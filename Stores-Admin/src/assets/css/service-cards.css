@@ -1,0 +1,48 @@
+/* Service Cards Styling */
+.service-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Service Card Responsive Font Sizes */
+@media (max-width: 768px) {
+  .service-card h3 {
+    font-size: 1.25rem;
+  }
+  
+  .service-card p {
+    font-size: 0.875rem;
+  }
+  
+  .service-card .inline-flex {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .service-card h3 {
+    font-size: 1.125rem;
+  }
+  
+  .service-card p {
+    font-size: 0.8125rem;
+  }
+}
+
+/* Enhanced Hover Effects */
+.service-card:hover .absolute.bottom-0 {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  padding-bottom: 1.25rem;
+}
+
+/* Card Badge Styles */
+.service-card .rounded-full {
+  transition: all 0.3s ease;
+}
+
+.service-card:hover .rounded-full {
+  transform: scale(1.05);
+}

@@ -1,0 +1,47 @@
+export interface Driver {
+    id: string;
+    name: string;
+    email: string;
+    phone_number: string;
+    date_of_birth?: string;
+    national_insurance_number?: string;
+    address?: string;
+    postcode?: string;
+    employment_type: string;
+    date_started: string;
+    license_number: string;
+    license_country_of_issue: string;
+    license_categories: string[];
+    license_expiry_date: string;
+    has_tacho: boolean;
+    digital_tachograph_card_number?: string;
+    tacho_card_expiry_date?: string;
+    has_cpc: boolean;
+    cpc_expiry_date?: string;
+    has_adr: boolean;
+    adr_expiry_date?: string;
+    induction_completed: boolean;
+    induction_date?: string;
+    max_weekly_hours: number;
+    opted_out_of_working_time_directive: boolean;
+    status: string;
+    verification_status: string;
+    penalty_points: number;
+    preferred_vehicle_types?: string[];
+    notes?: string;
+    is_license_valid: boolean;
+    is_cpc_valid: boolean;
+    needs_license_renewal: boolean;
+    documents?: Array<{
+        id: string;
+        document_type: string;
+        document_front: string;
+        document_back?: string;
+        issue_date: string;
+        expiry_date?: string;
+        reference_number: string;
+        notes?: string;
+        is_verified: boolean;
+        rejection_reason?: string;
+    }>;
+} 

@@ -1,0 +1,7 @@
+{
+    "iis.configDir": ""
+    "terminal.integrated.env.windows": {
+        "NODE_OPTIONS": "--max-old-space-size=4192"
+    },
+    "iis.configDir": ""
+}

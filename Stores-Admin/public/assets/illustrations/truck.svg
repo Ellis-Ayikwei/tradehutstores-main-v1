@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Truck Body -->
+    <path d="M20 60H100V80H20V60Z" fill="white"/>
+    <!-- Truck Cabin -->
+    <path d="M60 40H100V60H60V40Z" fill="white"/>
+    <!-- Wheels -->
+    <circle cx="35" cy="80" r="10" fill="white"/>
+    <circle cx="85" cy="80" r="10" fill="white"/>
+    <!-- Windows -->
+    <path d="M65 45H95V55H65V45Z" fill="#1E293B"/>
+    <!-- Headlights -->
+    <path d="M100 50H105V55H100V50Z" fill="#FCD34D"/>
+    <!-- Details -->
+    <path d="M20 65H100V70H20V65Z" fill="#1E293B"/>
+</svg> 

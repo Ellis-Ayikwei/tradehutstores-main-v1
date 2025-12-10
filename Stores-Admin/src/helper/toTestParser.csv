@@ -1,0 +1,7 @@
+id,name,email,password,role,created_at,status
+1,John Doe,john.doe@example.com,pass123,user,2024-12-01,active
+2,Jane Smith,jane.smith@example.com,secure456,admin,2024-11-30,inactive
+3,Michael Brown,michael.brown@example.com,qwerty789,editor,2024-12-01,active
+4,Emily Davis,emily.davis@example.com,abc123,viewer,2024-11-29,pending
+5,Chris Johnson,chris.johnson@example.com,password,manager,2024-11-28,active
+7,Sarah Connor,sarah.connor@example.com,terminator,user,2024-12-02,active
