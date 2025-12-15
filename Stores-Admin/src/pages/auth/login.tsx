@@ -16,7 +16,7 @@ import * as Yup from 'yup';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AppDispatch, IRootState } from '../../store/index';
 import { useDispatch, useSelector } from 'react-redux';
-import { LoginUser } from '../../store/authSlice';
+import { LoginUser, MfaLoginUser } from '../../store/authSlice';
 import useSignIn from 'react-auth-kit/hooks/useSignIn';
 import { ThunkDispatch, AnyAction } from '@reduxjs/toolkit';
 import { useEffect } from 'react';
@@ -71,7 +71,7 @@ const Login: React.FC = () => {
             ).unwrap();
 
             // Navigate on successful login
-            // navigate(from);
+            navigate(from);
         } catch (error) {
             console.error('Login error:', error);
         } finally {

@@ -212,7 +212,7 @@ const PaymentCancel: React.FC = () => {
                                     Call Support
                                 </a>
                                 <a
-                                    href="mailto:support@morevans.com"
+                                    href="mailto:support@tradehut.com"
                                     className="block bg-yellow-100 dark:bg-yellow-800/30 hover:bg-yellow-200 dark:hover:bg-yellow-700/40 text-yellow-900 dark:text-yellow-100 px-4 py-2 rounded-lg text-center transition-colors text-sm"
                                 >
                                     <IconMail className="w-4 h-4 inline mr-2" />

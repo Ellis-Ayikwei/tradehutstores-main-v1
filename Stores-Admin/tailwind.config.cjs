@@ -10,19 +10,19 @@ module.exports = {
             colors: {
                 // Core brand colors with standard Tailwind scale
                 primary: {
-                    50: '#f3f2fc', // Lightest tint
-                    100: '#e8eaf6', // Very light
-                    200: '#d1d4ed', // Light
-                    300: '#a3a9d9', // Medium light
-                    400: '#7575c0', // Medium
-                    500: '#2E2787', // DEFAULT - Deep indigo
-                    600: '#252060', // Darker
-                    700: '#1c1849', // Dark
-                    800: '#131132', // Very dark
-                    900: '#0a091b', // Darkest
-                    DEFAULT: '#2E2787',
-                    light: '#e8eaf6',
-                    'dark-light': 'rgba(46, 39, 135, 0.15)',
+                    50: '#fef4ee', // Lightest tint
+                    100: '#fde6d4', // Very light
+                    200: '#f9c89c', // Light
+                    300: '#f5a96d', // Medium light
+                    400: '#f18137', // Medium
+                    500: '#dc711a', // DEFAULT - TradeHut Orange
+                    600: '#c45811', // Darker
+                    700: '#a34311', // Dark
+                    800: '#853614', // Very dark
+                    900: '#6d2e15', // Darkest
+                    DEFAULT: '#dc711a',
+                    light: '#fde6d4',
+                    'dark-light': 'rgba(220, 113, 26, 0.15)',
                 },
                 secondary: {
                     50: '#fff5f2', // Lightest tint
@@ -157,8 +157,8 @@ module.exports = {
                 4.5: '18px',
             },
             boxShadow: {
-                '3xl': '0 2px 2px rgba(46, 39, 135, 0.05), 1px 6px 7px rgba(46, 39, 135, 0.1)', // Indigo-tinted
-                urgent: '0 4px 14px -2px rgba(255, 107, 53, 0.25)', // Orange shadow
+                '3xl': '0 2px 2px rgba(220, 113, 26, 0.05), 1px 6px 7px rgba(220, 113, 26, 0.1)', // TradeHut Orange-tinted
+                urgent: '0 4px 14px -2px rgba(220, 113, 26, 0.25)', // TradeHut Orange shadow
             },
             typography: ({ theme }) => ({
                 DEFAULT: {

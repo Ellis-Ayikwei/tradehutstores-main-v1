@@ -48,16 +48,14 @@ export const LoginUser = createAsyncThunk(
             console.log("Raw Access header:", accessToken);
             console.log("Raw Refresh header:", refreshToken);
 
+            // Remove 'Bearer ' prefix if present (we'll add it back in the correct format)
             if (accessToken?.startsWith("Bearer ")) {
-                console.log("Access token BEFORE cleanup:", accessToken);
                 accessToken = accessToken.substring(7);
-                console.log("Access token AFTER cleanup:", accessToken);
             }
 
+            // Refresh token should not have Bearer prefix
             if (refreshToken?.startsWith("Bearer ")) {
-                console.log("Refresh token BEFORE cleanup:", refreshToken);
                 refreshToken = refreshToken.substring(7);
-                console.log("Refresh token AFTER cleanup:", refreshToken);
             }
 
             console.log("Extracted tokens:", { accessToken, refreshToken });
@@ -68,9 +66,12 @@ export const LoginUser = createAsyncThunk(
             // Debug cookies BEFORE sign-in
             console.log("Cookies BEFORE signIn:", document.cookie);
 
+            // Ensure access token has 'Bearer ' prefix for cookie storage
+            // react-auth-kit expects the token with Bearer prefix when using cookie storage
+            const cleanAccessToken = `Bearer ${accessToken}`;
             
             console.log("Calling signIn with:", {
-                auth: { token: accessToken, type: 'Bearer' },
+                auth: { token: cleanAccessToken, type: 'Bearer' },
                 refresh: refreshToken,
                 userState: user,
                 expiresIn: 60,
@@ -79,14 +80,44 @@ export const LoginUser = createAsyncThunk(
             const { signIn } = extra;
             const isSignedIn = signIn({
                 auth: {
-                    token: accessToken,
+                    token: cleanAccessToken,
                     type: 'Bearer',
                 },
                 refresh: refreshToken,
                 userState: user,
             });
 
+            // Also set cookies manually to ensure axios interceptor can read them immediately
+            // This is critical because react-auth-kit might not set cookies synchronously
+            const secureFlag = window.location.protocol === 'https:' ? '; Secure' : '';
+            const cookieDomain = window.location.hostname !== 'localhost' ? `; domain=${window.location.hostname}` : '';
+            
+            // if (cleanAccessToken) {
+            //     const expires = new Date();
+            //     expires.setTime(expires.getTime() + (60 * 60 * 1000)); // 60 minutes (matching expiresIn)
+            //     document.cookie = `_auth=${encodeURIComponent(cleanAccessToken)}; expires=${expires.toUTCString()}; path=/; SameSite=Lax${secureFlag}${cookieDomain}`;
+            // }
+            // if (refreshToken) {
+            //     const expires = new Date();
+            //     expires.setTime(expires.getTime() + (30 * 24 * 60 * 60 * 1000)); // 30 days
+            //     document.cookie = `_auth_refresh=${encodeURIComponent(refreshToken)}; expires=${expires.toUTCString()}; path=/; SameSite=Lax${secureFlag}${cookieDomain}`;
+            // }
 
+            // Verify cookies were set
+            console.log("Cookies AFTER signIn:", document.cookie);
+            const authCookie = document.cookie.split('; ').find(row => row.startsWith('_auth='));
+            const refreshCookie = document.cookie.split('; ').find(row => row.startsWith('_auth_refresh='));
+            console.log("Cookie verification:", { authCookie: !!authCookie, refreshCookie: !!refreshCookie });
+
+            if (!isSignedIn) {
+                console.error('Frontend sign-in failed');
+                throw new Error('Frontend sign-in failed');
+            }
+
+            return {
+                success: true,
+                user,
+            };
         } catch (error: any) {
             console.error("💥 ERROR during login:", error);
 
@@ -158,15 +189,18 @@ export const MfaLoginUser = createAsyncThunk('auth/MfaLoginUser', async (
 
                 // Also set cookies manually to ensure axios interceptor can read them immediately
                 // This is critical because react-auth-kit might not set cookies synchronously
+                const secureFlag = window.location.protocol === 'https:' ? '; Secure' : '';
+                const cookieDomain = window.location.hostname !== 'localhost' ? `; domain=${window.location.hostname}` : '';
+                
                 if (cleanAccessToken) {
                     const expires = new Date();
                     expires.setTime(expires.getTime() + (24 * 60 * 60 * 1000)); // 24 hours
-                    document.cookie = `_auth=${encodeURIComponent(cleanAccessToken)}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+                    document.cookie = `_auth=${encodeURIComponent(cleanAccessToken)}; expires=${expires.toUTCString()}; path=/; SameSite=Lax${secureFlag}${cookieDomain}`;
                 }
                 if (refreshToken) {
                     const expires = new Date();
                     expires.setTime(expires.getTime() + (30 * 24 * 60 * 60 * 1000)); // 30 days
-                    document.cookie = `_auth_refresh=${encodeURIComponent(refreshToken)}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+                    document.cookie = `_auth_refresh=${encodeURIComponent(refreshToken)}; expires=${expires.toUTCString()}; path=/; SameSite=Lax${secureFlag}${cookieDomain}`;
                 }
 
                 // Verify cookies were set
@@ -269,16 +303,42 @@ export const VerifyMfaLogin = createAsyncThunk(
         // Update device fingerprint user tracking after successful OTP verification
         // This will check if user has changed and clear fingerprint if needed
 
+        // Ensure token format is correct (add 'Bearer ' prefix if not present)
+        const cleanAccessToken = accessToken?.startsWith('Bearer ') ? accessToken : `Bearer ${accessToken}`;
+
         const { signIn } = extra;
         const isSignedIn = signIn({
             auth: {
-                token: accessToken,
+                token: cleanAccessToken,
                 type: 'Bearer',
             },
             refresh: refreshToken,
             userState: user,
             expiresIn: 60,
         });
+
+        // Also set cookies manually to ensure axios interceptor can read them immediately
+        // This is critical because react-auth-kit might not set cookies synchronously
+        const secureFlag = window.location.protocol === 'https:' ? '; Secure' : '';
+        const cookieDomain = window.location.hostname !== 'localhost' ? `; domain=${window.location.hostname}` : '';
+        
+        if (cleanAccessToken) {
+            const expires = new Date();
+            expires.setTime(expires.getTime() + (60 * 60 * 1000)); // 60 minutes (matching expiresIn)
+            document.cookie = `_auth=${encodeURIComponent(cleanAccessToken)}; expires=${expires.toUTCString()}; path=/; SameSite=Lax${secureFlag}${cookieDomain}`;
+        }
+        if (refreshToken) {
+            const expires = new Date();
+            expires.setTime(expires.getTime() + (30 * 24 * 60 * 60 * 1000)); // 30 days
+            document.cookie = `_auth_refresh=${encodeURIComponent(refreshToken)}; expires=${expires.toUTCString()}; path=/; SameSite=Lax${secureFlag}${cookieDomain}`;
+        }
+
+        // Verify cookies were set
+        console.log("Cookies AFTER VerifyMfaLogin signIn:", document.cookie);
+        const authCookie = document.cookie.split('; ').find(row => row.startsWith('_auth='));
+        const refreshCookie = document.cookie.split('; ').find(row => row.startsWith('_auth_refresh='));
+        console.log("Cookie verification:", { authCookie: !!authCookie, refreshCookie: !!refreshCookie });
+
         localStorage.setItem('userId', user?.id);
 
         if (!isSignedIn) {

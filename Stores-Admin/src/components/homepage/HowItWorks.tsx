@@ -44,7 +44,7 @@ const HowItWorks: React.FC = () => {
         <section className="py-20 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-16">
-                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">How MoreVans Works</h2>
+                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">How TradeHut Works</h2>
                     <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">Get your items moved in four simple steps with our efficient platform.</p>
                 </div>
 

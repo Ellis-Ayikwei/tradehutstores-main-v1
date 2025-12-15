@@ -324,7 +324,7 @@ const mockChats: Chat[] = [
     messages: [
       {
         id: '301',
-        content: 'Welcome to MoreVans Customer Support! How can we help you today?',
+        content: 'Welcome to TradeHut Customer Support! How can we help you today?',
         timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(),
         sender: 'provider',
         status: 'read'
@@ -335,8 +335,8 @@ const mockChats: Chat[] = [
       name: 'Support Team',
       rating: 4.9,
       reviewCount: 1024,
-      company: 'MoreVans',
-      email: 'support@morevans.com'
+      company: 'TradeHut',
+      email: 'support@tradehut.com'
     }
   }
 ];
@@ -471,7 +471,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       messages: [
         {
           id: uuidv4(),
-          content: 'Welcome to MoreVans support! How can we help you today?',
+          content: 'Welcome to TradeHut support! How can we help you today?',
           timestamp: new Date().toISOString(),
           sender: 'provider',
           status: 'sent'
@@ -482,10 +482,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         name: 'Support Team',
         rating: 4.9,
         reviewCount: 1024,
-        company: 'MoreVans',
-        email: 'support@morevans.com'
+        company: 'TradeHut',
+        email: 'support@tradehut.com'
       },
-      lastMessage: 'Welcome to MoreVans support! How can we help you today?',
+      lastMessage: 'Welcome to TradeHut support! How can we help you today?',
       lastMessageTime: new Date().toISOString()
     };
     

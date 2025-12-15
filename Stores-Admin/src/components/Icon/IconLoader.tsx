@@ -1,5 +1,6 @@
 import { FC } from 'react';
-import aluminiLogo from './morevans.png'; // Adjust path to your image
+// Using public path for logo - ensure tradehut-logo.png exists in public/assets/images/
+const tradehutLogo = '/assets/images/tradehut-logo.png'; // TradeHut logo - fallback to morevans.png if not found
 
 interface IconLoaderProps {
     className?: string;
@@ -30,7 +31,7 @@ const IconLoader: FC<IconLoaderProps> = ({ className = '', fill = false, duotone
 
                 {/* The centered image */}
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" style={{ width: `${imageSize}px`, height: `${imageSize}px` }}>
-                    <img src={aluminiLogo} alt="Alumni Logo" className="w-full h-full object-contain" />
+                    <img src={tradehutLogo} alt="TradeHut Logo" className="w-full h-full object-contain" />
                 </div>
             </div>
         </div>

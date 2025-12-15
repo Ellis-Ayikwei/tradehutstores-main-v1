@@ -875,14 +875,14 @@ const AdminRequestEditor: React.FC<AdminRequestEditorProps> = ({ requestId }) =>
                                 Edit Request #{requestData.tracking_number || requestData.id.slice(-8)}
                             </h1>
                             <p className="mt-2 text-gray-600 dark:text-gray-400">
-                                {requestData.request_type.charAt(0).toUpperCase() + requestData.request_type.slice(1)} Request • 
+                                {requestData.request_type?.charAt(0).toUpperCase() + requestData.request_type?.slice(1) || 'Request'} Request • 
                                 Status: <span className={`font-medium ${
                                     requestData.status === 'completed' ? 'text-green-600' :
                                     requestData.status === 'cancelled' ? 'text-red-600' :
                                     requestData.status === 'in_transit' ? 'text-blue-600' :
                                     'text-yellow-600'
                                 }`}>
-                                    {requestData.status.replace('_', ' ').toUpperCase()}
+                                    {(requestData?.status || 'unknown').replace('_', ' ').toUpperCase()}
                                 </span>
                             </p>
                         </div>

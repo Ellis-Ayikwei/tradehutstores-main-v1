@@ -137,21 +137,22 @@ const CategoryManagement: React.FC = () => {
             active: 'bg-green-100 text-green-800',
             inactive: 'bg-gray-100 text-gray-800',
         };
+        const safeStatus = status || 'inactive';
         return (
-            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${statusConfig[status as keyof typeof statusConfig]}`}>
-                {status.toUpperCase()}
+            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${statusConfig[safeStatus as keyof typeof statusConfig] || statusConfig.inactive}`}>
+                {safeStatus.toUpperCase()}
             </span>
         );
     };
 
-    const columns: ColumnDefinition<Category>[] = [
+    const columns: ColumnDefinition[] = [
         {
-            key: 'image',
-            label: 'Icon',
-            render: (category) => (
+            accessor: 'image',
+            title: 'Icon',
+            render: (category: Category) => (
                 <div className="w-12 h-12 flex-shrink-0">
                     {category.image ? (
-                        <img src={category.image} alt={category.name} className="w-full h-full object-cover rounded" />
+                        <img src={category.image} alt={category.name || 'Category'} className="w-full h-full object-cover rounded" />
                     ) : (
                         <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center">
                             <IconFolder className="w-6 h-6 text-gray-400" />
@@ -161,21 +162,21 @@ const CategoryManagement: React.FC = () => {
             ),
         },
         {
-            key: 'name',
-            label: 'Category Name',
+            accessor: 'name',
+            title: 'Category Name',
             sortable: true,
-            render: (category) => (
+            render: (category: Category) => (
                 <div>
-                    <div className="font-semibold text-gray-900">{category.name}</div>
-                    <div className="text-sm text-gray-500">{category.slug}</div>
+                    <div className="font-semibold text-gray-900">{category.name || 'N/A'}</div>
+                    <div className="text-sm text-gray-500">{category.slug || 'N/A'}</div>
                 </div>
             ),
         },
         {
-            key: 'parent_category_name',
-            label: 'Parent Category',
+            accessor: 'parent_category_name',
+            title: 'Parent Category',
             sortable: true,
-            render: (category) => (
+            render: (category: Category) => (
                 <div>
                     {category.parent_category_name ? (
                         <span className="text-sm text-gray-600">{category.parent_category_name}</span>
@@ -186,43 +187,43 @@ const CategoryManagement: React.FC = () => {
             ),
         },
         {
-            key: 'product_count',
-            label: 'Products',
+            accessor: 'product_count',
+            title: 'Products',
             sortable: true,
-            render: (category) => (
+            render: (category: Category) => (
                 <div className="text-center">
-                    <span className="font-semibold text-gray-900">{category.product_count}</span>
+                    <span className="font-semibold text-gray-900">{category.product_count ?? 0}</span>
                 </div>
             ),
         },
         {
-            key: 'display_order',
-            label: 'Order',
+            accessor: 'display_order',
+            title: 'Order',
             sortable: true,
-            render: (category) => (
+            render: (category: Category) => (
                 <div className="text-center">
-                    <span className="text-gray-600">{category.display_order}</span>
+                    <span className="text-gray-600">{category.display_order ?? 0}</span>
                 </div>
             ),
         },
         {
-            key: 'status',
-            label: 'Status',
+            accessor: 'status',
+            title: 'Status',
             sortable: true,
-            render: (category) => getStatusBadge(category.status),
+            render: (category: Category) => getStatusBadge(category.status),
         },
         {
-            key: 'created_at',
-            label: 'Created',
+            accessor: 'created_at',
+            title: 'Created',
             sortable: true,
-            render: (category) => (
-                <div className="text-sm text-gray-600">{formatDate(category.created_at)}</div>
+            render: (category: Category) => (
+                <div className="text-sm text-gray-600">{category.created_at ? formatDate(category.created_at) : 'N/A'}</div>
             ),
         },
         {
-            key: 'actions',
-            label: 'Actions',
-            render: (category) => (
+            accessor: 'actions',
+            title: 'Actions',
+            render: (category: Category) => (
                 <div className="flex gap-2">
                     <button
                         onClick={() => handleEdit(category)}
@@ -330,10 +331,9 @@ const CategoryManagement: React.FC = () => {
                 <DraggableDataTable
                     data={categories}
                     columns={columns}
-                    searchable={true}
-                    searchableColumns={['name', 'slug', 'parent_category_name']}
-                    pagination={true}
-                    pageSize={20}
+                    loading={loading}
+                    title="Categories"
+                    quickCheckFields={['name', 'slug', 'parent_category_name']}
                 />
             </div>
 

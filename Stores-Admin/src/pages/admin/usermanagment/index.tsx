@@ -1,7 +1,6 @@
 import {
     IconAlertTriangle,
     IconBan,
-    IconBuilding,
     IconCheck,
     IconChevronDown,
     IconChevronUp,
@@ -21,12 +20,26 @@ import DraggableDataTable, { ColumnDefinition } from '../../../components/ui/Dra
 import FilterSelect from '../../../components/ui/FilterSelect';
 import axiosInstance from '../../../services/axiosInstance';
 
+interface ApiUser {
+    id: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    is_staff: boolean;
+    is_superuser: boolean;
+    is_active: boolean;
+    date_joined: string;
+    last_login: string | null;
+    groups: Array<{ id: number; name: string }>;
+    user_permissions: string[];
+}
+
 interface UserAccount {
     id: string;
-    user_type: 'customer' | 'provider' | 'admin';
+    user_type: 'customer' | 'admin';
     account_status: 'active' | 'pending' | 'suspended' | 'inactive';
     email: string;
-    phone_number: string;
+    phone_number?: string;
     first_name: string;
     last_name: string;
     date_joined: string;
@@ -54,6 +67,10 @@ interface UserAccount {
     // Additional fields
     suspension_reason?: string;
     notes?: string;
+    // API fields
+    is_staff?: boolean;
+    is_superuser?: boolean;
+    groups?: Array<{ id: number; name: string }>;
 }
 
 const UserManagement: React.FC = () => {
@@ -66,16 +83,59 @@ const UserManagement: React.FC = () => {
     const [suspensionReason, setSuspensionReason] = useState('');
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+    // Transform API user to UserAccount format
+    const transformUser = (apiUser: ApiUser): UserAccount => {
+        // Determine user_type from groups or is_staff/is_superuser
+        let user_type: 'customer' | 'admin' = 'customer';
+        if (apiUser.is_superuser || apiUser.is_staff) {
+            user_type = 'admin';
+        } else if (apiUser.groups && apiUser.groups.length > 0) {
+            const groupNames = apiUser.groups.map(g => g.name.toLowerCase());
+            if (groupNames.some(name => name.includes('admin') || name.includes('administrator'))) {
+                user_type = 'admin';
+            }
+        }
+
+        // Map is_active to account_status
+        const account_status: 'active' | 'pending' | 'suspended' | 'inactive' = 
+            apiUser.is_active ? 'active' : 'inactive';
+
+        return {
+            id: apiUser.id,
+            email: apiUser.email,
+            first_name: apiUser.first_name || '',
+            last_name: apiUser.last_name || '',
+            user_type,
+            account_status,
+            date_joined: apiUser.date_joined,
+            last_active: apiUser.last_login || apiUser.date_joined,
+            phone_number: '', // Not in API response
+            rating: 0, // Not in API response
+            number_of_completed_bookings: 0, // Not in API response
+            is_staff: apiUser.is_staff,
+            is_superuser: apiUser.is_superuser,
+            groups: apiUser.groups,
+        };
+    };
+
     // Fetch users from API
     const fetchUsers = async () => {
         try {
             setLoading(true);
             setError(null);
             const response = await axiosInstance.get('/users/');
-            setUsers(response.data);
+            // Handle both array response and paginated response with results
+            const apiUsersData: ApiUser[] = Array.isArray(response.data) 
+                ? response.data 
+                : (response.data?.results || response.data?.data || []);
+            
+            // Transform API users to UserAccount format
+            const transformedUsers = apiUsersData.map(transformUser);
+            setUsers(transformedUsers);
         } catch (err) {
             setError('Failed to fetch users. Please try again later.');
             console.error('Error fetching users:', err);
+            setUsers([]);
         } finally {
             setLoading(false);
         }
@@ -87,14 +147,25 @@ const UserManagement: React.FC = () => {
 
     // Calculate user counts by type
     const getUserCounts = () => {
+        // Ensure users is an array - defensive check
+        if (!users || !Array.isArray(users)) {
+            return {
+                all: 0,
+                customer: 0,
+                admin: 0,
+                active: 0,
+                suspended: 0,
+                pending: 0,
+            };
+        }
+        const usersArray = users;
         const counts = {
-            all: users.length,
-            customer: users.filter((user) => user.user_type === 'customer').length,
-            provider: users.filter((user) => user.user_type === 'provider').length,
-            admin: users.filter((user) => user.user_type === 'admin').length,
-            active: users.filter((user) => user.account_status === 'active').length,
-            suspended: users.filter((user) => user.account_status === 'suspended').length,
-            pending: users.filter((user) => user.account_status === 'pending').length,
+            all: usersArray.length,
+            customer: usersArray.filter((user) => user?.user_type === 'customer').length,
+            admin: usersArray.filter((user) => user?.user_type === 'admin').length,
+            active: usersArray.filter((user) => user?.account_status === 'active').length,
+            suspended: usersArray.filter((user) => user?.account_status === 'suspended').length,
+            pending: usersArray.filter((user) => user?.account_status === 'pending').length,
         };
         return counts;
     };
@@ -103,16 +174,19 @@ const UserManagement: React.FC = () => {
 
     // Filter users based on active filter
     const getFilteredUsers = () => {
-        if (activeFilter === 'all') return users;
+        // Ensure users is an array - defensive check with early return
+        if (!users || !Array.isArray(users)) {
+            return [];
+        }
+        const usersArray = users;
+        if (activeFilter === 'all') return usersArray;
         
         if (activeFilter === 'customer') {
-            return users.filter((user) => user.user_type === 'customer');
-        } else if (activeFilter === 'provider') {
-            return users.filter((user) => user.user_type === 'provider');
+            return usersArray.filter((user) => user?.user_type === 'customer');
         } else if (activeFilter === 'admin') {
-            return users.filter((user) => user.user_type === 'admin');
+            return usersArray.filter((user) => user?.user_type === 'admin');
         } else {
-            return users.filter((user) => user.account_status === activeFilter);
+            return usersArray.filter((user) => user?.account_status === activeFilter);
         }
     };
 
@@ -230,16 +304,12 @@ const UserManagement: React.FC = () => {
                 <div className="flex items-center gap-4">
                     <div
                         className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center ${
-                            item.user_type === 'provider'
-                                ? 'bg-purple-100 dark:bg-purple-900/30'
-                                : item.user_type === 'admin'
+                            item.user_type === 'admin'
                                 ? 'bg-emerald-100 dark:bg-emerald-900/30'
                                 : 'bg-blue-100 dark:bg-blue-900/30'
                         }`}
                     >
-                        {item.user_type === 'provider' ? (
-                            <IconBuilding className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                        ) : item.user_type === 'admin' ? (
+                        {item.user_type === 'admin' ? (
                             <IconUserCheck className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
                         ) : (
                             <IconUsers className="w-6 h-6 text-blue-600 dark:text-blue-400" />
@@ -267,23 +337,18 @@ const UserManagement: React.FC = () => {
                 <div className="flex flex-col gap-2">
                     <span
                         className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${
-                            item.user_type === 'provider'
-                                ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400'
-                                : item.user_type === 'admin'
+                            item.user_type === 'admin'
                                 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400'
                                 : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
                         }`}
                     >
-                        {item.user_type === 'provider' ? (
-                            <IconBuilding className="w-3 h-3" />
-                        ) : item.user_type === 'admin' ? (
+                        {item.user_type === 'admin' ? (
                             <IconUserCheck className="w-3 h-3" />
                         ) : (
                             <IconUsers className="w-3 h-3" />
                         )}
                         {item.user_type}
                     </span>
-                    {item.business_name && <div className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-32">{item.business_name}</div>}
                 </div>
             ),
         },
@@ -293,16 +358,18 @@ const UserManagement: React.FC = () => {
             width: '15%',
             sortable: true,
             render: (item: UserAccount) => (
-                <div className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-32">{item.phone_number}</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-32">{item.phone_number || 'N/A'}</div>
             ),
         },
         {
-            accessor: 'user_type',
+            accessor: 'is_staff',
             title: 'Staff',
             width: '15%',
             sortable: true,
             render: (item: UserAccount) => (
-                <div className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-32">{item.user_type === 'admin' ? 'Yes' : 'No'}</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-32">
+                    {item.is_staff || item.is_superuser ? 'Yes' : 'No'}
+                </div>
             ),
         },
         {
@@ -352,19 +419,20 @@ const UserManagement: React.FC = () => {
         //     ),
         // },
         {
-            accessor: 'rating',
-            title: 'Rating',
+            accessor: 'groups',
+            title: 'Groups',
             width: '10%',
-            sortable: true,
+            sortable: false,
             render: (item: UserAccount) => (
-                <div className="flex items-center gap-2">
-                    {item.rating > 0 ? (
-                        <>
-                            <IconStar className="w-4 h-4 text-yellow-500" />
-                            <span className="text-sm font-semibold text-gray-900 dark:text-white">{item.rating.toFixed(1)}</span>
-                        </>
+                <div className="flex flex-col gap-1">
+                    {item.groups && item.groups.length > 0 ? (
+                        item.groups.slice(0, 2).map((group, idx) => (
+                            <span key={idx} className="text-xs px-2 py-0.5 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 rounded-full">
+                                {group.name}
+                            </span>
+                        ))
                     ) : (
-                        <span className="text-sm text-gray-400 dark:text-gray-500">N/A</span>
+                        <span className="text-xs text-gray-400 dark:text-gray-500">No groups</span>
                     )}
                 </div>
             ),
@@ -452,7 +520,7 @@ const UserManagement: React.FC = () => {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white">User Management</h1>
-                    <p className="text-gray-600 dark:text-gray-400 mt-1">Manage customers, providers, and admin accounts</p>
+                    <p className="text-gray-600 dark:text-gray-400 mt-1">Manage customers and admin accounts</p>
                 </div>
                 <Link
                     to="/admin/users/new"
@@ -483,18 +551,7 @@ const UserManagement: React.FC = () => {
                         </div>
                         <div>
                             <p className="text-sm text-gray-600 dark:text-gray-400">Active Users</p>
-                            <p className="text-2xl font-bold text-gray-900 dark:text-white">{users.filter((u) => u.account_status === 'active').length}</p>
-                        </div>
-                    </div>
-                </div>
-                <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
-                            <IconBuilding className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">Providers</p>
-                            <p className="text-2xl font-bold text-gray-900 dark:text-white">{users.filter((u) => u.user_type === 'provider').length}</p>
+                            <p className="text-2xl font-bold text-gray-900 dark:text-white">{(Array.isArray(users) ? users : []).filter((u) => u.account_status === 'active').length}</p>
                         </div>
                     </div>
                 </div>
@@ -505,7 +562,7 @@ const UserManagement: React.FC = () => {
                         </div>
                         <div>
                             <p className="text-sm text-gray-600 dark:text-gray-400">Pending Review</p>
-                            <p className="text-2xl font-bold text-gray-900 dark:text-white">{users.filter((u) => u.account_status === 'pending').length}</p>
+                            <p className="text-2xl font-bold text-gray-900 dark:text-white">{(Array.isArray(users) ? users : []).filter((u) => u.account_status === 'pending').length}</p>
                         </div>
                     </div>
                 </div>
@@ -547,23 +604,6 @@ const UserManagement: React.FC = () => {
                                     : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
                             }`}>
                                 {userCounts.customer}
-                            </span>
-                        </button>
-                        <button
-                            onClick={() => setActiveFilter('provider')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
-                                activeFilter === 'provider'
-                                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
-                            }`}
-                        >
-                            Providers
-                            <span className={`ml-2 py-0.5 px-2 rounded-full text-xs font-semibold ${
-                                activeFilter === 'provider'
-                                    ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
-                                    : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
-                            }`}>
-                                {userCounts.provider}
                             </span>
                         </button>
                         <button

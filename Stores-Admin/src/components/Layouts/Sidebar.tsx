@@ -18,6 +18,7 @@ import {
     IconGavel,
     IconHeadphones,
     IconCreditCard,
+    IconBuildingStore,
 } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -77,10 +78,17 @@ const Sidebar = () => {
     };
 
     // Derive user groups and global-admin bypass from auth state
-    const{ data: userProfile, isLoading: userProfileLoading, error: userProfileError } = useSWR(`/users/${authUser?.user?.id}/profile/`, fetcher, {
-        revalidateOnFocus: false,
-        keepPreviousData: true,
-    });
+    // Extract user ID - handle both nested (authUser.user.id) and direct (authUser.id) structures
+    const userId = authUser?.user?.id || authUser?.id || (authUser && typeof authUser === 'object' && 'id' in authUser ? authUser.id : null);
+    
+    const{ data: userProfile, isLoading: userProfileLoading, error: userProfileError } = useSWR(
+        userId ? `/users/${userId}/profile/` : null,
+        fetcher,
+        {
+            revalidateOnFocus: false,
+            keepPreviousData: true,
+        }
+    );
     const userGroups = toLowerStringArray(userProfile?.groups || []);
     const userTypeLc = (userProfile?.user_type || userProfile?.role || '').toString().toLowerCase();
     const isGlobalAdmin = userGroups.includes('super admins') || userTypeLc === 'super_admin';
@@ -119,6 +127,17 @@ const Sidebar = () => {
             ],
         },
         {
+            path: '/admin/users',
+            icon: IconUsers,
+            label: 'User Management',
+            allowedGroups: ['Administrators'],
+            subItems: [
+                { path: '/admin/users/list', icon: IconUsers, label: 'All Users', allowedGroups: ['Administrators'] },
+                { path: '/admin/users/roles', icon: IconShieldLock, label: 'User Roles', allowedGroups: ['Administrators'] },
+            ],
+        },
+
+        {
             path: '/admin/customers',
             icon: IconUsers,
             label: 'Customers',
@@ -126,6 +145,16 @@ const Sidebar = () => {
             subItems: [
                 { path: '/admin/customers/list', icon: IconUsers, label: 'All Customers', allowedGroups: ['Administrators'] },
                 { path: '/admin/customers/new', icon: IconUsers, label: 'Add Customer', allowedGroups: ['Administrators'] },
+            ],
+        },
+        {
+            path: '/admin/sellers',
+            icon: IconBuildingStore,
+            label: 'Sellers',
+            allowedGroups: ['Administrators'],
+            subItems: [
+                { path: '/admin/sellers/list', icon: IconBuildingStore, label: 'All Sellers', allowedGroups: ['Administrators'] },
+                { path: '/admin/sellers/new', icon: IconBuildingStore, label: 'Add Seller', allowedGroups: ['Administrators'] },
             ],
         },
         {
@@ -224,7 +253,7 @@ const Sidebar = () => {
     //                 <div className="bg-secondary dark:bg-secondary h-full flex flex-col">
     //                     <div className="flex justify-between items-center px-3 py-2">
     //                         <NavLink to="/" className="main-logo flex items-center shrink-0">
-    //                             <img className="w-[160px] sm:w-[180px] ml-[5px] flex-none brightness-0 invert" src="/assets/images/morevanstext.png" alt="logo" />
+    //                             <img className="w-[160px] sm:w-[180px] ml-[5px] flex-none" src="/assets/images/tradehut-text.png" alt="TradeHut Logo" />
     //                         </NavLink>
     //                     </div>
     //                     <div className="flex-1 flex items-center justify-center">
@@ -242,7 +271,7 @@ const Sidebar = () => {
                 <div className="bg-secondary dark:bg-secondary h-full flex flex-col">
                     <div className="flex justify-between items-center px-3 py-2">
                         <NavLink to="/" className="main-logo flex items-center shrink-0">
-                            <img className="w-[160px] sm:w-[180px] ml-[5px] flex-none brightness-0 invert" src="/assets/images/morevanstext.png" alt="logo" />
+                            <img className="w-[160px] sm:w-[180px] ml-[5px] flex-none" src="/assets/images/tradehut-text.png" alt="TradeHut Logo" />
                         </NavLink>
 
                         <button

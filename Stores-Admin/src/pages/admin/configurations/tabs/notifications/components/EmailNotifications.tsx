@@ -327,7 +327,7 @@ const EmailNotifications: React.FC = () => {
                   </label>
                   <input
                     type="email"
-                    defaultValue="noreply@morevans.com"
+                    defaultValue="noreply@tradehut.com"
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                   />
                 </div>
@@ -338,7 +338,7 @@ const EmailNotifications: React.FC = () => {
                   </label>
                   <input
                     type="text"
-                    defaultValue="MoreVans"
+                    defaultValue="TradeHut"
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                   />
                 </div>

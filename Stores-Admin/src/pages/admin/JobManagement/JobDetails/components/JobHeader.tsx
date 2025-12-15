@@ -47,7 +47,7 @@ const JobHeader: React.FC<JobHeaderProps> = ({
                         {/* Status Badge */}
                         <span className={`flex items-center px-2 py-1 rounded-2xl  font-bold backdrop-blur-sm border-2 ${getStatusBadgeClass(job.status)}`}>
                             {getStatusIcon(job.status)}
-                            <span className="ml-2">{job.status.replace(/_/g, ' ')}</span>
+                            <span className="ml-2">{(job?.status || 'unknown').replace(/_/g, ' ')}</span>
                         </span>
 
                         {/* Action Buttons */}

@@ -58,7 +58,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle, show
                                 <IconTruck className="h-8 w-8 text-white" />
                             </motion.div>
                         </div>
-                        <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">MoreVans</h1>
+                        <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">TradeHut</h1>
                         <p className="text-sm text-gray-600 mt-1">Moving made simple</p>
                     </motion.div>
 
@@ -75,7 +75,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle, show
 
                     {/* Footer */}
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="mt-8 text-center text-sm text-gray-500">
-                        <p>© 2024 MoreVans. All rights reserved.</p>
+                        <p>© 2024 TradeHut. All rights reserved.</p>
                     </motion.div>
                 </div>
             </div>
@@ -133,7 +133,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle, show
                                     </div>
                                 </div>
                                 <div className="ml-4">
-                                    <p className="text-white/90 text-sm italic mb-2">"MoreVans made our office relocation seamless. Professional, reliable, and stress-free!"</p>
+                                    <p className="text-white/90 text-sm italic mb-2">"TradeHut made our office relocation seamless. Professional, reliable, and stress-free!"</p>
                                     <p className="text-white/70 text-xs">- Maria Johnson, Operations Manager</p>
                                 </div>
                             </div>

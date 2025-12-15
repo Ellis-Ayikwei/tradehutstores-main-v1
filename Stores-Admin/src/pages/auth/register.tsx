@@ -122,7 +122,7 @@ const Register: React.FC = () => {
                                 <FontAwesomeIcon icon={faUserShield} className="h-8 w-8 text-white" />
                             </div>
                             <div>
-                                <h1 className="text-3xl font-bold text-white">MoreVans</h1>
+                                <h1 className="text-3xl font-bold text-white">TradeHut</h1>
                                 <p className="text-blue-200 text-sm">Professional Logistics Solutions</p>
                             </div>
                         </div>
@@ -171,7 +171,7 @@ const Register: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="ml-4">
-                                    <p className="text-white/90 text-sm italic mb-2">"Joining MoreVans transformed our logistics operations. Best decision we made for our business."</p>
+                                    <p className="text-white/90 text-sm italic mb-2">"Joining TradeHut transformed our logistics operations. Best decision we made for our business."</p>
                                     <p className="text-white/70 text-xs">- Sarah Chen, Supply Chain Director</p>
                                 </div>
                             </div>
@@ -201,7 +201,7 @@ const Register: React.FC = () => {
                             <FontAwesomeIcon icon={faUserShield} className="h-6 w-6 text-white" />
                         </div>
                         <div>
-                            <h1 className="text-xl font-bold text-white">MoreVans</h1>
+                            <h1 className="text-xl font-bold text-white">TradeHut</h1>
                             <p className="text-blue-200 text-xs">Professional Logistics</p>
                         </div>
                     </div>

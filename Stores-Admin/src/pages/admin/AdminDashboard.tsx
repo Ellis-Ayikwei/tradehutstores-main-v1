@@ -90,7 +90,7 @@ interface RealtimeActivity {
 const AdminDashboard = () => {
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(setPageTitle('MoreVans Admin Dashboard'));
+        dispatch(setPageTitle('TradeHut Admin Dashboard'));
     });
 
     const isDark = useSelector((state: IRootState) => state.themeConfig.theme === 'dark' || state.themeConfig.isDarkMode);
@@ -680,7 +680,7 @@ const AdminDashboard = () => {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">MoreVans Dashboard</h1>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">TradeHut Dashboard</h1>
                     <p className="text-gray-600 dark:text-gray-400 mt-1">Comprehensive logistics management platform</p>
                 </div>
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">

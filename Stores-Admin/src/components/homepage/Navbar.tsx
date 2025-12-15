@@ -42,8 +42,8 @@ const Navbar: React.FC<NavbarProps> = ({ isScrolled }) => {
                         <Link to="/" className="flex items-center flex-shrink-0">
                         <img
                                 className={`w-[120px] sm:w-[160px] transition-all duration-300 ${isScrolled ? '' : 'brightness-0 invert'}`}
-                            src="/assets/images/morevanstext.png"
-                            alt="MoreVans"
+                            src="/assets/images/tradehut-text.png"
+                            alt="TradeHut"
                         />
                     </Link>
 

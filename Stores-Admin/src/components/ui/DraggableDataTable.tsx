@@ -304,15 +304,41 @@ const DraggableDataTable: React.FC<DraggableDataTableProps> = ({
       }, [sortStatus]);
 
 
+    // Sanitize data to prevent undefined values from causing errors in mantine-datatable
+    const sanitizeData = useCallback((dataArray: any[]): any[] => {
+        if (!Array.isArray(dataArray)) return [];
+        
+        return dataArray.map(item => {
+            if (!item || typeof item !== 'object') return item;
+            
+            const sanitized: any = {};
+            for (const key in item) {
+                const value = item[key];
+                // Convert undefined to empty string for string fields, null for others
+                if (value === undefined) {
+                    sanitized[key] = '';
+                } else if (value === null) {
+                    sanitized[key] = null;
+                } else if (typeof value === 'string' && value.length === 0) {
+                    sanitized[key] = '';
+                } else {
+                    sanitized[key] = value;
+                }
+            }
+            return sanitized;
+        });
+    }, []);
+
     // Update filtered data when data changes
     useEffect(() => {
         if (Array.isArray(data)) {
-            setFilteredData(data);
+            const sanitized = sanitizeData(data);
+            setFilteredData(sanitized);
         } else {
             console.error('Data is not an array:', data);
             setFilteredData([]);
         }
-    }, [data]);
+    }, [data, sanitizeData]);
 
     // Filter data based on search
     useEffect(() => {

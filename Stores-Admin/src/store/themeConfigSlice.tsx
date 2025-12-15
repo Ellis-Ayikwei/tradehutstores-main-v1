@@ -70,7 +70,7 @@ const defaultState: ThemeState = {
         { code: 'tr', name: 'Turkish' },
     ],
     semidark: false,
-    accentColor: '#dc711a',
+    accentColor: '#dc711a', // TradeHut Orange
     fontSize: 16,
 };
 
@@ -172,7 +172,7 @@ const themeConfigSlice = createSlice({
         },
         setPageTitle(state, action: PayloadAction<string>) {
             state.pageTitle = action.payload;
-            document.title = `${action.payload} | MoreVans`;
+            document.title = `${action.payload} | TradeHut`;
         },
         setAccentColor(state, action: PayloadAction<string>) {
             const payload = action.payload;

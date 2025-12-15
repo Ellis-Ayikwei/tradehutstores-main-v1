@@ -80,8 +80,8 @@ const InventoryManagement: React.FC = () => {
         return inventory.filter((item) => item.status === activeFilter);
     };
 
-    const handleFilterChange = (filter: string) => {
-        setActiveFilter(filter);
+    const handleFilterChange = (filter: string | number) => {
+        setActiveFilter(String(filter));
     };
 
     // Handle stock adjustment
@@ -137,19 +137,22 @@ const InventoryManagement: React.FC = () => {
             out_of_stock: { bg: 'bg-red-100', text: 'text-red-800', icon: IconAlertTriangle },
             overstock: { bg: 'bg-blue-100', text: 'text-blue-800', icon: IconTrendingUp },
         };
-        const config = statusConfig[status as keyof typeof statusConfig];
+        const safeStatus = status || 'unknown';
+        const config = statusConfig[safeStatus as keyof typeof statusConfig] || statusConfig.in_stock;
         const Icon = config.icon;
         
         return (
             <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full ${config.bg} ${config.text}`}>
                 <Icon className="w-3 h-3" />
-                {status.replace('_', ' ').toUpperCase()}
+                {safeStatus.replace('_', ' ').toUpperCase()}
             </span>
         );
     };
 
     const getStockIndicator = (item: InventoryItem) => {
-        const percentage = (item.current_stock / item.maximum_stock) * 100;
+        const currentStock = item.current_stock || 0;
+        const maxStock = item.maximum_stock || 1;
+        const percentage = (currentStock / maxStock) * 100;
         let color = 'bg-green-500';
         if (percentage < 25) color = 'bg-red-500';
         else if (percentage < 50) color = 'bg-yellow-500';
@@ -164,89 +167,89 @@ const InventoryManagement: React.FC = () => {
         );
     };
 
-    const columns: ColumnDefinition<InventoryItem>[] = [
+    const columns: ColumnDefinition[] = [
         {
-            key: 'product_name',
-            label: 'Product',
+            accessor: 'product_name',
+            title: 'Product',
             sortable: true,
-            render: (item) => (
+            render: (item: InventoryItem) => (
                 <div>
-                    <div className="font-semibold text-gray-900">{item.product_name}</div>
-                    <div className="text-sm text-gray-500">SKU: {item.sku}</div>
+                    <div className="font-semibold text-gray-900">{item.product_name || 'N/A'}</div>
+                    <div className="text-sm text-gray-500">SKU: {item.sku || 'N/A'}</div>
                 </div>
             ),
         },
         {
-            key: 'current_stock',
-            label: 'Stock Level',
+            accessor: 'current_stock',
+            title: 'Stock Level',
             sortable: true,
-            render: (item) => (
+            render: (item: InventoryItem) => (
                 <div className="space-y-1">
                     <div className="flex items-center gap-2">
                         <span className={`font-semibold ${
-                            item.current_stock <= item.reorder_point ? 'text-red-600' :
-                            item.current_stock <= item.minimum_stock ? 'text-yellow-600' :
+                            (item.current_stock || 0) <= (item.reorder_point || 0) ? 'text-red-600' :
+                            (item.current_stock || 0) <= (item.minimum_stock || 0) ? 'text-yellow-600' :
                             'text-gray-900'
                         }`}>
-                            {item.current_stock}
+                            {item.current_stock ?? 0}
                         </span>
-                        <span className="text-xs text-gray-500">/ {item.maximum_stock}</span>
+                        <span className="text-xs text-gray-500">/ {item.maximum_stock || 0}</span>
                     </div>
                     {getStockIndicator(item)}
                 </div>
             ),
         },
         {
-            key: 'reorder_point',
-            label: 'Reorder Point',
+            accessor: 'reorder_point',
+            title: 'Reorder Point',
             sortable: true,
-            render: (item) => (
+            render: (item: InventoryItem) => (
                 <div className="text-center">
-                    <span className="text-gray-900">{item.reorder_point}</span>
+                    <span className="text-gray-900">{item.reorder_point ?? 0}</span>
                 </div>
             ),
         },
         {
-            key: 'unit_cost',
-            label: 'Unit Cost',
+            accessor: 'unit_cost',
+            title: 'Unit Cost',
             sortable: true,
-            render: (item) => (
-                <div className="text-gray-600">{formatCurrency(item.unit_cost)}</div>
+            render: (item: InventoryItem) => (
+                <div className="text-gray-600">{formatCurrency(item.unit_cost || 0)}</div>
             ),
         },
         {
-            key: 'total_value',
-            label: 'Total Value',
+            accessor: 'total_value',
+            title: 'Total Value',
             sortable: true,
-            render: (item) => (
-                <div className="font-semibold text-gray-900">{formatCurrency(item.total_value)}</div>
+            render: (item: InventoryItem) => (
+                <div className="font-semibold text-gray-900">{formatCurrency(item.total_value || 0)}</div>
             ),
         },
         {
-            key: 'warehouse_location',
-            label: 'Location',
-            render: (item) => (
+            accessor: 'warehouse_location',
+            title: 'Location',
+            render: (item: InventoryItem) => (
                 <div className="text-sm text-gray-600">{item.warehouse_location || 'N/A'}</div>
             ),
         },
         {
-            key: 'status',
-            label: 'Status',
+            accessor: 'status',
+            title: 'Status',
             sortable: true,
-            render: (item) => getStatusBadge(item.status),
+            render: (item: InventoryItem) => getStatusBadge(item.status),
         },
         {
-            key: 'last_restocked',
-            label: 'Last Restocked',
+            accessor: 'last_restocked',
+            title: 'Last Restocked',
             sortable: true,
-            render: (item) => (
-                <div className="text-sm text-gray-600">{formatDate(item.last_restocked)}</div>
+            render: (item: InventoryItem) => (
+                <div className="text-sm text-gray-600">{item.last_restocked ? formatDate(item.last_restocked) : 'N/A'}</div>
             ),
         },
         {
-            key: 'actions',
-            label: 'Actions',
-            render: (item) => (
+            accessor: 'actions',
+            title: 'Actions',
+            render: (item: InventoryItem) => (
                 <div className="flex gap-2">
                     <button
                         onClick={() => handleStockAdjustment(item, 'add')}
@@ -275,11 +278,11 @@ const InventoryManagement: React.FC = () => {
     ];
 
     const filterOptions = [
-        { value: 'all', label: `All Items (${inventoryStats.all})`, icon: IconPackage },
-        { value: 'in_stock', label: `In Stock (${inventoryStats.in_stock})`, icon: IconPackage },
-        { value: 'low_stock', label: `Low Stock (${inventoryStats.low_stock})`, icon: IconAlertTriangle },
-        { value: 'out_of_stock', label: `Out of Stock (${inventoryStats.out_of_stock})`, icon: IconAlertTriangle },
-        { value: 'overstock', label: `Overstock (${inventoryStats.overstock})`, icon: IconTrendingUp },
+        { value: 'all', label: `All Items (${inventoryStats.all})` },
+        { value: 'in_stock', label: `In Stock (${inventoryStats.in_stock})` },
+        { value: 'low_stock', label: `Low Stock (${inventoryStats.low_stock})` },
+        { value: 'out_of_stock', label: `Out of Stock (${inventoryStats.out_of_stock})` },
+        { value: 'overstock', label: `Overstock (${inventoryStats.overstock})` },
     ];
 
     if (loading) {
@@ -366,7 +369,12 @@ const InventoryManagement: React.FC = () => {
 
             {/* Filters */}
             <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                <FilterSelect options={filterOptions} activeFilter={activeFilter} onFilterChange={handleFilterChange} />
+                <FilterSelect 
+                    options={filterOptions} 
+                    value={activeFilter} 
+                    onChange={handleFilterChange}
+                    placeholder="Filter by status"
+                />
             </div>
 
             {/* Inventory Table */}
@@ -374,10 +382,9 @@ const InventoryManagement: React.FC = () => {
                 <DraggableDataTable
                     data={getFilteredInventory()}
                     columns={columns}
-                    searchable={true}
-                    searchableColumns={['product_name', 'sku', 'warehouse_location']}
-                    pagination={true}
-                    pageSize={20}
+                    loading={loading}
+                    title="Inventory"
+                    quickCheckFields={['product_name', 'sku', 'warehouse_location']}
                 />
             </div>
 

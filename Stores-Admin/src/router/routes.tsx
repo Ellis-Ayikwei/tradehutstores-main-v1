@@ -90,11 +90,18 @@ import DisputeManagement from '../pages/admin/disputes/DisputeManagement';
 
 // E-commerce Management Pages
 import ProductManagement from '../pages/admin/ProductManagement';
+import AddProduct from '../pages/admin/ProductManagement/AddProduct';
 import OrderManagement from '../pages/admin/OrderManagement';
 import CategoryManagement from '../pages/admin/CategoryManagement';
 import CustomerManagement from '../pages/admin/CustomerManagement';
+import SellerManagement from '../pages/admin/SellerManagement';
 import InventoryManagement from '../pages/admin/InventoryManagement';
 import EcommerceDashboard from '../pages/admin/EcommerceDashboard';
+
+// Revenue Management Pages
+import RevenueOverview from '../pages/admin/RevenueManagement/RevenueOverview';
+import RevenueTransactions from '../pages/admin/RevenueManagement/RevenueTransactions';
+import RevenueRefunds from '../pages/admin/RevenueManagement/RevenueRefunds';
 
 const userRole = localStorage.getItem('userRole') || '';
 const isAdmin = userRole === 'ADMIN' || userRole === 'SUPER_ADMIN';
@@ -188,6 +195,15 @@ const routes = [
         element: (
             <ProtectedRoute allowedGroups={['Administrators', 'Support']}>
                 <TicketDetail />
+            </ProtectedRoute>
+        ),
+        layout: 'admin',
+    },
+    {
+        path: '/admin/support/disputes',
+        element: (
+            <ProtectedRoute allowedGroups={['Administrators', 'Support']}>
+                <DisputeManagement />
             </ProtectedRoute>
         ),
         layout: 'admin',
@@ -479,7 +495,7 @@ const routes = [
         path: '/admin/products/new',
         element: (
             <ProtectedRoute allowedGroups={['Administrators', 'Inventory Managers']}>
-                <ProductManagement />
+                <AddProduct />
             </ProtectedRoute>
         ),
         layout: 'admin',
@@ -543,6 +559,24 @@ const routes = [
         element: (
             <ProtectedRoute allowedGroups={['Administrators']}>
                 <CustomerManagement />
+            </ProtectedRoute>
+        ),
+        layout: 'admin',
+    },
+    {
+        path: '/admin/sellers/list',
+        element: (
+            <ProtectedRoute allowedGroups={['Administrators']}>
+                <SellerManagement />
+            </ProtectedRoute>
+        ),
+        layout: 'admin',
+    },
+    {
+        path: '/admin/sellers/new',
+        element: (
+            <ProtectedRoute allowedGroups={['Administrators']}>
+                <SellerManagement />
             </ProtectedRoute>
         ),
         layout: 'admin',
@@ -775,6 +809,33 @@ const routes = [
             </ProtectedRoute>
         ),
         layout: 'default',
+    },
+    {
+        path: '/admin/revenue/overview',
+        element: (
+            <ProtectedRoute allowedGroups={['Administrators','Finance Officers']}>
+                <RevenueOverview />
+            </ProtectedRoute>
+        ),
+        layout: 'admin',
+    },
+    {
+        path: '/admin/revenue/transactions',
+        element: (
+            <ProtectedRoute allowedGroups={['Administrators','Finance Officers']}>
+                <RevenueTransactions />
+            </ProtectedRoute>
+        ),
+        layout: 'admin',
+    },
+    {
+        path: '/admin/revenue/refunds',
+        element: (
+            <ProtectedRoute allowedGroups={['Administrators','Finance Officers']}>
+                <RevenueRefunds />
+            </ProtectedRoute>
+        ),
+        layout: 'admin',
     },
     {
         path: '/admin/revenue/provider-payments',

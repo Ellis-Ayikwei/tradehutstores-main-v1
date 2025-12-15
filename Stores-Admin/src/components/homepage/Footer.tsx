@@ -54,9 +54,9 @@ const Footer: React.FC = () => {
                     {/* Company Info */}
                     <div className="lg:col-span-2">
                         <Link to="/" className="inline-block mb-6">
-                            <img src="/logo-white.png" alt="MoreVans" className="h-8" />
+                            <img src="/logo-white.png" alt="TradeHut" className="h-8" />
                         </Link>
-                        <p className="text-gray-400 mb-6 max-w-md">MoreVans is the UK's leading platform connecting customers with reliable van operators for all their moving and delivery needs.</p>
+                        <p className="text-gray-400 mb-6 max-w-md">TradeHut is the UK's leading platform connecting customers with reliable van operators for all their moving and delivery needs.</p>
                         <div className="space-y-3">
                             <div className="flex items-center">
                                 <FontAwesomeIcon icon={faPhone} className="w-5 h-5 text-secondary mr-3" />
@@ -64,7 +64,7 @@ const Footer: React.FC = () => {
                             </div>
                             <div className="flex items-center">
                                 <FontAwesomeIcon icon={faEnvelope} className="w-5 h-5 text-secondary mr-3" />
-                                <span>support@morevans.com</span>
+                                <span>support@tradehut.com</span>
                             </div>
                             <div className="flex items-center">
                                 <FontAwesomeIcon icon={faMapMarkerAlt} className="w-5 h-5 text-secondary mr-3" />
@@ -134,7 +134,7 @@ const Footer: React.FC = () => {
                                 </a>
                             ))}
                         </div>
-                        <div className="text-gray-400 text-sm">© {currentYear} MoreVans. All rights reserved.</div>
+                        <div className="text-gray-400 text-sm">© {currentYear} TradeHut. All rights reserved.</div>
                     </div>
                 </div>
             </div>

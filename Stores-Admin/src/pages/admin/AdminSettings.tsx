@@ -303,9 +303,9 @@ const AdminSettings: React.FC = () => {
   const [activeTab, setActiveTab] = useState('general');
   const [systemSettings, setSystemSettings] = useState<SystemSettings>({
     general: {
-      siteName: 'MoreVans',
+      siteName: 'TradeHut',
       siteDescription: 'The ultimate platform for van and moving services',
-      supportEmail: 'support@morevans.com',
+      supportEmail: 'support@tradehut.com',
       contact_phone: '+1-555-123-4567',
       defaultLanguage: 'en',
       timezone: 'UTC',
@@ -321,10 +321,10 @@ const AdminSettings: React.FC = () => {
       emailServiceProvider: 'smtp',
       smtpServer: 'smtp.example.com',
       smtpPort: '587',
-      smtpUsername: 'notifications@morevans.com',
+      smtpUsername: 'notifications@tradehut.com',
       smtpPassword: '',
       smsApiKey: '',
-      smsFrom: 'MoreVans'
+      smsFrom: 'TradeHut'
     },
     payment: {
       currencyCode: 'USD',
@@ -361,7 +361,7 @@ const AdminSettings: React.FC = () => {
       secondaryColor: '#1a56db',
       logoUrl: '/logo192.png',
       faviconUrl: '/favicon.png',
-      footerText: '© 2025 MoreVans. All rights reserved.',
+      footerText: '© 2025 TradeHut. All rights reserved.',
       customCss: '',
       customJs: '',
       homePageLayout: 'default'
@@ -801,7 +801,7 @@ const AdminSettings: React.FC = () => {
                         label="SMS From Name/Number"
                         value={systemSettings.notifications.smsFrom}
                         onChange={(value) => updateSettings('notifications', 'smsFrom', value)}
-                        placeholder="MoreVans"
+                        placeholder="TradeHut"
                       />
                     </div>
                   </Card>

@@ -57,7 +57,7 @@ export default function ForgotPassword() {
                                 <FontAwesomeIcon icon={faUserShield} className="h-8 w-8 text-white" />
                             </div>
                             <div>
-                                <h1 className="text-3xl font-bold text-white">MoreVans Admin</h1>
+                                <h1 className="text-3xl font-bold text-white">TradeHut Admin</h1>
                                 <p className="text-slate-300 text-sm">Administrative Control Center</p>
                             </div>
                         </div>
@@ -130,7 +130,7 @@ export default function ForgotPassword() {
                             <FontAwesomeIcon icon={faUserShield} className="h-6 w-6 text-white" />
                         </div>
                         <div>
-                            <h1 className="text-xl font-bold text-white">MoreVans Admin</h1>
+                            <h1 className="text-xl font-bold text-white">TradeHut Admin</h1>
                             <p className="text-slate-300 text-xs">Control Center</p>
                         </div>
                     </div>
@@ -165,7 +165,7 @@ export default function ForgotPassword() {
                                                     onChange={(e) => setEmail(e.target.value)}
                                                     required
                                                     className="w-full pl-12 pr-4 py-4 bg-white/5 backdrop-blur-sm border border-white/20 transition-all duration-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 hover:border-white/30"
-                                                    placeholder="admin@morevans.com"
+                                                    placeholder="admin@tradehut.com"
                                                 />
                                             </div>
                                         </motion.div>

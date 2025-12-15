@@ -524,7 +524,7 @@ const BookingDetail: React.FC = () => {
                     {
                         id: 'msg1',
                         sender: 'system',
-                        senderName: 'MoreVans System',
+                        senderName: 'TradeHut System',
                         content: 'Your booking has been confirmed. Your confirmation number is MV-89735462.',
                         timestamp: '2025-03-15T10:35:00Z',
                     },

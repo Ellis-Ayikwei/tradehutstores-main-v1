@@ -47,10 +47,15 @@ const ProductManagement: React.FC = () => {
             setLoading(true);
             setError(null);
             const response = await axiosInstance.get('/products/');
-            setProducts(response.data);
+            // Handle both array response and paginated response with results
+            const productsData = Array.isArray(response.data) 
+                ? response.data 
+                : (response.data?.results || response.data?.data || []);
+            setProducts(productsData);
         } catch (err) {
             setError('Failed to fetch products. Please try again later.');
             console.error('Error fetching products:', err);
+            setProducts([]); // Ensure products is always an array
         } finally {
             setLoading(false);
         }
@@ -62,11 +67,21 @@ const ProductManagement: React.FC = () => {
 
     // Calculate product counts
     const getProductCounts = () => {
+        // Ensure products is an array - defensive check with early return
+        if (!products || !Array.isArray(products)) {
+            return {
+                all: 0,
+                active: 0,
+                inactive: 0,
+                out_of_stock: 0,
+            };
+        }
+        const productsArray = products;
         const counts = {
-            all: products.length,
-            active: products.filter((p) => p.status === 'active').length,
-            inactive: products.filter((p) => p.status === 'inactive').length,
-            out_of_stock: products.filter((p) => p.status === 'out_of_stock').length,
+            all: productsArray.length,
+            active: productsArray.filter((p) => p?.status === 'active').length,
+            inactive: productsArray.filter((p) => p?.status === 'inactive').length,
+            out_of_stock: productsArray.filter((p) => p?.status === 'out_of_stock').length,
         };
         return counts;
     };
@@ -75,12 +90,17 @@ const ProductManagement: React.FC = () => {
 
     // Filter products based on active filter
     const getFilteredProducts = () => {
-        if (activeFilter === 'all') return products;
-        return products.filter((product) => product.status === activeFilter);
+        // Ensure products is an array - defensive check with early return
+        if (!products || !Array.isArray(products)) {
+            return [];
+        }
+        const productsArray = products;
+        if (activeFilter === 'all') return productsArray;
+        return productsArray.filter((product) => product?.status === activeFilter);
     };
 
-    const handleFilterChange = (filter: string) => {
-        setActiveFilter(filter);
+    const handleFilterChange = (filter: string | number) => {
+        setActiveFilter(String(filter));
     };
 
     // Handle product deletion
@@ -125,21 +145,22 @@ const ProductManagement: React.FC = () => {
             inactive: 'bg-gray-100 text-gray-800',
             out_of_stock: 'bg-red-100 text-red-800',
         };
+        const safeStatus = status || 'unknown';
         return (
-            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${statusConfig[status as keyof typeof statusConfig]}`}>
-                {status.replace('_', ' ').toUpperCase()}
+            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${statusConfig[safeStatus as keyof typeof statusConfig] || 'bg-gray-100 text-gray-800'}`}>
+                {safeStatus.replace('_', ' ').toUpperCase()}
             </span>
         );
     };
 
-    const columns: ColumnDefinition<Product>[] = [
+    const columns: ColumnDefinition[] = [
         {
-            key: 'main_product_image',
-            label: 'Image',
-            render: (product) => (
+            accessor: 'main_product_image',
+            title: 'Image',
+            render: (product: Product) => (
                 <div className="w-12 h-12 flex-shrink-0">
                     {product.main_product_image ? (
-                        <img src={product.main_product_image} alt={product.name} className="w-full h-full object-cover rounded" />
+                        <img src={product.main_product_image} alt={product.name || 'Product'} className="w-full h-full object-cover rounded" />
                     ) : (
                         <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center">
                             <IconPackage className="w-6 h-6 text-gray-400" />
@@ -149,54 +170,60 @@ const ProductManagement: React.FC = () => {
             ),
         },
         {
-            key: 'name',
-            label: 'Product Name',
+            accessor: 'name',
+            title: 'Product Name',
             sortable: true,
-            render: (product) => (
+            render: (product: Product) => (
                 <div>
-                    <div className="font-semibold text-gray-900">{product.name}</div>
-                    <div className="text-sm text-gray-500">SKU: {product.sku}</div>
+                    <div className="font-semibold text-gray-900">{product.name || 'N/A'}</div>
+                    <div className="text-sm text-gray-500">SKU: {product.sku || 'N/A'}</div>
                 </div>
             ),
         },
         {
-            key: 'category',
-            label: 'Category',
+            accessor: 'category',
+            title: 'Category',
             sortable: true,
+            render: (product: Product) => (
+                <span className="text-gray-900">{product.category || 'N/A'}</span>
+            ),
         },
         {
-            key: 'brand',
-            label: 'Brand',
+            accessor: 'brand',
+            title: 'Brand',
             sortable: true,
+            render: (product: Product) => (
+                <span className="text-gray-900">{product.brand || 'N/A'}</span>
+            ),
         },
         {
-            key: 'price',
-            label: 'Price',
+            accessor: 'price',
+            title: 'Price',
             sortable: true,
-            render: (product) => (
+            render: (product: Product) => (
                 <div>
-                    <div className="font-semibold">{formatCurrency(product.price)}</div>
-                    {product.original_price && product.original_price > product.price && (
+                    <div className="font-semibold">{formatCurrency(product.price || 0)}</div>
+                    {product.original_price && product.original_price > (product.price || 0) && (
                         <div className="text-sm text-gray-500 line-through">{formatCurrency(product.original_price)}</div>
                     )}
                 </div>
             ),
         },
         {
-            key: 'stock',
-            label: 'Stock',
+            accessor: 'stock',
+            title: 'Stock',
             sortable: true,
-            render: (product) => (
-                <div className={`font-semibold ${product.stock <= 10 ? 'text-red-600' : 'text-gray-900'}`}>
-                    {product.stock}
-                    {product.stock <= 10 && <span className="text-xs ml-1">(Low)</span>}
+            render: (product: Product) => (
+                <div className={`font-semibold ${(product.stock || 0) <= 10 ? 'text-red-600' : 'text-gray-900'}`}>
+                    {product.stock ?? 0}
+                    {(product.stock || 0) <= 10 && <span className="text-xs ml-1">(Low)</span>}
                 </div>
             ),
         },
         {
-            key: 'average_rating',
-            label: 'Rating',
-            render: (product) => (
+            accessor: 'average_rating',
+            title: 'Rating',
+            render: (product: Product) => (
                 <div className="flex items-center gap-1">
                     <span className="font-semibold">{product.average_rating?.toFixed(1) || '0.0'}</span>
                     <span className="text-xs text-gray-500">({product.total_reviews || 0})</span>
@@ -204,15 +231,15 @@ const ProductManagement: React.FC = () => {
             ),
         },
         {
-            key: 'status',
-            label: 'Status',
+            accessor: 'status',
+            title: 'Status',
             sortable: true,
-            render: (product) => getStatusBadge(product.status),
+            render: (product: Product) => getStatusBadge(product.status),
         },
         {
-            key: 'actions',
-            label: 'Actions',
-            render: (product) => (
+            accessor: 'actions',
+            title: 'Actions',
+            render: (product: Product) => (
                 <div className="flex gap-2">
                     <Link
                         to={`/admin/products/${product.id}`}
@@ -241,10 +268,10 @@ const ProductManagement: React.FC = () => {
     ];
 
     const filterOptions = [
-        { value: 'all', label: `All Products (${productCounts.all})`, icon: IconPackage },
-        { value: 'active', label: `Active (${productCounts.active})`, icon: IconPackage },
-        { value: 'inactive', label: `Inactive (${productCounts.inactive})`, icon: IconPackage },
-        { value: 'out_of_stock', label: `Out of Stock (${productCounts.out_of_stock})`, icon: IconAlertTriangle },
+        { value: 'all', label: `All Products (${productCounts.all})` },
+        { value: 'active', label: `Active (${productCounts.active})` },
+        { value: 'inactive', label: `Inactive (${productCounts.inactive})` },
+        { value: 'out_of_stock', label: `Out of Stock (${productCounts.out_of_stock})` },
     ];
 
     if (loading) {
@@ -322,7 +349,12 @@ const ProductManagement: React.FC = () => {
 
             {/* Filters */}
             <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                <FilterSelect options={filterOptions} activeFilter={activeFilter} onFilterChange={handleFilterChange} />
+                <FilterSelect 
+                    options={filterOptions} 
+                    value={activeFilter} 
+                    onChange={handleFilterChange}
+                    placeholder="Filter by status"
+                />
             </div>
 
             {/* Products Table */}
@@ -330,10 +362,9 @@ const ProductManagement: React.FC = () => {
                 <DraggableDataTable
                     data={getFilteredProducts()}
                     columns={columns}
-                    searchable={true}
-                    searchableColumns={['name', 'sku', 'category', 'brand']}
-                    pagination={true}
-                    pageSize={20}
+                    loading={loading}
+                    title="Products"
+                    quickCheckFields={['name', 'sku', 'category', 'brand']}
                 />
             </div>
 

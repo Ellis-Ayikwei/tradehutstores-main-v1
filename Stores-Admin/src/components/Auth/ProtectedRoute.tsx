@@ -128,6 +128,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedGroups
     
     const effectiveUserId = userId || localUser?.id;
     
+    // Use effective user data (from auth or localStorage)
+    const effectiveUser = authUser || localUser;
+    
     // Only fetch profile if we have a valid user ID
     const { data: userProfile, isLoading: userProfileLoading, error: userProfileError } = useSWR(
         effectiveUserId ? `/users/${effectiveUserId}/profile/` : null,
@@ -157,9 +160,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedGroups
     if (!effectiveUser && !effectiveUserId) {
         return <LoadingScreen />;
     }
-
-    // Use effective user data (from auth or localStorage)
-    const effectiveUser = authUser || localUser;
     
     // Normalize user's groups
     const userGroups = toLowerStringArray(userProfile?.groups);

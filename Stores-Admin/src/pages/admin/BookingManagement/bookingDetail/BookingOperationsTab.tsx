@@ -402,7 +402,7 @@ const BookingOperationsTab: React.FC<BookingOperationsTabProps> = ({
                                     <span className="text-blue-600 dark:text-blue-400 text-xs">2 hours ago</span>
                                 </div>
                                 <p className="text-blue-800 dark:text-blue-300 text-sm">Status manually changed to confirmed due to customer request. Payment verified manually.</p>
-                                <div className="mt-2 text-xs text-blue-600 dark:text-blue-400">By: admin@morevans.com</div>
+                                <div className="mt-2 text-xs text-blue-600 dark:text-blue-400">By: admin@tradehut.com</div>
                             </div>
 
                             <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
@@ -413,7 +413,7 @@ const BookingOperationsTab: React.FC<BookingOperationsTabProps> = ({
                                 <p className="text-gray-700 dark:text-gray-300 text-sm">
                                     Customer called to confirm pickup time. Requested to move pickup window from 2-4 PM to 3-5 PM. Driver notified and confirmed availability.
                                 </p>
-                                <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">By: support@morevans.com</div>
+                                <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">By: support@tradehut.com</div>
                             </div>
                         </div>
                     </div>

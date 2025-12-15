@@ -22,7 +22,7 @@ const Navigation: React.FC = () => {
                     {/* Logo */}
                     <Link to="/" className="flex items-center space-x-2">
                         <IconTruck className="w-8 h-8 text-primary" />
-                        <span className="text-2xl font-bold text-gray-900">MoreVans</span>
+                        <span className="text-2xl font-bold text-gray-900">TradeHut</span>
                     </Link>
 
                     {/* Desktop Navigation */}

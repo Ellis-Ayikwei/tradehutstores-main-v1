@@ -626,12 +626,15 @@ const BookingManagement: React.FC = () => {
         {
             accessor: 'status',
             title: 'Status',
-            render: (booking: Booking) => (
-                <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium ${getStatusBadgeClass(booking.status)}`}>
-                    {getStatusIcon(booking.status)}
-                    {booking.status.replace('_', ' ')}
-                </span>
-            ),
+            render: (booking: Booking) => {
+                const safeStatus = booking?.status || 'unknown';
+                return (
+                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium ${getStatusBadgeClass(safeStatus)}`}>
+                        {getStatusIcon(safeStatus)}
+                        {safeStatus.replace('_', ' ')}
+                    </span>
+                );
+            },
         },
         {
             accessor: 'payment_status',

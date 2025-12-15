@@ -464,7 +464,7 @@ const AdminForm: React.FC = () => {
                                 className={`w-full p-3 border rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white ${
                                     errors.email ? 'border-red-500' : 'border-gray-200'
                                 }`}
-                                placeholder="admin@morevans.com"
+                                placeholder="admin@tradehut.com"
                             />
                             {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
                         </div>

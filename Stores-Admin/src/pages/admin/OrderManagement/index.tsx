@@ -76,8 +76,8 @@ const OrderManagement: React.FC = () => {
         return orders.filter((order) => order.status === activeFilter);
     };
 
-    const handleFilterChange = (filter: string) => {
-        setActiveFilter(filter);
+    const handleFilterChange = (filter: string | number) => {
+        setActiveFilter(String(filter));
     };
 
     const formatCurrency = (amount: number): string => {
@@ -106,13 +106,14 @@ const OrderManagement: React.FC = () => {
             delivered: { bg: 'bg-green-100', text: 'text-green-800', icon: IconCheck },
             cancelled: { bg: 'bg-red-100', text: 'text-red-800', icon: IconX },
         };
-        const config = statusConfig[status as keyof typeof statusConfig];
+        const safeStatus = status || 'pending';
+        const config = statusConfig[safeStatus as keyof typeof statusConfig] || statusConfig.pending;
         const Icon = config.icon;
         
         return (
             <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full ${config.bg} ${config.text}`}>
                 <Icon className="w-3 h-3" />
-                {status.toUpperCase()}
+                {safeStatus.toUpperCase()}
             </span>
         );
     };
@@ -123,77 +124,78 @@ const OrderManagement: React.FC = () => {
             paid: 'bg-green-100 text-green-800',
             refunded: 'bg-gray-100 text-gray-800',
         };
+        const safeStatus = status || 'pending';
         return (
-            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${statusConfig[status as keyof typeof statusConfig]}`}>
-                {status.toUpperCase()}
+            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${statusConfig[safeStatus as keyof typeof statusConfig] || statusConfig.pending}`}>
+                {safeStatus.toUpperCase()}
             </span>
         );
     };
 
-    const columns: ColumnDefinition<Order>[] = [
+    const columns: ColumnDefinition[] = [
         {
-            key: 'order_number',
-            label: 'Order Number',
+            accessor: 'order_number',
+            title: 'Order Number',
             sortable: true,
-            render: (order) => (
+            render: (order: Order) => (
                 <Link to={`/admin/orders/${order.id}`} className="font-semibold text-blue-600 hover:text-blue-800">
-                    #{order.order_number}
+                    #{order.order_number || 'N/A'}
                 </Link>
             ),
         },
         {
-            key: 'customer_name',
-            label: 'Customer',
+            accessor: 'customer_name',
+            title: 'Customer',
             sortable: true,
-            render: (order) => (
+            render: (order: Order) => (
                 <div>
-                    <div className="font-semibold text-gray-900">{order.customer_name}</div>
-                    <div className="text-sm text-gray-500">{order.customer_email}</div>
+                    <div className="font-semibold text-gray-900">{order.customer_name || 'N/A'}</div>
+                    <div className="text-sm text-gray-500">{order.customer_email || 'N/A'}</div>
                 </div>
             ),
         },
         {
-            key: 'items_count',
-            label: 'Items',
+            accessor: 'items_count',
+            title: 'Items',
             sortable: true,
-            render: (order) => (
+            render: (order: Order) => (
                 <div className="text-center">
-                    <span className="font-semibold">{order.items_count}</span>
+                    <span className="font-semibold">{order.items_count ?? 0}</span>
                 </div>
             ),
         },
         {
-            key: 'total_amount',
-            label: 'Total Amount',
+            accessor: 'total_amount',
+            title: 'Total Amount',
             sortable: true,
-            render: (order) => (
-                <div className="font-semibold text-gray-900">{formatCurrency(order.total_amount)}</div>
+            render: (order: Order) => (
+                <div className="font-semibold text-gray-900">{formatCurrency(order.total_amount || 0)}</div>
             ),
         },
         {
-            key: 'status',
-            label: 'Order Status',
+            accessor: 'status',
+            title: 'Order Status',
             sortable: true,
-            render: (order) => getStatusBadge(order.status),
+            render: (order: Order) => getStatusBadge(order.status),
         },
         {
-            key: 'payment_status',
-            label: 'Payment',
+            accessor: 'payment_status',
+            title: 'Payment',
             sortable: true,
-            render: (order) => getPaymentStatusBadge(order.payment_status),
+            render: (order: Order) => getPaymentStatusBadge(order.payment_status),
         },
         {
-            key: 'created_at',
-            label: 'Order Date',
+            accessor: 'created_at',
+            title: 'Order Date',
             sortable: true,
-            render: (order) => (
-                <div className="text-sm text-gray-600">{formatDate(order.created_at)}</div>
+            render: (order: Order) => (
+                <div className="text-sm text-gray-600">{order.created_at ? formatDate(order.created_at) : 'N/A'}</div>
             ),
         },
         {
-            key: 'actions',
-            label: 'Actions',
-            render: (order) => (
+            accessor: 'actions',
+            title: 'Actions',
+            render: (order: Order) => (
                 <div className="flex gap-2">
                     <Link
                         to={`/admin/orders/${order.id}`}
@@ -215,12 +217,12 @@ const OrderManagement: React.FC = () => {
     ];
 
     const filterOptions = [
-        { value: 'all', label: `All Orders (${orderCounts.all})`, icon: IconPackage },
-        { value: 'pending', label: `Pending (${orderCounts.pending})`, icon: IconClock },
-        { value: 'processing', label: `Processing (${orderCounts.processing})`, icon: IconPackage },
-        { value: 'shipped', label: `Shipped (${orderCounts.shipped})`, icon: IconTruck },
-        { value: 'delivered', label: `Delivered (${orderCounts.delivered})`, icon: IconCheck },
-        { value: 'cancelled', label: `Cancelled (${orderCounts.cancelled})`, icon: IconX },
+        { value: 'all', label: `All Orders (${orderCounts.all})` },
+        { value: 'pending', label: `Pending (${orderCounts.pending})` },
+        { value: 'processing', label: `Processing (${orderCounts.processing})` },
+        { value: 'shipped', label: `Shipped (${orderCounts.shipped})` },
+        { value: 'delivered', label: `Delivered (${orderCounts.delivered})` },
+        { value: 'cancelled', label: `Cancelled (${orderCounts.cancelled})` },
     ];
 
     if (loading) {
@@ -300,7 +302,12 @@ const OrderManagement: React.FC = () => {
 
             {/* Filters */}
             <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                <FilterSelect options={filterOptions} activeFilter={activeFilter} onFilterChange={handleFilterChange} />
+                <FilterSelect 
+                    options={filterOptions} 
+                    value={activeFilter} 
+                    onChange={handleFilterChange}
+                    placeholder="Filter by status"
+                />
             </div>
 
             {/* Orders Table */}
@@ -308,10 +315,9 @@ const OrderManagement: React.FC = () => {
                 <DraggableDataTable
                     data={getFilteredOrders()}
                     columns={columns}
-                    searchable={true}
-                    searchableColumns={['order_number', 'customer_name', 'customer_email']}
-                    pagination={true}
-                    pageSize={20}
+                    loading={loading}
+                    title="Orders"
+                    quickCheckFields={['order_number', 'customer_name', 'customer_email']}
                 />
             </div>
         </div>

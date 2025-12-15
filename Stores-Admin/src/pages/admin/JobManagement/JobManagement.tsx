@@ -708,12 +708,15 @@ console.log("the jobs data", jobsData);
                                 title: 'Status',
                                 sortable: true,
                                 width: 120,
-                                render: (job: Job) => (
-                                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${getStatusBadgeClass(job.status)}`}>
-                                                            {getStatusIcon(job.status)}
-                                        {job.status.replace('_', ' ').toUpperCase()}
-                                                        </span>
-                                )
+                                render: (job: Job) => {
+                                    const safeStatus = job?.status || 'unknown';
+                                    return (
+                                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${getStatusBadgeClass(safeStatus)}`}>
+                                            {getStatusIcon(safeStatus)}
+                                            {safeStatus.replace('_', ' ').toUpperCase()}
+                                        </span>
+                                    );
+                                }
                             },
                             {
                                 accessor: 'available_to_providers',

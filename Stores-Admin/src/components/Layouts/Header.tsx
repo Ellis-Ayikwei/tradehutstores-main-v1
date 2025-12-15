@@ -206,8 +206,8 @@ const Header = () => {
                         {/* Left Section - Logo and Menu Toggle */}
                         <div className={`${themeConfig.sidebar == true ? 'lg:flex' : 'lg:hidden'} items-center gap-3 flex-col lg:flex-row`}>
                             <Link to="/" className="flex items-center gap-2 shrink-0">
-                                <img src="/assets/images/morevans.png" alt="logo" className="w-8 h-8" />
-                                <h1 className="text-lg font-bold text-gray-900 dark:text-white">MoreVans</h1>
+                                <img src="/assets/images/tradehut-logo.png" alt="TradeHut Logo" className="w-8 h-8" />
+                                <h1 className="text-lg font-bold text-gray-900 dark:text-white">TradeHut</h1>
                             </Link>
                             <button
                                 type="button"
