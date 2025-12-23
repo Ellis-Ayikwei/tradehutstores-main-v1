@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="240" viewBox="0 0 400 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Gradient -->
+    <rect width="400" height="240" fill="url(#gradient)"/>
+    
+    <!-- Abstract Shapes -->
+    <path d="M0 120C100 80 200 160 400 120V240H0V120Z" fill="white" fill-opacity="0.05"/>
+    <path d="M0 140C150 100 250 180 400 140V240H0V140Z" fill="white" fill-opacity="0.05"/>
+    
+    <!-- Modern Truck -->
+    <g transform="translate(120, 140)">
+        <!-- Truck Body -->
+        <path d="M0 0H100V40H0V0Z" fill="white" fill-opacity="0.9"/>
+        <!-- Truck Cabin -->
+        <path d="M70 -30H100V0H70V-30Z" fill="white" fill-opacity="0.9"/>
+        <!-- Wheels -->
+        <circle cx="25" cy="40" r="15" fill="white" fill-opacity="0.9"/>
+        <circle cx="75" cy="40" r="15" fill="white" fill-opacity="0.9"/>
+        <!-- Windows -->
+        <path d="M75 -25H95V-5H75V-25Z" fill="#1E293B"/>
+        <!-- Headlights -->
+        <path d="M100 -15H110V-5H100V-15Z" fill="#FCD34D"/>
+    </g>
+    
+    <!-- Floating Elements -->
+    <g transform="translate(280, 100)">
+        <!-- Box -->
+        <path d="M0 0H40V40H0V0Z" fill="white" fill-opacity="0.7"/>
+        <path d="M20 -20L40 0L20 20L0 0L20 -20Z" fill="white" fill-opacity="0.7"/>
+        <!-- Box Details -->
+        <path d="M10 10H30V15H10V10Z" fill="#1E293B" fill-opacity="0.3"/>
+        <path d="M10 20H30V25H10V20Z" fill="#1E293B" fill-opacity="0.3"/>
+    </g>
+    
+    <!-- Route Line -->
+    <path d="M50 180C150 140 250 200 350 160" 
+          stroke="white" 
+          stroke-width="3" 
+          stroke-dasharray="6 6" 
+          fill="none"
+          stroke-opacity="0.3"/>
+    
+    <!-- Gradient Definition -->
+    <defs>
+        <linearGradient id="gradient" x1="0" y1="0" x2="400" y2="240">
+            <stop offset="0%" stop-color="#2563EB"/>
+            <stop offset="100%" stop-color="#1E40AF"/>
+        </linearGradient>
+    </defs>
+</svg> 
