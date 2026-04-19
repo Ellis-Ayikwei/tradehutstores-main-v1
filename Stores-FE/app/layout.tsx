@@ -9,8 +9,8 @@ import { CurrencyProvider } from '@/contexts/CurrencyContext'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-    title: 'Next.js E-Commerce',
-    description: 'Modern e-commerce platform built with Next.js',
+    title: 'TradeHut - Buy Your One Stop Shop',
+    description: 'TradeHut - Buy Your One Stop Shop',
 }
 
 export default function RootLayout({

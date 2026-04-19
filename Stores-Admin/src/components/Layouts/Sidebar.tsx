@@ -209,8 +209,8 @@ const Sidebar = () => {
 
         if (!hasSubItems) {
             return (
-                <li key={item.path} className="menu nav-item border-secondary-dark last:border-b-0">
-                    <NavLink to={item.path} className={`group hover:bg-secondary-light/10 ${isSubItem ? 'pl-6' : ''}`}>
+                <li key={item.path} className="menu nav-item border-primary-dark last:border-b-0">
+                    <NavLink to={item.path} className={`group hover:bg-primary-light/10 ${isSubItem ? 'pl-6' : ''}`}>
                         <div className="flex items-center justify-between w-full py-1.5 px-3">
                             <div className="flex items-center">
                                 <Icon className="!w-6 !h-6 !text-white" />
@@ -227,8 +227,8 @@ const Sidebar = () => {
         if (!filteredSubItems.length) return null;
 
         return (
-            <li key={item.path} className="menu nav-item border-secondary-dark last:border-b-0">
-                <button type="button" className={`nav-link group w-full hover:bg-secondary-light/10 ${currentMenu === item.path ? 'active' : ''}`} onClick={() => toggleMenu(item.path)}>
+            <li key={item.path} className="menu nav-item border-primary-dark last:border-b-0">
+                <button type="button" className={`nav-link group w-full hover:bg-primary-light/10 ${currentMenu === item.path ? 'active' : ''}`} onClick={() => toggleMenu(item.path)}>
                     <div className="flex items-center justify-between w-full py-1.5 px-3">
                         <div className="flex items-center">
                             <Icon className="!w-6 !h-6 !text-white" />
@@ -240,7 +240,7 @@ const Sidebar = () => {
                     </div>
                 </button>
 
-                {isExpanded && <ul className="sub-menu bg-secondary-dark/30">{filteredSubItems.map((subItem: any) => renderMenuItem(subItem, true))}</ul>}
+                {isExpanded && <ul className="sub-menu bg-primary-dark/30">{filteredSubItems.map((subItem: any) => renderMenuItem(subItem, true))}</ul>}
             </li>
         );
     };
@@ -250,7 +250,7 @@ const Sidebar = () => {
     //     return (
     //         <div className={semidark ? 'dark' : ''}>
     //             <nav className={`sidebar fixed min-h-screen h-full top-0 bottom-0 w-[260px] sm:w-[280px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] z-50 transition-all duration-300`}>
-    //                 <div className="bg-secondary dark:bg-secondary h-full flex flex-col">
+    //                 <div className="bg-primary dark:bg-primary h-full flex flex-col">
     //                     <div className="flex justify-between items-center px-3 py-2">
     //                         <NavLink to="/" className="main-logo flex items-center shrink-0">
     //                             <img className="w-[160px] sm:w-[180px] ml-[5px] flex-none" src="/assets/images/tradehut-text.png" alt="TradeHut Logo" />
@@ -268,22 +268,22 @@ const Sidebar = () => {
     return (
         <div className={semidark ? 'dark' : ''}>
             <nav className={`sidebar fixed min-h-screen h-full top-0 bottom-0 w-[260px] sm:w-[280px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] z-50 transition-all duration-300`}>
-                <div className="bg-secondary dark:bg-secondary h-full flex flex-col">
+                <div className="bg-primary dark:bg-primary h-full flex flex-col">
                     <div className="flex justify-between items-center px-3 py-2">
                         <NavLink to="/" className="main-logo flex items-center shrink-0">
-                            <img className="w-[160px] sm:w-[180px] ml-[5px] flex-none" src="/assets/images/tradehut-text.png" alt="TradeHut Logo" />
+                            <img className="w-[100px] sm:w-[100px] ml-[5px] flex-none" src="/assets/images/logos/tradehutfullText.png" alt="TradeHut Logo" />
                         </NavLink>
 
                         <button
                             type="button"
-                            className="collapse-icon w-7 h-7 rounded-full flex items-center hover:bg-secondary-dark transition duration-300 rtl:rotate-180"
+                            className="collapse-icon w-7 h-7 rounded-full flex items-center hover:bg-primary-dark transition duration-300 rtl:rotate-180"
                             onClick={() => dispatch(toggleSidebar())}
                         >
                             <IconMenu2 className="m-auto w-5 h-5 text-white" />
                         </button>
                     </div>
 
-                    <div className="px-3 py-2 border-b border-secondary-dark/30">
+                    <div className="px-3 py-2 border-b border-primary-dark/30">
                         <div className="flex items-center space-x-2">
                             <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
                                 <IconUser className="w-5 h-5 text-white" />
@@ -304,7 +304,7 @@ const Sidebar = () => {
                             <ul className="relative font-semibold space-y-0.5 p-3 py-2 text-base">{menuItems.map((item) => renderMenuItem(item))}</ul>
                         </PerfectScrollbar>
 
-                        <div className="p-3 border-t border-secondary-dark/30 mt-auto">
+                        <div className="p-3 border-t border-primary-dark/30 mt-auto">
                             <button
                                 onClick={() => {
                                     localStorage.removeItem('userRole');
@@ -312,7 +312,7 @@ const Sidebar = () => {
                                     localStorage.removeItem('token');
                                     window.location.href = '/login';
                                 }}
-                                className="flex items-center w-full px-3 py-1.5 text-white hover:bg-secondary-light/10 rounded-lg transition-colors duration-200"
+                                className="flex items-center w-full px-3 py-1.5 text-white hover:bg-primary-light/10 rounded-lg transition-colors duration-200"
                             >
                                 <IconLogout className="w-5 h-5 text-white" />
                                 <span className="ml-2 text-sm font-medium">Logout</span>

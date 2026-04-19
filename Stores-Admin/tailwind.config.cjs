@@ -25,19 +25,19 @@ module.exports = {
                     'dark-light': 'rgba(220, 113, 26, 0.15)',
                 },
                 secondary: {
-                    50: '#fff5f2', // Lightest tint
-                    100: '#ffeae0', // Very light
-                    200: '#ffd5c7', // Light
-                    300: '#ffb59e', // Medium light
-                    400: '#ff8d67', // Medium
-                    500: '#FF6B35', // DEFAULT - Coral-orange
-                    600: '#e5522a', // Darker
-                    700: '#cc3e1f', // Dark
-                    800: '#b32b14', // Very dark
-                    900: '#99180a', // Darkest
-                    DEFAULT: '#FF6B35',
-                    light: '#ffeae0',
-                    'dark-light': 'rgba(255, 107, 53, 0.15)',
+                    50: '#f7f7f7', // Lightest charcoal gray
+                    100: '#e8e8e8', // Very light charcoal
+                    200: '#d1d1d1', // Light charcoal gray
+                    300: '#a8a8a8', // Medium light charcoal
+                    400: '#7a7a7a', // Medium charcoal
+                    500: '#4a4a4a', // DEFAULT - Charcoal black
+                    600: '#3a3a3a', // Dark charcoal
+                    700: '#2a2a2a', // Darker charcoal
+                    800: '#1a1a1a', // Very dark charcoal
+                    900: '#0a0a0a', // Deep charcoal black
+                    DEFAULT: '#4a4a4a',
+                    light: '#e8e8e8',
+                    'dark-light': 'rgba(74, 74, 74, 0.15)',
                 },
 
                 // Semantic colors with full scales
