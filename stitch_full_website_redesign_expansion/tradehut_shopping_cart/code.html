@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Shopping Cart | TradeHut</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;700;900&amp;family=DM+Sans:wght@400;500;700&amp;family=JetBrains+Mono:wght@500;700&amp;family=Syne:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed-dim": "#3fdfa5",
+                    "secondary": "#006c4b",
+                    "on-surface-variant": "#5a4137",
+                    "inverse-surface": "#3d2d26",
+                    "surface": "#fff8f6",
+                    "on-tertiary-fixed": "#001945",
+                    "on-tertiary-container": "#002761",
+                    "on-primary-container": "#4e1900",
+                    "surface-container-low": "#fff1ec",
+                    "tertiary-fixed-dim": "#b0c6ff",
+                    "surface-dim": "#efd5cb",
+                    "surface-variant": "#f8ddd3",
+                    "primary": "#a43d00",
+                    "surface-container-highest": "#f8ddd3",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed": "#ffdbcd",
+                    "on-secondary-fixed": "#002114",
+                    "tertiary": "#0058ca",
+                    "error": "#ba1a1a",
+                    "on-tertiary-fixed-variant": "#00429b",
+                    "on-primary-fixed-variant": "#7d2d00",
+                    "tertiary-fixed": "#d9e2ff",
+                    "surface-tint": "#a43d00",
+                    "on-secondary-fixed-variant": "#005138",
+                    "outline-variant": "#e2bfb2",
+                    "on-surface": "#261813",
+                    "secondary-container": "#60f9bd",
+                    "outline": "#8e7165",
+                    "on-background": "#261813",
+                    "primary-container": "#f5620f",
+                    "tertiary-container": "#558dff",
+                    "error-container": "#ffdad6",
+                    "surface-container": "#ffe9e2",
+                    "on-primary-fixed": "#360f00",
+                    "on-error": "#ffffff",
+                    "secondary-fixed": "#63fcc0",
+                    "on-secondary-container": "#00714f",
+                    "on-tertiary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "background": "#fff8f6",
+                    "inverse-primary": "#ffb597",
+                    "surface-bright": "#fff8f6",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed-dim": "#ffb597",
+                    "on-primary": "#ffffff",
+                    "surface-container-high": "#fee3d9",
+                    "inverse-on-surface": "#ffede7"
+            },
+            "fontFamily": {
+                    "headline": ["Syne", "sans-serif"],
+                    "body": ["DM Sans", "sans-serif"],
+                    "label": ["DM Sans", "sans-serif"],
+                    "mono": ["JetBrains Mono", "monospace"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'DM Sans', sans-serif; background-color: #fff8f6; color: #261813; }
+        .font-syne { font-family: 'Syne', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .glass-header { backdrop-filter: blur(24px); }
+        .shadow-card { box-shadow: 0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02); }
+        .shadow-card:hover { box-shadow: 0 12px 32px 0 rgba(38, 24, 19, 0.08); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- TopNavBar -->
+<header class="sticky top-0 w-full z-50 bg-[#FFF8F6]/70 dark:bg-stone-950/70 backdrop-blur-xl transition-all duration-300">
+<div class="max-w-screen-2xl mx-auto flex flex-col md:flex-row items-center justify-between px-8 py-4">
+<div class="flex items-center gap-12">
+<span class="text-2xl font-black tracking-tighter text-stone-900 dark:text-stone-50 font-['Epilogue']">TradeHut</span>
+<nav class="hidden lg:flex items-center gap-8 font-['Epilogue'] font-medium tracking-tight">
+<a class="text-stone-600 dark:text-stone-400 font-medium hover:text-orange-600 dark:hover:text-orange-400 transition-colors duration-300" href="#">Buy</a>
+<a class="text-stone-600 dark:text-stone-400 font-medium hover:text-orange-600 dark:hover:text-orange-400 transition-colors duration-300" href="#">Bid</a>
+<a class="text-stone-600 dark:text-stone-400 font-medium hover:text-orange-600 dark:hover:text-orange-400 transition-colors duration-300" href="#">Request</a>
+<a class="text-stone-600 dark:text-stone-400 font-medium hover:text-orange-600 dark:hover:text-orange-400 transition-colors duration-300" href="#">Categories</a>
+<a class="text-stone-600 dark:text-stone-400 font-medium hover:text-orange-600 dark:hover:text-orange-400 transition-colors duration-300" href="#">Featured</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden md:flex items-center bg-surface-container-low px-4 py-2 rounded-lg border border-outline-variant/15">
+<span class="material-symbols-outlined text-on-surface-variant text-xl">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-48 font-body" placeholder="Search inventory..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-stone-600 dark:text-stone-400 hover:text-orange-600">public</button>
+<button class="material-symbols-outlined text-stone-600 dark:text-stone-400 hover:text-orange-600">dark_mode</button>
+<a class="flex items-center gap-2 text-stone-600 dark:text-stone-400 font-medium hover:text-orange-600" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="hidden sm:inline">Account</span>
+</a>
+<a class="text-orange-600 dark:text-orange-500 border-b-2 border-orange-600 pb-1 flex items-center gap-2 font-medium" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="hidden sm:inline">Cart</span>
+</a>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-screen-2xl mx-auto px-8 py-12">
+<h1 class="font-syne text-5xl font-extrabold tracking-tighter text-on-surface mb-12">Review Your Items</h1>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+<!-- Left Column: Items List -->
+<div class="lg:col-span-7 space-y-6">
+<!-- Cart Item Row 1 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-card flex flex-col sm:flex-row gap-6 items-center sm:items-start transition-all duration-300">
+<div class="w-32 h-32 rounded-lg overflow-hidden bg-surface-container-low flex-shrink-0">
+<img alt="Luxury Mechanical Watch" class="w-full h-full object-cover" data-alt="close-up of a high-end mechanical wrist watch with silver casing and leather strap on a textured marble background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgUjwEPthVcIroS_f8li5TEdjVRLXVD-pd9OiodT_6MCtTjRy-ATvV7BpNMQi0ym-pJregE8CkUUKQerhFg5zsjThESyQRgqDWzNGFSnRxop4kstPOmFZKr5ZUk8zQz1D9Fggx1n42VWOj7DGUGnn374selmWEjz4wVjUh-f-KOOd7GIgUUFB0HCScwQSxpcpO6aOuTrQJVfhUXcZbTQZrIwftKhTzhMe2qnJVAOsfQDsWUwL2XpDbPmrS4FJuytQ_hYQjBV8Ih5Y"/>
+</div>
+<div class="flex-grow space-y-2 text-center sm:text-left">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<h3 class="font-syne font-bold text-xl text-on-surface">Vanguard Series Mk II</h3>
+<p class="text-on-surface-variant text-sm">SKU: TH-77291 • Silver/Tan</p>
+</div>
+<div class="text-right">
+<span class="font-mono text-xl font-bold text-on-surface">$2,450.00</span>
+</div>
+</div>
+<div class="flex flex-wrap items-center justify-between pt-6 border-t border-outline-variant/10">
+<div class="flex items-center gap-3 bg-surface-container-low rounded-lg px-2 py-1">
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-surface-container-highest rounded-md transition-colors">
+<span class="material-symbols-outlined text-lg">remove</span>
+</button>
+<span class="font-mono font-bold px-2 w-8 text-center">01</span>
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-surface-container-highest rounded-md transition-colors">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+<div class="flex items-center gap-6 mt-4 sm:mt-0">
+<button class="flex items-center gap-1.5 text-on-surface-variant hover:text-primary transition-colors text-sm font-medium">
+<span class="material-symbols-outlined text-lg">bookmark</span> Save
+                                </button>
+<button class="flex items-center gap-1.5 text-on-surface-variant hover:text-error transition-colors text-sm font-medium">
+<span class="material-symbols-outlined text-lg">delete</span> Remove
+                                </button>
+<div class="hidden sm:block pl-6 border-l border-outline-variant/20">
+<span class="text-xs uppercase tracking-widest text-on-surface-variant block mb-0.5">Line Total</span>
+<span class="font-mono font-bold text-lg">$2,450.00</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Cart Item Row 2 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-card flex flex-col sm:flex-row gap-6 items-center sm:items-start transition-all duration-300">
+<div class="w-32 h-32 rounded-lg overflow-hidden bg-surface-container-low flex-shrink-0">
+<img alt="Professional Laptop" class="w-full h-full object-cover" data-alt="sleek modern laptop with matte black finish sitting on a minimalist wooden desk with soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPn8I6KO_cPFKGK1oNNUciO8Fon2m8NNL5HAL6J2rVctil6lw4muhIhfBwE7GCU_m44wMnjgSrXB0mdHo2AcaUC7LKikwsV6Epszkr8jdebAbHrXO0YKHxNRo_BlFPWCpxO7UhhAfnmjFNe5P9x5VD_w79o_YzpYmdU73diV7jG8NpQT35ShfIwyrYdMZBO8SAaRqCQ_r-cPWn3Sxct6nNUXaHtTHpDhvSIiR3lXuRAJGl6s4BHOjLlY_8u34wPJLwODHB8C-hE_M"/>
+</div>
+<div class="flex-grow space-y-2 text-center sm:text-left">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<h3 class="font-syne font-bold text-xl text-on-surface">Precision Pro 14"</h3>
+<p class="text-on-surface-variant text-sm">SKU: TH-99120 • 32GB RAM / 1TB SSD</p>
+</div>
+<div class="text-right">
+<span class="font-mono text-xl font-bold text-on-surface">$1,899.00</span>
+</div>
+</div>
+<div class="flex flex-wrap items-center justify-between pt-6 border-t border-outline-variant/10">
+<div class="flex items-center gap-3 bg-surface-container-low rounded-lg px-2 py-1">
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-surface-container-highest rounded-md transition-colors">
+<span class="material-symbols-outlined text-lg">remove</span>
+</button>
+<span class="font-mono font-bold px-2 w-8 text-center">02</span>
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-surface-container-highest rounded-md transition-colors">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+<div class="flex items-center gap-6 mt-4 sm:mt-0">
+<button class="flex items-center gap-1.5 text-on-surface-variant hover:text-primary transition-colors text-sm font-medium">
+<span class="material-symbols-outlined text-lg">bookmark</span> Save
+                                </button>
+<button class="flex items-center gap-1.5 text-on-surface-variant hover:text-error transition-colors text-sm font-medium">
+<span class="material-symbols-outlined text-lg">delete</span> Remove
+                                </button>
+<div class="hidden sm:block pl-6 border-l border-outline-variant/20">
+<span class="text-xs uppercase tracking-widest text-on-surface-variant block mb-0.5">Line Total</span>
+<span class="font-mono font-bold text-lg">$3,798.00</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Empty State Spacer/Secondary Actions -->
+<div class="bg-surface-container-low/50 border border-dashed border-outline-variant/30 rounded-xl p-8 flex flex-col items-center justify-center text-center">
+<span class="material-symbols-outlined text-on-surface-variant text-4xl mb-3">auto_awesome</span>
+<p class="text-on-surface-variant font-medium">Looking for more? Explore curated categories for your workspace.</p>
+<a class="mt-4 text-primary font-bold hover:underline underline-offset-4" href="#">Continue Shopping</a>
+</div>
+</div>
+<!-- Right Column: Order Summary -->
+<div class="lg:col-span-5 sticky top-28">
+<div class="bg-surface-container-low rounded-2xl p-8 space-y-8">
+<h2 class="font-syne text-2xl font-bold text-on-surface">Order Summary</h2>
+<div class="space-y-4">
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-medium">Subtotal</span>
+<span class="font-mono font-bold">$6,248.00</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-medium">Shipping &amp; Handling</span>
+<span class="font-mono font-bold">$45.00</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-medium">Estimated Tax</span>
+<span class="font-mono font-bold">$512.24</span>
+</div>
+<div class="pt-4 border-t border-outline-variant/20 flex justify-between items-end">
+<span class="font-syne text-xl font-bold text-on-surface">Total</span>
+<span class="font-mono text-3xl font-extrabold text-primary">$6,805.24</span>
+</div>
+</div>
+<div class="space-y-4">
+<button class="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary py-5 rounded-xl font-syne font-bold text-lg shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all duration-200">
+                            Proceed to Checkout
+                        </button>
+<!-- Trust Badges -->
+<div class="grid grid-cols-2 gap-4">
+<div class="flex items-center gap-3 bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/10">
+<span class="material-symbols-outlined text-secondary">verified_user</span>
+<div class="text-[10px] leading-tight font-bold uppercase tracking-tighter text-on-surface-variant">
+                                    Secure<br/>Checkout
+                                </div>
+</div>
+<div class="flex items-center gap-3 bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/10">
+<span class="material-symbols-outlined text-secondary">local_shipping</span>
+<div class="text-[10px] leading-tight font-bold uppercase tracking-tighter text-on-surface-variant">
+                                    Insured<br/>Delivery
+                                </div>
+</div>
+</div>
+</div>
+<!-- Promo Code -->
+<div class="pt-4">
+<label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Discount Code</label>
+<div class="flex gap-2">
+<input class="flex-grow bg-surface-container-lowest border-none focus:ring-1 focus:ring-primary/20 rounded-lg text-sm font-mono px-4" placeholder="ENTER CODE" type="text"/>
+<button class="bg-on-surface text-surface px-4 py-2 rounded-lg font-bold text-xs uppercase tracking-widest hover:bg-primary transition-colors">Apply</button>
+</div>
+</div>
+</div>
+<p class="mt-6 text-center text-xs text-on-surface-variant leading-relaxed">
+                    By clicking "Proceed to Checkout", you agree to the TradeHut Terms of Service and Privacy Policy. Architectural precision in every transaction.
+                </p>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="mt-24 bg-stone-50 dark:bg-stone-900 w-full rounded-t-3xl border-t border-outline-variant/10">
+<div class="max-w-screen-2xl mx-auto px-12 py-16 grid grid-cols-1 md:grid-cols-4 gap-12 font-['DM_Sans'] text-sm">
+<div class="space-y-6">
+<span class="text-xl font-bold text-stone-900 dark:text-stone-50">TradeHut</span>
+<p class="text-stone-500 dark:text-stone-400">The premier kinetic gallery for high-frequency global commerce.</p>
+</div>
+<div class="space-y-4">
+<h4 class="font-bold text-on-surface uppercase tracking-widest text-xs">Marketplace</h4>
+<ul class="space-y-2">
+<li><a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all" href="#">Marketplace</a></li>
+<li><a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all" href="#">Auctions</a></li>
+<li><a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all" href="#">RFQ Portal</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h4 class="font-bold text-on-surface uppercase tracking-widest text-xs">Resources</h4>
+<ul class="space-y-2">
+<li><a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all" href="#">Help Center</a></li>
+<li><a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all" href="#">Terms of Service</a></li>
+<li><a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all" href="#">Privacy Policy</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h4 class="font-bold text-on-surface uppercase tracking-widest text-xs">Newsletter</h4>
+<div class="flex border-b border-outline-variant/30 pb-2">
+<input class="bg-transparent border-none focus:ring-0 text-sm flex-grow" placeholder="Email address" type="email"/>
+<button class="material-symbols-outlined text-primary">arrow_forward</button>
+</div>
+</div>
+</div>
+<div class="max-w-screen-2xl mx-auto px-12 py-8 border-t border-outline-variant/10 text-center text-stone-500 dark:text-stone-400 text-xs tracking-wide">
+            © 2024 TradeHut Stores. Architectural Precision in Commerce.
+        </div>
+</footer>
+</body></html>

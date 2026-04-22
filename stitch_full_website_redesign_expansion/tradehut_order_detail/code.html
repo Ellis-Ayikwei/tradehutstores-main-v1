@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Order Detail | Kinetic Dashboard</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;family=Epilogue:wght@800&amp;family=JetBrains+Mono:wght@500;700&amp;family=Syne:wght@700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#002114",
+                    "primary-fixed-dim": "#ffb597",
+                    "primary-container": "#f5620f",
+                    "error": "#ba1a1a",
+                    "background": "#fff8f6",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed": "#63fcc0",
+                    "primary-fixed": "#ffdbcd",
+                    "on-background": "#261813",
+                    "surface": "#fff8f6",
+                    "on-secondary-fixed-variant": "#005138",
+                    "on-primary": "#ffffff",
+                    "surface-container-highest": "#f8ddd3",
+                    "on-tertiary-container": "#002761",
+                    "on-error": "#ffffff",
+                    "inverse-on-surface": "#ffede7",
+                    "secondary": "#006c4b",
+                    "on-secondary-container": "#00714f",
+                    "tertiary": "#0058ca",
+                    "tertiary-container": "#558dff",
+                    "on-primary-fixed-variant": "#7d2d00",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#f8ddd3",
+                    "surface-tint": "#a43d00",
+                    "on-primary-container": "#4e1900",
+                    "surface-container": "#ffe9e2",
+                    "tertiary-fixed-dim": "#b0c6ff",
+                    "secondary-container": "#60f9bd",
+                    "inverse-surface": "#3d2d26",
+                    "tertiary-fixed": "#d9e2ff",
+                    "on-tertiary-fixed": "#001945",
+                    "inverse-primary": "#ffb597",
+                    "on-primary-fixed": "#360f00",
+                    "secondary-fixed-dim": "#3fdfa5",
+                    "on-tertiary-fixed-variant": "#00429b",
+                    "on-surface": "#261813",
+                    "surface-dim": "#efd5cb",
+                    "on-secondary": "#ffffff",
+                    "surface-container-low": "#fff1ec",
+                    "primary": "#a43d00",
+                    "outline": "#8e7165",
+                    "surface-bright": "#fff8f6",
+                    "surface-container-lowest": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "on-surface-variant": "#5a4137",
+                    "surface-container-high": "#fee3d9",
+                    "outline-variant": "#e2bfb2"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Syne", "Epilogue", "sans-serif"],
+                    "body": ["DM Sans", "Plus Jakarta Sans", "sans-serif"],
+                    "label": ["DM Sans", "Plus Jakarta Sans", "sans-serif"],
+                    "mono": ["JetBrains Mono", "monospace"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .shadow-card {
+            box-shadow: 0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02);
+        }
+        .shadow-card-hover:hover {
+            box-shadow: 0 12px 32px 0 rgba(38, 24, 19, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopAppBar Component -->
+<header class="bg-[#FFF8F6]/70 backdrop-blur-2xl sticky top-0 w-full z-50 shadow-[0_4px_20px_0_rgba(38,24,19,0.04)] bg-gradient-to-b from-[#FFF1EC] to-transparent">
+<div class="flex justify-between items-center px-8 h-20 w-full">
+<div class="flex items-center gap-8">
+<span class="font-['Epilogue'] font-extrabold tracking-tighter text-[#261813] text-xl">Kinetic Dashboard</span>
+<nav class="hidden md:flex items-center gap-6 font-['DM_Sans'] text-sm font-medium tracking-wide">
+<a class="text-[#261813]/60 hover:text-[#F5620F] transition-colors" href="#">Marketplace</a>
+<a class="text-[#F5620F] font-bold border-b-2 border-[#F5620F] pb-1" href="#">Active Orders</a>
+<a class="text-[#261813]/60 hover:text-[#F5620F] transition-colors" href="#">History</a>
+<a class="text-[#261813]/60 hover:text-[#F5620F] transition-colors" href="#">Wallet</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-[#261813]/60 hover:bg-[#FFF1EC] rounded-lg transition-all duration-300 active:scale-90">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-[#261813]/60 hover:bg-[#FFF1EC] rounded-lg transition-all duration-300 active:scale-90">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-surface-container overflow-hidden">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="Close-up professional headshot of a person with soft studio lighting and neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBx7pALNFAKILwja73K6DEN7zq8FIZ2FKDuMUesyzSC6cVUBVDcozl8ofxE_TEJ9Yl3s1r4KCqZUFRhCJWTP4O3maHfPMrLbQWYYkJmFSgOuxk-9fm5vVRoZZ6adMeZ1SX-aeqBXcm9yWVIKJ83Q5tOpXSrGOQ9Mdt8T3Bs1BsSDY4REJBZbNUQziX4ePptHSrKUy5K75NBpFAEY4kUsocslhMnaE7301xIZhXYtwc91Nf6lLo5R5k4EDfI8fzztaAxc_lNQ4Zt-O0"/>
+</div>
+</div>
+</div>
+</header>
+<div class="flex min-h-[calc(100vh-5rem)]">
+<!-- Main Content Area -->
+<main class="flex-grow px-8 py-12 md:px-16 lg:px-24">
+<!-- Order Header -->
+<div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<h1 class="font-headline text-4xl mb-2">Order Details</h1>
+<div class="flex items-center gap-4 text-on-surface-variant">
+<span class="font-mono text-lg font-bold text-on-surface">#99284</span>
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant/30"></span>
+<span class="text-sm">Placed on October 24, 2023</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 px-6 py-3 bg-surface-container-lowest text-on-surface rounded-xl font-bold shadow-card shadow-card-hover transition-all active:scale-95 group">
+<span class="material-symbols-outlined text-primary">download</span>
+<span>Download Invoice</span>
+</button>
+</div>
+</div>
+<!-- Status Timeline -->
+<div class="bg-surface-container-low rounded-3xl p-8 mb-12 shadow-sm">
+<div class="relative flex justify-between items-start w-full">
+<!-- Progress Line -->
+<div class="absolute top-5 left-0 w-full h-[2px] bg-outline-variant/20 -z-0">
+<div class="h-full bg-primary-container" style="width: 50%;"></div>
+</div>
+<!-- Steps -->
+<div class="relative z-10 flex flex-col items-center gap-3 flex-1">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<span class="text-xs font-bold uppercase tracking-widest text-on-surface">Placed</span>
+</div>
+<div class="relative z-10 flex flex-col items-center gap-3 flex-1">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<span class="text-xs font-bold uppercase tracking-widest text-on-surface">Confirmed</span>
+</div>
+<div class="relative z-10 flex flex-col items-center gap-3 flex-1">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center ring-8 ring-primary-container/10">
+<span class="material-symbols-outlined text-sm">local_shipping</span>
+</div>
+<span class="text-xs font-bold uppercase tracking-widest text-primary-container">Shipped</span>
+</div>
+<div class="relative z-10 flex flex-col items-center gap-3 flex-1">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">inventory_2</span>
+</div>
+<span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60">Delivered</span>
+</div>
+<div class="relative z-10 flex flex-col items-center gap-3 flex-1">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">grade</span>
+</div>
+<span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60">Reviewed</span>
+</div>
+</div>
+</div>
+<!-- Content Grid (Asymmetric Bento Style) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Item List (Primary Section) -->
+<div class="lg:col-span-8 space-y-6">
+<div class="bg-surface-container-lowest rounded-3xl p-8 shadow-card">
+<h3 class="font-headline text-xl mb-8">Order Items (2)</h3>
+<div class="space-y-8">
+<!-- Item 1 -->
+<div class="flex gap-6 group">
+<div class="w-32 h-32 rounded-2xl bg-surface-container-low overflow-hidden flex-shrink-0 group-hover:scale-[1.02] transition-transform duration-500">
+<img alt="Running Shoe" class="w-full h-full object-cover" data-alt="Modern athletic sneaker in bright orange on a clean minimalist background with professional lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9_gV5p-gpbl3ew_HhXex2gDUvPq10oOrCxvZ1pb1JUAcXK0blY8Nfcyn74Gs4NMbvnd1i9701Uv7mV05ralxETm7dSLOAXiV5v713jtAYH2R4TBMtXDrBacvAxOYIkXGxcV6DDO340_PUgOB39UKBOYlOMQcTOeccaQP4Ro354be3ub1AZ_d_rjh_S5cZ69xpiFQgzCgvwNYVWdzz-0wKIiei5lsI65KRbQp-Wbu2_uCAW865I2SxNeYhW_3Et-Qpgm5R6imIgPk"/>
+</div>
+<div class="flex flex-col justify-center flex-grow">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-bold text-lg">Velocity Max G2 Runner</h4>
+<span class="font-mono text-lg font-bold">$189.00</span>
+</div>
+<p class="text-sm text-on-surface-variant mb-4">Variant: Neon Orange / US 10.5</p>
+<div class="flex items-center gap-4">
+<span class="text-xs font-bold uppercase tracking-tighter bg-surface-container text-on-surface-variant px-3 py-1 rounded-full">Qty: 1</span>
+<button class="text-xs font-bold text-primary flex items-center gap-1 hover:underline">
+                                            View Specifications <span class="material-symbols-outlined text-[14px]">arrow_outward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex gap-6 group">
+<div class="w-32 h-32 rounded-2xl bg-surface-container-low overflow-hidden flex-shrink-0 group-hover:scale-[1.02] transition-transform duration-500">
+<img alt="Watch" class="w-full h-full object-cover" data-alt="Minimalist wrist watch with white face and silver mesh band on soft cream textured surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2FMGdA0BpWa9H8i_ucGye30wkHumaJJoyy2ZY-TlgNN049beWx5kmW_-nlx7R9PVPuVcL2e-lDCAKvnm-v8q3CZq2RoREXy6t7XHsi6_mwLMITJaKWWtGcWl9U7kpRC077Sdth9p5lFEfVm1qBBvZ4QmQn1qskjOMzbYPp-UNb-0wNSguBAMe4PsAnsIXp1fa8iLdOLVXn6wxWzmAyCtpTp2pqr0O9Ms11d4da5tFjkc5GmShpY6f64DX3sm3Hg3WqEVf72Ejh88"/>
+</div>
+<div class="flex flex-col justify-center flex-grow">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-bold text-lg">Metric Chrono Minimalist</h4>
+<span class="font-mono text-lg font-bold">$345.00</span>
+</div>
+<p class="text-sm text-on-surface-variant mb-4">Variant: Silver Mesh / 42mm</p>
+<div class="flex items-center gap-4">
+<span class="text-xs font-bold uppercase tracking-tighter bg-surface-container text-on-surface-variant px-3 py-1 rounded-full">Qty: 1</span>
+<button class="text-xs font-bold text-primary flex items-center gap-1 hover:underline">
+                                            View Specifications <span class="material-symbols-outlined text-[14px]">arrow_outward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Post-Delivery Rate Card Placeholder -->
+<div class="bg-gradient-to-br from-secondary-container to-surface-container-low rounded-3xl p-8 shadow-card relative overflow-hidden group">
+<div class="absolute -right-8 -bottom-8 opacity-10 group-hover:scale-110 transition-transform duration-700">
+<span class="material-symbols-outlined text-[120px]">stars</span>
+</div>
+<div class="relative z-10 max-w-md">
+<h3 class="font-headline text-xl mb-2 text-on-secondary-container">Satisfied with your items?</h3>
+<p class="text-sm text-on-secondary-container/80 mb-6">Your feedback helps our community of traders find the best sellers. Rate this transaction once delivered.</p>
+<button class="px-6 py-3 bg-secondary text-on-secondary rounded-xl font-bold flex items-center gap-2 transition-transform active:scale-95 disabled:opacity-50" disabled="">
+                                Rate this Seller <span class="material-symbols-outlined">lock</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Sidebar (Summary and Details) -->
+<div class="lg:col-span-4 space-y-8">
+<!-- Delivery Address -->
+<div class="bg-surface-container-low rounded-3xl p-8 shadow-sm">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary-container">location_on</span>
+<h3 class="font-bold">Delivery Address</h3>
+</div>
+<div class="space-y-1">
+<p class="font-bold">Jonathan Sterling</p>
+<p class="text-on-surface-variant text-sm">4829 Kinetic Boulevard</p>
+<p class="text-on-surface-variant text-sm">Tech District, Suite 402</p>
+<p class="text-on-surface-variant text-sm">Palo Alto, CA 94301</p>
+<p class="text-on-surface-variant text-sm mt-4">+1 (555) 092-8472</p>
+</div>
+</div>
+<!-- Payment Summary -->
+<div class="bg-surface-container-lowest rounded-3xl p-8 shadow-card border border-outline-variant/10">
+<h3 class="font-headline text-xl mb-6">Payment Summary</h3>
+<div class="space-y-4 mb-8">
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="text-sm">Subtotal</span>
+<span class="font-mono">$534.00</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="text-sm">Shipping</span>
+<span class="font-mono">$12.50</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="text-sm">Tax (HST)</span>
+<span class="font-mono">$42.72</span>
+</div>
+<div class="pt-4 mt-4 border-t border-outline-variant/10 flex justify-between items-center">
+<span class="font-bold">Order Total</span>
+<span class="font-mono text-2xl font-bold text-primary-container">$589.22</span>
+</div>
+</div>
+<div class="p-4 bg-surface-container rounded-xl flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container">contactless</span>
+<div class="text-xs">
+<p class="font-bold uppercase tracking-tighter opacity-60">Payment Method</p>
+<p class="text-on-surface font-medium">VISA ending in •••• 9284</p>
+</div>
+</div>
+</div>
+<!-- Secondary Actions -->
+<div class="flex flex-col gap-3">
+<button class="w-full py-4 text-center text-on-surface-variant font-bold hover:bg-surface-container transition-colors rounded-xl flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">gavel</span>
+                            Dispute Center
+                        </button>
+<button class="w-full py-4 text-center text-on-surface-variant font-bold hover:bg-surface-container transition-colors rounded-xl flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">keyboard_return</span>
+                            Initiate Return
+                        </button>
+</div>
+</div>
+</div>
+</main>
+<!-- SideNavBar Component (Persistent Context) -->
+<aside class="fixed right-0 top-0 h-full w-72 z-40 bg-[#FFF1EC] border-l border-[#261813]/5 flex flex-col p-6 gap-4 font-['DM_Sans'] text-sm hidden xl:flex">
+<div class="mb-8 pt-20">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined">receipt_long</span>
+</div>
+<div>
+<p class="font-['Syne'] font-bold text-[#F5620F] text-lg">Order #99284</p>
+<p class="text-[#261813]/70 text-xs">Processing Payment</p>
+</div>
+</div>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-3 p-4 bg-[#FFFFFF] text-[#F5620F] rounded-xl shadow-sm font-bold scale-105 transition-transform" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span>Order Overview</span>
+</a>
+<a class="flex items-center gap-3 p-4 text-[#261813]/70 hover:bg-[#FFF8F6]/50 hover:translate-x-1 transition-all rounded-xl" href="#">
+<span class="material-symbols-outlined">download</span>
+<span>Invoices</span>
+</a>
+<a class="flex items-center gap-3 p-4 text-[#261813]/70 hover:bg-[#FFF8F6]/50 hover:translate-x-1 transition-all rounded-xl" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<span>Dispute Center</span>
+</a>
+<a class="flex items-center gap-3 p-4 text-[#261813]/70 hover:bg-[#FFF8F6]/50 hover:translate-x-1 transition-all rounded-xl" href="#">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span>Messages</span>
+</a>
+</nav>
+<div class="mt-auto pt-8 border-t border-[#261813]/5">
+<button class="w-full py-4 mb-4 bg-primary-container text-on-primary font-bold rounded-xl active:opacity-80 transition-opacity">
+                    Generate Report
+                </button>
+<a class="flex items-center gap-3 p-4 text-[#261813]/70 hover:bg-[#FFF8F6]/50 rounded-xl" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</div>
+</aside>
+</div>
+<!-- Mobile Navigation (Responsive Pivot) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-surface-container-lowest/80 backdrop-blur-xl flex justify-around items-center h-16 z-50 px-4">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-bold uppercase">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="text-[10px] font-bold uppercase">Active</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="text-[10px] font-bold uppercase">Orders</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-bold uppercase">Profile</span>
+</a>
+</nav>
+</body></html>

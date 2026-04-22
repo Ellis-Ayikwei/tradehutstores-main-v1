@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TradeHut | Auction Hub</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;700;900&amp;family=DM+Sans:wght@400;500;700&amp;family=JetBrains+Mono:wght@500;700&amp;family=Syne:wght@700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed-dim": "#3fdfa5",
+                    "secondary": "#006c4b",
+                    "on-surface-variant": "#5a4137",
+                    "inverse-surface": "#3d2d26",
+                    "surface": "#fff8f6",
+                    "on-tertiary-fixed": "#001945",
+                    "on-tertiary-container": "#002761",
+                    "on-primary-container": "#4e1900",
+                    "surface-container-low": "#fff1ec",
+                    "tertiary-fixed-dim": "#b0c6ff",
+                    "surface-dim": "#efd5cb",
+                    "surface-variant": "#f8ddd3",
+                    "primary": "#a43d00",
+                    "surface-container-highest": "#f8ddd3",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed": "#ffdbcd",
+                    "on-secondary-fixed": "#002114",
+                    "tertiary": "#0058ca",
+                    "error": "#ba1a1a",
+                    "on-tertiary-fixed-variant": "#00429b",
+                    "on-primary-fixed-variant": "#7d2d00",
+                    "tertiary-fixed": "#d9e2ff",
+                    "surface-tint": "#a43d00",
+                    "on-secondary-fixed-variant": "#005138",
+                    "outline-variant": "#e2bfb2",
+                    "on-surface": "#261813",
+                    "secondary-container": "#60f9bd",
+                    "outline": "#8e7165",
+                    "on-background": "#261813",
+                    "primary-container": "#f5620f",
+                    "tertiary-container": "#558dff",
+                    "error-container": "#ffdad6",
+                    "surface-container": "#ffe9e2",
+                    "on-primary-fixed": "#360f00",
+                    "on-error": "#ffffff",
+                    "secondary-fixed": "#63fcc0",
+                    "on-secondary-container": "#00714f",
+                    "on-tertiary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "background": "#fff8f6",
+                    "inverse-primary": "#ffb597",
+                    "surface-bright": "#fff8f6",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed-dim": "#ffb597",
+                    "on-primary": "#ffffff",
+                    "surface-container-high": "#fee3d9",
+                    "inverse-on-surface": "#ffede7"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Epilogue", "Syne", "sans-serif"],
+                    "body": ["Plus Jakarta Sans", "DM Sans", "sans-serif"],
+                    "mono": ["JetBrains Mono", "monospace"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .font-syne { font-family: 'Syne', sans-serif; }
+        .font-epilogue { font-family: 'Epilogue', sans-serif; }
+        .glass-header { backdrop-filter: blur(24px); }
+        .shadow-card { box-shadow: 0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02); }
+        .shadow-card:hover { box-shadow: 0 12px 32px 0 rgba(38, 24, 19, 0.08); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<header class="sticky top-0 w-full z-50 bg-[#FFF8F6]/70 dark:bg-stone-950/70 backdrop-blur-xl">
+<nav class="max-w-screen-2xl mx-auto flex flex-col md:flex-row items-center justify-between px-8 py-4">
+<div class="flex items-center gap-8 w-full md:w-auto justify-between md:justify-start">
+<span class="text-2xl font-black tracking-tighter text-stone-900 dark:text-stone-50 font-epilogue">TradeHut</span>
+<div class="hidden md:flex items-center gap-6">
+<a class="text-stone-600 dark:text-stone-400 font-medium font-['Epilogue'] hover:text-orange-600 transition-colors duration-300" href="#">Buy</a>
+<a class="text-orange-600 dark:text-orange-500 border-b-2 border-orange-600 pb-1 font-['Epilogue'] font-medium tracking-tight" href="#">Bid</a>
+<a class="text-stone-600 dark:text-stone-400 font-medium font-['Epilogue'] hover:text-orange-600 transition-colors duration-300" href="#">Request</a>
+<a class="text-stone-600 dark:text-stone-400 font-medium font-['Epilogue'] hover:text-orange-600 transition-colors duration-300" href="#">Categories</a>
+</div>
+</div>
+<div class="flex items-center gap-4 mt-4 md:mt-0">
+<div class="relative hidden lg:block">
+<input class="bg-surface-container-low border-none rounded-lg px-4 py-2 w-64 focus:ring-2 focus:ring-primary/20 transition-all text-sm" placeholder="Search assets..." type="text"/>
+</div>
+<div class="flex items-center gap-3">
+<button class="p-2 text-stone-600 hover:text-primary transition-colors active:scale-95">
+<span class="material-symbols-outlined" data-icon="public">public</span>
+</button>
+<button class="p-2 text-stone-600 hover:text-primary transition-colors active:scale-95">
+<span class="material-symbols-outlined" data-icon="dark_mode">dark_mode</span>
+</button>
+<div class="h-6 w-[1px] bg-outline-variant/30 mx-1"></div>
+<button class="flex items-center gap-2 px-4 py-2 text-stone-600 font-medium hover:text-primary transition-colors active:scale-95">
+<span class="material-symbols-outlined text-[20px]" data-icon="shopping_cart">shopping_cart</span>
+<span class="hidden sm:inline">Cart</span>
+</button>
+<button class="bg-primary text-on-primary px-5 py-2 rounded-lg font-bold shadow-card active:scale-95 transition-all">
+                        Account
+                    </button>
+</div>
+</div>
+</nav>
+</header>
+<main>
+<!-- Hero Section: The Kinetic Gallery -->
+<section class="relative min-h-[716px] flex items-center overflow-hidden bg-inverse-surface">
+<div class="absolute inset-0 z-0">
+<img alt="" class="w-full h-full object-cover opacity-40" data-alt="Abstract 3D architectural render with flowing organic shapes in deep copper and matte black tones, dramatic cinematic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDds4aJw3SmuxkYU7EmcB2I1ibZUev1zEroRL2bhQQWz5WmVRnnR7KkEFKFcn7z6oSV0-mlB7aFUKv2Ctk-UBYcBisGy34o6VbGKoo0gS2U3tSAlpDV6s7FuY_pyyJ2To1I8ECfhKx5CXDTOuV4y9ed7SBZMXhpDMl9sZaqIF_DFjA4wQ8x2s_By1n3A4wAgWoz0JD2DF-MYQAIUXym6aWHtBNC3kGjxeMCIEp5baRTuan1LR88Pw95eChSLo7q1zH07HQXa0usXU4"/>
+<div class="absolute inset-0 bg-gradient-to-r from-inverse-surface via-inverse-surface/80 to-transparent"></div>
+</div>
+<div class="relative z-10 max-w-screen-2xl mx-auto px-8 py-20 grid lg:grid-cols-2 gap-12 items-center">
+<div class="space-y-8">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-xs font-bold tracking-widest uppercase">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
+</span>
+                        Live Auction Hub
+                    </div>
+<h1 class="text-6xl md:text-8xl font-syne font-extrabold text-white leading-[0.9] tracking-tighter">
+                        TRADE WITH <br/> <span class="text-secondary-fixed-dim">PRECISION</span>
+</h1>
+<p class="text-lg md:text-xl text-surface-variant/80 max-w-lg font-body leading-relaxed">
+                        High-frequency digital auctions meets architectural commerce. Experience the pulse of the market in our kinetic gallery.
+                    </p>
+<div class="flex flex-wrap gap-4">
+<button class="px-8 py-4 bg-primary-container text-on-primary-container rounded-lg font-syne font-bold text-lg hover:scale-105 transition-transform shadow-lg">
+                            Explore Live Bids
+                        </button>
+<button class="px-8 py-4 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-lg font-syne font-bold text-lg hover:bg-white/20 transition-all">
+                            View Schedule
+                        </button>
+</div>
+</div>
+<!-- My Bids Widget -->
+<div class="lg:justify-self-end w-full max-w-md">
+<div class="bg-surface-container-lowest/10 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 shadow-2xl">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-white font-syne font-bold text-xl">My Active Bids</h3>
+<span class="text-secondary-fixed-dim font-mono text-sm">3 Active</span>
+</div>
+<div class="space-y-4">
+<div class="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5">
+<div class="w-12 h-12 rounded-lg bg-surface-variant/20 overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="minimalist white designer watch on a marble surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDrL8e-35oTEIE4kRjl_xwUpG0auNpMuJX1q4Ae-lLf_Vy56ya3AF9Xpm-qaPvVYgB9neytDW3VyfzVFyVBZzMcvMaVeI3w1zfTTSfeeCAPVs8g-sARkEpylzjMRDz9GupopAHuZy1ab8Nw8o7uV9xJ2QPMcNlREyC3U-j7sC8RiJz5vEL-_0DniN2PbApd1Xb4KClAXsBcwl1ZNcehYpHNlzkIIYTS6aPNp4UW4pM9IQaqwlXJ7swYSjHB9Y0-A3wfuykeL_OoNg"/>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-white font-bold text-sm truncate">Zenith Chronomaster</p>
+<p class="text-secondary-fixed-dim font-mono text-xs">$12,450.00</p>
+</div>
+<div class="text-right">
+<span class="block text-[10px] text-white/40 uppercase font-bold">Status</span>
+<span class="text-secondary-fixed-dim text-xs font-bold">Winning</span>
+</div>
+</div>
+<div class="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5">
+<div class="w-12 h-12 rounded-lg bg-surface-variant/20 overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="premium black headphones with metallic accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCAc_hSjE_doDvqcNF7d3rfIHnv5YoV0mQWe-ZZr0ETxhyvlBM48S00iTvZNS5osNfXmKa5twRTaA5gVcswLWVyvzBOAVe1bJSNb9A21t-dqwAZY7UFZCuVBwHWt8JJL1BvqX_zeQEs4T8wg8ZZaKq4W0d0-32Bz28Q-cmhki-8DhbEav768fHXdzf1CUVkomebzMmyt7B2VIS8LMBGituEfkY4-S3OFIBjg5PuENcaEAQmGl2_S3vYqS4XvnFFJOVbn13RAiM2pk"/>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-white font-bold text-sm truncate">H-Series Prototype</p>
+<p class="text-error font-mono text-xs">$2,100.00</p>
+</div>
+<div class="text-right">
+<span class="block text-[10px] text-white/40 uppercase font-bold">Status</span>
+<span class="text-error text-xs font-bold">Outbid</span>
+</div>
+</div>
+</div>
+<button class="w-full mt-6 py-3 border border-secondary-fixed-dim/30 text-secondary-fixed-dim rounded-lg font-bold text-sm hover:bg-secondary-fixed-dim/10 transition-colors">
+                            Manage All Bids
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Live Now: Bento Grid -->
+<section class="max-w-screen-2xl mx-auto px-8 py-24">
+<div class="flex items-end justify-between mb-12">
+<div class="space-y-2">
+<h2 class="text-4xl font-syne font-extrabold tracking-tight">LIVE NOW</h2>
+<p class="text-on-surface-variant font-medium">Global high-frequency auctions currently in progress.</p>
+</div>
+<button class="group flex items-center gap-2 text-primary font-bold">
+                    View Live Dashboard 
+                    <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Main Featured Live Card -->
+<div class="md:col-span-8 group relative overflow-hidden rounded-2xl bg-surface-container-low shadow-card">
+<div class="aspect-[16/9] overflow-hidden">
+<img alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="Modern architectural interior with a grand concrete staircase and minimalist lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLUCpTIFtvB5HbNWg2YuIeyuvk4lAETW8iwOL53Da9tSKPfCs1dS5y0O1bpL-tRz9z2cSvxBOpb0s13mV6msdyRZAIIrtyJ1pdpT3P_KrzJH5vqQUdwWU270j6uymICUvSHH-8JtldgjH0n4Dh6oR6uPsTyElKXtugahVEKijg38lUjetbLOPutLRt0T0e9CRuHC_H1oJpMjOK8hALRicNJWNo9i8JcXDvQUqWH7ndcYSpz9-zLxvfhysWjdQ8zH5m2OZ2EN5PUoI"/>
+</div>
+<div class="absolute top-6 left-6 flex flex-col gap-2">
+<span class="bg-secondary text-white px-4 py-1 rounded-full text-xs font-bold font-mono uppercase tracking-widest flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+                            Live Bid
+                        </span>
+</div>
+<div class="p-8 flex flex-col md:flex-row gap-8 justify-between items-end">
+<div class="space-y-2">
+<h3 class="text-3xl font-syne font-bold">Metropolitan Industrial Complex #04</h3>
+<div class="flex items-center gap-4 text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm" data-icon="location_on">location_on</span> Berlin, DE</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm" data-icon="group">group</span> 142 Bidders</span>
+</div>
+</div>
+<div class="bg-white p-6 rounded-xl shadow-lg min-w-[200px]">
+<p class="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest mb-1">Current Price</p>
+<p class="text-3xl font-mono font-bold text-secondary mb-4">$842,000.00</p>
+<button class="w-full bg-secondary text-white py-3 rounded-lg font-syne font-extrabold hover:bg-on-secondary-container transition-colors shadow-lg active:scale-95">
+                                PLACE BID
+                            </button>
+</div>
+</div>
+</div>
+<!-- Secondary Live Cards Stack -->
+<div class="md:col-span-4 space-y-8">
+<div class="bg-surface-container-lowest p-6 rounded-2xl shadow-card border-l-4 border-secondary">
+<div class="flex gap-4 mb-4">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Abstract modern sculpture with copper and glass elements" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlA-g7EnjzDflwnx_iY6gAG3p-Tvy1Kh_nqgMx3vPZ18It82F_sY9VIzEUcFsGauywZf8ZtTbm6me_qgS2k-C8PKbHteXBDqw-w6KDFtFryPi9Y1oNGQQIj3S3oT5-ANSdk0SC5vvYT5L-QwTjzj8Lx6_rDtr8NslW-lXDufsrEGmOb96EMhF62iAZ7ttxeezGvLJml7mlUKG-swtjBqwjxbiKorXS4zd9H4KlwB2gLhQS9QH2AW4YV0k-ZibJmLxT4bX9gwWvtyg"/>
+</div>
+<div>
+<span class="text-[10px] text-secondary font-bold uppercase tracking-tighter">Closing in 04:12</span>
+<h4 class="font-syne font-bold">Kinetica Sculpture Series</h4>
+<p class="text-secondary font-mono font-bold text-lg">$4,500</p>
+</div>
+</div>
+<button class="w-full py-2 bg-secondary/10 text-secondary rounded-lg font-bold text-sm hover:bg-secondary/20 transition-colors">
+                            Bid Now
+                        </button>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-2xl shadow-card border-l-4 border-secondary">
+<div class="flex gap-4 mb-4">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Industrial robotic arm working on precision engineering part" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmmuVRapvEai4ZHNQ4mwyHXFNMpI7awMppniqDO1vQMTgzJeL-YPADMX0RqfaJoGNzH3-KkXLiXWYAsp490kaErv7lYuFA0Fx1MMdhSPoAJkmc1Q0BlpzYHcui5j2ctUxmwvGwRl0l2OletGLDOJHPU3Sm6bLKfs4HarHI832AchlXtvjCwgofFBPVs6LqSNpRDQ2QMIv2A2pnm3zV6zHeJxd-L1I2WV-e38Ix1Y70GYmDP0jgXEYWdqgX6zW4zZGuoJ1WV_qT45g"/>
+</div>
+<div>
+<span class="text-[10px] text-secondary font-bold uppercase tracking-tighter">Closing in 12:45</span>
+<h4 class="font-syne font-bold">Precision Unit XL-9</h4>
+<p class="text-secondary font-mono font-bold text-lg">$12,800</p>
+</div>
+</div>
+<button class="w-full py-2 bg-secondary/10 text-secondary rounded-lg font-bold text-sm hover:bg-secondary/20 transition-colors">
+                            Bid Now
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Starting Soon: Horizontal Rail -->
+<section class="bg-surface-container-low py-24 overflow-hidden">
+<div class="max-w-screen-2xl mx-auto px-8 mb-12 flex items-center justify-between">
+<h2 class="text-4xl font-syne font-extrabold tracking-tight italic">STARTING SOON</h2>
+<div class="flex gap-2">
+<button class="w-12 h-12 rounded-full border border-outline-variant flex items-center justify-center hover:bg-white transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-12 h-12 rounded-full border border-outline-variant flex items-center justify-center hover:bg-white transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="flex gap-8 px-8 overflow-x-auto no-scrollbar pb-10">
+<!-- Item 1 -->
+<div class="min-w-[400px] bg-surface-container-lowest rounded-2xl overflow-hidden shadow-card group">
+<div class="h-64 relative">
+<img alt="" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Cyberpunk style glowing blue and purple server racks in a dark data center" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbET4YyAoSTLSBTCHfYUYqMnR7juRA0GG1fwZvjTzb_oh8aGe-9eNrbGQ59YsRIOP1HYxTaNZ0-V8VGRFZVFNdUWbj-WRqN_ab7UMX9jIqAvO90ko3EDxtgje4Zo99_E6bk4dVA5Q14NW_vadozemmHc7KYK7_vsgPBwMu6euLf-YQIpestgZyuKP3-lernUkXS-yqYT4YOBzPdIKTM9AM485uj_oEdmxvuIAW2cXpmH1UgJnUvI07uV1gBxKGzcRnFALwuqpl-g8"/>
+<div class="absolute bottom-4 left-4 bg-tertiary text-white px-3 py-1 rounded-md text-xs font-bold font-syne">
+                            02h : 15m : 44s
+                        </div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-syne font-bold text-xl">Cloud Infrastructure Node B</h3>
+<p class="text-on-surface-variant text-sm">Enterprise Data Clusters</p>
+</div>
+<div class="text-right">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">Starting at</span>
+<p class="font-mono font-bold text-primary">$45,000</p>
+</div>
+</div>
+<button class="w-full py-4 border border-outline-variant rounded-lg font-bold text-on-surface-variant hover:bg-on-surface hover:text-white transition-all">
+                            Set Reminder
+                        </button>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="min-w-[400px] bg-surface-container-lowest rounded-2xl overflow-hidden shadow-card group">
+<div class="h-64 relative">
+<img alt="" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Interior of a luxury modern apartment with floor to ceiling windows at dusk" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYoVbZoYi18ij92FoDUcRpDFu9meYQb-2sLKYRVfRdKPZsnK6xrojCWr6RxlJHp2JbOgvUJkYdrknH0Ox23VAxhhR78zCCkve5QLi3A4fFh3U4j74MlA-r0W5DABSDH7Wv1DchtEjrLBSGHXh8LdEO04hbNgx5H8RRatQ7Tazd1Ctlf0qIw32uLYikgmmsluXO_zZMerAJ2lWklS-LEcsP5XY1lijslro85hOaAo62UgOMdDfEV2a2bUPzLBvdQpqP9hwMyW0IO3w"/>
+<div class="absolute bottom-4 left-4 bg-tertiary text-white px-3 py-1 rounded-md text-xs font-bold font-syne">
+                            05h : 22m : 10s
+                        </div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-syne font-bold text-xl">Skyline Loft Residence</h3>
+<p class="text-on-surface-variant text-sm">Luxury Residential Real Estate</p>
+</div>
+<div class="text-right">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">Starting at</span>
+<p class="font-mono font-bold text-primary">$1.2M</p>
+</div>
+</div>
+<button class="w-full py-4 border border-outline-variant rounded-lg font-bold text-on-surface-variant hover:bg-on-surface hover:text-white transition-all">
+                            Set Reminder
+                        </button>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="min-w-[400px] bg-surface-container-lowest rounded-2xl overflow-hidden shadow-card group">
+<div class="h-64 relative">
+<img alt="" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Close up of a motherboard with futuristic glowing gold circuits" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdBKOJIqNqLW0EJOuyvF2jrg8HElLPEyw4nW0e-1H_hkEmLEqV6KjcmJKKzCPmIXr-gXejBE4mZd39bIGMKEVZwLgyeAHZU1ZNN44jOUOqLUQbQUUzE5rjE94W7E6-ZFlRfvcn-l2MuldrEw46v0wmP6kANX5LXnfGp4yKQmGkbSvbnlGfWjJIB-y-KoDWnd2f26Eu6yz7c7CnaPPNLWgqQxwf_7RIo4jK57yxdG-v0yfGq54SCjhTvOaExvPUBGT2790kqyvcc24"/>
+<div class="absolute bottom-4 left-4 bg-tertiary text-white px-3 py-1 rounded-md text-xs font-bold font-syne">
+                            10h : 05m : 00s
+                        </div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-syne font-bold text-xl">Neural Engine v2.0</h3>
+<p class="text-on-surface-variant text-sm">Hardware Research Prototypes</p>
+</div>
+<div class="text-right">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">Starting at</span>
+<p class="font-mono font-bold text-primary">$8,500</p>
+</div>
+</div>
+<button class="w-full py-4 border border-outline-variant rounded-lg font-bold text-on-surface-variant hover:bg-on-surface hover:text-white transition-all">
+                            Set Reminder
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Newsletter / CTA -->
+<section class="max-w-screen-2xl mx-auto px-8 py-24">
+<div class="bg-primary-container rounded-[2rem] p-12 md:p-20 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-1/3 h-full bg-white/5 skew-x-12 translate-x-20"></div>
+<div class="relative z-10 max-w-2xl">
+<h2 class="text-4xl md:text-6xl font-syne font-extrabold text-on-primary-container leading-tight mb-6">
+                        NEVER MISS A <br/>AUCTION OPPORTUNITY.
+                    </h2>
+<p class="text-on-primary-container/80 text-lg mb-10">
+                        Join 25,000+ high-frequency traders receiving real-time notifications on premium assets and unique opportunities.
+                    </p>
+<div class="flex flex-col sm:flex-row gap-4">
+<input class="flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/60 rounded-xl px-6 py-4 focus:ring-2 focus:ring-white/40" placeholder="Enter your business email" type="email"/>
+<button class="bg-on-primary-container text-white px-8 py-4 rounded-xl font-bold font-syne hover:scale-105 transition-transform">
+                            Join TradeHut
+                        </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full rounded-t-3xl bg-stone-50 dark:bg-stone-900 border-t border-stone-100 dark:border-stone-800">
+<div class="max-w-screen-2xl mx-auto px-12 py-16 grid grid-cols-1 md:grid-cols-4 gap-12">
+<div class="space-y-6">
+<span class="text-xl font-bold text-stone-900 dark:text-stone-50 font-epilogue">TradeHut</span>
+<p class="text-stone-500 dark:text-stone-400 text-sm leading-relaxed font-['DM_Sans']">
+                    Architectural Precision in Commerce. Redefining high-frequency asset exchange through the kinetic gallery experience.
+                </p>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-600 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="share">share</span>
+</a>
+<a class="w-10 h-10 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-600 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="mail">mail</span>
+</a>
+</div>
+</div>
+<div>
+<h4 class="font-syne font-bold mb-6 uppercase tracking-widest text-xs">Platform</h4>
+<ul class="space-y-4 font-['DM_Sans'] text-sm">
+<li><a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">Marketplace</a></li>
+<li><a class="text-orange-600 font-bold" href="#">Auctions</a></li>
+<li><a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">RFQ Portal</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-syne font-bold mb-6 uppercase tracking-widest text-xs">Resources</h4>
+<ul class="space-y-4 font-['DM_Sans'] text-sm">
+<li><a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">Help Center</a></li>
+<li><a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">System Status</a></li>
+<li><a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">Developer API</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-syne font-bold mb-6 uppercase tracking-widest text-xs">Legal</h4>
+<ul class="space-y-4 font-['DM_Sans'] text-sm">
+<li><a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">Terms of Service</a></li>
+<li><a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">Privacy Policy</a></li>
+<li><a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">Compliance</a></li>
+</ul>
+</div>
+</div>
+<div class="max-w-screen-2xl mx-auto px-12 py-8 border-t border-stone-100 dark:border-stone-800 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-stone-500 dark:text-stone-400 text-xs font-['DM_Sans']">© 2024 TradeHut Stores. Architectural Precision in Commerce.</p>
+<div class="flex gap-6 text-xs text-stone-400">
+<span>v2.1.4 Canary</span>
+<span>All Systems Operational</span>
+</div>
+</div>
+</footer>
+</body></html>

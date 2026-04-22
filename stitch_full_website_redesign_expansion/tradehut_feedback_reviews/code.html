@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&amp;family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&amp;family=JetBrains+Mono:wght@400;500&amp;family=Epilogue:wght@400;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#002114",
+                    "primary-fixed": "#ffdbcd",
+                    "surface-container-highest": "#f8ddd3",
+                    "on-secondary": "#ffffff",
+                    "surface-dim": "#efd5cb",
+                    "tertiary-fixed-dim": "#b0c6ff",
+                    "surface-container-low": "#fff1ec",
+                    "on-primary-container": "#4e1900",
+                    "surface-variant": "#f8ddd3",
+                    "primary": "#a43d00",
+                    "on-tertiary-fixed": "#001945",
+                    "on-tertiary-container": "#002761",
+                    "on-surface-variant": "#5a4137",
+                    "inverse-surface": "#3d2d26",
+                    "surface": "#fff8f6",
+                    "secondary-fixed-dim": "#3fdfa5",
+                    "secondary": "#006c4b",
+                    "surface-container-high": "#fee3d9",
+                    "inverse-on-surface": "#ffede7",
+                    "on-error-container": "#93000a",
+                    "background": "#fff8f6",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-container": "#00714f",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-bright": "#fff8f6",
+                    "primary-fixed-dim": "#ffb597",
+                    "inverse-primary": "#ffb597",
+                    "secondary-fixed": "#63fcc0",
+                    "on-error": "#ffffff",
+                    "on-primary-fixed": "#360f00",
+                    "tertiary-container": "#558dff",
+                    "primary-container": "#f5620f",
+                    "error-container": "#ffdad6",
+                    "surface-container": "#ffe9e2",
+                    "outline": "#8e7165",
+                    "secondary-container": "#60f9bd",
+                    "on-background": "#261813",
+                    "tertiary-fixed": "#d9e2ff",
+                    "on-surface": "#261813",
+                    "surface-tint": "#a43d00",
+                    "outline-variant": "#e2bfb2",
+                    "on-secondary-fixed-variant": "#005138",
+                    "on-tertiary-fixed-variant": "#00429b",
+                    "on-primary-fixed-variant": "#7d2d00",
+                    "tertiary": "#0058ca",
+                    "error": "#ba1a1a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Epilogue"],
+                    "body": ["Plus Jakarta Sans"],
+                    "label": ["Plus Jakarta Sans"],
+                    "syne": ["Syne"],
+                    "mono": ["JetBrains Mono"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-header {
+            background: rgba(255, 248, 246, 0.7);
+            backdrop-filter: blur(24px);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 h-20 bg-[#FFF8F6]/70 dark:bg-stone-950/70 backdrop-blur-xl shadow-[0_4px_20px_0_rgba(38,24,19,0.04)]">
+<div class="flex justify-between items-center px-8 w-full max-w-[1920px] mx-auto h-full">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black font-['Syne'] text-[#261813] dark:text-white tracking-tighter">Gallery Support</span>
+<nav class="hidden md:flex gap-6">
+<a class="text-[#261813]/60 dark:text-stone-400 font-medium hover:bg-[#FFF1EC] dark:hover:bg-stone-800 transition-colors duration-300 px-3 py-1 rounded-lg" href="#">Home</a>
+<a class="text-[#261813]/60 dark:text-stone-400 font-medium hover:bg-[#FFF1EC] dark:hover:bg-stone-800 transition-colors duration-300 px-3 py-1 rounded-lg" href="#">Auctions</a>
+<a class="text-[#F5620F] font-bold border-b-2 border-[#F5620F] px-3 py-1" href="#">Support</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer p-2 hover:bg-surface-container-low rounded-full transition-all">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full"></span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer p-2 hover:bg-surface-container-low rounded-full transition-all">help_outline</span>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant/15 active:scale-[0.98] transition-transform duration-200 cursor-pointer">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="close-up portrait of a professional woman with a warm expression, soft natural lighting, minimalist studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtoXctpWTazDcGxaHz0jcd3FoP7NGX9nR5kYRWTgjRVSuVKmtpIADG8sAsI9a3JExnVwvrBokpTHmN1yQD0pDFRwXKzdIaTw5tmA9c1SLfripSt1jQhnbZAMr8i13gphbu1X3AQi0CwJtqpHxiUqAMcKFprNxJXOA8LyuA2yCm32cQlx77cv-5fwF3sYugHyVqVhQ8El7LOW2v_N44wmG-t8M6rnmkebexFMJfZ4u_-8RDdXBiztnKMW-mx2XGpRAev8fbiCQ8m-M"/>
+</div>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="h-screen w-72 fixed left-0 top-0 pt-24 bg-[#FFF1EC] dark:bg-stone-900 z-40 hidden lg:flex flex-col">
+<div class="px-8 mb-8">
+<h2 class="font-['Syne'] text-lg font-bold text-[#F5620F]">Control Center</h2>
+<p class="text-xs text-on-surface-variant/70 uppercase tracking-widest font-bold mt-1">Manage your account</p>
+</div>
+<nav class="flex flex-col gap-1 pr-4">
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">assignment_return</span>
+<span class="font-['DM_Sans'] text-sm">Returns/Refunds</span>
+</a>
+<a class="bg-white dark:bg-stone-800 text-[#F5620F] font-bold rounded-r-xl shadow-[4px_0_12px_rgba(245,98,15,0.1)] px-6 py-3 flex items-center gap-4" href="#">
+<span class="material-symbols-outlined">rate_review</span>
+<span class="font-['DM_Sans'] text-sm">Feedback</span>
+</a>
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">group_add</span>
+<span class="font-['DM_Sans'] text-sm">Invite Friends</span>
+</a>
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">flag</span>
+<span class="font-['DM_Sans'] text-sm">Manage Reports</span>
+</a>
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">lightbulb</span>
+<span class="font-['DM_Sans'] text-sm">Suggestions</span>
+</a>
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">help_center</span>
+<span class="font-['DM_Sans'] text-sm">DS Center</span>
+</a>
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-['DM_Sans'] text-sm">Penalties Info</span>
+</a>
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">warning</span>
+<span class="font-['DM_Sans'] text-sm">Safety Alerts</span>
+</a>
+</nav>
+<div class="mt-auto p-6">
+<button class="w-full bg-primary-container text-white py-3 rounded-xl font-bold text-sm shadow-card hover:shadow-card-hover transition-all">
+                Upgrade Plan
+            </button>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="lg:ml-72 pt-28 px-6 pb-20 max-w-7xl mx-auto">
+<!-- Header Section & Hero Stat -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+<div class="lg:col-span-2">
+<h1 class="font-syne text-4xl font-extrabold tracking-tight text-on-surface mb-2">Reputation <span class="text-primary-container">Insights</span></h1>
+<p class="text-on-surface-variant text-lg max-w-xl">Monitor your community standing, manage pending reviews, and analyze your feedback trends across the ecosystem.</p>
+<div class="flex gap-4 mt-8">
+<button class="bg-primary text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-card">
+<span class="material-symbols-outlined text-sm">edit_note</span>
+                        Pending Reviews (4)
+                    </button>
+<button class="bg-surface-container-lowest text-on-surface px-6 py-3 rounded-xl font-bold border border-outline-variant/15 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">history</span>
+                        Archived Feedback
+                    </button>
+</div>
+</div>
+<!-- Stats Bento Card -->
+<div class="bg-surface-container-low rounded-3xl p-8 relative overflow-hidden group">
+<div class="absolute -right-12 -top-12 w-48 h-48 bg-primary-fixed-dim/20 rounded-full blur-3xl group-hover:bg-primary-container/10 transition-colors"></div>
+<div class="relative z-10">
+<p class="text-xs font-bold uppercase tracking-widest text-primary mb-4">Overall Score</p>
+<div class="flex items-baseline gap-2">
+<span class="font-mono text-6xl font-bold text-on-surface">4.92</span>
+<span class="text-on-surface-variant font-medium">/ 5.0</span>
+</div>
+<div class="flex gap-1 mt-4">
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 0.5;">star_half</span>
+</div>
+<p class="text-sm text-on-surface-variant mt-6 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                        Top 2% of community members
+                    </p>
+</div>
+</div>
+</section>
+<!-- Dynamic Bento Grid for Reviews -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Pending Reviews (Wide) -->
+<div class="md:col-span-8 bg-surface-container-lowest rounded-3xl p-8 shadow-card border border-outline-variant/10">
+<div class="flex justify-between items-center mb-8">
+<h3 class="font-syne text-2xl font-bold">Awaiting Your Word</h3>
+<span class="bg-primary-container/10 text-primary-container px-3 py-1 rounded-full text-xs font-bold">Action Required</span>
+</div>
+<div class="space-y-6">
+<!-- Pending Item 1 -->
+<div class="group flex flex-col sm:flex-row gap-6 p-4 rounded-2xl hover:bg-surface-container-low transition-all border border-transparent hover:border-outline-variant/20">
+<div class="w-full sm:w-32 h-32 rounded-xl overflow-hidden bg-surface-container shrink-0">
+<img alt="Abstract painting" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="vibrant abstract oil painting with bold brushstrokes of orange, teal and gold on canvas, studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVQ8oanLxr1inZhh7B3PM1rUHjtpl61AEXgAcB3NBaqSsFc3pA5zLF7azfsubFDtENYXsPN8kIayyvQ7s35t1P0uN9UNNrv-XKaU7gy8yunJBvxFt-ET4yrdOeunpsQaGOXdwtvtK4n0Qqc6eGa2LYYeM17-KKDy4aO-WQysFUzYUu_4S-UPNAixOpIHHxboYCPmHUh67qyzVr3qz92by2lZbHSP1vFn8V-Vv6TGtPFdPEwGuRQY49di1PviADEYOLDF0-U4DptJA"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="font-bold text-lg">Ethereal Fragments #04</h4>
+<p class="text-sm text-on-surface-variant">Purchased from <span class="text-primary font-medium">Studio Nova</span></p>
+</div>
+<span class="font-mono text-sm bg-surface-container px-2 py-1 rounded">2d ago</span>
+</div>
+<div class="flex gap-2 mb-4">
+<button class="p-1 text-on-surface-variant hover:text-primary-container"><span class="material-symbols-outlined">star</span></button>
+<button class="p-1 text-on-surface-variant hover:text-primary-container"><span class="material-symbols-outlined">star</span></button>
+<button class="p-1 text-on-surface-variant hover:text-primary-container"><span class="material-symbols-outlined">star</span></button>
+<button class="p-1 text-on-surface-variant hover:text-primary-container"><span class="material-symbols-outlined">star</span></button>
+<button class="p-1 text-on-surface-variant hover:text-primary-container"><span class="material-symbols-outlined">star</span></button>
+</div>
+<button class="text-sm font-bold text-primary flex items-center gap-1 group/btn">
+                                Write Review 
+                                <span class="material-symbols-outlined text-sm group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Pending Item 2 -->
+<div class="group flex flex-col sm:flex-row gap-6 p-4 rounded-2xl hover:bg-surface-container-low transition-all border border-transparent hover:border-outline-variant/20">
+<div class="w-full sm:w-32 h-32 rounded-xl overflow-hidden bg-surface-container shrink-0">
+<img alt="Vintage camera" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="vintage leather-bound book and classic film camera on a rustic wooden table, moody indoor lighting, shallow depth of field" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUCBrzNu8uVFn0QKJgvMsHGDg3SZiGZKzw0aKfuhexaCwAZr71-U6wp8NsyFJvso64VifloQd4NzlAoRyLq38ulYl-x48m9J9BJ8iQmf08TY5xZpUiSVWJQLP6uozFlwylu9M7BPUktUJ_NnKEnlJNnsNp0QNYTHbJsJDOnYnB55KkPgckyETemR85uMPhPkymiaKNuydKZ_eNpE8i7YwE8bIT2gelNYOd1MnoNb7vP97IEWz1_vnVe6RKZEg78evNtSCnMdRyb2U"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="font-bold text-lg">Leica M3 Replica (Pristine)</h4>
+<p class="text-sm text-on-surface-variant">Purchased from <span class="text-primary font-medium">Vintage Vault</span></p>
+</div>
+<span class="font-mono text-sm bg-surface-container px-2 py-1 rounded">5d ago</span>
+</div>
+<div class="flex gap-2 mb-4">
+<span class="material-symbols-outlined text-on-surface-variant">star</span>
+<span class="material-symbols-outlined text-on-surface-variant">star</span>
+<span class="material-symbols-outlined text-on-surface-variant">star</span>
+<span class="material-symbols-outlined text-on-surface-variant">star</span>
+<span class="material-symbols-outlined text-on-surface-variant">star</span>
+</div>
+<button class="text-sm font-bold text-primary flex items-center gap-1 group/btn">
+                                Write Review 
+                                <span class="material-symbols-outlined text-sm group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Stats Breakout (Narrow) -->
+<div class="md:col-span-4 flex flex-col gap-6">
+<!-- Trust Score Card -->
+<div class="bg-[#261813] text-white rounded-3xl p-8 shadow-card flex-1">
+<h3 class="font-syne text-xl font-bold mb-6">Trust Metrics</h3>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">
+<span>Buyer Honesty</span>
+<span class="font-mono">98%</span>
+</div>
+<div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[98%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">
+<span>Prompt Payments</span>
+<span class="font-mono">100%</span>
+</div>
+<div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-full"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">
+<span>Review Quality</span>
+<span class="font-mono">84%</span>
+</div>
+<div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-[84%]"></div>
+</div>
+</div>
+</div>
+<div class="mt-8 p-4 bg-white/5 rounded-2xl border border-white/10">
+<p class="text-xs leading-relaxed text-stone-300 italic">"Consistently provides constructive, high-detail feedback that helps sellers improve."</p>
+<p class="text-[10px] font-bold text-secondary mt-2">— Community Badge: Master Reviewer</p>
+</div>
+</div>
+<!-- Ad/CTA card -->
+<div class="bg-primary-container rounded-3xl p-8 text-white relative overflow-hidden">
+<div class="absolute bottom-0 right-0 opacity-20">
+<span class="material-symbols-outlined text-8xl translate-y-1/4 translate-x-1/4">verified_user</span>
+</div>
+<h4 class="font-syne text-xl font-bold mb-2">Verified Status</h4>
+<p class="text-white/80 text-sm mb-4">Complete 5 more reviews to earn your verified badge and unlock 2% fee reduction.</p>
+<button class="bg-white text-primary px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider">Learn More</button>
+</div>
+</div>
+<!-- Recent Feedback Given (Wide) -->
+<div class="md:col-span-12 bg-surface-container-low rounded-3xl p-10">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
+<div>
+<h3 class="font-syne text-2xl font-bold">Feedback History</h3>
+<p class="text-on-surface-variant">Detailed breakdown of the reviews you've shared.</p>
+</div>
+<div class="flex bg-white rounded-xl p-1 shadow-sm border border-outline-variant/10">
+<button class="px-6 py-2 bg-primary-container text-white rounded-lg font-bold text-sm">All</button>
+<button class="px-6 py-2 text-on-surface-variant font-medium text-sm hover:text-primary">Sellers</button>
+<button class="px-6 py-2 text-on-surface-variant font-medium text-sm hover:text-primary">Items</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Feedback Card 1 -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl shadow-card hover:shadow-card-hover transition-all">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 rounded-full bg-primary-fixed overflow-hidden">
+<img alt="Seller" class="w-full h-full object-cover" data-alt="professional artist portrait in studio setting with canvases in background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGVluhfhbnTN7BMUpCFXZtlp2_Y0v2simlDkeFBVpGsgOBE8Uql6N6bXx1WKLmAYBCXTXwzoZ9B6wAlW4NWIayYrkOvex9clNO94hyEYUwLDwSofSNgyl1n4hRmVOnXyRWiyylBaAfajp_yY4vGAllp0MKb3wGBgLz078YYLbCvJYyFHcclCtF3gHQAwY0u0qPQM4S4bDNldCaZGXVVxfmeDyC82tTDCo17iNi-XOL1O0S8cSY11i3WUj54bYFGS0GDF3UAPCjHgw"/>
+</div>
+<div>
+<h5 class="font-bold text-sm">Gallery.Eth</h5>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-tighter">Transaction: #A8821</p>
+</div>
+<div class="ml-auto flex">
+<span class="material-symbols-outlined text-primary-container text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-mono text-xs font-bold ml-1">5.0</span>
+</div>
+</div>
+<p class="text-sm text-on-surface mb-4 leading-relaxed line-clamp-3">Excellent shipping speed and the packaging was museum-grade. The piece looks even better in person than the high-res scans suggested.</p>
+<div class="flex items-center gap-2 pt-4 border-t border-outline-variant/10">
+<span class="text-[10px] font-bold text-on-surface-variant/60 uppercase">October 12, 2023</span>
+<span class="ml-auto material-symbols-outlined text-on-surface-variant text-sm cursor-pointer hover:text-primary">more_horiz</span>
+</div>
+</div>
+<!-- Feedback Card 2 -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl shadow-card hover:shadow-card-hover transition-all">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 rounded-full bg-primary-fixed overflow-hidden">
+<img alt="Seller" class="w-full h-full object-cover" data-alt="middle aged antique dealer in a shop full of clocks and curiosities" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKk6mPs59bVmR078pVhPGXNKmvk0LDD2PHvMezGles7XzNPncBGgKbZ5oxMg8jHgdFN_gyOzoJfOKxa_wM9eRkwEGvfoEGTHhp3RDojFvUK2oHss-LTaLAKyShrzgE24VuwsJ5xZ71Evb4sqaNJ1B8b02lvBwSh04rJVhve8XbrjDn6DFtO1aLCzU0wcicfz7gwEjxkOBXIlChme4gyPdOO9purYV-oY06RC7pQJMq_jN7GMPcowO56WdqzMZNi_zrDnpA0aDkQss"/>
+</div>
+<div>
+<h5 class="font-bold text-sm">Timeless Curations</h5>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-tighter">Transaction: #B1092</p>
+</div>
+<div class="ml-auto flex">
+<span class="material-symbols-outlined text-primary-container text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-mono text-xs font-bold ml-1">4.5</span>
+</div>
+</div>
+<p class="text-sm text-on-surface mb-4 leading-relaxed line-clamp-3">Very honest description about the minor patina. Great communication throughout the customs process. Recommended seller.</p>
+<div class="flex items-center gap-2 pt-4 border-t border-outline-variant/10">
+<span class="text-[10px] font-bold text-on-surface-variant/60 uppercase">September 28, 2023</span>
+<span class="ml-auto material-symbols-outlined text-on-surface-variant text-sm cursor-pointer hover:text-primary">more_horiz</span>
+</div>
+</div>
+<!-- Feedback Card 3 -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl shadow-card hover:shadow-card-hover transition-all border-l-4 border-primary">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 rounded-full bg-primary-fixed overflow-hidden">
+<img alt="Seller" class="w-full h-full object-cover" data-alt="young designer with trendy glasses in a bright modern office" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1KeLcYnHmPotGTwlENdAgEhyaUoudrQOiyVKgg0xqiF-cGbTUg0m_-zOb-n_Rrh3lwhBYtIxTplBYWGBx-88NOJLevE93hlNiCj9u0Sw8J3YHdSJLenVJX8XW83tBMTIMwpwSvkdk7R0_-uqAW9-IS6QrTY4ozRr5EMb6cUmodw2Y0ScvNi2iagwPmN-Qw3g8sFWfN1v_XKMOhyEJcS5r7xNd6IioPMFoZp88yy1uyns4yno9CMOypgHWv5Zui0-qaV5zh6kewgU"/>
+</div>
+<div>
+<h5 class="font-bold text-sm">Pixel &amp; Print</h5>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-tighter">Transaction: #X7761</p>
+</div>
+<div class="ml-auto flex">
+<span class="material-symbols-outlined text-primary-container text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-mono text-xs font-bold ml-1">5.0</span>
+</div>
+</div>
+<p class="text-sm text-on-surface mb-4 leading-relaxed line-clamp-3">The limited edition print arrived with a personalized note. High attention to detail. Will definitely bid on their future lots.</p>
+<div class="flex items-center gap-2 pt-4 border-t border-outline-variant/10">
+<span class="text-[10px] font-bold text-on-surface-variant/60 uppercase">August 15, 2023</span>
+<span class="ml-auto material-symbols-outlined text-on-surface-variant text-sm cursor-pointer hover:text-primary">more_horiz</span>
+</div>
+</div>
+</div>
+<div class="mt-8 flex justify-center">
+<button class="bg-surface-container-high text-on-surface-variant px-8 py-3 rounded-xl font-bold hover:bg-surface-container-highest transition-colors">
+                        View All History
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Space -->
+<footer class="lg:ml-72 p-8 border-t border-outline-variant/10 text-center">
+<p class="text-xs text-on-surface-variant font-medium">© 2023 Gallery Support Ecosystem. All feedback is verified via blockchain protocol.</p>
+</footer>
+<!-- Mobile Nav Shell -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-surface-container-lowest shadow-[0_-4px_16px_rgba(38,24,19,0.06)] px-6 py-4 flex justify-between items-center z-50">
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-bold">Home</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">explore</span>
+<span class="text-[10px] font-bold">Explore</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">rate_review</span>
+<span class="text-[10px] font-bold">Feedback</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-bold">Profile</span>
+</button>
+</nav>
+</body></html>

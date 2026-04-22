@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;700;800;900&amp;family=DM+Sans:wght@400;500;700&amp;family=JetBrains+Mono:wght@400;700&amp;family=Syne:wght@400;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#3fdfa5",
+                        "secondary": "#006c4b",
+                        "on-surface-variant": "#5a4137",
+                        "inverse-surface": "#3d2d26",
+                        "surface": "#fff8f6",
+                        "on-tertiary-fixed": "#001945",
+                        "on-tertiary-container": "#002761",
+                        "on-primary-container": "#4e1900",
+                        "surface-container-low": "#fff1ec",
+                        "tertiary-fixed-dim": "#b0c6ff",
+                        "surface-dim": "#efd5cb",
+                        "surface-variant": "#f8ddd3",
+                        "primary": "#a43d00",
+                        "surface-container-highest": "#f8ddd3",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed": "#ffdbcd",
+                        "on-secondary-fixed": "#002114",
+                        "tertiary": "#0058ca",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#00429b",
+                        "on-primary-fixed-variant": "#7d2d00",
+                        "tertiary-fixed": "#d9e2ff",
+                        "surface-tint": "#a43d00",
+                        "on-secondary-fixed-variant": "#005138",
+                        "outline-variant": "#e2bfb2",
+                        "on-surface": "#261813",
+                        "secondary-container": "#60f9bd",
+                        "outline": "#8e7165",
+                        "on-background": "#261813",
+                        "primary-container": "#f5620f",
+                        "tertiary-container": "#558dff",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#ffe9e2",
+                        "on-primary-fixed": "#360f00",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#63fcc0",
+                        "on-secondary-container": "#00714f",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "background": "#fff8f6",
+                        "inverse-primary": "#ffb597",
+                        "surface-bright": "#fff8f6",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#ffb597",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#fee3d9",
+                        "inverse-on-surface": "#ffede7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Syne", "Epilogue", "sans-serif"],
+                        "body": ["DM Sans", "Plus Jakarta Sans", "sans-serif"],
+                        "label": ["Plus Jakarta Sans", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    },
+                    "boxShadow": {
+                        "card": "0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02)",
+                        "card-hover": "0 12px 32px 0 rgba(38, 24, 19, 0.08)"
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .ghost-border {
+            outline: 1px solid rgba(226, 191, 178, 0.3);
+        }
+        .active-tab-glow {
+            box-shadow: 0 0 15px rgba(245, 98, 15, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-fixed selection:text-on-primary-fixed">
+<header class="sticky top-0 w-full z-50 bg-[#FFF8F6]/70 dark:bg-stone-950/70 backdrop-blur-xl transition-all duration-300">
+<div class="max-w-screen-2xl mx-auto flex flex-col md:flex-row items-center justify-between px-8 py-4">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black tracking-tighter text-stone-900 dark:text-stone-50 font-headline">TradeHut</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-orange-600 dark:text-orange-500 border-b-2 border-orange-600 pb-1 font-['Epilogue'] font-medium tracking-tight" href="#">Buy</a>
+<a class="text-stone-600 dark:text-stone-400 font-medium font-['Epilogue'] hover:text-orange-600 dark:hover:text-orange-400 transition-colors duration-300" href="#">Bid</a>
+<a class="text-stone-600 dark:text-stone-400 font-medium font-['Epilogue'] hover:text-orange-600 dark:hover:text-orange-400 transition-colors duration-300" href="#">Request</a>
+<a class="text-stone-600 dark:text-stone-400 font-medium font-['Epilogue'] hover:text-orange-600 dark:hover:text-orange-400 transition-colors duration-300" href="#">Categories</a>
+<a class="text-stone-600 dark:text-stone-400 font-medium font-['Epilogue'] hover:text-orange-600 dark:hover:text-orange-400 transition-colors duration-300" href="#">Featured</a>
+</nav>
+</div>
+<div class="flex items-center gap-4 mt-4 md:mt-0">
+<div class="relative flex items-center bg-surface-container-low px-4 py-2 rounded-lg ghost-border">
+<span class="material-symbols-outlined text-outline text-sm">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm font-medium w-48 lg:w-64" placeholder="Search for assets..." type="text"/>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container transition-colors rounded-lg">
+<span class="material-symbols-outlined">public</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container transition-colors rounded-lg">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+<div class="h-6 w-[1px] bg-outline-variant mx-2"></div>
+<button class="flex items-center gap-2 px-4 py-2 font-medium text-stone-600 hover:text-orange-600 transition-colors">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span>Cart</span>
+</button>
+<button class="px-6 py-2 bg-primary-container text-on-primary-container font-bold rounded-md active:scale-95 transition-all shadow-md">
+                        Account
+                    </button>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-screen-2xl mx-auto px-8 py-8">
+<nav class="flex items-center gap-2 mb-8 text-xs font-medium text-on-surface-variant uppercase tracking-widest">
+<a class="hover:text-primary transition-colors" href="#">Marketplace</a>
+<span class="material-symbols-outlined text-[10px]">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Electronics</a>
+<span class="material-symbols-outlined text-[10px]">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Smartphones</a>
+<span class="material-symbols-outlined text-[10px]">chevron_right</span>
+<span class="text-on-surface">Xiaomi Redmi 15C</span>
+</nav>
+<div class="grid grid-cols-1 lg:grid-cols-10 gap-12">
+<div class="lg:col-span-6 space-y-6">
+<div class="relative aspect-square overflow-hidden rounded-xl bg-surface-container-lowest shadow-card group">
+<img alt="Xiaomi Redmi 15C Main View" class="w-full h-full object-contain p-12 transition-transform duration-700 group-hover:scale-105" data-alt="Modern smartphone with sleek design and large display centered on a clean minimalist light gray studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAidGITItxF6HwKb6EwxxXwBPj32lUfm00PMGsZCdig5ljoxIbF8VYNExsLVFsPPlOEDCVMD-AU2G0SB7Xdn0YEkTcdt5c950aYtdd9roeFvPfjGysp8uXp-WAzDHlOZPbieyfg-PrbOSm5EOGud43iOMHPw_07nvIQorSkxCUncKkuzqhaQVxpbdLJ-oKCE7RLwiY4QYlLObXhnRqmU7ellfHX0mnUnS-RN1GAXPGrikx28-iCBxfoltS3wKcA5AYQKKmPYaO0Cj4"/>
+<button class="absolute top-6 right-6 p-3 bg-surface/80 backdrop-blur-md rounded-full shadow-sm hover:text-primary transition-colors">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+</div>
+<div class="grid grid-cols-5 gap-4">
+<button class="aspect-square rounded-lg overflow-hidden bg-surface-container-low ghost-border p-2 hover:bg-surface-container transition-all ring-2 ring-primary ring-offset-2">
+<img class="w-full h-full object-contain" data-alt="front view of smartphone showing screen" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxisVFGMpEjv4i1rxxEDURvBsKKudyQiE-D2EeLiMiBG2f_8SPRmoR02DPty7v3XfuPHr8yiNc4sNHEYs2tE1xfoOvx770NZPiM9tXkT8iUjqyq1wFO39b8lkmSeCG16B_WBX1dgB_s2WcAbE0JQnQY39T9hVapvMxgo470Q8BYIW9LNwm54JGBLVH57AnToM4W9Q4nhpql_v3pThz3F6xP0yOUEwRmzFK8V1fZPz0YvvnDgm9_a4dAWqGTJ2JwxzjI_jp4ijh-68"/>
+</button>
+<button class="aspect-square rounded-lg overflow-hidden bg-surface-container-low ghost-border p-2 hover:bg-surface-container transition-all">
+<img class="w-full h-full object-contain" data-alt="back view of smartphone showing camera module" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7hyN4eitA78lslNwoZQ0veKdE10LevRXcOhQ43bz2D3DRcuiGiACs9kA2bKx9pxo1S96wEmnxpHBiCMf8mjgBZT_IPZrI7IhemOuEfEeEo8HuUOcwQkitFGODhfDp5fpXNmSBESItmyDTGaLfT25F8VtNnF1bvYW3ZEG9ayTUKNtLgdY_gVl5wNWg9P0aKnSC1VrBl3Koxz5DuQEi42C2KxXvzlpZfk1QGAlIrdIjD_ku9y6iOMET2s6BjID6y-93dcjap0upPm4"/>
+</button>
+<button class="aspect-square rounded-lg overflow-hidden bg-surface-container-low ghost-border p-2 hover:bg-surface-container transition-all">
+<img class="w-full h-full object-contain" data-alt="side profile of thin smartphone" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYXmLbNATQS6PYY2KVKkAHt2NZQllmW5OMVxDFB_hkgph5vSNuF4jH8CXi3nG3ey5MH0VGWD16gFUK0pkAqDT1-yLKLz2uIImfHkANNE73NTD8LdBuH41uImup73GBb7t9pSrda645Hn7WL-K0bdh63uv10A1N6NDUTMk_2ReQT1I4PTsdcMr3NA_tb6hi2AVxke6n19tgc9lpNJbnUcQz0BOec6-moYQxiwKj-oK1FFGax-lsWBdo5y6cE2pjoQzHj5sCcmwXRk4"/>
+</button>
+<button class="aspect-square rounded-lg overflow-hidden bg-surface-container-low ghost-border p-2 hover:bg-surface-container transition-all">
+<img class="w-full h-full object-contain" data-alt="close up of smartphone buttons and ports" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTMoT9u1VLXPiRkD7FGriBYWX7nzuJIMH-p8QS-0JvIX_0n501XzXIxmJ6auO0gUcV6obJ4SXN7Upg_Xz5fNYO3Fr5PK_ndGcxN8U9GYttj3VFegLQiXGEM2QcC5Zir6gVtHwoFSFc7rU8sZ5NOzAMe3Q0ccEEKyHDpQgwkIxb7VkyA7aDRXNrvWf8jO6K8SJqfBm8_QMknUQ3heHxNix-b45Zo2ECwjF8L3gskXscZcPbiYgdq4goUQITHq9zj0RyUtuhzvkpAiA"/>
+</button>
+<div class="relative aspect-square rounded-lg overflow-hidden bg-surface-container-low ghost-border p-2 group cursor-pointer">
+<img class="w-full h-full object-contain blur-[2px] opacity-40" data-alt="lifestyle shot of person holding smartphone" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5sE381shTGgeU75_NbHiZYK_pPWrpmOyXftBzShDqa13BS7WPSkTCG9RctRCBjyNrD7g7CuXPm9xwJ2xYbZ5aHZC_f8ODyPXmxhhoKuorgQ3GorTyAVGBkrWj5PgOJZey0nKH2GlAN8YpbPYj-8o0QO_BmwPwyYIcgn1RkwVAe-rw37jaO-BDcHpIAd_ujPOdr-D-VXxjHaKDLxJNX0sqrPE2-43kirvvs2I7qOdaOVIt_OoTP5RhTIcKby8VmW6cp39MiCSJ-YI"/>
+<div class="absolute inset-0 flex items-center justify-center text-on-surface font-bold">
+                            +12
+                        </div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-4 flex flex-col space-y-8">
+<section>
+<div class="flex items-center gap-2 mb-4">
+<span class="px-3 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-bold rounded-full tracking-wider uppercase">New Arrival</span>
+<div class="flex items-center gap-1 text-on-surface-variant ml-auto">
+<span class="material-symbols-outlined text-orange-400 text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-bold text-sm">4.8</span>
+<span class="text-xs opacity-60">(1,248 Reviews)</span>
+</div>
+</div>
+<h1 class="text-5xl font-headline font-extrabold tracking-tight text-on-surface mb-2">Xiaomi Redmi 15C</h1>
+<p class="text-on-surface-variant font-medium leading-relaxed">The pinnacle of mid-range performance with 120Hz AMOLED and 108MP Studio Camera.</p>
+</section>
+<section class="bg-surface-container-low p-6 rounded-xl space-y-4">
+<div class="flex items-end gap-3">
+<span class="text-4xl font-mono font-bold text-primary tracking-tighter">$249.00</span>
+<span class="text-xl font-mono text-on-surface-variant line-through mb-1 opacity-50">$299.00</span>
+<span class="ml-auto text-bid-green font-bold text-sm bg-secondary-container px-2 py-1 rounded">Save 17%</span>
+</div>
+<div class="flex items-center gap-2 text-xs text-on-surface-variant font-medium">
+<span class="material-symbols-outlined text-sm">info</span>
+<span>Estimated financing available at $21/mo</span>
+</div>
+</section>
+<section class="space-y-6">
+<div>
+<h3 class="text-xs font-bold uppercase tracking-widest mb-4">Select Color</h3>
+<div class="flex gap-4">
+<button class="w-12 h-12 rounded-full bg-[#1A1A1A] ring-2 ring-primary ring-offset-4 active-tab-glow"></button>
+<button class="w-12 h-12 rounded-full bg-[#C0C0C0] ring-1 ring-outline-variant ring-offset-2 hover:ring-primary transition-all"></button>
+<button class="w-12 h-12 rounded-full bg-[#3D5A80] ring-1 ring-outline-variant ring-offset-2 hover:ring-primary transition-all"></button>
+</div>
+</div>
+<div>
+<h3 class="text-xs font-bold uppercase tracking-widest mb-4">Storage Variant</h3>
+<div class="grid grid-cols-2 gap-3">
+<button class="flex flex-col p-4 rounded-lg bg-surface-container-lowest ghost-border ring-2 ring-primary transition-all text-left">
+<span class="font-bold">128GB / 6GB RAM</span>
+<span class="font-mono text-xs text-primary">$249.00</span>
+</button>
+<button class="flex flex-col p-4 rounded-lg bg-surface-container-lowest ghost-border hover:bg-surface-container-low transition-all text-left">
+<span class="font-bold text-on-surface-variant">256GB / 8GB RAM</span>
+<span class="font-mono text-xs text-on-surface-variant">$299.00</span>
+</button>
+</div>
+</div>
+</section>
+<div class="space-y-4">
+<div class="flex p-1 bg-surface-container rounded-xl">
+<button class="flex-1 py-3 px-2 rounded-lg bg-surface-container-lowest shadow-sm font-bold text-sm flex items-center justify-center gap-2 transition-all">
+<span class="material-symbols-outlined text-sm">bolt</span> Buy Now
+                        </button>
+<button class="flex-1 py-3 px-2 rounded-lg font-bold text-sm flex items-center justify-center gap-2 text-on-surface-variant hover:text-on-surface transition-all">
+<span class="material-symbols-outlined text-sm">gavel</span> Place Bid
+                        </button>
+<button class="flex-1 py-3 px-2 rounded-lg font-bold text-sm flex items-center justify-center gap-2 text-on-surface-variant hover:text-on-surface transition-all">
+<span class="material-symbols-outlined text-sm">local_offer</span> Offer
+                        </button>
+</div>
+<div class="grid grid-cols-1 gap-3">
+<button class="w-full py-4 bg-gradient-to-r from-primary to-primary-container text-on-primary font-bold rounded-lg shadow-xl hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+<span class="material-symbols-outlined">shopping_cart_checkout</span>
+                            Add to Cart
+                        </button>
+<button class="w-full py-4 bg-[#00C48C] text-white font-bold rounded-lg shadow-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+<span class="material-symbols-outlined">payments</span>
+                            Direct Checkout
+                        </button>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-xl p-6 space-y-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="professional portrait of an electronics seller" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtgj56456hrdXJbMkkA8p4gnIZRLQbdcX0bfZk_atZBhIcyg0oWhVmphiONYNAO31nw6X4BgzQNbYPfJkrHppH0ds3sja0mlUnm8sVpaCzbD0rDYdiR08fyE7CVawtfxYtVYeFO1A4av4hwy-eFd8r_fer-u0lMehWLslknmt2hGEc07GaeABhf9YxBMQL83hiaqsjvKQJJu4FeCTAjdx3gOul9g2XjA_xOJvFQECdqG1a-W1aeg6kvm1xuOfbU1yDLgb1in0r6kQ"/>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h4 class="font-bold">Xiaomi Official Store</h4>
+<span class="material-symbols-outlined text-blue-500 text-sm" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<p class="text-xs text-on-surface-variant">99.2% Positive Feedback • 150k+ Orders</p>
+</div>
+</div>
+<div class="h-[1px] bg-outline-variant/30"></div>
+<div class="space-y-3">
+<div class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-on-surface-variant">local_shipping</span>
+<div class="flex-1">
+<span class="font-medium">Free Express Delivery</span>
+<p class="text-xs text-on-surface-variant">Get it by Thu, Oct 24th</p>
+</div>
+</div>
+<div class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-on-surface-variant">security</span>
+<div class="flex-1">
+<span class="font-medium">TradeHut Assurance</span>
+<p class="text-xs text-on-surface-variant">Money-back guarantee &amp; 1yr Warranty</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<section class="mt-24">
+<div class="flex gap-12 border-b border-outline-variant/30 mb-12">
+<button class="pb-6 border-b-2 border-primary text-on-surface font-bold text-lg">Description</button>
+<button class="pb-6 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface transition-all font-bold text-lg">Specifications</button>
+<button class="pb-6 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface transition-all font-bold text-lg">Reviews (1,248)</button>
+<button class="pb-6 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface transition-all font-bold text-lg">Shipping &amp; Returns</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-16">
+<div class="space-y-6">
+<h2 class="text-3xl font-headline font-bold text-on-surface">Redefining Mid-Range Performance</h2>
+<p class="text-on-surface-variant leading-relaxed">
+                        The Xiaomi Redmi 15C represents a tectonic shift in value-to-performance architecture. Built around the revolutionary Snapdragon 7-series chipset, it delivers flagship-level fluidity without the flagship price tag.
+                    </p>
+<div class="bg-surface-container-low p-8 rounded-2xl space-y-4">
+<h4 class="font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">visibility</span>
+                            Crystal Clear AMOLED
+                        </h4>
+<p class="text-sm text-on-surface-variant">The 6.67-inch Pro-Grade AMOLED display features a 120Hz adaptive refresh rate and 1200 nits peak brightness, ensuring perfect visibility even in direct midday sun.</p>
+</div>
+<div class="bg-surface-container-low p-8 rounded-2xl space-y-4">
+<h4 class="font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">photo_camera</span>
+                            108MP Studio Grade Matrix
+                        </h4>
+<p class="text-sm text-on-surface-variant">Capture professional-level details with the triple-lens setup. AI-enhanced low-light processing ensures every shot is a masterpiece, day or night.</p>
+</div>
+</div>
+<div class="relative h-full min-h-[400px] rounded-3xl overflow-hidden shadow-card">
+<img class="w-full h-full object-cover" data-alt="abstract close up of high tech camera lenses and glass components with blue and orange light reflections" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCH4KU4aMGqdZ8ticfXw3Be17PQhg-tuHX-7C3vH9zWCd_Ya-2p2RmMAlCucpwm_SrLUxQEZpgPOGzi0EnLKEP9cPNLmcOdLdkslihuFaL2m6oSirV9JwZYjn5supfAitUVkggrn8545zBgzL9CCKq2_-_FHkYa0hpzVwzMFwrl8WWh-QxtpcdJgeOUVdiO0T9q44RImAvHvJ9vpAGGi7JcdYy0XyqNwHBP8fQfjOR6tg-CLac9X-ePNLhFOUTizqPc-7cw3UhbN0"/>
+<div class="absolute inset-0 bg-gradient-to-t from-on-surface/80 to-transparent flex items-end p-12">
+<div class="text-surface space-y-2">
+<p class="font-mono text-sm uppercase tracking-widest text-primary-container">Next Gen Optics</p>
+<h3 class="text-3xl font-headline font-bold">Lenses Built for the Future</h3>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="w-full rounded-t-3xl bg-stone-50 dark:bg-stone-900 mt-24">
+<div class="max-w-screen-2xl mx-auto px-12 py-16 grid grid-cols-1 md:grid-cols-4 gap-12 font-['DM_Sans'] text-sm">
+<div class="space-y-6">
+<span class="text-xl font-bold text-stone-900 dark:text-stone-50">TradeHut</span>
+<p class="text-stone-500 dark:text-stone-400 leading-relaxed">
+                    Architectural precision in commerce. Global marketplace for tech-forward professionals and enthusiasts.
+                </p>
+<div class="flex gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:text-orange-600 transition-colors">
+<span class="material-symbols-outlined">share</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:text-orange-600 transition-colors">
+<span class="material-symbols-outlined">public</span>
+</button>
+</div>
+</div>
+<div class="space-y-4">
+<h4 class="font-bold text-stone-900 dark:text-stone-100">Shop</h4>
+<nav class="flex flex-col gap-2">
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">Marketplace</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">Auctions</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">RFQ Portal</a>
+</nav>
+</div>
+<div class="space-y-4">
+<h4 class="font-bold text-stone-900 dark:text-stone-100">Support</h4>
+<nav class="flex flex-col gap-2">
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">Help Center</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">Terms of Service</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">Privacy Policy</a>
+</nav>
+</div>
+<div class="space-y-6">
+<h4 class="font-bold text-stone-900 dark:text-stone-100">Newsletter</h4>
+<div class="flex flex-col gap-3">
+<div class="flex items-center bg-stone-100 dark:bg-stone-800 rounded-lg px-4 py-2">
+<input class="bg-transparent border-none focus:ring-0 text-sm flex-1" placeholder="Your email address" type="email"/>
+<button class="text-orange-600 font-bold">Join</button>
+</div>
+<p class="text-xs text-stone-400">Updates on drops and exclusive auctions.</p>
+</div>
+</div>
+</div>
+<div class="max-w-screen-2xl mx-auto px-12 py-8 border-t border-stone-200 dark:border-stone-800 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-stone-500 dark:text-stone-400 text-xs">© 2024 TradeHut Stores. Architectural Precision in Commerce.</p>
+<div class="flex gap-6">
+<span class="material-symbols-outlined text-stone-400">payments</span>
+<span class="material-symbols-outlined text-stone-400">credit_card</span>
+<span class="material-symbols-outlined text-stone-400">account_balance_wallet</span>
+</div>
+</div>
+</footer>
+</body></html>

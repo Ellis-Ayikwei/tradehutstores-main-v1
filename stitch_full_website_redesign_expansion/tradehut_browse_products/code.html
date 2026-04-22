@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;700;900&amp;family=DM+Sans:wght@400;500;700&amp;family=JetBrains+Mono:wght@400;700&amp;family=Syne:wght@400;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed-dim": "#3fdfa5",
+                    "secondary": "#006c4b",
+                    "on-surface-variant": "#5a4137",
+                    "inverse-surface": "#3d2d26",
+                    "surface": "#fff8f6",
+                    "on-tertiary-fixed": "#001945",
+                    "on-tertiary-container": "#002761",
+                    "on-primary-container": "#4e1900",
+                    "surface-container-low": "#fff1ec",
+                    "tertiary-fixed-dim": "#b0c6ff",
+                    "surface-dim": "#efd5cb",
+                    "surface-variant": "#f8ddd3",
+                    "primary": "#a43d00",
+                    "surface-container-highest": "#f8ddd3",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed": "#ffdbcd",
+                    "on-secondary-fixed": "#002114",
+                    "tertiary": "#0058ca",
+                    "error": "#ba1a1a",
+                    "on-tertiary-fixed-variant": "#00429b",
+                    "on-primary-fixed-variant": "#7d2d00",
+                    "tertiary-fixed": "#d9e2ff",
+                    "surface-tint": "#a43d00",
+                    "on-secondary-fixed-variant": "#005138",
+                    "outline-variant": "#e2bfb2",
+                    "on-surface": "#261813",
+                    "secondary-container": "#60f9bd",
+                    "outline": "#8e7165",
+                    "on-background": "#261813",
+                    "primary-container": "#f5620f",
+                    "tertiary-container": "#558dff",
+                    "error-container": "#ffdad6",
+                    "surface-container": "#ffe9e2",
+                    "on-primary-fixed": "#360f00",
+                    "on-error": "#ffffff",
+                    "secondary-fixed": "#63fcc0",
+                    "on-secondary-container": "#00714f",
+                    "on-tertiary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "background": "#fff8f6",
+                    "inverse-primary": "#ffb597",
+                    "surface-bright": "#fff8f6",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed-dim": "#ffb597",
+                    "on-primary": "#ffffff",
+                    "surface-container-high": "#fee3d9",
+                    "inverse-on-surface": "#ffede7"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Epilogue", "Syne"],
+                    "body": ["Plus Jakarta Sans", "DM Sans"],
+                    "label": ["Plus Jakarta Sans", "DM Sans"],
+                    "mono": ["JetBrains Mono"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .shadow-card {
+            box-shadow: 0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02);
+        }
+        .shadow-card:hover {
+            box-shadow: 0 12px 32px 0 rgba(38, 24, 19, 0.08);
+        }
+        .glass-header {
+            backdrop-filter: blur(24px);
+        }
+        .ghost-border {
+            border: 1px solid rgba(226, 191, 178, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<header class="sticky top-0 w-full z-50 bg-[#FFF8F6]/70 dark:bg-stone-950/70 backdrop-blur-xl">
+<div class="max-w-screen-2xl mx-auto flex flex-col md:flex-row items-center justify-between px-8 py-4">
+<div class="flex items-center gap-8 w-full md:w-auto justify-between md:justify-start">
+<span class="text-2xl font-black tracking-tighter text-stone-900 dark:text-stone-50 font-headline">TradeHut</span>
+<nav class="hidden md:flex items-center gap-6 font-['Epilogue'] font-medium tracking-tight">
+<a class="text-stone-600 dark:text-stone-400 font-medium hover:text-orange-600 dark:hover:text-orange-400 transition-colors duration-300" href="#">Buy</a>
+<a class="text-stone-600 dark:text-stone-400 font-medium hover:text-orange-600 dark:hover:text-orange-400 transition-colors duration-300" href="#">Bid</a>
+<a class="text-stone-600 dark:text-stone-400 font-medium hover:text-orange-600 dark:hover:text-orange-400 transition-colors duration-300" href="#">Request</a>
+<a class="text-orange-600 dark:text-orange-500 border-b-2 border-orange-600 pb-1" href="#">Categories</a>
+<a class="text-stone-600 dark:text-stone-400 font-medium hover:text-orange-600 dark:hover:text-orange-400 transition-colors duration-300" href="#">Featured</a>
+<a class="text-stone-600 dark:text-stone-400 font-medium hover:text-orange-600 dark:hover:text-orange-400 transition-colors duration-300" href="#">Help</a>
+</nav>
+</div>
+<div class="flex items-center gap-6 mt-4 md:mt-0 w-full md:w-auto justify-end">
+<div class="relative group hidden lg:block">
+<input class="bg-surface-container-low border-none rounded-lg px-4 py-2 text-sm w-64 focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search assets..." type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-2 text-on-surface-variant">search</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">public</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">dark_mode</button>
+<div class="h-8 w-[1px] bg-outline-variant opacity-20"></div>
+<button class="flex items-center gap-2 text-stone-600 dark:text-stone-400 font-medium hover:text-orange-600 active:scale-95 transition-all">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="hidden md:inline">Cart</span>
+</button>
+<button class="flex items-center gap-2 bg-primary-container text-on-primary-container px-5 py-2 rounded-xl font-bold active:scale-95 transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+<span>Account</span>
+</button>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-screen-2xl mx-auto px-8 py-10">
+<!-- Breadcrumbs & Category Header -->
+<nav class="flex items-center gap-2 text-sm text-on-surface-variant mb-6">
+<a class="hover:text-primary" href="#">Marketplace</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<a class="hover:text-primary" href="#">Industrial Equipment</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="font-bold text-on-surface">Precision Tools</span>
+</nav>
+<section class="relative overflow-hidden rounded-3xl mb-12 bg-surface-container-low min-h-[240px] flex items-center p-12">
+<div class="relative z-10 max-w-2xl">
+<h1 class="font-['Syne'] text-5xl font-extrabold tracking-tight mb-4 text-on-surface">Precision Engineering</h1>
+<p class="text-on-surface-variant text-lg leading-relaxed">Sourcing excellence for high-frequency trading in hardware. From CNC routers to laser interferometers.</p>
+</div>
+<div class="absolute right-0 top-0 w-1/3 h-full overflow-hidden opacity-80 md:opacity-100">
+<img class="w-full h-full object-cover grayscale mix-blend-multiply" data-alt="industrial close up of high precision mechanical parts and blueprint sketches with warm technical lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZABxSjbQUATmsm2gCGpTt-b_SA1yCUjmJOXvHys_3F7rpXnce8TsHbGb8EZlfCIffdJ45dt4LGL-U9oA9C3rnkJ9HiTjoI1-4rHLwNJW3-IlT5lBAhVR7oecczm7vDNe7Jh-JuZUvR3D8I6UCEMVJjgl-lb3lBxNUCAwjoy4EoCT0nM3a0lVHPWrOpJhJUPpS11DVALjC3NLR-Huv7vEpJh8ccuUrycmRiMrjWxbqlfASE8fkrPO9moCeHcqgb0NmxK4VSE9meS8"/>
+</div>
+</section>
+<div class="flex flex-col md:flex-row gap-12">
+<!-- Sidebar Filters -->
+<aside class="w-full md:w-72 flex-shrink-0">
+<div class="sticky top-32 space-y-10">
+<div>
+<h3 class="font-['Syne'] font-bold text-xl mb-6">Refine Search</h3>
+<div class="space-y-8">
+<!-- Price Range -->
+<div>
+<label class="block text-sm font-bold uppercase tracking-wider text-on-surface-variant mb-4">Price Range (USD)</label>
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-surface-container rounded-lg p-3">
+<span class="text-[10px] text-on-surface-variant block uppercase font-bold">Min</span>
+<span class="font-mono text-sm">0.00</span>
+</div>
+<div class="bg-surface-container rounded-lg p-3">
+<span class="text-[10px] text-on-surface-variant block uppercase font-bold">Max</span>
+<span class="font-mono text-sm">50,000+</span>
+</div>
+</div>
+<div class="mt-4 h-1 bg-surface-container-highest rounded-full relative">
+<div class="absolute left-0 right-1/4 h-full bg-primary rounded-full"></div>
+<div class="absolute right-1/4 top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-primary rounded-full shadow-md"></div>
+</div>
+</div>
+<!-- Condition -->
+<div>
+<label class="block text-sm font-bold uppercase tracking-wider text-on-surface-variant mb-4">Condition</label>
+<div class="space-y-3">
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="w-5 h-5 rounded border-2 border-outline-variant group-hover:border-primary flex items-center justify-center transition-all">
+<div class="w-2.5 h-2.5 bg-primary rounded-sm opacity-0 group-has-[:checked]:opacity-100"></div>
+</div>
+<input checked="" class="hidden" type="checkbox"/>
+<span class="text-sm font-medium">New / Factory Sealed</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="w-5 h-5 rounded border-2 border-outline-variant group-hover:border-primary flex items-center justify-center transition-all"></div>
+<input class="hidden" type="checkbox"/>
+<span class="text-sm font-medium text-on-surface-variant">Refurbished (A+)</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="w-5 h-5 rounded border-2 border-outline-variant group-hover:border-primary flex items-center justify-center transition-all"></div>
+<input class="hidden" type="checkbox"/>
+<span class="text-sm font-medium text-on-surface-variant">Lightly Used</span>
+</label>
+</div>
+</div>
+<!-- Purchase Type -->
+<div>
+<label class="block text-sm font-bold uppercase tracking-wider text-on-surface-variant mb-4">Transaction Model</label>
+<div class="grid grid-cols-1 gap-2">
+<button class="flex items-center justify-between p-4 rounded-xl bg-surface-container-highest text-primary font-bold">
+<span>Instant Buy</span>
+<span class="material-symbols-outlined text-lg">bolt</span>
+</button>
+<button class="flex items-center justify-between p-4 rounded-xl ghost-border text-on-surface-variant font-medium hover:bg-surface-container-low transition-colors">
+<span>Auction Only</span>
+<span class="material-symbols-outlined text-lg">gavel</span>
+</button>
+<button class="flex items-center justify-between p-4 rounded-xl ghost-border text-on-surface-variant font-medium hover:bg-surface-container-low transition-colors">
+<span>Bulk RFQ</span>
+<span class="material-symbols-outlined text-lg">request_quote</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<div class="flex-1">
+<!-- Sort Bar -->
+<div class="flex flex-col md:flex-row items-center justify-between mb-8 gap-4">
+<p class="text-on-surface-variant"><span class="font-bold text-on-surface">1,248</span> results found</p>
+<div class="flex items-center gap-4">
+<span class="text-sm font-medium text-on-surface-variant">Sort by:</span>
+<div class="relative">
+<button class="flex items-center gap-6 bg-surface-container-lowest ghost-border px-4 py-2 rounded-lg text-sm font-bold">
+                                Featured First
+                                <span class="material-symbols-outlined text-sm">keyboard_arrow_down</span>
+</button>
+</div>
+<div class="flex bg-surface-container rounded-lg p-1">
+<button class="p-1.5 bg-white shadow-sm rounded-md text-primary">
+<span class="material-symbols-outlined">grid_view</span>
+</button>
+<button class="p-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined">view_list</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10">
+<!-- Auction Card (Green Logic) -->
+<div class="group relative flex flex-col bg-surface-container-lowest rounded-xl shadow-card transition-all duration-300">
+<div class="relative overflow-hidden rounded-t-xl aspect-[4/5]">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="heavy duty industrial milling machine in a clean workshop with cinematic lighting and tech atmosphere" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoYaAuN5B85I0eI8uPCMDGmPC1uJFPnZpRAGp-U1lTCYqHzybbFYBllAzfidW2wM3F7YhDehjcZclW8IFIHyWs7cVVm9TvVnIjLcWHs0pE1d4OBWxW_1zaseqHHgyYudEj1uCyBm5JrjqqGrPqgDPdTwGeyrS1EJSWqxFKy4qZx5oCI8ORoxlQrnn4L4_optA4QyszW0LhfX6rpJ2oMe6TUPWaZkeidXASOC8f8M-rgLPKQWRoL7EtLSxyQ3AM1-6GRyIrQXng4og"/>
+<div class="absolute top-4 left-4 flex flex-col gap-2">
+<span class="bg-secondary text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-1">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">timer</span> 02:45:11
+                                </span>
+</div>
+<button class="absolute top-4 right-4 bg-white/40 backdrop-blur-md p-2 rounded-full hover:bg-white text-on-surface transition-all">
+<span class="material-symbols-outlined text-lg">favorite</span>
+</button>
+</div>
+<div class="p-5 flex-1 flex flex-col">
+<div class="flex items-center justify-between mb-2">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">MacroTools GmbH</span>
+<span class="text-[10px] bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded font-bold uppercase">Auction</span>
+</div>
+<h4 class="font-headline font-bold text-lg mb-3 leading-tight group-hover:text-primary transition-colors">V-X400 Precision Milling Core</h4>
+<div class="mt-auto">
+<div class="flex items-end justify-between mb-4">
+<div>
+<p class="text-[10px] text-on-surface-variant uppercase font-bold">Current Bid</p>
+<p class="font-mono text-xl font-bold text-secondary">$12,450.00</p>
+</div>
+<p class="text-[10px] text-on-surface-variant font-medium">18 Bids</p>
+</div>
+<button class="w-full bg-secondary text-white py-3 rounded-lg font-bold text-sm active:scale-95 transition-transform">Place Bid</button>
+</div>
+</div>
+</div>
+<!-- RFQ Card (Blue Logic) -->
+<div class="group relative flex flex-col bg-surface-container-lowest rounded-xl shadow-card transition-all duration-300">
+<div class="relative overflow-hidden rounded-t-xl aspect-[4/5]">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="futuristic industrial robotic arm for high precision tasks with neon highlights and dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEwNoZWgdTstEe1tNTYg14owhGqjtK1WdxStasN3MSjv3reDfZJxKV-J4_bz3PhsF-6OQZ_NmWphpIsM72XBB-mmFnXXW22pM1f7RWJYBO7alii-5l6J48IM16X3rrVcEV6djQymiZ412Ea6cS-_zXQvGvKE1eqsTHhEQt14_fuJt_mMQR9UpWbrLoHHDTtQPETLwUER78fq0TbW7W-TypXCBla8bG2S8coVR0OG3QalwpKQxWMwzbLtBDad0E-LEFRZhmgsZoB5c"/>
+<div class="absolute top-4 left-4">
+<span class="bg-tertiary text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Enterprise Only</span>
+</div>
+</div>
+<div class="p-5 flex-1 flex flex-col">
+<div class="flex items-center justify-between mb-2">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Synth-Robotics</span>
+<span class="text-[10px] bg-tertiary-container text-white px-2 py-0.5 rounded font-bold uppercase">RFQ</span>
+</div>
+<h4 class="font-headline font-bold text-lg mb-3 leading-tight group-hover:text-primary transition-colors">Delta-7 Synchronized Arm</h4>
+<div class="mt-auto">
+<div class="mb-4">
+<p class="text-[10px] text-on-surface-variant uppercase font-bold">Quote Estimate</p>
+<p class="font-mono text-xl font-bold text-tertiary">$45k - $60k</p>
+</div>
+<button class="w-full bg-tertiary text-white py-3 rounded-lg font-bold text-sm active:scale-95 transition-transform">Request Quote</button>
+</div>
+</div>
+</div>
+<!-- Buy Card (Primary Logic) -->
+<div class="group relative flex flex-col bg-surface-container-lowest rounded-xl shadow-card transition-all duration-300">
+<div class="relative overflow-hidden rounded-t-xl aspect-[4/5]">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="professional laboratory level measurement equipment with digital screen and orange accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBP4XebmW5XNIe2ITWVkNOHE_epRx-MrJKlRy5ecHf1GBxKSwj_7eegLiudSXID1faWCOK6ASU-IGKlwavE_ZDwsklFu-BeZi8R-E1yEakM-_aPtIql-nj-4q38OI-OBuTnUzqK-czZjraZAe8io5L2JtFMYH_WFFkHyqr8SpN6180OS9ReqcpIXKMa253_p0fzvKf2w4tzLjNCp57NMkygjjNnvx91KP7Ib5LOHXPoc9IPIOoxPdvsUZ4JMWNy_Wg8-VA1T9DERvg"/>
+<div class="absolute top-4 right-4 bg-white/40 backdrop-blur-md p-2 rounded-full hover:bg-white text-on-surface transition-all">
+<span class="material-symbols-outlined text-lg">favorite</span>
+</div>
+</div>
+<div class="p-5 flex-1 flex flex-col">
+<div class="flex items-center justify-between mb-2">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">CaliberMetrics</span>
+<span class="text-[10px] bg-primary-fixed-dim text-on-primary-fixed px-2 py-0.5 rounded font-bold uppercase">In Stock</span>
+</div>
+<h4 class="font-headline font-bold text-lg mb-3 leading-tight group-hover:text-primary transition-colors">Spectra-9 Interferometer</h4>
+<div class="mt-auto">
+<div class="mb-4">
+<p class="text-[10px] text-on-surface-variant uppercase font-bold">Buy Now</p>
+<p class="font-mono text-xl font-bold text-primary">$3,890.00</p>
+</div>
+<button class="w-full bg-primary-container text-on-primary-container py-3 rounded-lg font-bold text-sm active:scale-95 transition-transform">Add to Cart</button>
+</div>
+</div>
+</div>
+<!-- Standard Item 4 -->
+<div class="group relative flex flex-col bg-surface-container-lowest rounded-xl shadow-card transition-all duration-300">
+<div class="relative overflow-hidden rounded-t-xl aspect-[4/5]">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="industrial workbench with various high-end power tools and measuring devices in a minimalist studio" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlLhqvzuq7MKc36PlWkzOhx0PKCBbicXn4OL-Ek-OX1YqKbsiLhR-ilNwV3VCQ8VwqHFdNLpeWzJz6wlEW_OUbsChNeCEKZ6F_XYvOu7eFC-C7bfz8bNUqYeFVWpJ1-32t65Vx4hxQwKRAj5RntlbaZRCQFrt1ilzwelYTHD9fKnH8sGZMhfE4QKJY6r70xMnMNivRtL2CXLbZq3Ip8Vi0LoENu-NF9Q79gU9nAbdXNAk5axGQlE6lk6t_Tz9ETKCpspZaKiJliME"/>
+</div>
+<div class="p-5 flex-1 flex flex-col">
+<div class="flex items-center justify-between mb-2">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">TorqueMaster</span>
+<span class="text-[10px] bg-surface-container-highest text-on-surface-variant px-2 py-0.5 rounded font-bold uppercase">New Arrival</span>
+</div>
+<h4 class="font-headline font-bold text-lg mb-3 leading-tight group-hover:text-primary transition-colors">Hyper-Torque Servo Engine</h4>
+<div class="mt-auto">
+<div class="mb-4">
+<p class="text-[10px] text-on-surface-variant uppercase font-bold">Price</p>
+<p class="font-mono text-xl font-bold text-on-surface">$1,150.00</p>
+</div>
+<button class="w-full ghost-border text-on-surface py-3 rounded-lg font-bold text-sm hover:bg-surface-container-low transition-colors active:scale-95">View Details</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="mt-20 flex flex-col items-center gap-6">
+<button class="px-10 py-4 bg-surface-container-lowest ghost-border rounded-xl font-bold text-on-surface-variant hover:border-primary hover:text-primary transition-all flex items-center gap-3">
+                        Load More Results
+                        <span class="material-symbols-outlined text-sm">expand_more</span>
+</button>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary-container text-on-primary-container font-bold">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-low transition-colors font-medium">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-low transition-colors font-medium">3</button>
+<span class="px-2 text-on-surface-variant">...</span>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-low transition-colors font-medium">42</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-stone-50 dark:bg-stone-900 w-full rounded-t-3xl mt-20">
+<div class="max-w-screen-2xl mx-auto px-12 py-16 grid grid-cols-1 md:grid-cols-4 gap-12 font-['DM_Sans'] text-sm">
+<div class="col-span-1 md:col-span-1">
+<span class="text-xl font-bold text-stone-900 dark:text-stone-50 mb-6 block">TradeHut</span>
+<p class="text-stone-500 dark:text-stone-400 leading-relaxed max-w-xs mb-6">Architectural precision in commerce. The world's fastest secondary market for high-value industrial assets.</p>
+<div class="flex gap-4">
+<a class="w-8 h-8 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-600 dark:text-stone-400 hover:text-orange-600 transition-colors" href="#">
+<span class="material-symbols-outlined text-base">language</span>
+</a>
+<a class="w-8 h-8 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-600 dark:text-stone-400 hover:text-orange-600 transition-colors" href="#">
+<span class="material-symbols-outlined text-base">share</span>
+</a>
+</div>
+</div>
+<div>
+<h5 class="font-bold text-stone-900 dark:text-stone-50 mb-6 uppercase tracking-widest text-[10px]">Marketplace</h5>
+<nav class="flex flex-col gap-4">
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">Auctions</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">RFQ Portal</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">Direct Buy</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">Categories</a>
+</nav>
+</div>
+<div>
+<h5 class="font-bold text-stone-900 dark:text-stone-50 mb-6 uppercase tracking-widest text-[10px]">Support</h5>
+<nav class="flex flex-col gap-4">
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">Help Center</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">Safety &amp; Trust</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">API Documentation</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">Vendor Portal</a>
+</nav>
+</div>
+<div>
+<h5 class="font-bold text-stone-900 dark:text-stone-50 mb-6 uppercase tracking-widest text-[10px]">Legal</h5>
+<nav class="flex flex-col gap-4">
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">Terms of Service</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">Privacy Policy</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 underline-offset-4 hover:underline transition-all duration-200" href="#">Cookie Settings</a>
+</nav>
+</div>
+</div>
+<div class="max-w-screen-2xl mx-auto px-12 py-8 border-t border-stone-100 dark:border-stone-800 flex flex-col md:flex-row justify-between items-center gap-4">
+<span class="text-stone-500 dark:text-stone-400 text-xs">© 2024 TradeHut Stores. Architectural Precision in Commerce.</span>
+<div class="flex items-center gap-6">
+<img class="h-6 grayscale opacity-50" data-alt="visa payment logo icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFE1QRWBGa24-ZPy_62Ci9KNAm3prVXbSwFK3AmaUjWxM4E9ADlmqP4Y7V8dsgMAz4RCjAZQpGhHFNH0vf59hs5tazMaWGLERAsCeiYOw67q5VGGBfypUE0YVILUKzuVJJNI8y7Io1Jky9ezZ1JmYLRHjzej82iKej_KUrPMmB36HwPwWj5LTn6gouc0OiujtP7d7NngWBod4IXXvU-PGjCEuMyxphzZ0WFhHQ7i9g0aUQS5LP8vae-rDXCZobYnQ5dFWAv0SHhyw"/>
+<img class="h-6 grayscale opacity-50" data-alt="mastercard payment logo icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCN-oQ_nNweCWxLVPsdmB06ya1fKrxDmWzA0mahh1ECutZv3r5liA02qvKYnsfr25JuXZ5A4QuQeVU72w-CTff_nVITAA7Ow2oMyAH_1KKQ9zNhGDb4lOWeajsv5QdDVtgQYDT1Gw_wBkG2z7tw3oNDnKEMnaa_5XFXLt2b2-B71kqBVDWt8ppN2WEPj0407QmdK780j14Ea_RqiaL1NanzvIfX6WX_W-UgbAeLvNg__C2kpAjalIqjZq5HB8A5L093oNgoVvptZ6I"/>
+<img class="h-6 grayscale opacity-50" data-alt="stripe payment logo icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3w6CO3DskZE-Grk2V0RE4UJBh6pd1fXn1lS9rV86404JTAbTBDhyvz5xzkWa23dP6h0NANKd_ZJ7eLP4E0wCBEKsHF_wZWltc2gL4JQBuGsthkl9hp7UMY6kDU9iBDCtlTnkaSbKYKlS2t2gUMlD4eASmk9S6OwoFiVy-FxktN3QcgXFOyXbOd77vj78bQJdsFHhEPGcLlRi4xGDxIirEjUN9cIaFo8VVRhfET7xivMSjedv0Q4K-v3Bxf3XkaLTUsZTE-69ZWY8"/>
+</div>
+</div>
+</footer>
+</body></html>

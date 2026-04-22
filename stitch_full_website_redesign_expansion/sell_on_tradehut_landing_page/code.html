@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sell on TradeHut | The Future of High-Frequency Commerce</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&amp;family=DM+Sans:wght@400;500;700&amp;family=JetBrains+Mono:wght@400;700&amp;family=Epilogue:wght@800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#f8ddd3",
+                        "surface-container": "#ffe9e2",
+                        "secondary-container": "#60f9bd",
+                        "on-primary-fixed": "#360f00",
+                        "surface-variant": "#f8ddd3",
+                        "surface-tint": "#a43d00",
+                        "outline-variant": "#e2bfb2",
+                        "on-tertiary-fixed-variant": "#00429b",
+                        "on-secondary-fixed": "#002114",
+                        "inverse-surface": "#3d2d26",
+                        "on-error": "#ffffff",
+                        "surface": "#fff8f6",
+                        "secondary": "#006c4b",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-low": "#fff1ec",
+                        "on-surface-variant": "#5a4137",
+                        "secondary-fixed": "#63fcc0",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#ffb597",
+                        "surface-container-high": "#fee3d9",
+                        "error-container": "#ffdad6",
+                        "on-primary-container": "#4e1900",
+                        "on-surface": "#261813",
+                        "primary-fixed": "#ffdbcd",
+                        "on-secondary-fixed-variant": "#005138",
+                        "primary-fixed-dim": "#ffb597",
+                        "secondary-fixed-dim": "#3fdfa5",
+                        "on-tertiary-container": "#002761",
+                        "on-background": "#261813",
+                        "on-secondary": "#ffffff",
+                        "background": "#fff8f6",
+                        "tertiary-fixed-dim": "#b0c6ff",
+                        "on-error-container": "#93000a",
+                        "outline": "#8e7165",
+                        "tertiary": "#0058ca",
+                        "on-tertiary-fixed": "#001945",
+                        "surface-bright": "#fff8f6",
+                        "on-secondary-container": "#00714f",
+                        "on-primary-fixed-variant": "#7d2d00",
+                        "inverse-on-surface": "#ffede7",
+                        "tertiary-fixed": "#d9e2ff",
+                        "primary-container": "#f5620f",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#a43d00",
+                        "tertiary-container": "#558dff",
+                        "surface-dim": "#efd5cb",
+                        "error": "#ba1a1a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "boxShadow": {
+                        'card': '0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02)',
+                        'card-hover': '0 12px 32px 0 rgba(38, 24, 19, 0.08)',
+                    },
+                    "fontFamily": {
+                        "headline": ["Syne", "sans-serif"],
+                        "body": ["DM Sans", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                        "display": ["Epilogue", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-header {
+            background: rgba(255, 248, 246, 0.7);
+            backdrop-filter: blur(24px);
+        }
+        .signature-glow {
+            background: linear-gradient(135deg, #a43d00 0%, #f5620f 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface selection:bg-primary-container selection:text-white">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl shadow-card">
+<nav class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
+<div class="text-2xl font-black font-['Syne'] text-stone-900">TradeHut</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors" href="#">Marketplace</a>
+<a class="text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors" href="#">Bidding</a>
+<a class="text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors" href="#">RFQ</a>
+<a class="text-orange-600 font-bold border-b-2 border-orange-600 pb-1" href="#">Sell</a>
+<a class="text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors" href="#">Fees</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="hidden lg:block text-stone-600 font-medium hover:text-primary transition-colors">Login</button>
+<button class="bg-primary-container text-white px-6 py-2.5 rounded-md font-bold scale-95 active:scale-90 transition-transform duration-200 shadow-lg hover:shadow-xl">Join as Seller</button>
+</div>
+</nav>
+</header>
+<main class="pt-20">
+<!-- Hero Section -->
+<section class="relative overflow-hidden pt-16 pb-24 lg:pt-32 lg:pb-40 px-6">
+<div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+<div class="relative z-10">
+<span class="inline-block px-4 py-1.5 rounded-full bg-primary-fixed text-on-primary-fixed font-bold text-sm mb-6 uppercase tracking-widest">Global Commerce v2.0</span>
+<h1 class="font-display text-5xl lg:text-7xl font-extrabold leading-[1.1] text-on-surface mb-8 tracking-tight">
+                        The Future of <span class="text-primary-container">High-Frequency</span> Commerce.
+                    </h1>
+<p class="text-xl text-on-surface-variant mb-10 max-w-xl leading-relaxed">
+                        Scale your inventory with institutional speed. Whether it's fixed price, competitive bidding, or custom RFQs, TradeHut is built for the professional seller.
+                    </p>
+<div class="flex flex-col sm:flex-row gap-4">
+<button class="signature-glow text-white px-8 py-4 rounded-md font-bold text-lg shadow-xl hover:shadow-primary/20 transition-all">Start Selling</button>
+<button class="bg-surface-container-low text-on-surface px-8 py-4 rounded-md font-bold text-lg hover:bg-surface-container transition-all">View Seller Handbook</button>
+</div>
+<div class="mt-12 flex items-center gap-6 opacity-60 grayscale transition-all hover:grayscale-0">
+<span class="font-mono text-sm uppercase tracking-widest font-bold">Trusted by</span>
+<div class="flex gap-8 items-center">
+<span class="font-headline font-bold text-xl">APEX</span>
+<span class="font-headline font-bold text-xl">QUANTUM</span>
+<span class="font-headline font-bold text-xl">ORBIT</span>
+</div>
+</div>
+</div>
+<div class="relative">
+<div class="absolute -top-20 -right-20 w-96 h-96 bg-primary-container/10 rounded-full blur-3xl"></div>
+<div class="absolute -bottom-20 -left-20 w-80 h-80 bg-secondary/10 rounded-full blur-3xl"></div>
+<img class="relative z-10 w-full h-[500px] object-cover rounded-xl shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500" data-alt="Modern minimalist office workspace with high-end tech dashboard displaying financial growth charts and market data analytics" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAouU8CFC6Mtjo0jTe6hL-0iZ25k_RR5GqRya6sD4vR0Jblb21be5BCfzqFsC2fTFzpaHhIipvniPyO6405XuPa4deufU96deBMeAYqL0nuYw01JZCzLUfVZ42wqPvpfOOLFn8S-L0tRcLItYoE0wVcoAcA6_WKq-DmqeOs_yTveJ5FTVlRKWQrJORzHxugKmK7snjSjlYKx1VfJpblDF2tYsuImsSXnc-bm1DCHOiledfR3NfTzZ4Jmps7Q26xKWVrtRrQiABZiRY"/>
+<div class="absolute top-1/2 -right-12 z-20 bg-surface-container-lowest p-6 rounded-xl shadow-card border border-outline-variant/15 hidden xl:block">
+<div class="flex items-center gap-4 mb-2">
+<div class="p-2 bg-secondary-container rounded-full text-on-secondary-container">
+<span class="material-symbols-outlined">trending_up</span>
+</div>
+<div>
+<p class="text-xs text-on-surface-variant">Merchant Growth</p>
+<p class="font-mono font-bold text-xl">+124.8%</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- How it Works -->
+<section class="py-24 bg-surface-container-low px-6">
+<div class="max-w-7xl mx-auto">
+<div class="text-center mb-20">
+<h2 class="font-headline text-4xl lg:text-5xl font-bold mb-6">Designed for Velocity</h2>
+<p class="text-on-surface-variant max-w-2xl mx-auto">Go from onboarding to your first global trade in under 24 hours.</p>
+</div>
+<div class="grid md:grid-cols-3 gap-12">
+<div class="group">
+<div class="mb-8 w-16 h-16 bg-surface-container-lowest rounded-xl flex items-center justify-center shadow-card group-hover:bg-primary-container group-hover:text-white transition-all duration-300">
+<span class="material-symbols-outlined text-3xl">add_business</span>
+</div>
+<h3 class="font-headline text-2xl font-bold mb-4">01. Create</h3>
+<p class="text-on-surface-variant leading-relaxed">Onboard with our lightning-fast verification system. Upload your inventory via API or CSV with automated metadata tagging.</p>
+</div>
+<div class="group">
+<div class="mb-8 w-16 h-16 bg-surface-container-lowest rounded-xl flex items-center justify-center shadow-card group-hover:bg-primary-container group-hover:text-white transition-all duration-300">
+<span class="material-symbols-outlined text-3xl">sync_alt</span>
+</div>
+<h3 class="font-headline text-2xl font-bold mb-4">02. Trade</h3>
+<p class="text-on-surface-variant leading-relaxed">Choose your mode: Live Auction, Direct Buy, or RFQ. Our match-making algorithm connects you to verified buyers instantly.</p>
+</div>
+<div class="group">
+<div class="mb-8 w-16 h-16 bg-surface-container-lowest rounded-xl flex items-center justify-center shadow-card group-hover:bg-primary-container group-hover:text-white transition-all duration-300">
+<span class="material-symbols-outlined text-3xl">show_chart</span>
+</div>
+<h3 class="font-headline text-2xl font-bold mb-4">03. Grow</h3>
+<p class="text-on-surface-variant leading-relaxed">Real-time data feeds and automated reinvestment tools help you scale your operations with institutional precision.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- The Three Modes -->
+<section class="py-24 px-6">
+<div class="max-w-7xl mx-auto">
+<div class="grid lg:grid-cols-3 gap-8">
+<!-- Buy Mode -->
+<div class="bg-surface-container-lowest p-10 rounded-xl shadow-card hover:shadow-card-hover transition-all flex flex-col">
+<div class="mb-8 text-primary">
+<span class="material-symbols-outlined text-4xl">shopping_cart</span>
+</div>
+<h3 class="font-headline text-2xl font-bold mb-4">Fixed Buy</h3>
+<p class="text-on-surface-variant mb-8 flex-grow">Standard e-commerce speed. Set your price and let our 24/7 global engine handle the fulfillment and escrow.</p>
+<ul class="space-y-4 mb-8">
+<li class="flex items-center gap-3 text-sm font-bold">
+<span class="material-symbols-outlined text-secondary text-lg" data-weight="fill">check_circle</span>
+                                Instant Checkout
+                            </li>
+<li class="flex items-center gap-3 text-sm font-bold">
+<span class="material-symbols-outlined text-secondary text-lg" data-weight="fill">check_circle</span>
+                                Global Logistics Integration
+                            </li>
+</ul>
+</div>
+<!-- Bid Mode -->
+<div class="bg-surface-container-lowest p-10 rounded-xl shadow-card hover:shadow-card-hover border-2 border-secondary-container transition-all flex flex-col relative overflow-hidden">
+<div class="absolute top-4 right-4 px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-[10px] font-black uppercase tracking-tighter">Most Active</div>
+<div class="mb-8 text-secondary">
+<span class="material-symbols-outlined text-4xl">gavel</span>
+</div>
+<h3 class="font-headline text-2xl font-bold mb-4">Kinetic Auction</h3>
+<p class="text-on-surface-variant mb-8 flex-grow">Maximized price discovery. Real-time competitive bidding with automated anti-sniping and institutional liquidity.</p>
+<ul class="space-y-4 mb-8">
+<li class="flex items-center gap-3 text-sm font-bold">
+<span class="material-symbols-outlined text-secondary text-lg" data-weight="fill">check_circle</span>
+                                Dynamic Bid Increments
+                            </li>
+<li class="flex items-center gap-3 text-sm font-bold">
+<span class="material-symbols-outlined text-secondary text-lg" data-weight="fill">check_circle</span>
+                                Real-time Pricing Engine
+                            </li>
+</ul>
+<button class="w-full py-3 bg-secondary text-white font-bold rounded-md">Learn Auctions</button>
+</div>
+<!-- RFQ Mode -->
+<div class="bg-surface-container-lowest p-10 rounded-xl shadow-card hover:shadow-card-hover transition-all flex flex-col">
+<div class="mb-8 text-tertiary">
+<span class="material-symbols-outlined text-4xl">request_quote</span>
+</div>
+<h3 class="font-headline text-2xl font-bold mb-4">Request for Quote</h3>
+<p class="text-on-surface-variant mb-8 flex-grow">For complex bulk orders. Negotiate terms, specifications, and logistics in a secure, structured workspace.</p>
+<ul class="space-y-4 mb-8">
+<li class="flex items-center gap-3 text-sm font-bold">
+<span class="material-symbols-outlined text-secondary text-lg" data-weight="fill">check_circle</span>
+                                Private Negotiations
+                            </li>
+<li class="flex items-center gap-3 text-sm font-bold">
+<span class="material-symbols-outlined text-secondary text-lg" data-weight="fill">check_circle</span>
+                                Custom Terms &amp; Escrow
+                            </li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<!-- Seller Benefits -->
+<section class="py-24 bg-on-surface text-surface px-6 overflow-hidden">
+<div class="max-w-7xl mx-auto">
+<div class="grid lg:grid-cols-2 gap-20 items-center">
+<div>
+<h2 class="font-headline text-4xl lg:text-5xl font-bold mb-10 leading-tight">Institutional Infrastructure for Individual Sellers.</h2>
+<div class="grid sm:grid-cols-2 gap-8">
+<div>
+<div class="text-primary-container mb-4"><span class="material-symbols-outlined text-3xl">verified_user</span></div>
+<h4 class="font-bold text-xl mb-2">Smart Escrow</h4>
+<p class="text-surface-variant/80 text-sm">Automated payout triggers linked to logistics tracking. No more waiting 30 days for funds.</p>
+</div>
+<div>
+<div class="text-primary-container mb-4"><span class="material-symbols-outlined text-3xl">public</span></div>
+<h4 class="font-bold text-xl mb-2">Global Reach</h4>
+<p class="text-surface-variant/80 text-sm">Sell across 180 countries with automated VAT/Tax compliance and currency conversion.</p>
+</div>
+<div>
+<div class="text-primary-container mb-4"><span class="material-symbols-outlined text-3xl">bolt</span></div>
+<h4 class="font-bold text-xl mb-2">Instant Liquidity</h4>
+<p class="text-surface-variant/80 text-sm">Access 50% of your sale value as soon as the item is picked up by a verified carrier.</p>
+</div>
+<div>
+<div class="text-primary-container mb-4"><span class="material-symbols-outlined text-3xl">api</span></div>
+<h4 class="font-bold text-xl mb-2">Unified API</h4>
+<p class="text-surface-variant/80 text-sm">One endpoint for listing, bidding, and shipping. Integrate with your existing ERP seamlessly.</p>
+</div>
+</div>
+</div>
+<div class="relative">
+<img class="rounded-xl opacity-80 shadow-2xl grayscale hover:grayscale-0 transition-all duration-700" data-alt="Modern tech operations center with multi-monitor setup showing logistics maps and real-time trade data on dark screens" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAM-DIyISJKpMuxHo1ZaeQGMnUK6s13c_XcqlnYkaw7itvvuIZmsRsw8z1x_6vSHSOumal7pexnM4LdYjJto02ALTH57ZBYPsI1eQTXvO2WL39dffszjOCb4aFi61LqnSYk66bhbBL6RStqh_COLvBBR5iNC-EEdBBy0fyyLqwttQKWXdd9wrtOo1rOy7kT40K3Lb8d7vqBTtJFab_dpZPqXVe_M30y3vwSqK3HszKSmYNORAG2IhUTPaoDbmAJnl4oZ12fpK9dIY4"/>
+<div class="absolute inset-0 bg-gradient-to-t from-on-surface via-transparent to-transparent"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Fee Table -->
+<section class="py-24 px-6 bg-surface-container">
+<div class="max-w-4xl mx-auto">
+<div class="text-center mb-16">
+<h2 class="font-headline text-4xl font-bold mb-6">Honest Pricing. No Hidden Layers.</h2>
+<p class="text-on-surface-variant">We make money when you scale, not through administrative friction.</p>
+</div>
+<div class="bg-surface-container-lowest rounded-xl shadow-card overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high">
+<th class="p-6 font-headline font-bold text-on-surface">Feature</th>
+<th class="p-6 font-headline font-bold text-primary">TradeHut Kinetic</th>
+<th class="p-6 font-headline font-bold text-on-surface-variant">Legacy Platforms</th>
+</tr>
+</thead>
+<tbody class="font-body">
+<tr class="border-b border-surface-container">
+<td class="p-6 font-medium">Transaction Fee</td>
+<td class="p-6 font-mono font-bold text-primary">1.5%</td>
+<td class="p-6 text-on-surface-variant">8% - 15%</td>
+</tr>
+<tr class="border-b border-surface-container">
+<td class="p-6 font-medium">Listing Fees</td>
+<td class="p-6 font-mono font-bold text-primary">$0.00</td>
+<td class="p-6 text-on-surface-variant">$0.35 / item</td>
+</tr>
+<tr class="border-b border-surface-container">
+<td class="p-6 font-medium">Payout Speed</td>
+<td class="p-6 font-mono font-bold text-primary">Instant</td>
+<td class="p-6 text-on-surface-variant">7-14 Days</td>
+</tr>
+<tr>
+<td class="p-6 font-medium">Global API Access</td>
+<td class="p-6 font-mono font-bold text-primary">Included</td>
+<td class="p-6 text-on-surface-variant">Enterprise Only</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- Testimonials -->
+<section class="py-24 px-6 overflow-hidden">
+<div class="max-w-7xl mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+<h2 class="font-headline text-4xl font-bold max-w-xl">Trusted by 50,000+ Institutional Merchants.</h2>
+<div class="flex gap-4">
+<button class="w-12 h-12 rounded-full border border-outline-variant flex items-center justify-center hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<button class="w-12 h-12 rounded-full border border-outline-variant flex items-center justify-center hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+<div class="p-8 bg-surface-container-lowest rounded-xl shadow-card border-l-4 border-primary">
+<p class="text-lg leading-relaxed mb-8 italic">"TradeHut's RFQ system transformed our bulk hardware business. We've cut negotiation cycles by 60% while increasing margins by 12%."</p>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-high overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of a professional male executive in a studio setting with soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKroV00D4SJyh7urbH4DVpBY3ojNnBPFwkDi6Qk6FhTrh44Mus7uLT_MAD71LZ1HMme7RTPY6Xz_eSrYReet6eBqNlo6UCqRD9A0p9k-CAFppqijTcxen_9i73jfDr0bUnpmhC_W61kMec7CZrpY26DgClUNmNkyrHbq4DTAlkbny3gyOP6hRlRAW0jHjXrky3ChqUHyxipCJcqjT6O2mKz5UhqSE3HJxay7O81a9KP_A18dlCAPJO3I7OGKWEMNTlkkYocR_82Xk"/>
+</div>
+<div>
+<p class="font-bold text-on-surface">Marcus Thorne</p>
+<p class="text-xs text-on-surface-variant uppercase tracking-widest font-mono">CEO, Thorne Dynamics</p>
+</div>
+</div>
+</div>
+<div class="p-8 bg-surface-container-lowest rounded-xl shadow-card border-l-4 border-secondary">
+<p class="text-lg leading-relaxed mb-8 italic">"The Kinetic Auction engine is incredible. The price discovery we get here consistently outperforms any other secondary market platform."</p>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-high overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of a young professional woman smiling warmly in an office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9mPrY460x6D7s6IWCrncJ_kGiKh5d9geXP5b0lJMsgHzhVBkbLv_l-u-6qIEwUo8BF-XeTS-iLca6k1Md86Owt7Amf3i6jAABEe674EVDOEoV10aV0vDwUichelVXtxRQ9YP6CvF9VzGdbOTDxt1MvlRnDs5sPbNKU8ESonE7Euh65CiMMRzP5-99fHM8jlLA7GUlpx72d8ktr1Y6IB3Bgxh0ckOCFRhRJOk1dlnVzFV2YAyq-UOdesoI6wXTj5QNpNN-waXwoC0"/>
+</div>
+<div>
+<p class="font-bold text-on-surface">Sarah Chen</p>
+<p class="text-xs text-on-surface-variant uppercase tracking-widest font-mono">Head of Ops, Orbit Supply</p>
+</div>
+</div>
+</div>
+<div class="p-8 bg-surface-container-lowest rounded-xl shadow-card border-l-4 border-tertiary">
+<p class="text-lg leading-relaxed mb-8 italic">"Unified logistics tracking and instant payouts changed our cash flow overnight. We can reinvest capital before the goods even cross the border."</p>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-high overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of a man with glasses looking confident in a bright modern environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJ0G4U2KEapIBvlag-iH8GmjfMoGAgTUlf6rgB06p0mR1Pjc5RHLhxHPrIF7ze64uCCLkK9Ae0xvxgVE4HsgnXMAq5BbGpmN5lPLWG863PSlhh2yf1GYHhx1CFBuDifuyFANkjUXny8p5MI2LqezUzIq38hAqeCCUaBWMD4Ta2R8A4pfMBch8_PrXlRMblyzF8ckyykLC9IO-hCfoaj00Da9rdJ4UZjkTcnvuqHX3JEvquJ-Cqc0rqhQrFt9ht0D9Ys-EBASmmsQo"/>
+</div>
+<div>
+<p class="font-bold text-on-surface">David Ross</p>
+<p class="text-xs text-on-surface-variant uppercase tracking-widest font-mono">Founder, Ross Collective</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- FAQ Section -->
+<section class="py-24 px-6 bg-surface-container-low">
+<div class="max-w-3xl mx-auto">
+<h2 class="font-headline text-3xl font-bold mb-12 text-center">Frequently Asked Questions</h2>
+<div class="space-y-4">
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden border border-outline-variant/15">
+<button class="w-full p-6 text-left flex justify-between items-center group">
+<span class="font-bold text-lg">How quickly can I start selling?</span>
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">expand_more</span>
+</button>
+</div>
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden border border-outline-variant/15">
+<button class="w-full p-6 text-left flex justify-between items-center group">
+<span class="font-bold text-lg">What are the verification requirements?</span>
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">expand_more</span>
+</button>
+</div>
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden border border-outline-variant/15">
+<button class="w-full p-6 text-left flex justify-between items-center group">
+<span class="font-bold text-lg">Does TradeHut handle international shipping?</span>
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">expand_more</span>
+</button>
+</div>
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden border border-outline-variant/15">
+<button class="w-full p-6 text-left flex justify-between items-center group">
+<span class="font-bold text-lg">Are there any monthly subscription fees?</span>
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">expand_more</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Final CTA Strip -->
+<section class="py-20 px-6">
+<div class="max-w-7xl mx-auto bg-primary-container rounded-3xl p-12 lg:p-20 text-center relative overflow-hidden">
+<div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-48 -mt-48"></div>
+<div class="absolute bottom-0 left-0 w-64 h-64 bg-black/10 rounded-full blur-3xl -ml-32 -mb-32"></div>
+<h2 class="font-display text-4xl lg:text-6xl font-extrabold text-white mb-8 relative z-10">Join 50k+ Verified Merchants Today.</h2>
+<p class="text-white/80 text-xl mb-12 max-w-2xl mx-auto relative z-10 leading-relaxed">Stop letting legacy platforms eat your margins. Experience the kinetic speed of modern global commerce.</p>
+<div class="relative z-10 flex flex-col sm:flex-row gap-6 justify-center">
+<button class="bg-white text-primary-container px-10 py-5 rounded-md font-bold text-xl shadow-2xl hover:scale-105 transition-all">Create Seller Account</button>
+<button class="bg-primary-container border-2 border-white/30 text-white px-10 py-5 rounded-md font-bold text-xl hover:bg-white/10 transition-all">Talk to Sales</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-stone-50 border-t border-stone-200/20 w-full py-12 px-6">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+<div class="flex flex-col gap-6">
+<div class="font-['Syne'] font-bold text-2xl text-stone-900">TradeHut</div>
+<p class="font-['DM_Sans'] text-sm text-stone-500 max-w-xs leading-relaxed">
+                    © 2024 TradeHut Kinetic. Built for the modern seller.
+                </p>
+</div>
+<div class="flex flex-col gap-4">
+<h5 class="font-bold text-stone-900">Platform</h5>
+<a class="font-['DM_Sans'] text-sm text-stone-500 hover:text-orange-500 transition-colors underline-offset-4 hover:underline" href="#">Marketplace</a>
+<a class="font-['DM_Sans'] text-sm text-stone-500 hover:text-orange-500 transition-colors underline-offset-4 hover:underline" href="#">Seller Handbook</a>
+<a class="font-['DM_Sans'] text-sm text-stone-500 hover:text-orange-500 transition-colors underline-offset-4 hover:underline" href="#">API Documentation</a>
+</div>
+<div class="flex flex-col gap-4">
+<h5 class="font-bold text-stone-900">Company</h5>
+<a class="font-['DM_Sans'] text-sm text-stone-500 hover:text-orange-500 transition-colors underline-offset-4 hover:underline" href="#">Privacy Policy</a>
+<a class="font-['DM_Sans'] text-sm text-stone-500 hover:text-orange-500 transition-colors underline-offset-4 hover:underline" href="#">Terms of Service</a>
+<a class="font-['DM_Sans'] text-sm text-stone-500 hover:text-orange-500 transition-colors underline-offset-4 hover:underline" href="#">Contact Support</a>
+</div>
+<div class="flex flex-col gap-4">
+<h5 class="font-bold text-stone-900">Subscribe</h5>
+<p class="text-sm text-stone-500 mb-2">Get the latest market insights.</p>
+<div class="flex">
+<input class="bg-stone-100 border-none rounded-l-md w-full focus:ring-1 focus:ring-primary" placeholder="Email address" type="email"/>
+<button class="bg-primary-container text-white px-4 rounded-r-md">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

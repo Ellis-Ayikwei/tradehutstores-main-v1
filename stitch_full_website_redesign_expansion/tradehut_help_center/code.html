@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TradeHut Help Center</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;family=Syne:wght@400..800&amp;family=Epilogue:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-highest": "#f8ddd3",
+                      "on-tertiary-fixed-variant": "#00429b",
+                      "secondary-fixed-dim": "#3fdfa5",
+                      "surface-dim": "#efd5cb",
+                      "on-secondary-fixed": "#002114",
+                      "surface-container-high": "#fee3d9",
+                      "error": "#ba1a1a",
+                      "tertiary-fixed-dim": "#b0c6ff",
+                      "tertiary-fixed": "#d9e2ff",
+                      "outline-variant": "#e2bfb2",
+                      "on-primary-fixed": "#360f00",
+                      "on-tertiary-fixed": "#001945",
+                      "on-primary-container": "#4e1900",
+                      "on-primary": "#ffffff",
+                      "inverse-on-surface": "#ffede7",
+                      "primary": "#a43d00",
+                      "surface-container": "#ffe9e2",
+                      "on-error": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "tertiary-container": "#558dff",
+                      "primary-container": "#f5620f",
+                      "error-container": "#ffdad6",
+                      "on-primary-fixed-variant": "#7d2d00",
+                      "primary-fixed": "#ffdbcd",
+                      "surface-tint": "#a43d00",
+                      "secondary-fixed": "#63fcc0",
+                      "inverse-primary": "#ffb597",
+                      "secondary": "#006c4b",
+                      "on-secondary": "#ffffff",
+                      "inverse-surface": "#3d2d26",
+                      "primary-fixed-dim": "#ffb597",
+                      "surface-bright": "#fff8f6",
+                      "on-error-container": "#93000a",
+                      "tertiary": "#0058ca",
+                      "surface-variant": "#f8ddd3",
+                      "secondary-container": "#60f9bd",
+                      "outline": "#8e7165",
+                      "on-surface-variant": "#5a4137",
+                      "surface-container-low": "#fff1ec",
+                      "on-secondary-fixed-variant": "#005138",
+                      "surface-container-lowest": "#ffffff",
+                      "background": "#fff8f6",
+                      "surface": "#fff8f6",
+                      "on-tertiary-container": "#002761",
+                      "on-surface": "#261813",
+                      "on-background": "#261813",
+                      "on-secondary-container": "#00714f"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {},
+              "fontFamily": {
+                      "headline": ["Syne", "sans-serif"],
+                      "body": ["DM Sans", "sans-serif"],
+                      "label": ["DM Sans", "sans-serif"],
+                      "mono": ["JetBrains Mono", "monospace"],
+                      "editorial": ["Epilogue", "sans-serif"]
+              }
+            },
+          }
+        }
+      </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-header {
+            background-color: rgba(255, 248, 246, 0.7);
+            backdrop-filter: blur(24px);
+        }
+        .signature-glow {
+            background: linear-gradient(135deg, #a43d00 0%, #f5620f 100%);
+        }
+        .shadow-card {
+            box-shadow: 0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02);
+        }
+        .shadow-card:hover {
+            box-shadow: 0 12px 32px 0 rgba(38, 24, 19, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface selection:bg-primary-container selection:text-white">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 glass-header shadow-[0_4px_20px_0_rgba(38,24,19,0.04)]">
+<div class="max-w-[1440px] mx-auto flex justify-between items-center px-8 h-20">
+<div class="flex items-center gap-8">
+<a class="font-['Syne'] text-2xl font-bold tracking-tighter text-[#261813] dark:text-[#FFF8F6]" href="#">TradeHut Help</a>
+<nav class="hidden md:flex items-center gap-6 font-['DM_Sans'] tracking-tight">
+<a class="text-[#261813] dark:text-stone-400 hover:text-[#F5620F] transition-colors" href="#">Marketplace</a>
+<a class="text-[#261813] dark:text-stone-400 hover:text-[#F5620F] transition-colors" href="#">Auctions</a>
+<a class="text-[#261813] dark:text-stone-400 hover:text-[#F5620F] transition-colors" href="#">RFQs</a>
+<a class="text-[#F5620F] border-b-2 border-[#F5620F] pb-1 font-bold" href="#">Guides</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="hidden lg:flex items-center px-6 py-2.5 rounded-md signature-glow text-white font-bold transition-all active:scale-95 duration-200">
+                    Contact Support
+                </button>
+<div class="h-10 w-10 rounded-full overflow-hidden bg-surface-container-highest">
+<img alt="User avatar" data-alt="Close-up portrait of a professional male user in a clean, brightly lit office environment, soft focused background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWY7GCAicMY9JiMQh4mqEtifP6DRZCYrt7EYZ12UZWi_C4SAaA_oTJ-jyzruCMj-ieF5_H7QCZ6U9_WctX13NycgZyc_2e59OBTPEIn9Jx4Tf6l3xu-OHidWlCANcXi5X-lBOGLhnf0jpGtxn-C1sKpoX4BOxZobOlvuJdqP7VqrhERQYajUzRi6BwEuBDaroUScsLAfwJGglZwzMsy6WpVZWikUP9cNz7NoolJokenz9CmpO4O1xUiS4otfncSCxmc6NVFKsq3Gs"/>
+</div>
+</div>
+</div>
+</header>
+<main class="pt-20">
+<!-- Hero Search Section -->
+<section class="relative bg-surface py-24 md:py-32 overflow-hidden">
+<div class="absolute top-0 right-0 -mr-24 -mt-24 w-96 h-96 bg-primary-container/5 rounded-full blur-3xl"></div>
+<div class="absolute bottom-0 left-0 -ml-24 -mb-24 w-96 h-96 bg-tertiary-container/5 rounded-full blur-3xl"></div>
+<div class="relative max-w-4xl mx-auto px-8 text-center">
+<h1 class="font-headline text-5xl md:text-7xl font-bold text-on-surface tracking-tighter mb-8">
+                    How can we help you today?
+                </h1>
+<div class="relative group">
+<div class="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline text-2xl">search</span>
+</div>
+<input class="w-full bg-surface-container-low border-none rounded-xl py-6 pl-16 pr-6 text-xl focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all shadow-card group-hover:shadow-card-hover placeholder:text-outline-variant" placeholder="Search for articles, guides, or troubleshooting..." type="text"/>
+<div class="absolute inset-y-3 right-3 hidden md:flex items-center">
+<kbd class="bg-surface-container-highest/50 px-3 py-1.5 rounded-md font-mono text-xs text-on-surface-variant uppercase tracking-widest border border-outline-variant/15">Search</kbd>
+</div>
+</div>
+<div class="mt-8 flex flex-wrap justify-center gap-3">
+<span class="text-sm font-label text-on-surface-variant">Popular searches:</span>
+<a class="text-sm font-label text-primary hover:underline" href="#">Shipping labels</a>
+<a class="text-sm font-label text-primary hover:underline" href="#">API integration</a>
+<a class="text-sm font-label text-primary hover:underline" href="#">Auction limits</a>
+</div>
+</div>
+</section>
+<!-- Category Grid Section -->
+<section class="bg-surface-container-low py-24">
+<div class="max-w-7xl mx-auto px-8">
+<div class="flex justify-between items-end mb-16">
+<div>
+<h2 class="font-headline text-3xl font-bold tracking-tight text-on-surface mb-2">Browse by category</h2>
+<p class="text-on-surface-variant max-w-md">Find specialized assistance across the entire TradeHut ecosystem.</p>
+</div>
+<a class="hidden md:flex items-center gap-2 text-primary font-bold group" href="#">
+                        View all topics
+                        <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Buying Card -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-card hover:shadow-card-hover transition-all cursor-pointer group">
+<div class="w-14 h-14 bg-surface-container-highest rounded-lg flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-3xl">shopping_cart</span>
+</div>
+<h3 class="font-headline text-xl font-bold mb-3">Buying on TradeHut</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6">Learn about placing bids, RFQ processes, and making secure payments through our portal.</p>
+<div class="space-y-3">
+<a class="flex items-center text-sm font-bold text-on-surface hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-sm mr-2">description</span>
+                                Making your first bid
+                            </a>
+<a class="flex items-center text-sm font-bold text-on-surface hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-sm mr-2">description</span>
+                                Understanding RFQ status
+                            </a>
+</div>
+</div>
+<!-- Selling Card -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-card hover:shadow-card-hover transition-all cursor-pointer group">
+<div class="w-14 h-14 bg-secondary-container rounded-lg flex items-center justify-center mb-6 text-on-secondary-container group-hover:bg-secondary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-3xl">sell</span>
+</div>
+<h3 class="font-headline text-xl font-bold mb-3">Selling on TradeHut</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6">Manage your inventory, optimize your listings, and track your commercial sales performance.</p>
+<div class="space-y-3">
+<a class="flex items-center text-sm font-bold text-on-surface hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-sm mr-2">description</span>
+                                Creating effective listings
+                            </a>
+<a class="flex items-center text-sm font-bold text-on-surface hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-sm mr-2">description</span>
+                                Managing auction reserves
+                            </a>
+</div>
+</div>
+<!-- Security Card -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-card hover:shadow-card-hover transition-all cursor-pointer group">
+<div class="w-14 h-14 bg-surface-variant rounded-lg flex items-center justify-center mb-6 text-on-surface-variant group-hover:bg-on-surface-variant group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-3xl">verified_user</span>
+</div>
+<h3 class="font-headline text-xl font-bold mb-3">Account Security</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6">Protect your credentials with MFA, manage permissions, and review login history.</p>
+<div class="space-y-3">
+<a class="flex items-center text-sm font-bold text-on-surface hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-sm mr-2">description</span>
+                                Enabling 2FA
+                            </a>
+<a class="flex items-center text-sm font-bold text-on-surface hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-sm mr-2">description</span>
+                                Resetting passwords
+                            </a>
+</div>
+</div>
+<!-- Shipping Card -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-card hover:shadow-card-hover transition-all cursor-pointer group">
+<div class="w-14 h-14 bg-tertiary-container/20 rounded-lg flex items-center justify-center mb-6 text-tertiary group-hover:bg-tertiary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-3xl">local_shipping</span>
+</div>
+<h3 class="font-headline text-xl font-bold mb-3">Shipping &amp; Logistics</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6">Carrier integrations, international customs handling, and tracking your global shipments.</p>
+<div class="space-y-3">
+<a class="flex items-center text-sm font-bold text-on-surface hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-sm mr-2">description</span>
+                                Printing shipping labels
+                            </a>
+<a class="flex items-center text-sm font-bold text-on-surface hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-sm mr-2">description</span>
+                                Customs documentation
+                            </a>
+</div>
+</div>
+<!-- Returns Card -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-card hover:shadow-card-hover transition-all cursor-pointer group">
+<div class="w-14 h-14 bg-error-container/40 rounded-lg flex items-center justify-center mb-6 text-error group-hover:bg-error group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-3xl">assignment_return</span>
+</div>
+<h3 class="font-headline text-xl font-bold mb-3">Returns &amp; Refunds</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6">Understanding policy frameworks, initiating returns, and monitoring refund status.</p>
+<div class="space-y-3">
+<a class="flex items-center text-sm font-bold text-on-surface hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-sm mr-2">description</span>
+                                The refund lifecycle
+                            </a>
+<a class="flex items-center text-sm font-bold text-on-surface hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-sm mr-2">description</span>
+                                Opening a dispute
+                            </a>
+</div>
+</div>
+<!-- API Card -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-card hover:shadow-card-hover transition-all cursor-pointer group">
+<div class="w-14 h-14 bg-primary-fixed rounded-lg flex items-center justify-center mb-6 text-on-primary-fixed group-hover:bg-on-primary-fixed group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-3xl">terminal</span>
+</div>
+<h3 class="font-headline text-xl font-bold mb-3">Business &amp; API</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6">Technical documentation for integrating our high-frequency trade engine into your workflow.</p>
+<div class="space-y-3">
+<a class="flex items-center text-sm font-bold text-on-surface hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-sm mr-2">description</span>
+                                Authentication protocols
+                            </a>
+<a class="flex items-center text-sm font-bold text-on-surface hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-sm mr-2">description</span>
+                                Webhook documentation
+                            </a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Technical Status Section (Bento Inspired) -->
+<section class="py-24 bg-surface">
+<div class="max-w-7xl mx-auto px-8">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Status Card -->
+<div class="lg:col-span-2 bg-[#FFF1EC] p-10 rounded-2xl flex flex-col md:flex-row gap-8 items-center border border-outline-variant/10">
+<div class="flex-1">
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-secondary-container rounded-full text-on-secondary-container text-xs font-bold uppercase tracking-widest mb-4">
+<span class="w-2 h-2 bg-secondary rounded-full"></span>
+                                All Systems Operational
+                            </div>
+<h3 class="font-headline text-3xl font-bold mb-4">System Status</h3>
+<p class="text-on-surface-variant mb-6 leading-relaxed">Our marketplace and auction engines are performing at peak efficiency. Real-time data sync is active across all global nodes.</p>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-lowest/50 p-4 rounded-lg">
+<div class="text-xs text-on-surface-variant font-mono uppercase mb-1">Response Time</div>
+<div class="text-xl font-mono font-bold text-on-surface">42ms</div>
+</div>
+<div class="bg-surface-container-lowest/50 p-4 rounded-lg">
+<div class="text-xs text-on-surface-variant font-mono uppercase mb-1">Uptime</div>
+<div class="text-xl font-mono font-bold text-on-surface">99.98%</div>
+</div>
+</div>
+</div>
+<div class="w-full md:w-64 aspect-square rounded-xl overflow-hidden bg-white/50 backdrop-blur-sm p-4 border border-white">
+<img alt="Analytics visualization" class="w-full h-full object-cover rounded-lg mix-blend-multiply opacity-80" data-alt="Technical dashboard showing neon green lines of uptime and trading frequency charts over a clean white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9MBa-fch6Vxr2xV7M9zezzpMJmtVv1XyTYpg8isI9Swiz-fhaa9Aeh3ZVCImZ6c8Yk1O-Br4UN4EjQVUS2BF1X898TeNpiHmIsfLc1-k0ytjjtNdfLm_5GOoGIN6WWvpHjHqqVzd0E65bCJ3len9zMMjKCbuvhCmtSiqr40TxoTRnApopUno2FritJgg0kwV1pMdhtMIQPRQXNUhEbfaMUceFLkd4L1TePdcijAe25Xp-CiQO_fl2GejvMenpSXG3YEmp_uKSVU8"/>
+</div>
+</div>
+<!-- Support Card -->
+<div class="bg-primary-container p-10 rounded-2xl text-white relative overflow-hidden flex flex-col justify-between">
+<div class="absolute top-0 right-0 p-8 opacity-20 transform translate-x-4 -translate-y-4">
+<span class="material-symbols-outlined text-[120px]">support_agent</span>
+</div>
+<div>
+<h3 class="font-headline text-3xl font-bold mb-4 relative z-10">Still need help?</h3>
+<p class="text-on-primary/80 mb-8 relative z-10 leading-relaxed">Our specialist support team is available 24/7 to assist with complex inquiries or technical disputes.</p>
+</div>
+<button class="bg-white text-primary font-bold py-4 px-8 rounded-md transition-all active:scale-95 shadow-lg">
+                            Contact Support
+                        </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full pt-16 pb-8 bg-[#FFF1EC] dark:bg-stone-900">
+<div class="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="flex flex-col gap-4">
+<div class="font-['Syne'] font-bold text-[#261813] dark:text-[#FFF8F6] text-xl">TradeHut</div>
+<p class="font-['DM_Sans'] text-sm text-[#261813]/60 dark:text-stone-500 max-w-sm">
+                    Empowering global commerce through architectural precision and kinetic marketplace technology.
+                </p>
+<div class="flex gap-4 mt-4">
+<span class="material-symbols-outlined text-[#261813]/60 cursor-pointer hover:text-[#F5620F] transition-colors">public</span>
+<span class="material-symbols-outlined text-[#261813]/60 cursor-pointer hover:text-[#F5620F] transition-colors">forum</span>
+<span class="material-symbols-outlined text-[#261813]/60 cursor-pointer hover:text-[#F5620F] transition-colors">terminal</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-8">
+<div class="flex flex-col gap-3">
+<h4 class="font-bold text-on-surface mb-2">Legal</h4>
+<a class="font-['DM_Sans'] text-sm text-[#261813]/60 dark:text-stone-500 hover:text-[#F5620F] transition-colors" href="#">Privacy</a>
+<a class="font-['DM_Sans'] text-sm text-[#261813]/60 dark:text-stone-500 hover:text-[#F5620F] transition-colors" href="#">Terms</a>
+<a class="font-['DM_Sans'] text-sm text-[#261813]/60 dark:text-stone-500 hover:text-[#F5620F] transition-colors" href="#">Cookie Policy</a>
+</div>
+<div class="flex flex-col gap-3">
+<h4 class="font-bold text-on-surface mb-2">Platform</h4>
+<a class="font-['DM_Sans'] text-sm text-[#261813]/60 dark:text-stone-500 hover:text-[#F5620F] transition-colors" href="#">API Status</a>
+<a class="font-['DM_Sans'] text-sm text-[#261813]/60 dark:text-stone-500 hover:text-[#F5620F] transition-colors" href="#">Community</a>
+<a class="font-['DM_Sans'] text-sm text-[#261813]/60 dark:text-stone-500 hover:text-[#F5620F] transition-colors" href="#">System Status</a>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-8 mt-16 pt-8 border-t border-outline-variant/15 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="font-['DM_Sans'] text-sm text-[#261813]/60 dark:text-stone-500">
+                © 2024 TradeHut. Kinetic Gallery Architecture.
+            </p>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-[#00C48C] rounded-full"></span>
+<span class="font-mono text-[10px] text-on-surface-variant uppercase tracking-widest">Version 2.4.0-Stable</span>
+</div>
+</div>
+</footer>
+</body></html>

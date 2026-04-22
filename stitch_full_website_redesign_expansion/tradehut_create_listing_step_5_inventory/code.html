@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kinetic Seller - Inventory Management</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&amp;family=DM+Sans:wght@400;500;700&amp;family=JetBrains+Mono:wght@500&amp;family=Syne:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Scripts -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#ffdbcd",
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#e2bfb2",
+                        "inverse-surface": "#3d2d26",
+                        "error": "#ba1a1a",
+                        "tertiary": "#0058ca",
+                        "on-error-container": "#93000a",
+                        "surface-container-highest": "#f8ddd3",
+                        "secondary-fixed-dim": "#3fdfa5",
+                        "on-secondary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "primary": "#a43d00",
+                        "on-error": "#ffffff",
+                        "surface": "#fff8f6",
+                        "on-tertiary-fixed-variant": "#00429b",
+                        "primary-fixed-dim": "#ffb597",
+                        "background": "#fff8f6",
+                        "tertiary-container": "#558dff",
+                        "surface-variant": "#f8ddd3",
+                        "on-surface-variant": "#5a4137",
+                        "on-background": "#261813",
+                        "outline": "#8e7165",
+                        "inverse-primary": "#ffb597",
+                        "surface-container-high": "#fee3d9",
+                        "on-primary-fixed-variant": "#7d2d00",
+                        "on-secondary-fixed": "#002114",
+                        "inverse-on-surface": "#ffede7",
+                        "secondary-fixed": "#63fcc0",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed": "#360f00",
+                        "tertiary-fixed": "#d9e2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed-variant": "#005138",
+                        "on-primary-container": "#4e1900",
+                        "surface-tint": "#a43d00",
+                        "surface-container-low": "#fff1ec",
+                        "surface-bright": "#fff8f6",
+                        "on-tertiary-fixed": "#001945",
+                        "on-tertiary-container": "#002761",
+                        "surface-dim": "#efd5cb",
+                        "surface-container": "#ffe9e2",
+                        "secondary-container": "#60f9bd",
+                        "tertiary-fixed-dim": "#b0c6ff",
+                        "secondary": "#006c4b",
+                        "on-surface": "#261813",
+                        "primary-container": "#f5620f",
+                        "on-secondary-container": "#00714f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Epilogue"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"],
+                        "mono": ["JetBrains Mono"],
+                        "syne": ["Syne"]
+                    }
+                },
+            }
+        }
+    </script>
+<style>
+        body { background-color: #fff8f6; font-family: 'DM Sans', sans-serif; }
+        .font-syne { font-family: 'Syne', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-header { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(24px); }
+        .shadow-card { box-shadow: 0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02); }
+        .shadow-card-hover:hover { box-shadow: 0 12px 32px 0 rgba(38, 24, 19, 0.08); transition: all 0.3s ease-in-out; }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- Top Navigation Anchor -->
+<header class="fixed top-0 w-full z-50 glass-header shadow-sm h-16 flex items-center justify-between px-6">
+<div class="flex items-center gap-4">
+<span class="font-['Epilogue'] font-black text-xl tracking-tight text-on-background">Kinetic Seller</span>
+<div class="h-6 w-[1px] bg-outline-variant/30"></div>
+<span class="text-on-surface-variant font-medium text-sm">Create Listing</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-stone-600 hover:bg-orange-50 transition-colors rounded-lg active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<button class="p-2 text-stone-600 hover:bg-orange-50 transition-colors rounded-lg active:scale-95 duration-200 relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full"></span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/30">
+<img alt="Seller Profile Avatar" data-alt="Close-up portrait of a professional store manager in a brightly lit studio environment with warm lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXmBH43KfXk3UL2XkNcR4xWBW0V8ilkUHPCAbznryG64GLonPB4drdGOGqmY_iXa6XBQz-8jz7M7nxAKchUEMGkKLh0Srz5VsvUuYQyVfwaVGwV3Fp7lXR1LXzwA1d5NrrPtvb8EwAvYg3qWvzNSSPqewkDTHjTV9PKdX4N0-LyHznUyvBSThv7DDvWUmHcBaxnK_oGi9h46TKRenIKCH0R2_GydHz7AbvuGfY_AeYD0NnmrIMdiF07cFLMo3myoVgj6ssU6GsFsw"/>
+</div>
+</div>
+</header>
+<div class="flex min-h-screen pt-16">
+<!-- Sidebar Stepper (Left) -->
+<aside class="fixed left-0 h-[calc(100vh-64px)] w-72 bg-[#FFF8F6] border-r border-outline-variant/10 py-10 px-8 flex flex-col justify-between">
+<div>
+<h3 class="font-syne font-bold text-sm uppercase tracking-widest text-on-surface-variant/60 mb-8">Listing Progress</h3>
+<nav class="space-y-6">
+<!-- Completed Steps -->
+<div class="flex items-center gap-4 group">
+<div class="w-6 h-6 rounded-full bg-secondary text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px]" data-icon="check" style="font-variation-settings: 'wght' 700;">check</span>
+</div>
+<span class="font-medium text-sm text-on-surface/50">Basics</span>
+</div>
+<div class="flex items-center gap-4 group">
+<div class="w-6 h-6 rounded-full bg-secondary text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px]" data-icon="check" style="font-variation-settings: 'wght' 700;">check</span>
+</div>
+<span class="font-medium text-sm text-on-surface/50">Media</span>
+</div>
+<div class="flex items-center gap-4 group">
+<div class="w-6 h-6 rounded-full bg-secondary text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px]" data-icon="check" style="font-variation-settings: 'wght' 700;">check</span>
+</div>
+<span class="font-medium text-sm text-on-surface/50">Pricing</span>
+</div>
+<div class="flex items-center gap-4 group">
+<div class="w-6 h-6 rounded-full bg-secondary text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px]" data-icon="check" style="font-variation-settings: 'wght' 700;">check</span>
+</div>
+<span class="font-medium text-sm text-on-surface/50">Variants</span>
+</div>
+<!-- Active Step -->
+<div class="flex items-center gap-4">
+<div class="w-6 h-6 rounded-full bg-primary-container text-white flex items-center justify-center ring-4 ring-primary-fixed">
+<span class="font-mono text-xs font-bold">05</span>
+</div>
+<span class="font-bold text-sm text-primary">Inventory</span>
+</div>
+<!-- Pending Steps -->
+<div class="flex items-center gap-4 group">
+<div class="w-6 h-6 rounded-full border-2 border-outline-variant text-outline-variant flex items-center justify-center">
+<span class="font-mono text-xs font-bold">06</span>
+</div>
+<span class="font-medium text-sm text-outline">Shipping</span>
+</div>
+<div class="flex items-center gap-4 group">
+<div class="w-6 h-6 rounded-full border-2 border-outline-variant text-outline-variant flex items-center justify-center">
+<span class="font-mono text-xs font-bold">07</span>
+</div>
+<span class="font-medium text-sm text-outline">Preview</span>
+</div>
+</nav>
+</div>
+<div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/10">
+<p class="text-[11px] font-bold text-on-surface-variant/40 uppercase tracking-tighter mb-2">Need help?</p>
+<p class="text-xs text-on-surface-variant leading-relaxed">Inventory settings ensure you never oversell or miss a fulfillment deadline.</p>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-72 flex-1 p-12 max-w-5xl">
+<!-- Header Section -->
+<div class="mb-12">
+<h1 class="font-syne text-4xl font-bold text-on-surface tracking-tight mb-2">Inventory Management</h1>
+<p class="text-on-surface-variant font-medium">Configure stock levels, warehouse routing, and automated alerts for your listing.</p>
+</div>
+<!-- Bento Layout Content -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Stock Count Section (Wide) -->
+<section class="col-span-8 space-y-6">
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-card border border-outline-variant/5">
+<div class="flex items-center justify-between mb-8">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="inventory_2">inventory_2</span>
+<h2 class="font-syne text-xl font-bold">Stock Availability</h2>
+</div>
+<div class="flex items-center gap-2 px-3 py-1 bg-secondary-fixed rounded-full text-on-secondary-fixed text-xs font-bold">
+<span class="w-2 h-2 bg-on-secondary-fixed rounded-full"></span>
+                                Live Sync
+                            </div>
+</div>
+<!-- Global Stock Input -->
+<div class="mb-8 p-6 bg-surface-container-low rounded-lg border border-primary-fixed/20">
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-3">Global Inventory Pool</label>
+<div class="flex items-end gap-4">
+<div class="flex-1">
+<div class="relative group">
+<input class="w-full bg-surface-container-lowest border-none ring-1 ring-outline-variant/20 focus:ring-2 focus:ring-primary-container rounded-md px-4 py-4 font-mono text-2xl font-bold transition-all" placeholder="0" type="number" value="124"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant/40 font-syne text-sm font-bold">UNITS</span>
+</div>
+</div>
+<div class="w-32">
+<p class="text-[10px] text-on-surface-variant/60 leading-tight mb-1 uppercase font-bold">Current Buffer</p>
+<p class="font-mono text-lg text-primary">12%</p>
+</div>
+</div>
+</div>
+<!-- Variant Level Stock Table -->
+<div>
+<h3 class="text-sm font-bold text-on-surface mb-4">Variant Specific Allocation</h3>
+<div class="space-y-3">
+<!-- Row 1 -->
+<div class="flex items-center justify-between p-4 bg-white border border-outline-variant/10 rounded-lg shadow-sm hover:border-primary/20 transition-all">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-surface-container rounded-md overflow-hidden flex items-center justify-center">
+<img class="object-cover w-full h-full" data-alt="Close up of a premium product detail with soft shadows and sharp focus" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0-9RGY01pVvnzJWMUNuFg5IACHpEYzHr584xR7mHEWtZYk2lrx7h6rANefMrd9Stgks9W2pJBVi96nrFKOrb7J9fmMeKynIi6xgJfYbkHN2Ve_o4PMedWg3U2s26rqCvZovQWNZjx3oEi_AOq02Xnr_XLyHBl3y5MNlfVaW0EF89FdNQyTVChWcB9z8g0QJaE1_UmIQCMhnV9UTF6BazR1XR1G7pQDl2VSSUmB6mTG_HRMGgWmQqfU2JDX1wBRkbAi1ktQXQpaRk"/>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Size: Large / Color: Obsidian</p>
+<p class="text-xs font-mono text-on-surface-variant/60">SKU-293-A</p>
+</div>
+</div>
+<div class="w-32">
+<input class="w-full bg-surface-container-low border-none focus:ring-1 focus:ring-primary rounded px-3 py-2 font-mono text-right font-bold text-on-surface" type="number" value="48"/>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="flex items-center justify-between p-4 bg-white border border-outline-variant/10 rounded-lg shadow-sm hover:border-primary/20 transition-all">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-surface-container rounded-md overflow-hidden flex items-center justify-center">
+<img class="object-cover w-full h-full" data-alt="High-end electronic product on a minimalist surface with clean lines" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_QQIHEICMKurSOmt6Tjgvxeny4aOJek7KG-lDedn7YSUN7j2rubu51pxnaECF8846fB8pTqcDl97zIG3ZmK-CXrUJXZWC-_P2MawCiiCkBao10tDdDa1IiomRC7bfP171TBQ7z-hW7we0Sxq9dw3Ib5zcpKrKTFkSK1D9WHd6d1mopx6aazBuh4-FtnMR_Q-riUaXgeyURGsUWLQOTamUYqd2v3uNsyVxlXJzTAO3bWzFG1N4ho81qyvwAdvdwFJ5O3OdZxUpn_Q"/>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Size: Medium / Color: Obsidian</p>
+<p class="text-xs font-mono text-on-surface-variant/60">SKU-293-B</p>
+</div>
+</div>
+<div class="w-32">
+<input class="w-full bg-surface-container-low border-none focus:ring-1 focus:ring-primary rounded px-3 py-2 font-mono text-right font-bold text-on-surface" type="number" value="76"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Sidebar Actions (Narrow) -->
+<aside class="col-span-4 space-y-6">
+<!-- Low Stock Alerts -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-card border border-outline-variant/5">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-syne font-bold">Low Stock Alert</h3>
+<button class="relative inline-flex h-5 w-9 items-center rounded-full bg-primary-container">
+<span class="translate-x-4 inline-block h-4 w-4 transform rounded-full bg-white transition shadow-sm"></span>
+</button>
+</div>
+<p class="text-xs text-on-surface-variant mb-4">Notify me when stock falls below a specific threshold for any variant.</p>
+<div class="relative">
+<input class="w-full bg-surface-container-low border-none focus:ring-2 focus:ring-primary rounded-md pl-10 pr-4 py-3 font-mono font-bold text-primary" type="number" value="5"/>
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary text-xl" data-icon="warning">warning</span>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-primary-container/40">UNITS</span>
+</div>
+</div>
+<!-- Availability Toggle -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-card border border-outline-variant/5">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-secondary" data-icon="visibility">visibility</span>
+<h3 class="font-syne font-bold">Visibility</h3>
+</div>
+<div class="flex items-center justify-between p-3 bg-secondary/5 rounded-lg">
+<span class="text-sm font-medium text-secondary">Visible on Storefront</span>
+<button class="relative inline-flex h-5 w-9 items-center rounded-full bg-secondary">
+<span class="translate-x-4 inline-block h-4 w-4 transform rounded-full bg-white transition"></span>
+</button>
+</div>
+</div>
+<!-- Dispatch Location -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-card border border-outline-variant/5">
+<h3 class="font-syne font-bold mb-4">Fulfillment Details</h3>
+<div class="space-y-4">
+<div>
+<label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-2">Dispatch Location</label>
+<select class="w-full bg-surface-container-low border-none focus:ring-1 focus:ring-primary rounded-md text-sm font-medium p-3">
+<option>Main Warehouse (NJ, USA)</option>
+<option>Secondary Hub (CA, USA)</option>
+<option>Local Workshop (NY, USA)</option>
+</select>
+</div>
+<div>
+<label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-2">Bin / Storage ID (Optional)</label>
+<input class="w-full bg-surface-container-low border-none focus:ring-1 focus:ring-primary rounded-md text-sm font-mono p-3" placeholder="e.g. A4-R12" type="text"/>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+</div>
+<!-- Sticky Footer Actions -->
+<footer class="fixed bottom-0 right-0 w-[calc(100%-288px)] h-24 bg-white/70 backdrop-blur-xl border-t border-outline-variant/10 px-12 flex items-center justify-between z-50">
+<button class="flex items-center gap-2 text-on-surface font-syne font-bold text-sm px-6 py-3 rounded-md hover:bg-surface-container-low transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-lg" data-icon="arrow_back">arrow_back</span>
+            Back: Variants
+        </button>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant font-medium text-sm px-4">Save as Draft</button>
+<button class="bg-gradient-to-r from-primary to-primary-container text-white font-syne font-bold text-sm px-10 py-3 rounded-md shadow-lg shadow-primary/20 flex items-center gap-2 hover:translate-y-[-2px] transition-all active:scale-95 duration-200">
+                Next: Shipping
+                <span class="material-symbols-outlined text-lg" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</footer>
+</body></html>

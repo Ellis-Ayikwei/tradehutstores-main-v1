@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&amp;family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&amp;family=JetBrains+Mono:wght@500&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;family=Epilogue:wght@700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#ffe9e2",
+                        "tertiary-container": "#558dff",
+                        "primary-container": "#f5620f",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed": "#63fcc0",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed": "#360f00",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#fff8f6",
+                        "primary-fixed-dim": "#ffb597",
+                        "inverse-primary": "#ffb597",
+                        "on-error-container": "#93000a",
+                        "background": "#fff8f6",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#00714f",
+                        "inverse-on-surface": "#ffede7",
+                        "surface-container-high": "#fee3d9",
+                        "error": "#ba1a1a",
+                        "tertiary": "#0058ca",
+                        "on-primary-fixed-variant": "#7d2d00",
+                        "on-tertiary-fixed-variant": "#00429b",
+                        "on-surface": "#261813",
+                        "surface-tint": "#a43d00",
+                        "outline-variant": "#e2bfb2",
+                        "on-secondary-fixed-variant": "#005138",
+                        "tertiary-fixed": "#d9e2ff",
+                        "on-background": "#261813",
+                        "outline": "#8e7165",
+                        "secondary-container": "#60f9bd",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#f8ddd3",
+                        "primary-fixed": "#ffdbcd",
+                        "on-secondary-fixed": "#002114",
+                        "secondary-fixed-dim": "#3fdfa5",
+                        "secondary": "#006c4b",
+                        "surface": "#fff8f6",
+                        "on-surface-variant": "#5a4137",
+                        "inverse-surface": "#3d2d26",
+                        "on-tertiary-container": "#002761",
+                        "on-tertiary-fixed": "#001945",
+                        "surface-variant": "#f8ddd3",
+                        "primary": "#a43d00",
+                        "surface-dim": "#efd5cb",
+                        "tertiary-fixed-dim": "#b0c6ff",
+                        "surface-container-low": "#fff1ec",
+                        "on-primary-container": "#4e1900"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Syne", "sans-serif"],
+                        "body": ["DM Sans", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                        "label": ["Plus Jakarta Sans", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .font-syne { font-family: 'Syne', sans-serif; }
+        .font-dm { font-family: 'DM Sans', sans-serif; }
+        
+        #filter-drawer {
+            transition: transform 0.3s ease-in-out;
+        }
+        #filter-drawer.translate-x-full {
+            transform: translateX(100%);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-dm selection:bg-primary-container selection:text-white overflow-x-hidden">
+<!-- Filter Drawer for Mobile -->
+<div class="fixed inset-0 bg-black/40 z-[60] hidden opacity-0 transition-opacity duration-300" id="filter-drawer-overlay"></div>
+<aside class="fixed top-0 right-0 h-full w-[300px] bg-surface z-[70] shadow-2xl translate-x-full lg:hidden p-8 overflow-y-auto" id="filter-drawer">
+<div class="flex justify-between items-center mb-8">
+<h3 class="font-syne font-bold text-lg uppercase tracking-tight">Refine Search</h3>
+<button class="material-symbols-outlined" onclick="toggleFilters()">close</button>
+</div>
+<!-- Reused Sidebar Content -->
+<div class="sidebar-content space-y-10">
+<!-- Sidebar filters same as below but for mobile drawer -->
+<div class="space-y-4 mb-8">
+<p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60">Transaction Type</p>
+<div class="space-y-3">
+<label class="flex items-center space-x-3 cursor-pointer group">
+<input checked="" class="rounded-sm border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-sm font-medium">Fixed Price</span>
+</label>
+<label class="flex items-center space-x-3 cursor-pointer group">
+<input class="rounded-sm border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-sm font-medium">Live Auction</span>
+</label>
+</div>
+</div>
+<div class="space-y-4 mb-8">
+<p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60">Price Range (USD)</p>
+<div class="px-2">
+<div class="h-1 bg-surface-container-high rounded-full relative">
+<div class="absolute h-full w-2/3 bg-primary-container left-4"></div>
+<div class="absolute h-4 w-4 bg-primary-container rounded-full -top-1.5 left-4 shadow-sm border-2 border-white"></div>
+</div>
+</div>
+</div>
+<button class="w-full py-4 bg-primary text-white font-bold rounded-xl" onclick="toggleFilters()">Apply Filters</button>
+</div>
+</aside>
+<!-- Top Navigation Anchor -->
+<header class="bg-[#FFF8F6]/70 dark:bg-[#1A1412]/70 backdrop-blur-2xl sticky top-0 w-full z-50 shadow-[0_4px_20px_0_rgba(38,24,19,0.04)]">
+<div class="flex justify-between items-center px-6 md:px-12 py-4 md:py-6 max-w-[1920px] mx-auto">
+<div class="text-xl md:text-2xl font-black text-[#261813] dark:text-[#FFF8F6] font-['Syne'] tracking-tighter uppercase">KINETIC GALLERY</div>
+<nav class="hidden lg:flex items-center space-x-8">
+<a class="text-[#261813]/60 dark:text-[#FFF8F6]/60 font-medium hover:text-[#F5620F] transition-colors duration-300" href="#">Exhibitions</a>
+<a class="text-[#261813]/60 dark:text-[#FFF8F6]/60 font-medium hover:text-[#F5620F] transition-colors duration-300" href="#">Auctions</a>
+<a class="text-[#261813]/60 dark:text-[#FFF8F6]/60 font-medium hover:text-[#F5620F] transition-colors duration-300" href="{{DATA:SCREEN:SCREEN_89}}">RFQ</a>
+<a class="text-[#261813]/60 dark:text-[#FFF8F6]/60 font-medium hover:text-[#F5620F] transition-colors duration-300" href="#">Studio</a>
+</nav>
+<div class="flex items-center space-x-4 md:space-x-6">
+<div class="relative group hidden sm:block">
+<input class="bg-surface-container-low border-none rounded-full px-6 py-2 w-48 lg:w-64 focus:ring-2 focus:ring-primary-container transition-all" placeholder="Search gallery..." type="text"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+</div>
+<div class="flex items-center space-x-3 md:space-x-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">shopping_bag</span></button>
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">account_circle</span></button>
+<button class="lg:hidden text-on-surface-variant hover:text-primary transition-colors" onclick="toggleFilters()"><span class="material-symbols-outlined">tune</span></button>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-[1920px] mx-auto px-6 md:px-12 py-8 flex flex-col lg:flex-row gap-12">
+<!-- Desktop Sidebar Filters -->
+<aside class="hidden lg:block w-[260px] flex-shrink-0 sticky top-32 h-fit space-y-10">
+<div>
+<h3 class="font-syne font-bold text-lg uppercase tracking-tight mb-6">Refine Search</h3>
+<div class="space-y-4 mb-8">
+<p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60">Transaction Type</p>
+<div class="space-y-3">
+<label class="flex items-center space-x-3 cursor-pointer group">
+<input checked="" class="rounded-sm border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-sm font-medium group-hover:text-primary transition-colors">Fixed Price</span>
+</label>
+<label class="flex items-center space-x-3 cursor-pointer group">
+<input class="rounded-sm border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-sm font-medium group-hover:text-primary transition-colors">Live Auction</span>
+</label>
+<label class="flex items-center space-x-3 cursor-pointer group">
+<input class="rounded-sm border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-sm font-medium group-hover:text-primary transition-colors">RFQ Technical</span>
+</label>
+</div>
+</div>
+<div class="space-y-4 mb-8">
+<p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60">Price Range (USD)</p>
+<div class="px-2">
+<div class="h-1 bg-surface-container-high rounded-full relative">
+<div class="absolute h-full w-2/3 bg-primary-container left-4"></div>
+<div class="absolute h-4 w-4 bg-primary-container rounded-full -top-1.5 left-4 shadow-sm border-2 border-white"></div>
+<div class="absolute h-4 w-4 bg-primary-container rounded-full -top-1.5 right-1/4 shadow-sm border-2 border-white"></div>
+</div>
+</div>
+<div class="flex items-center justify-between font-mono text-[11px] text-on-surface-variant">
+<span>$500</span>
+<span>$25,000+</span>
+</div>
+</div>
+<div class="space-y-4 mb-8">
+<p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60">Asset Condition</p>
+<div class="grid grid-cols-2 gap-2">
+<button class="py-2 px-3 bg-surface-container-low rounded-lg text-xs font-bold border border-transparent hover:border-primary/20 transition-all">Mint</button>
+<button class="py-2 px-3 bg-surface-container-lowest rounded-lg text-xs font-bold border border-primary/20 text-primary transition-all">Excellent</button>
+<button class="py-2 px-3 bg-surface-container-low rounded-lg text-xs font-bold border border-transparent hover:border-primary/20 transition-all">Good</button>
+<button class="py-2 px-3 bg-surface-container-low rounded-lg text-xs font-bold border border-transparent hover:border-primary/20 transition-all">Fair</button>
+</div>
+</div>
+<div class="space-y-4 mb-8">
+<p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60">Curated Brands</p>
+<div class="space-y-3">
+<label class="flex items-center space-x-3 cursor-pointer group">
+<input class="rounded-sm border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-sm font-medium group-hover:text-primary transition-colors">Aura Dynamics</span>
+</label>
+<label class="flex items-center space-x-3 cursor-pointer group">
+<input checked="" class="rounded-sm border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-sm font-medium group-hover:text-primary transition-colors">Vortex Labs</span>
+</label>
+<label class="flex items-center space-x-3 cursor-pointer group">
+<input class="rounded-sm border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-sm font-medium group-hover:text-primary transition-colors">Prism Heavy</span>
+</label>
+</div>
+</div>
+<div class="space-y-4">
+<p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60">Delivery Origin</p>
+<select class="w-full bg-surface-container-low border-none rounded-lg text-sm font-medium py-3 px-4 focus:ring-1 focus:ring-primary">
+<option>Global Shipping</option>
+<option>North America</option>
+<option>Europe (EU)</option>
+<option>Asia Pacific</option>
+</select>
+</div>
+</div>
+</aside>
+<!-- Right Content Area -->
+<section class="flex-grow">
+<!-- Breadcrumbs -->
+<nav class="flex items-center flex-wrap gap-y-2 space-x-2 text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant/40 mb-6">
+<a class="hover:text-primary transition-colors" href="#">Gallery</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Industrial Assets</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="text-on-surface">Kinetic Oscillators</span>
+</nav>
+<!-- Search Suggestion Bar -->
+<div class="bg-surface-container-high/50 p-4 md:p-5 rounded-2xl flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+<div class="flex items-center space-x-4">
+<span class="material-symbols-outlined text-primary">lightbulb</span>
+<p class="text-sm font-medium">Did you mean <a class="text-primary font-bold italic underline underline-offset-4 decoration-primary/30" href="#">"Kinetic Modular Oscillators"</a>?</p>
+</div>
+<div class="text-[11px] font-bold text-on-surface-variant/60 uppercase">Found 1,284 results for "Kinetic Ossilator"</div>
+</div>
+<!-- Sort & Active Filters -->
+<div class="flex flex-col xl:flex-row xl:items-center justify-between gap-6 mb-10">
+<div class="flex flex-wrap items-center gap-2">
+<span class="text-xs font-bold text-on-surface-variant/40 uppercase mr-2">Filters:</span>
+<div class="bg-surface-container-lowest shadow-sm border border-outline-variant/20 px-4 py-2 rounded-full flex items-center space-x-2">
+<span class="text-[11px] font-bold uppercase">Excellent Condition</span>
+<button class="material-symbols-outlined text-sm hover:text-error transition-colors">close</button>
+</div>
+<div class="bg-surface-container-lowest shadow-sm border border-outline-variant/20 px-4 py-2 rounded-full flex items-center space-x-2">
+<span class="text-[11px] font-bold uppercase">Vortex Labs</span>
+<button class="material-symbols-outlined text-sm hover:text-error transition-colors">close</button>
+</div>
+<button class="text-[10px] font-bold uppercase text-primary hover:underline underline-offset-2 px-2">Clear All</button>
+</div>
+<div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+<span class="text-xs font-bold text-on-surface-variant/40 uppercase">Sort by:</span>
+<div class="flex bg-surface-container-low p-1 rounded-lg w-full sm:w-auto overflow-x-auto">
+<button class="px-4 py-2 bg-surface-container-lowest rounded-md text-[11px] font-bold shadow-sm whitespace-nowrap">RELEVANCE</button>
+<button class="px-4 py-2 text-[11px] font-bold text-on-surface-variant/60 hover:text-on-surface transition-colors whitespace-nowrap">PRICE</button>
+<button class="px-4 py-2 text-[11px] font-bold text-on-surface-variant/60 hover:text-on-surface transition-colors whitespace-nowrap">NEWEST</button>
+</div>
+</div>
+</div>
+<!-- Sponsored Row (Asymmetric Bento Highlight) -->
+<div class="mb-12">
+<div class="flex items-center space-x-3 mb-6">
+<div class="h-px bg-outline-variant/30 flex-grow"></div>
+<span class="bg-primary/10 text-primary text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full whitespace-nowrap">Curated Partner Focus</span>
+<div class="h-px bg-outline-variant/30 flex-grow"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Sponsored Asset 1 -->
+<div class="group relative bg-surface-container-low rounded-[32px] overflow-hidden flex flex-col sm:flex-row h-auto sm:h-[280px]">
+<div class="w-full sm:w-1/2 overflow-hidden relative aspect-video sm:aspect-auto">
+<img alt="Precision technical machinery closeup" class="h-full w-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" data-alt="Close-up of a sleek industrial kinetic oscillator with orange wires and brushed aluminum casing in a laboratory setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIkLFUiYQ3gBcT4e-z07-oGTYBQCvWDS5Tc_GlQDvrMVcIJbhAI1cSV2FQ54jY0yveWrByCFvzmgJU7f-inPGjxVcn0KRCyCUI0BcY-Mp7TkXIuQZDyaYrrvNDFt82mOyNhOKInTtsZvKjdJESs4p6sWzb3cQq6EsahavcYd6zuPu4Q9NrY3-kiSrST_YRAoVCQYIvBZzGkJjGdKBSWOWVO-sDwJlcmkJA48Bk8LYzcpXFu33KIai-zvZbNsNayaq2-c6pmHVHMrc"/>
+<div class="hidden sm:block absolute inset-0 bg-gradient-to-r from-transparent to-surface-container-low"></div>
+</div>
+<div class="w-full sm:w-1/2 p-6 sm:p-8 flex flex-col justify-between">
+<div>
+<span class="bg-surface-container-highest text-on-surface-variant text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm">Sponsored</span>
+<h4 class="font-syne font-bold text-2xl mt-3 tracking-tighter group-hover:text-primary transition-colors">VORTEX PRO 900</h4>
+<p class="text-sm text-on-surface-variant/70 mt-2 line-clamp-2">High-frequency industrial oscillator featuring dual-core magnetic stabilization and titanium housing.</p>
+</div>
+<div class="flex items-end justify-between mt-4 sm:mt-0">
+<div class="font-mono text-xl font-bold tracking-tight text-primary">$12,450.00</div>
+<button class="h-12 w-12 rounded-full bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20 transition-transform hover:scale-110">
+<span class="material-symbols-outlined">arrow_outward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Sponsored Asset 2 -->
+<div class="group relative bg-surface-container-low rounded-[32px] overflow-hidden flex flex-col sm:flex-row h-auto sm:h-[280px]">
+<div class="w-full sm:w-1/2 overflow-hidden relative aspect-video sm:aspect-auto">
+<img alt="Modern engine component in bright lighting" class="h-full w-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" data-alt="Abstract view of a chrome modular technical component with soft orange ambient lighting reflections and sharp focus" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvfO9ibLVsraEpcJLgrncqy7bDXWiaEFPCWebceg8A9A-nQ_SBihIArSTdSLkHgorsdj_BEXlPKTH1l32OyyBqBQjjz1hAetcSPaK55nZVB5Yu7jemfHA26fVYgGa_gPr7OEP4Dnh5Il7ByDl-SddPnB2f-_gJrMQ8BKzAcdL9ENx42rxQ-SDybGotz7gBxkkjk2Y9ByMcsTR_GGeBD_hvP4BqqxTMDFaNinaVlt9kvv583n46Wh3qA8PNXQlbqxzmehvZlqabbLI"/>
+<div class="hidden sm:block absolute inset-0 bg-gradient-to-r from-transparent to-surface-container-low"></div>
+</div>
+<div class="w-full sm:w-1/2 p-6 sm:p-8 flex flex-col justify-between">
+<div>
+<span class="bg-surface-container-highest text-on-surface-variant text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm">Sponsored</span>
+<h4 class="font-syne font-bold text-2xl mt-3 tracking-tighter group-hover:text-primary transition-colors">AURA SYNC-X</h4>
+<p class="text-sm text-on-surface-variant/70 mt-2 line-clamp-2">Modular synchronization array for large-scale gallery installations and technical labs.</p>
+</div>
+<div class="flex items-end justify-between mt-4 sm:mt-0">
+<div class="font-mono text-xl font-bold tracking-tight text-primary">$8,900.00</div>
+<button class="h-12 w-12 rounded-full bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20 transition-transform hover:scale-110">
+<span class="material-symbols-outlined">arrow_outward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Fully Responsive Grid (1-col mobile, 2-col tablet, 4-col desktop) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-6 gap-y-12">
+<!-- Product Card 1: Auction -->
+<a class="group block" href="{{DATA:SCREEN:SCREEN_96}}">
+<div class="relative aspect-[3/4] bg-surface-container-low rounded-2xl overflow-hidden mb-5">
+<img alt="Industrial hardware" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Close-up of industrial machinery parts in high contrast lighting with subtle orange accents and sharp edges" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCh3mWSnWJy08sGKTU-se_WwA8HtDrrHXxGcFrTHaFqrsg0rI_8J7nSX-SnnGuEp8JuPNwylEHuAaXfyLH2U5WUAJdphpHqImqRqD_3GCvYCrmxIl3-AA1M9dMYs4yKoe1Dle-aF4VZRJEjrGgvqiHYUesSFuwWaLzWMDVJ0LPeoAFBrFQTFffwlS4HfOes_cZ4umI-Rr0FyK_6AWtxyJWjI7PC2Tj-XRgjK55mEO41mKwC24DPJIbhcUdJHn_cLr8cvEbeHnH8ZOM"/>
+<div class="absolute top-4 left-4 flex flex-col space-y-2">
+<span class="bg-black/80 text-white text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm flex items-center">
+<span class="material-symbols-outlined text-[10px] mr-1" style="font-variation-settings: 'FILL' 1;">gavel</span> Auction
+                        </span>
+<span class="bg-[#00C48C] text-white text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm">Live</span>
+</div>
+<button class="absolute bottom-4 right-4 h-10 w-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-on-surface shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+</div>
+<p class="text-[10px] font-bold text-on-surface-variant/50 uppercase tracking-widest">Helix Industries</p>
+<h5 class="font-syne font-bold text-lg leading-tight mt-1 group-hover:text-primary transition-colors">Omni-Phased Modulator v2</h5>
+<div class="mt-4 flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-[9px] font-bold text-on-surface-variant uppercase">Current Bid</span>
+<span class="font-mono text-lg font-bold text-[#00C48C] tracking-tighter">$4,250</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-[9px] font-bold text-on-surface-variant uppercase">Time Left</span>
+<span class="font-mono text-sm font-medium">04h 22m</span>
+</div>
+</div>
+</a>
+<!-- Product Card 2: Fixed -->
+<a class="group block" href="{{DATA:SCREEN:SCREEN_96}}">
+<div class="relative aspect-[3/4] bg-surface-container-low rounded-2xl overflow-hidden mb-5">
+<img alt="Modern art installation tech" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Sleek silver metal casing of a professional camera or tech device with reflective surfaces and clean lines" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBytUWCJwRH38Yk1fc2P6DDiHeanHUInFffaU_j-8LUnw2W_vtRXjcGGQnttr3da9vaQua6OrIGHxquEKgVUcOs2SGRv4JccpdhbBuE9r7uzpvEgVarDpUJv-rTg5SSRxSbuLhUHI2f4xDPR-79fx3DLrYMjAF9h4uE0yEMtaMxoaxGimh_lMmZXhP84YbXmu06gneexZxJhHYt3Tcutcv42c3EuZ8at-DOAUYvIbDfrFQclKoKTO9zqoobNr9_h6Nf3TaQCBpa1lc"/>
+<div class="absolute top-4 left-4">
+<span class="bg-surface-container-highest text-on-surface text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm">Fixed Price</span>
+</div>
+</div>
+<p class="text-[10px] font-bold text-on-surface-variant/50 uppercase tracking-widest">Zenith Labs</p>
+<h5 class="font-syne font-bold text-lg leading-tight mt-1 group-hover:text-primary transition-colors">Spectral Diffuser Grid</h5>
+<div class="mt-4 flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-[9px] font-bold text-on-surface-variant uppercase">Price</span>
+<span class="font-mono text-lg font-bold text-on-surface tracking-tighter">$1,800</span>
+</div>
+<span class="text-[10px] font-bold text-[#00C48C] bg-[#00C48C]/10 px-2 py-0.5 rounded-sm">In Stock</span>
+</div>
+</a>
+<!-- Product Card 3: RFQ -->
+<div class="group">
+<a class="block" href="{{DATA:SCREEN:SCREEN_96}}">
+<div class="relative aspect-[3/4] bg-surface-container-low rounded-2xl overflow-hidden mb-5">
+<img alt="Heavy machinery detail" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Massive industrial gear system with intricate metallic details and deep shadows, emphasizing scale and precision" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTXUvHp2fZeQa0jVHvAUfx034F6G-Y9KFlIG9k2KPYpaeQJUcfDtaLZSlkc-sVoS_Ec5S4QYSJY0J4qEW6CiXodiETv7Qhu2fO89Nf6-YGHcLo0AcNcNiY2fPcFYFHbLRAnr7nQCjo9ozW8kx8Eulfzz-y0QWc90Dx2w5VFIL2oRX5g-04xa0VCwQ_2Et9t3_aMNl8ZDCQyw5hktlmp-EInlpdHnT_1mJZ4-qsaBQTOWv2uizvAF8ZPw1Qs_ze4Z7dr75a6-e7cNk"/>
+<div class="absolute top-4 left-4">
+<span class="bg-[#2979FF] text-white text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm">RFQ Only</span>
+</div>
+</div>
+<p class="text-[10px] font-bold text-on-surface-variant/50 uppercase tracking-widest">Titan Heavy</p>
+<h5 class="font-syne font-bold text-lg leading-tight mt-1 group-hover:text-primary transition-colors">Industrial Torque Assembly</h5>
+</a>
+<div class="mt-4">
+<a class="block w-full text-center py-3 bg-surface-container-high hover:bg-[#2979FF] hover:text-white transition-all text-[11px] font-bold uppercase tracking-widest rounded-lg" href="{{DATA:SCREEN:SCREEN_89}}">Post an RFQ</a>
+</div>
+</div>
+<!-- Product Card 4: Auction -->
+<a class="group block" href="{{DATA:SCREEN:SCREEN_96}}">
+<div class="relative aspect-[3/4] bg-surface-container-low rounded-2xl overflow-hidden mb-5">
+<img alt="Electronic boards" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Vibrant orange and blue electronic circuit board paths with glowing highlights and futuristic technical aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUsqI9eUXqKoUSgCTFTk9H6Cp2FLfYtl5rXpsfXp6zpxFbHs0jaUpsudylxnX-ELZuWOHWqXKGLD2amBHRGYbhhheD0wAwg04sR6mROKK1r-8dZqNT91gHAdJKRlfjL4vyU85KFAS9SFriCJ_6rIgN86RBFg_nYROZbTdj1QLODwZRReiIeCoqJ7xQ6uJpE_F8NNE3snwySNQhw8wpL-loiyXKry3tin2yqlQRX1VT0Jrf0uj5nBnLwkmeB8G_LP-RtjT_Q-MctSQ"/>
+<div class="absolute top-4 left-4">
+<span class="bg-black/80 text-white text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm flex items-center">
+<span class="material-symbols-outlined text-[10px] mr-1" style="font-variation-settings: 'FILL' 1;">gavel</span> Auction
+                        </span>
+</div>
+</div>
+<p class="text-[10px] font-bold text-on-surface-variant/50 uppercase tracking-widest">Logic Stream</p>
+<h5 class="font-syne font-bold text-lg leading-tight mt-1 group-hover:text-primary transition-colors">Core Processing Array X-9</h5>
+<div class="mt-4 flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-[9px] font-bold text-on-surface-variant uppercase">Starting At</span>
+<span class="font-mono text-lg font-bold text-on-surface tracking-tighter">$15,200</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-[9px] font-bold text-on-surface-variant uppercase">Starts In</span>
+<span class="font-mono text-sm font-medium">12:04:45</span>
+</div>
+</div>
+</a>
+<!-- Cards 5-8 repeated for layout demonstration -->
+<!-- Product Card 5: Fixed -->
+<a class="group block" href="{{DATA:SCREEN:SCREEN_96}}">
+<div class="relative aspect-[3/4] bg-surface-container-low rounded-2xl overflow-hidden mb-5">
+<img alt="Tech part" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Microscopic view of high-precision fiber optic connectors with glowing light and sleek metallic finish" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9rkY6c7496A-hd1dTcZY4l-b_hAAxJG0yZTka41uPC_4BMSu-0JE3ePgRw27n_E7fP2IcXe9v7f4UoLE4QrKrymAARSfp9mjPgh-aZ1ArQqpaxefhvbQoqgoGuhyWEJq3NiDxs-Slk6LrCqinNbkrpZTtQnRI6PVMDkzBdSZmJ3-M1YdhYmKzBNKv13ioQAlPBLI9_92flpJ79SQVXhUhL37cK4UWstRfrg2AhP-TCWim38V8552EiBHD3DmB_D7jmZkZtw5BrbA"/>
+<div class="absolute top-4 left-4">
+<span class="bg-surface-container-highest text-on-surface text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm">Fixed Price</span>
+</div>
+</div>
+<p class="text-[10px] font-bold text-on-surface-variant/50 uppercase tracking-widest">Optic Core</p>
+<h5 class="font-syne font-bold text-lg leading-tight mt-1 group-hover:text-primary transition-colors">Quantum Bridge Connector</h5>
+<div class="mt-4 flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-[9px] font-bold text-on-surface-variant uppercase">Price</span>
+<span class="font-mono text-lg font-bold text-on-surface tracking-tighter">$750</span>
+</div>
+</div>
+</a>
+<!-- Product Card 6: Auction -->
+<a class="group block" href="{{DATA:SCREEN:SCREEN_96}}">
+<div class="relative aspect-[3/4] bg-surface-container-low rounded-2xl overflow-hidden mb-5">
+<img alt="Metallic sculpture" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Abstract chrome flowing sculpture with liquid-like properties and deep reflections against a dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZIcz6tB2fDtXaE1dJvR3cAEMfktN3--H1QTpVYaQ7T82J5kQZOOkc-oVXYYSAEzAppwhgdlm-q3qoSSOgibx0qEgL-dlaTG80QqwBf6IXR5-kQz46kgUylpfER7NMRhCFu1G1ULV4aeLDPr-f1rj98AF3p9EpnYhBYQWq-W816R1vjDGzD4zRDbn5Fl9jgM6B7oI4bmUDqKuc2uvmQXLQJaDNiWX3cVPmoPYqqhbVOBsJ--7a3zPNGVp_6twh2r0sgnWT7MkSQjk"/>
+<div class="absolute top-4 left-4 flex flex-col space-y-2">
+<span class="bg-black/80 text-white text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm flex items-center">
+<span class="material-symbols-outlined text-[10px] mr-1" style="font-variation-settings: 'FILL' 1;">gavel</span> Auction
+                        </span>
+</div>
+</div>
+<p class="text-[10px] font-bold text-on-surface-variant/50 uppercase tracking-widest">Flux Studios</p>
+<h5 class="font-syne font-bold text-lg leading-tight mt-1 group-hover:text-primary transition-colors">Liquid Motion Sculpture 04</h5>
+<div class="mt-4 flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-[9px] font-bold text-on-surface-variant uppercase">Current Bid</span>
+<span class="font-mono text-lg font-bold text-[#00C48C] tracking-tighter">$22,400</span>
+</div>
+<span class="font-mono text-sm font-medium text-error">Ending in 14m</span>
+</div>
+</a>
+<!-- Product Card 7: RFQ -->
+<div class="group">
+<a class="block" href="{{DATA:SCREEN:SCREEN_96}}">
+<div class="relative aspect-[3/4] bg-surface-container-low rounded-2xl overflow-hidden mb-5">
+<img alt="Tech workspace" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Top down view of advanced computer circuitry with blue and orange LED accents and industrial design" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBA_suymxL-U_sku9ab8CMoh7PKNQUREeY3O8h1H4lg_OG35Fu9IsXZSJu66gyNncBg8C_8OeJbYyXBDIySYqFG3mRbWZXJtq-jz9n_VMMRTK0VMUovnmZJgzrATSbOCtbQe59BT3gR7RIrH6rtX0HAnWBZD818e-hu2xaAku-d5WpgC7FKwrrwjeHy7KFxoJISa-qtxNGr7tCXI2YiQdxJS5-DpI7hhibZV8eiQbJJyLxs5hm-nn1KKzR72hG9_u3iJ2AZAjR5zD8"/>
+<div class="absolute top-4 left-4">
+<span class="bg-[#2979FF] text-white text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm">RFQ Only</span>
+</div>
+</div>
+<p class="text-[10px] font-bold text-on-surface-variant/50 uppercase tracking-widest">Omni-Net</p>
+<h5 class="font-syne font-bold text-lg leading-tight mt-1 group-hover:text-primary transition-colors">Server Node Cluster Alpha</h5>
+</a>
+<div class="mt-4">
+<a class="block w-full text-center py-3 bg-surface-container-high hover:bg-[#2979FF] hover:text-white transition-all text-[11px] font-bold uppercase tracking-widest rounded-lg" href="{{DATA:SCREEN:SCREEN_89}}">Request Bulk Pricing</a>
+</div>
+</div>
+<!-- Product Card 8: Fixed -->
+<a class="group block" href="{{DATA:SCREEN:SCREEN_96}}">
+<div class="relative aspect-[3/4] bg-surface-container-low rounded-2xl overflow-hidden mb-5">
+<img alt="Speaker component" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Macro photo of a high-end audio speaker driver with carbon fiber texture and metallic accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCS27PQOH5yAD1j-bKOHeMUREJz8c7UxdZtNA47eDMn_q9FlxV8-uQqeOq45KvODqyLP8EoLpzUJfsiMXSM_L2eJPIjtU9M26A3ywpQXts_UdrMBIYZZL5YbATe5y8mm7tu7OMmjYqeQTD2yZHPlLk6ZNdHdlGeFhfiKghGohLIVueIjn5spv8JIyC5IdrR8_a7m_C6fNO84W4AEyvJ0Vv3cFBQxFpIqLeKvZZA-X5cfldAAMjrNVNHH1sBq9_2lWUR2tYG__ds-lY"/>
+<div class="absolute top-4 left-4">
+<span class="bg-surface-container-highest text-on-surface text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm">Fixed Price</span>
+</div>
+</div>
+<p class="text-[10px] font-bold text-on-surface-variant/50 uppercase tracking-widest">Sonic Horizon</p>
+<h5 class="font-syne font-bold text-lg leading-tight mt-1 group-hover:text-primary transition-colors">Resonance Plate Mk III</h5>
+<div class="mt-4 flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-[9px] font-bold text-on-surface-variant uppercase">Price</span>
+<span class="font-mono text-lg font-bold text-on-surface tracking-tighter">$3,400</span>
+</div>
+</div>
+</a>
+</div>
+<!-- Pagination -->
+<div class="mt-20 flex flex-col items-center">
+<div class="flex items-center space-x-1 mb-6">
+<button class="h-10 md:h-12 w-10 md:w-12 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors"><span class="material-symbols-outlined">chevron_left</span></button>
+<button class="h-10 md:h-12 w-10 md:w-12 flex items-center justify-center rounded-lg bg-primary-container text-white font-bold">1</button>
+<button class="h-10 md:h-12 w-10 md:w-12 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors font-bold">2</button>
+<span class="px-2 md:px-4 text-on-surface-variant/40">...</span>
+<button class="h-10 md:h-12 w-10 md:w-12 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors font-bold">24</button>
+<button class="h-10 md:h-12 w-10 md:w-12 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+<p class="text-[11px] font-bold text-on-surface-variant/40 uppercase tracking-widest">Displaying 24 of 1,284 assets</p>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation for Mobile -->
+<nav class="fixed bottom-0 w-full lg:hidden z-50 bg-[#FFF8F6]/80 dark:bg-[#1A1412]/80 backdrop-blur-xl flex justify-around items-center h-20 px-6 pb-safe border-t border-[#261813]/5 shadow-[0_-8px_32px_rgba(38,24,19,0.06)]">
+<div class="flex flex-col items-center justify-center text-[#261813]/40 dark:text-[#FFF8F6]/40">
+<span class="material-symbols-outlined">gallery_thumbnail</span>
+<span class="font-['DM_Sans'] text-[10px] font-bold uppercase mt-1">Gallery</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#F5620F] scale-110">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">search</span>
+<span class="font-['DM_Sans'] text-[10px] font-bold uppercase mt-1">Search</span>
+</div>
+<a class="flex flex-col items-center justify-center text-[#261813]/40 dark:text-[#FFF8F6]/40" href="{{DATA:SCREEN:SCREEN_89}}">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-['DM_Sans'] text-[10px] font-bold uppercase mt-1">Bids</span>
+</a>
+<div class="flex flex-col items-center justify-center text-[#261813]/40 dark:text-[#FFF8F6]/40">
+<span class="material-symbols-outlined">person</span>
+<span class="font-['DM_Sans'] text-[10px] font-bold uppercase mt-1">Profile</span>
+</div>
+</nav>
+<script>
+    function toggleFilters() {
+        const drawer = document.getElementById('filter-drawer');
+        const overlay = document.getElementById('filter-drawer-overlay');
+        const isHidden = drawer.classList.contains('translate-x-full');
+        
+        if (isHidden) {
+            drawer.classList.remove('translate-x-full');
+            overlay.classList.remove('hidden');
+            setTimeout(() => overlay.classList.replace('opacity-0', 'opacity-100'), 10);
+            document.body.style.overflow = 'hidden';
+        } else {
+            drawer.classList.add('translate-x-full');
+            overlay.classList.replace('opacity-100', 'opacity-0');
+            setTimeout(() => overlay.classList.add('hidden'), 300);
+            document.body.style.overflow = '';
+        }
+    }
+
+    // Close on overlay click
+    document.getElementById('filter-drawer-overlay').addEventListener('click', toggleFilters);
+</script>
+</body></html>

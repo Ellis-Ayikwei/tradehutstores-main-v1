@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&amp;family=DM+Sans:wght@400;500;700&amp;family=JetBrains+Mono:wght@400;700&amp;family=Epilogue:wght@400;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed-dim": "#ffb597",
+                        "on-tertiary-fixed-variant": "#00429b",
+                        "inverse-surface": "#3d2d26",
+                        "on-primary-fixed-variant": "#7d2d00",
+                        "secondary": "#006c4b",
+                        "outline-variant": "#e2bfb2",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#0058ca",
+                        "primary": "#a43d00",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#005138",
+                        "tertiary-fixed-dim": "#b0c6ff",
+                        "inverse-primary": "#ffb597",
+                        "on-primary-container": "#4e1900",
+                        "tertiary-container": "#558dff",
+                        "secondary-container": "#60f9bd",
+                        "on-surface-variant": "#5a4137",
+                        "on-background": "#261813",
+                        "surface-dim": "#efd5cb",
+                        "secondary-fixed": "#63fcc0",
+                        "on-primary-fixed": "#360f00",
+                        "on-primary": "#ffffff",
+                        "surface": "#fff8f6",
+                        "surface-container-high": "#fee3d9",
+                        "surface-bright": "#fff8f6",
+                        "primary-fixed": "#ffdbcd",
+                        "primary-container": "#f5620f",
+                        "on-error": "#ffffff",
+                        "on-surface": "#261813",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#f8ddd3",
+                        "background": "#fff8f6",
+                        "surface-tint": "#a43d00",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#ffede7",
+                        "error": "#ba1a1a",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#3fdfa5",
+                        "surface-container-highest": "#f8ddd3",
+                        "surface-container-low": "#fff1ec",
+                        "tertiary-fixed": "#d9e2ff",
+                        "surface-container": "#ffe9e2",
+                        "outline": "#8e7165",
+                        "on-secondary-container": "#00714f",
+                        "on-tertiary-fixed": "#001945",
+                        "on-tertiary-container": "#002761",
+                        "on-secondary-fixed": "#002114"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Epilogue"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .font-syne { font-family: 'Syne', sans-serif; }
+        .font-dm { font-family: 'DM Sans', sans-serif; }
+        .shadow-card {
+            box-shadow: 0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02);
+        }
+        .shadow-card-hover:hover {
+            box-shadow: 0 12px 32px 0 rgba(38, 24, 19, 0.08);
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none !important;
+            border-color: rgba(245, 98, 15, 0.2) !important;
+            box-shadow: 0 0 0 4px rgba(245, 98, 15, 0.05) !important;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-fixed selection:text-on-primary-fixed">
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="h-screen sticky left-0 w-64 flex flex-col bg-[#FFF1EC] dark:bg-stone-900 py-8 gap-6 z-50">
+<div class="px-6 mb-4">
+<span class="font-['Syne'] font-extrabold text-[#F5620F] text-2xl tracking-tighter">TradeHut</span>
+</div>
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3 mb-2">
+<img class="w-10 h-10 rounded-xl object-cover ring-2 ring-primary/10" data-alt="professional male headshot in soft studio lighting with a clean neutral background, minimalist aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKCESN3kQVcR-f_XLKdMhKKd7UJxHNr83sA_tsQWQvawqk9YLzhjWAaLv-fINzU9_4NK8ADaLFrMHpPm5gYo7vq-UvzoD_BWhRAIER0CMLPjNSIWnanKE_quiMFYBdmkkh2WFClUxzNrR1mKfxowaQLAMDrchwbiVCWXYL1tBmzRmC4dw-FCiCO_EnuUXhEgGV2cTj2K-dXbWiGG15Fj4EMKdD_Xev3ljKnKNd_gLpbYhLR7fV509py-xvtPlJNkDB91Ic-dOjyWQ"/>
+<div>
+<h3 class="font-['DM_Sans'] font-medium text-on-surface text-sm">Account Central</h3>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-widest">Manage your trade presence</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-2">
+<a class="flex items-center gap-3 py-3 text-[#F5620F] font-bold border-r-4 border-[#F5620F] pl-4 transition-transform hover:translate-x-1" href="#">
+<span class="material-symbols-outlined text-[20px]">person</span>
+<span class="font-['DM_Sans'] font-medium">Profile</span>
+</a>
+<a class="flex items-center gap-3 py-3 text-[#261813] dark:text-stone-400 pl-4 transition-transform hover:text-[#F5620F] hover:translate-x-1" href="#">
+<span class="material-symbols-outlined text-[20px]">shield</span>
+<span class="font-['DM_Sans'] font-medium">Security</span>
+</a>
+<a class="flex items-center gap-3 py-3 text-[#261813] dark:text-stone-400 pl-4 transition-transform hover:text-[#F5620F] hover:translate-x-1" href="#">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+<span class="font-['DM_Sans'] font-medium">Order History</span>
+</a>
+<a class="flex items-center gap-3 py-3 text-[#261813] dark:text-stone-400 pl-4 transition-transform hover:text-[#F5620F] hover:translate-x-1" href="#">
+<span class="material-symbols-outlined text-[20px]">payments</span>
+<span class="font-['DM_Sans'] font-medium">Payment Methods</span>
+</a>
+<a class="flex items-center gap-3 py-3 text-[#261813] dark:text-stone-400 pl-4 transition-transform hover:text-[#F5620F] hover:translate-x-1" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-['DM_Sans'] font-medium">Preferences</span>
+</a>
+</nav>
+<div class="px-6 pt-4 mt-auto">
+<button class="w-full py-3 bg-primary-container text-white rounded-xl font-syne font-bold text-sm hover:opacity-90 transition-opacity active:scale-95 duration-200 shadow-lg shadow-primary/20">
+                    Request Support
+                </button>
+<button class="flex items-center gap-3 mt-6 py-3 text-[#261813] dark:text-stone-400 pl-0 hover:text-error transition-colors">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+<span class="font-['DM_Sans'] font-medium">Log Out</span>
+</button>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="flex-1 min-h-screen relative">
+<!-- TopAppBar -->
+<header class="sticky top-0 w-full z-40 bg-[#FFF8F6]/70 dark:bg-stone-950/70 backdrop-blur-xl flex items-center justify-between px-10 py-5 shadow-[0_4px_20px_0_rgba(38,24,19,0.04)]">
+<div class="flex items-center gap-8">
+<h1 class="font-syne font-bold text-xl text-on-surface">Profile Settings</h1>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative flex items-center bg-surface-container-low rounded-full px-4 py-2 border border-outline-variant/10">
+<span class="material-symbols-outlined text-on-surface-variant text-lg">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm font-dm w-48 placeholder:text-on-surface-variant/50" placeholder="Search settings..." type="text"/>
+</div>
+<div class="flex items-center gap-4 text-on-surface-variant">
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">notifications</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">help</span>
+<div class="h-8 w-[1px] bg-outline-variant/30 mx-2"></div>
+<img class="w-9 h-9 rounded-full ring-2 ring-primary/20" data-alt="User profile avatar close up, high quality portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYg7B01SIu6WfFtlE2caH9DT2T2Fh9FA2ZSKcs8SEIT2LYTeIPQ673gyoqz1tYyQjM4c0n7u9yjUHJt2DguhkCG7M34oJW6pdl4QKsXyzorDZlFbWND-3ayIKvXVxELr9St2nfmZwO4eFwqI7T1jJVaG42fwfQW9kF-RqAf-FxTXL2HyQYnftOsD3MITGjur-oWUmCxZqaG3Xmwxqtrp-bkK0evhocTnREhGoG7PHfSVvtlOZOpftErzpTMMkN8UcmmrOkzC_S_jg"/>
+</div>
+</div>
+</header>
+<div class="p-10 max-w-5xl mx-auto space-y-12">
+<!-- Section 1: Public Profile -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-10">
+<div class="space-y-2">
+<h2 class="font-syne font-bold text-xl text-on-surface">Public Profile</h2>
+<p class="font-dm text-sm text-on-surface-variant leading-relaxed">This information will be displayed publicly to other traders and auction participants.</p>
+</div>
+<div class="md:col-span-2 bg-surface-container-lowest rounded-2xl p-8 shadow-card border border-outline-variant/5 space-y-8">
+<div class="flex items-center gap-8">
+<div class="relative group">
+<img class="w-24 h-24 rounded-2xl object-cover ring-4 ring-surface-container-low transition-transform group-hover:scale-[1.02]" data-alt="Main profile avatar image, studio lighting, professional male portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAvL0_AYJxb0E2JLfGhWukt4WuQHQEA_SlMKpfQBZq6P2n-0ybb81NcU8MYQEwrYUb-B_Vwa_jWzlITH0fvtA3g9W2sNgbXRi_wnZoxpMTxITlhogQFNs3lDxJUu7yLxbkpyf_gz02VnHvj92tGfaUrunNUNq8shxAh_J7fDiznzg17Ov-yTTjHelLRfHIeg2m27TSPN7gxy0HuEYpBDmPLVngJ9zJTQOu3SSmV6FpDawcWEP3owoTa4JYPTV6P6EeLLLreRNG6yY"/>
+<button class="absolute -bottom-2 -right-2 bg-primary text-white p-2 rounded-lg shadow-lg hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-sm">photo_camera</span>
+</button>
+</div>
+<div class="space-y-1">
+<h4 class="font-syne font-bold text-on-surface">Profile Photo</h4>
+<p class="text-xs text-on-surface-variant">JPG, GIF or PNG. Max size 2MB.</p>
+<div class="flex gap-4 mt-2">
+<button class="text-xs font-bold text-primary hover:underline">Upload New</button>
+<button class="text-xs font-bold text-error/70 hover:underline">Remove</button>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Display Name</label>
+<input class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 font-dm text-sm" type="text" value="Alexander Thorne"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Username/Slug</label>
+<div class="relative flex items-center">
+<span class="absolute left-4 text-on-surface-variant/40 font-mono text-sm">@</span>
+<input class="w-full bg-surface-container-low border-none rounded-xl pl-8 pr-4 py-3 font-dm text-sm" type="text" value="alex_thorne"/>
+</div>
+</div>
+<div class="md:col-span-2 space-y-2">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Bio</label>
+<textarea class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 font-dm text-sm resize-none" placeholder="Tell the TradeHut community about yourself..." rows="3">Industrial collector and vintage enthusiast. Specialized in 20th-century machinery and maritime artifacts.</textarea>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2: Personal Information -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-10">
+<div class="space-y-2">
+<h2 class="font-syne font-bold text-xl text-on-surface">Personal Information</h2>
+<p class="font-dm text-sm text-on-surface-variant leading-relaxed">Private details used for shipping, billing, and identity management.</p>
+</div>
+<div class="md:col-span-2 bg-surface-container-lowest rounded-2xl p-8 shadow-card border border-outline-variant/5">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Full Name</label>
+<input class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 font-dm text-sm" type="text" value="Alexander Julian Thorne"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Email Address</label>
+<div class="relative flex items-center">
+<input class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 font-dm text-sm" type="email" value="alex.thorne@example.com"/>
+<span class="absolute right-3 flex items-center gap-1 bg-secondary/10 text-secondary px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">check_circle</span> Verified
+                                    </span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Phone Number</label>
+<input class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 font-dm text-sm" type="tel" value="+1 (555) 012-3456"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Date of Birth</label>
+<input class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 font-dm text-sm" type="date" value="1988-05-24"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Account Verification -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-10">
+<div class="space-y-2">
+<h2 class="font-syne font-bold text-xl text-on-surface">Account Verification</h2>
+<p class="font-dm text-sm text-on-surface-variant leading-relaxed">Maintain your trust status and manage institutional credentials.</p>
+</div>
+<div class="md:col-span-2 space-y-6">
+<div class="bg-surface-container-lowest rounded-2xl p-6 shadow-card border-l-4 border-secondary flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-secondary/10 text-secondary rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+</div>
+<div>
+<h4 class="font-syne font-bold text-on-surface">Identity Verified</h4>
+<p class="text-xs text-on-surface-variant font-dm">Verified on October 12, 2023</p>
+</div>
+</div>
+<button class="px-4 py-2 text-xs font-bold border border-outline-variant/30 rounded-lg hover:bg-surface-container-low transition-colors font-syne">View Badge</button>
+</div>
+<div class="bg-surface-container-lowest rounded-2xl p-8 shadow-card border border-outline-variant/5">
+<div class="flex items-center justify-between mb-6">
+<h4 class="font-syne font-bold text-on-surface">Company Information</h4>
+<span class="text-[10px] bg-tertiary-container/30 text-tertiary px-3 py-1 rounded-full font-bold uppercase">Institutional Partner</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Company Name</label>
+<input class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 font-dm text-sm" type="text" value="Thorne Heritage Collections"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Tax ID / VAT</label>
+<input class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 font-mono text-sm" type="text" value="US-129384756"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 4: Preferences -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-10">
+<div class="space-y-2">
+<h2 class="font-syne font-bold text-xl text-on-surface">Preferences</h2>
+<p class="font-dm text-sm text-on-surface-variant leading-relaxed">Customize your localized trading experience and interface language.</p>
+</div>
+<div class="md:col-span-2 bg-surface-container-lowest rounded-2xl p-8 shadow-card border border-outline-variant/5">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="space-y-2">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Language</label>
+<select class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 font-dm text-sm appearance-none">
+<option>English (US)</option>
+<option>German</option>
+<option>Japanese</option>
+<option>French</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Timezone</label>
+<select class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 font-dm text-sm appearance-none">
+<option>(GMT-05:00) Eastern Time</option>
+<option>(GMT+00:00) UTC</option>
+<option>(GMT+01:00) CET</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Currency</label>
+<select class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 font-dm text-sm appearance-none">
+<option>USD ($)</option>
+<option>EUR (€)</option>
+<option>GBP (£)</option>
+<option>JPY (¥)</option>
+</select>
+</div>
+</div>
+</div>
+</section>
+<!-- Save Actions -->
+<div class="pt-10 flex items-center justify-end gap-6 border-t border-outline-variant/10">
+<button class="text-on-surface-variant font-syne font-bold text-sm hover:text-on-surface transition-colors">Discard Changes</button>
+<button class="px-10 py-4 bg-primary text-white rounded-xl font-syne font-bold text-sm shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">Save Changes</button>
+</div>
+</div>
+<!-- Visual Decorative Element: Kinetic Background Glow -->
+<div class="fixed bottom-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+<div class="fixed top-20 left-64 w-64 h-64 bg-secondary/5 rounded-full blur-[100px] -z-10 pointer-events-none"></div>
+</main>
+</div>
+</body></html>

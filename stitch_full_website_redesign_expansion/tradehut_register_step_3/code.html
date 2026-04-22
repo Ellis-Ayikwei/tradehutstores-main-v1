@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Verify Your Email | TradeHut</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&amp;family=DM+Sans:wght@400;500;700&amp;family=JetBrains+Mono:wght@500&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface": "#261813",
+                    "error": "#ba1a1a",
+                    "background": "#fff8f6",
+                    "on-tertiary-fixed-variant": "#00429b",
+                    "on-primary": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed-variant": "#7d2d00",
+                    "primary": "#a43d00",
+                    "on-error": "#ffffff",
+                    "secondary-fixed": "#63fcc0",
+                    "outline-variant": "#e2bfb2",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-container": "#558dff",
+                    "secondary": "#006c4b",
+                    "primary-fixed": "#ffdbcd",
+                    "on-secondary-container": "#00714f",
+                    "inverse-primary": "#ffb597",
+                    "secondary-fixed-dim": "#3fdfa5",
+                    "on-primary-fixed": "#360f00",
+                    "secondary-container": "#60f9bd",
+                    "error-container": "#ffdad6",
+                    "on-surface-variant": "#5a4137",
+                    "tertiary-fixed": "#d9e2ff",
+                    "inverse-surface": "#3d2d26",
+                    "on-secondary-fixed": "#002114",
+                    "on-background": "#261813",
+                    "on-tertiary-fixed": "#001945",
+                    "surface-container-highest": "#f8ddd3",
+                    "surface-variant": "#f8ddd3",
+                    "surface-container-low": "#fff1ec",
+                    "surface-tint": "#a43d00",
+                    "primary-fixed-dim": "#ffb597",
+                    "surface-bright": "#fff8f6",
+                    "primary-container": "#f5620f",
+                    "surface-container-high": "#fee3d9",
+                    "surface": "#fff8f6",
+                    "on-secondary-fixed-variant": "#005138",
+                    "inverse-on-surface": "#ffede7",
+                    "surface-dim": "#efd5cb",
+                    "on-primary-container": "#4e1900",
+                    "tertiary": "#0058ca",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed-dim": "#b0c6ff",
+                    "outline": "#8e7165",
+                    "on-error-container": "#93000a",
+                    "surface-container": "#ffe9e2",
+                    "on-tertiary-container": "#002761"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Syne", "sans-serif"],
+                    "body": ["DM Sans", "sans-serif"],
+                    "label": ["Plus Jakarta Sans", "sans-serif"],
+                    "mono": ["JetBrains Mono", "monospace"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #030712; /* gray-950 */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            background-blend-mode: overlay;
+            opacity: 0.98;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 248, 246, 0.03);
+            backdrop-filter: blur(24px);
+            box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="antialiased font-body min-h-screen flex flex-col items-center">
+<!-- Top Navigation (Shell Implementation) -->
+<header class="fixed top-0 w-full z-50 bg-transparent flex justify-center items-center px-6 py-8">
+<div class="flex items-center gap-2">
+<span class="text-2xl font-black text-white font-headline tracking-tight">TradeHut</span>
+</div>
+</header>
+<!-- Main Registration Canvas -->
+<main class="flex-grow flex items-center justify-center px-4 w-full max-w-[1440px] mx-auto py-24">
+<div class="w-full max-w-[400px] flex flex-col gap-8">
+<!-- Progress Indicator -->
+<div class="flex flex-col gap-3">
+<div class="flex justify-between items-end">
+<span class="font-headline text-[10px] uppercase tracking-[0.2em] text-white/40">Registration Status</span>
+<span class="font-mono text-xs text-primary-container">STEP 3 OF 3</span>
+</div>
+<div class="h-[2px] w-full bg-white/10 overflow-hidden">
+<div class="h-full bg-primary-container w-full"></div>
+</div>
+</div>
+<!-- Verification Card -->
+<div class="glass-card rounded-xl p-8 flex flex-col items-center text-center border border-white/5 relative overflow-hidden">
+<!-- Tonal Depth Accent -->
+<div class="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 rounded-full blur-[80px]"></div>
+<!-- Success Icon Cluster -->
+<div class="relative mb-8">
+<div class="w-20 h-20 bg-primary-container/10 rounded-full flex items-center justify-center relative z-10">
+<span class="material-symbols-outlined text-[48px] text-primary-container" style="font-variation-settings: 'FILL' 0, 'wght' 200;">verified_user</span>
+</div>
+<!-- Aesthetic Rings -->
+<div class="absolute inset-0 border border-primary-container/20 rounded-full scale-125"></div>
+<div class="absolute inset-0 border border-primary-container/10 rounded-full scale-150"></div>
+</div>
+<!-- Content -->
+<h1 class="font-headline text-3xl text-white mb-4 tracking-tight">Verify your email</h1>
+<p class="text-white/60 leading-relaxed mb-10 text-sm">
+                    We've sent a verification link to your email address. Please click the link to secure your account and start trading.
+                </p>
+<!-- Actions -->
+<div class="w-full space-y-4">
+<button class="w-full py-4 px-6 rounded-md border border-white/10 text-white font-medium hover:bg-white/5 transition-all duration-300 flex items-center justify-center gap-3 group">
+<span class="material-symbols-outlined text-sm group-hover:rotate-180 transition-transform duration-500">sync</span>
+<span>Resend Email</span>
+</button>
+<div class="flex items-center justify-center gap-2">
+<span class="text-[10px] uppercase tracking-widest text-white/30 font-label">Resend available in</span>
+<span class="font-mono text-primary-container text-xs">00:58s</span>
+</div>
+</div>
+</div>
+<!-- Footnote / Redirect Info -->
+<div class="flex items-center justify-center gap-3 px-4">
+<div class="w-1.5 h-1.5 rounded-full bg-secondary shadow-[0_0_8px_rgba(0,196,140,0.4)] animate-pulse"></div>
+<p class="text-[11px] text-white/40 uppercase tracking-widest font-label leading-tight">
+                    Verified automatically? You'll be redirected to your dashboard in <span class="font-mono text-white/60">5 seconds</span>.
+                </p>
+</div>
+</div>
+</main>
+<!-- Secondary Contextual Detail (Asymmetric Element) -->
+<div class="fixed bottom-12 right-12 hidden lg:block max-w-[200px]">
+<div class="p-6 bg-white/5 backdrop-blur-md rounded-lg border-l-2 border-primary-container">
+<p class="text-[10px] text-white/50 leading-relaxed font-label">
+<strong class="text-white block mb-1">SECURITY TIP</strong>
+                Never share your verification link with anyone. TradeHut staff will never ask for your credentials.
+            </p>
+</div>
+</div>
+<!-- Minimal Footer (From JSON) -->
+<footer class="w-full py-8 mt-auto flex flex-col md:flex-row justify-center items-center gap-8 px-8 text-center bg-transparent">
+<div class="flex flex-wrap justify-center gap-6">
+<a class="font-['DM_Sans'] text-[10px] uppercase tracking-[0.2em] text-[#261813]/40 dark:text-[#FFF8F6]/40 hover:text-[#F5620F] transition-all opacity-80 hover:opacity-100" href="#">Privacy Policy</a>
+<a class="font-['DM_Sans'] text-[10px] uppercase tracking-[0.2em] text-[#261813]/40 dark:text-[#FFF8F6]/40 hover:text-[#F5620F] transition-all opacity-80 hover:opacity-100" href="#">Terms of Service</a>
+<a class="font-['DM_Sans'] text-[10px] uppercase tracking-[0.2em] text-[#261813]/40 dark:text-[#FFF8F6]/40 hover:text-[#F5620F] transition-all opacity-80 hover:opacity-100" href="#">Help Center</a>
+</div>
+<p class="font-['DM_Sans'] text-[10px] uppercase tracking-[0.2em] text-[#261813]/40 dark:text-[#FFF8F6]/40 opacity-80">© 2024 TradeHut Kinetic. All rights reserved.</p>
+</footer>
+</body></html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TradeHut | Account Central</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&amp;family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed-dim": "#ffb597",
+                    "on-tertiary-fixed-variant": "#00429b",
+                    "inverse-surface": "#3d2d26",
+                    "on-primary-fixed-variant": "#7d2d00",
+                    "secondary": "#006c4b",
+                    "outline-variant": "#e2bfb2",
+                    "error-container": "#ffdad6",
+                    "tertiary": "#0058ca",
+                    "primary": "#a43d00",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed-variant": "#005138",
+                    "tertiary-fixed-dim": "#b0c6ff",
+                    "inverse-primary": "#ffb597",
+                    "on-primary-container": "#4e1900",
+                    "tertiary-container": "#558dff",
+                    "secondary-container": "#60f9bd",
+                    "on-surface-variant": "#5a4137",
+                    "on-background": "#261813",
+                    "surface-dim": "#efd5cb",
+                    "secondary-fixed": "#63fcc0",
+                    "on-primary-fixed": "#360f00",
+                    "on-primary": "#ffffff",
+                    "surface": "#fff8f6",
+                    "surface-container-high": "#fee3d9",
+                    "surface-bright": "#fff8f6",
+                    "primary-fixed": "#ffdbcd",
+                    "primary-container": "#f5620f",
+                    "on-error": "#ffffff",
+                    "on-surface": "#261813",
+                    "on-tertiary": "#ffffff",
+                    "surface-variant": "#f8ddd3",
+                    "background": "#fff8f6",
+                    "surface-tint": "#a43d00",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-on-surface": "#ffede7",
+                    "error": "#ba1a1a",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed-dim": "#3fdfa5",
+                    "surface-container-highest": "#f8ddd3",
+                    "surface-container-low": "#fff1ec",
+                    "tertiary-fixed": "#d9e2ff",
+                    "surface-container": "#ffe9e2",
+                    "outline": "#8e7165",
+                    "on-secondary-container": "#00714f",
+                    "on-tertiary-fixed": "#001945",
+                    "on-tertiary-container": "#002761",
+                    "on-secondary-fixed": "#002114"
+            },
+            "fontFamily": {
+                    "headline": ["Syne", "sans-serif"],
+                    "body": ["DM Sans", "sans-serif"],
+                    "label": ["DM Sans", "sans-serif"],
+                    "mono": ["JetBrains Mono", "monospace"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .kinetic-glass {
+            background: rgba(255, 248, 246, 0.7);
+            backdrop-filter: blur(24px);
+        }
+        .signature-glow {
+            background: linear-gradient(to bottom right, #a43d00, #f5620f);
+        }
+        .shadow-card {
+            box-shadow: 0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02);
+        }
+        .shadow-card:hover {
+            box-shadow: 0 12px 32px 0 rgba(38, 24, 19, 0.08);
+        }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: #fff8f6;
+            color: #261813;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+<!-- Top Navigation Shell -->
+<nav class="sticky top-0 w-full z-40 bg-[#FFF8F6]/70 dark:bg-stone-950/70 backdrop-blur-xl shadow-[0_4px_20px_0_rgba(38,24,19,0.04)] flex items-center justify-between px-6 py-4">
+<div class="flex items-center gap-8">
+<span class="font-['Syne'] font-bold text-2xl tracking-tighter text-[#261813] dark:text-stone-100">TradeHut</span>
+<div class="hidden md:flex gap-6 font-['DM_Sans'] text-sm tracking-normal">
+<a class="text-[#261813] dark:text-stone-400 hover:text-[#F5620F] transition-colors" href="#">Marketplace</a>
+<a class="text-[#261813] dark:text-stone-400 hover:text-[#F5620F] transition-colors" href="#">Auctions</a>
+<a class="text-[#261813] dark:text-stone-400 hover:text-[#F5620F] transition-colors" href="#">Insights</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<input class="bg-[#FFF1EC] dark:bg-stone-900 border-none rounded-md px-4 py-2 text-sm w-64 focus:ring-1 focus:ring-[#F5620F]/20" placeholder="Search assets..." type="text"/>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-md hover:bg-[#FFF1EC] dark:hover:bg-stone-800 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[#261813] dark:text-stone-400">notifications</span>
+</button>
+<button class="p-2 rounded-md hover:bg-[#FFF1EC] dark:hover:bg-stone-800 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[#261813] dark:text-stone-400">help</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden ml-2 border border-[#F5620F]/20">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="professional headshot of a person with friendly expression in soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrcbVdKRdNxbSJ-Fg0Tt6JdGFLROUkGw-9cxQXY_zzsgnbEodr5moq-PerD8I19zf_lm9Dr57HYmN6AbijjhD_mcgDGsKV5YrAoO1OdsavoqEoVo8dSShma1UisvNQ5nWB32qLg4D6qxWJBsbrMPNk6qJ9DjADvSpuLm8YRovcQup033YxRLI3yr2GcmWE-GLDS7zDhL-Zg9zrFkIrOOerjP3NyOc4OFpyclLkY7Jt76fC1sxpo4KDJ321kswyg3dSCxCJFNEfC60"/>
+</div>
+</div>
+</div>
+</nav>
+<div class="flex max-w-[1440px] mx-auto">
+<!-- Side Navigation Shell -->
+<aside class="h-screen sticky left-0 w-64 flex flex-col bg-[#FFF1EC] dark:bg-stone-900 flex flex-col py-8 gap-6 hidden md:flex">
+<div class="px-6 mb-4">
+<h2 class="font-['Syne'] font-extrabold text-[#F5620F] text-xl">Account Central</h2>
+<p class="text-xs text-[#261813]/60 dark:text-stone-400 mt-1">Manage your trade presence</p>
+</div>
+<nav class="flex-1 space-y-2 font-['DM_Sans'] font-medium">
+<a class="flex items-center gap-3 text-[#F5620F] font-bold border-r-4 border-[#F5620F] pl-4 cursor-pointer duration-300 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">person</span>
+<span>Profile</span>
+</a>
+<a class="flex items-center gap-3 text-[#261813] dark:text-stone-400 pl-4 cursor-pointer duration-300 hover:text-[#F5620F] hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">shield</span>
+<span>Security</span>
+</a>
+<a class="flex items-center gap-3 text-[#261813] dark:text-stone-400 pl-4 cursor-pointer duration-300 hover:text-[#F5620F] hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span>Order History</span>
+</a>
+<a class="flex items-center gap-3 text-[#261813] dark:text-stone-400 pl-4 cursor-pointer duration-300 hover:text-[#F5620F] hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span>Payment Methods</span>
+</a>
+<a class="flex items-center gap-3 text-[#261813] dark:text-stone-400 pl-4 cursor-pointer duration-300 hover:text-[#F5620F] hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Preferences</span>
+</a>
+</nav>
+<div class="px-4 mt-auto space-y-4">
+<button class="w-full py-3 bg-[#F5620F] text-white rounded-md font-['Syne'] font-bold text-sm shadow-card active:scale-[0.98] transition-all">
+                    Request Support
+                </button>
+<a class="flex items-center gap-3 text-[#261813] dark:text-stone-400 pl-2 cursor-pointer duration-300 hover:text-error transition-transform" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span>Log Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 p-6 lg:p-10 space-y-10 overflow-x-hidden">
+<!-- User Hero Section (Bento Style) -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Profile Identity -->
+<div class="lg:col-span-4 bg-surface-container-lowest p-8 rounded-xl shadow-card relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16"></div>
+<div class="relative z-10 flex flex-col items-center text-center">
+<div class="w-24 h-24 rounded-full border-4 border-surface-container-low p-1 shadow-md mb-4">
+<img alt="Ellis Armahayikwei" class="w-full h-full object-cover rounded-full" data-alt="portrait of Ellis Armahayikwei, professional male profile with warm lighting and minimalist background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaEV5gXEries1tPiO2yEQcBWoct9yVpi4-tfYzQmX-JAHo2bjf4oBJraCr-D-7YD5N0w4STiAEPa6tSl6yjy5o9X9KBhK3x_-04D90DNGsZDssRVu3v0GmGGAH8fmUgQ3gUWIQ0lWe2-aYEsDGXjDLLMaoBPZt2b3SQbuGKOsE8-yMce7CaI3AhJVwZtlyhqsUikx3tYagpfXxCHFSEuHTEN84-zRQqnC4z4Rru51Xms6Fgf8HhwCoNhIR9s20Wts8-ip1cPKV7mc"/>
+</div>
+<h1 class="font-headline text-2xl font-extrabold tracking-tight text-on-surface">Ellis Armahayikwei</h1>
+<p class="text-on-surface-variant text-sm mt-1 mb-6">Platinum Tier Member</p>
+<div class="flex gap-2">
+<button class="px-4 py-2 bg-surface-container-high rounded-md text-sm font-medium hover:bg-surface-variant transition-colors">Edit Profile</button>
+<button class="p-2 bg-primary-container text-white rounded-md hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-lg">share</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Core Stats -->
+<div class="lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="bg-surface-container-low p-6 rounded-xl flex flex-col justify-center items-center group hover:bg-white hover:shadow-card transition-all cursor-pointer">
+<span class="font-mono text-3xl font-bold text-primary">12</span>
+<span class="text-xs uppercase tracking-widest font-bold mt-2 opacity-60">Wishlist</span>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl flex flex-col justify-center items-center group hover:bg-white hover:shadow-card transition-all cursor-pointer">
+<span class="font-mono text-3xl font-bold text-primary">84</span>
+<span class="text-xs uppercase tracking-widest font-bold mt-2 opacity-60">Viewed</span>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl flex flex-col justify-center items-center group hover:bg-white hover:shadow-card transition-all cursor-pointer">
+<span class="font-mono text-3xl font-bold text-primary">05</span>
+<span class="text-xs uppercase tracking-widest font-bold mt-2 opacity-60">Coupons</span>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl flex flex-col justify-center items-center group hover:bg-white hover:shadow-card transition-all cursor-pointer">
+<span class="font-mono text-3xl font-bold text-primary">$4.2k</span>
+<span class="text-xs uppercase tracking-widest font-bold mt-2 opacity-60">Credit</span>
+</div>
+</div>
+</section>
+<!-- Order Tracking & Management (Kinetic Row) -->
+<section class="space-y-4">
+<div class="flex justify-between items-end px-2">
+<h3 class="font-headline text-lg font-bold">Orders &amp; Fulfillment</h3>
+<a class="text-xs font-bold text-primary uppercase tracking-wider" href="#">Full History →</a>
+</div>
+<div class="grid grid-cols-2 lg:grid-cols-6 gap-4">
+<div class="bg-white p-6 rounded-xl shadow-card flex flex-col items-center gap-3 border border-transparent hover:border-primary/10 transition-all">
+<span class="material-symbols-outlined text-primary text-3xl">payments</span>
+<span class="text-sm font-medium">Unpaid</span>
+<div class="px-2 py-0.5 bg-primary/10 text-primary rounded-full font-mono text-[10px] font-bold">2</div>
+</div>
+<div class="bg-white p-6 rounded-xl shadow-card flex flex-col items-center gap-3 border border-transparent hover:border-primary/10 transition-all">
+<span class="material-symbols-outlined text-primary text-3xl">package_2</span>
+<span class="text-sm font-medium">To ship</span>
+<div class="px-2 py-0.5 bg-primary/10 text-primary rounded-full font-mono text-[10px] font-bold">1</div>
+</div>
+<div class="bg-white p-6 rounded-xl shadow-card flex flex-col items-center gap-3 border border-transparent hover:border-primary/10 transition-all">
+<span class="material-symbols-outlined text-primary text-3xl">local_shipping</span>
+<span class="text-sm font-medium">Shipped</span>
+<div class="px-2 py-0.5 bg-primary/10 text-primary rounded-full font-mono text-[10px] font-bold">4</div>
+</div>
+<div class="bg-white p-6 rounded-xl shadow-card flex flex-col items-center gap-3 border border-transparent hover:border-primary/10 transition-all">
+<span class="material-symbols-outlined text-primary text-3xl">rate_review</span>
+<span class="text-sm font-medium">To review</span>
+<div class="px-2 py-0.5 bg-primary/10 text-primary rounded-full font-mono text-[10px] font-bold">0</div>
+</div>
+<!-- Management Links (Asymmetric) -->
+<div class="col-span-2 flex flex-col gap-3">
+<div class="flex-1 bg-surface-container-low hover:bg-surface-container-highest transition-colors rounded-xl p-4 flex items-center justify-between cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary">history_edu</span>
+<span class="font-bold text-sm">My Appeal</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
+</div>
+<div class="flex-1 bg-surface-container-low hover:bg-surface-container-highest transition-colors rounded-xl p-4 flex items-center justify-between cursor-pointer group border-l-4 border-error/40">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-error">gavel</span>
+<span class="font-bold text-sm">In Dispute</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Personalization: Recommended Items (Grid) -->
+<section class="space-y-6">
+<div class="flex items-center gap-4">
+<h3 class="font-headline text-2xl font-extrabold italic">More to love</h3>
+<div class="h-[2px] flex-1 bg-surface-container-high"></div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+<!-- Product Card 1 -->
+<div class="group relative">
+<div class="aspect-[4/5] w-full overflow-hidden rounded-xl bg-surface-container-low mb-4 relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="high-end brown leather artisanal jacket on minimalist studio background with soft cinematic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6q9YC1AX6SqR7HNQNNkHut5xSB6aB3lWKsj_iy7pg1fCpjY7BN7vrHqp88Q2HYHh9Gu38C-lbAlp5FHC3KshzRMfUXmrtotsUf4xkKk-1xV-k2dw93jPleI0R9CsqvIhcFBp-U8roBovaagMTk2X0hfL0NSScd_G4YxDZE7OCchOhEZ07piOXjoudaM44V9iQrN7fgw3GCuca5T6Z5NGJYxh2YCptYfcSmIrFtc4MMXLThptYTaiidbysTzV2VTAKOYcWOUGGbV8"/>
+<div class="absolute top-3 right-3">
+<button class="w-8 h-8 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center shadow-sm hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-sm">favorite</span>
+</button>
+</div>
+<div class="absolute bottom-0 left-0 p-3 w-full translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+<button class="w-full py-2 bg-primary text-white rounded-md text-xs font-bold uppercase tracking-widest shadow-lg">Quick View</button>
+</div>
+</div>
+<h4 class="font-headline text-base font-bold text-on-surface truncate">Heritage Leather Shell</h4>
+<div class="flex justify-between items-center mt-1">
+<span class="font-mono text-lg font-medium text-primary">$1,280.00</span>
+<span class="text-[10px] text-on-surface-variant bg-surface-container-highest px-2 py-1 rounded uppercase tracking-tighter">Limited Edition</span>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="group relative">
+<div class="aspect-[4/5] w-full overflow-hidden rounded-xl bg-surface-container-low mb-4 relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="modern minimalist sculptural sneakers in neutral tones on a textured geometric stone plinth" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLgf8q_aPYC8oBmCz_MMfGWv2e1LGNVYhr9rXKN5AET7WVzE3SjDdrz_vLuAOC2Iey9mw1QmKANL6m-Ej36GVzldT4eAaHLPFawSc4OkJVx8mMitp5r2Mcl7fbsNnH-6QS7tFOn2ESGbfaOtRhxzduvVOLgGi8-t6bDPiba3zUzIjqXSXwa-bEs8NIGn7zJCULRbmxzwTQfuUw8zgXfhMGn7UI0bDjYcRpyHhJR7ES7HTz58gN8RjIvgg6Bs4g7KloRnPeWliDZZ4"/>
+<div class="absolute top-3 right-3">
+<button class="w-8 h-8 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center shadow-sm hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-sm">favorite</span>
+</button>
+</div>
+<div class="absolute bottom-0 left-0 p-3 w-full translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+<button class="w-full py-2 bg-primary text-white rounded-md text-xs font-bold uppercase tracking-widest shadow-lg">Quick View</button>
+</div>
+</div>
+<h4 class="font-headline text-base font-bold text-on-surface truncate">Kinetic Form Sneakers</h4>
+<div class="flex justify-between items-center mt-1">
+<span class="font-mono text-lg font-medium text-primary">$450.00</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-secondary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-mono text-xs font-bold">4.9</span>
+</div>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="group relative">
+<div class="aspect-[4/5] w-full overflow-hidden rounded-xl bg-surface-container-low mb-4 relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="luxury minimalist wrist watch with white face and silver mesh band on silk fabric background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZjII70eam0hcP191W5fTTG1-mLxhWQ48tiNfPjXq4Rs1-09Nuhu7DzWWKKICXyC9U4VJrbMrsyRlzeGuDdQTdrcXdRCMdQnSR7fmc_X40GkjO9fI1dyr7mfZzTxylFHcNmUKcCY6C7Ay-nlhhIJwUUkhOe2unbw-pX2kLpYaeZt8Z_JDPmX5jXdhhPPo4da5jaXKKUp39jRCyY-_1-SJIl1ZYbRJ4Y1Qm8vDvSrVmACK2jotZKNMZ_a2Av1--OSibHWbq3yU5gxk"/>
+<div class="absolute top-3 right-3">
+<button class="w-8 h-8 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center shadow-sm hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-sm">favorite</span>
+</button>
+</div>
+<div class="absolute bottom-0 left-0 p-3 w-full translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+<button class="w-full py-2 bg-primary text-white rounded-md text-xs font-bold uppercase tracking-widest shadow-lg">Quick View</button>
+</div>
+</div>
+<h4 class="font-headline text-base font-bold text-on-surface truncate">Prism Dial Chrono</h4>
+<div class="flex justify-between items-center mt-1">
+<span class="font-mono text-lg font-medium text-primary">$890.00</span>
+<span class="text-[10px] text-on-surface-variant bg-surface-container-highest px-2 py-1 rounded uppercase tracking-tighter">Low Stock</span>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="group relative">
+<div class="aspect-[4/5] w-full overflow-hidden rounded-xl bg-surface-container-low mb-4 relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="folded high-quality minimalist grey wool sweater on clean white surface with overhead lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBn3bqIUhRtfFvAh60qtxG6e9fFluxruEJjB2AKIwyM2ZYafHBgZEKAlHGjNcGmAuBWeRMe-GqrNCG520GDMnF4L7IVvNclPaOxFulywjZ83P2RpYsbqBTlPAUGQJoB19dcifzpfvqRWDU_QbGAR5Of-wP93tnLOxWYjOhEu3CxczDTHznYBNsvzJBAJLln9qG389xpBsrYCzKyWZJK_QtempRFG_iQ74vLmt0pMblJj4ywRLx07-gJvV3Mkf3sYOcs77HK9WMiFk"/>
+<div class="absolute top-3 right-3">
+<button class="w-8 h-8 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center shadow-sm hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-sm">favorite</span>
+</button>
+</div>
+<div class="absolute bottom-0 left-0 p-3 w-full translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+<button class="w-full py-2 bg-primary text-white rounded-md text-xs font-bold uppercase tracking-widest shadow-lg">Quick View</button>
+</div>
+</div>
+<h4 class="font-headline text-base font-bold text-on-surface truncate">Studio Knit Layer</h4>
+<div class="flex justify-between items-center mt-1">
+<span class="font-mono text-lg font-medium text-primary">$320.00</span>
+<span class="text-[10px] text-on-tertiary-container bg-tertiary-container/20 px-2 py-1 rounded uppercase tracking-tighter">Bestseller</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+</div>
+<!-- Mobile Navigation Shell (Responsive Pivot) -->
+<div class="md:hidden fixed bottom-0 left-0 w-full bg-surface-container-lowest shadow-[0_-4px_20px_0_rgba(38,24,19,0.08)] z-50 flex justify-around items-center py-3 px-2 border-t border-surface-container-high">
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-on-surface-variant">home</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter opacity-60">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-on-surface-variant">explore</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter opacity-60">Explore</span>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter text-primary">Account</span>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-on-surface-variant">shopping_bag</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter opacity-60">Cart</span>
+</a>
+</div>
+</body></html>

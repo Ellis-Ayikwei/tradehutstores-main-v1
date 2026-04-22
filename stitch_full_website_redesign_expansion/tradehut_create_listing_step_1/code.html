@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Create New Listing | Kinetic Seller Studio</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;family=Syne:wght@700&amp;family=DM+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#261813",
+                        "on-primary-fixed": "#360f00",
+                        "on-surface-variant": "#5a4137",
+                        "on-primary-fixed-variant": "#7d2d00",
+                        "surface-variant": "#f8ddd3",
+                        "primary": "#a43d00",
+                        "on-error-container": "#93000a",
+                        "surface": "#fff8f6",
+                        "primary-fixed": "#ffdbcd",
+                        "surface-bright": "#fff8f6",
+                        "outline-variant": "#e2bfb2",
+                        "inverse-on-surface": "#ffede7",
+                        "on-tertiary-fixed": "#001945",
+                        "on-secondary-container": "#00714f",
+                        "on-tertiary-fixed-variant": "#00429b",
+                        "on-background": "#261813",
+                        "inverse-surface": "#3d2d26",
+                        "surface-container-highest": "#f8ddd3",
+                        "on-secondary-fixed-variant": "#005138",
+                        "background": "#fff8f6",
+                        "outline": "#8e7165",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed-dim": "#3fdfa5",
+                        "primary-fixed-dim": "#ffb597",
+                        "on-secondary-fixed": "#002114",
+                        "surface-tint": "#a43d00",
+                        "tertiary-fixed-dim": "#b0c6ff",
+                        "tertiary": "#0058ca",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "primary-container": "#f5620f",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#d9e2ff",
+                        "secondary-container": "#60f9bd",
+                        "on-tertiary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed": "#63fcc0",
+                        "surface-dim": "#efd5cb",
+                        "surface-container-low": "#fff1ec",
+                        "tertiary-container": "#558dff",
+                        "surface-container-high": "#fee3d9",
+                        "on-primary-container": "#4e1900",
+                        "on-tertiary-container": "#002761",
+                        "inverse-primary": "#ffb597",
+                        "secondary": "#006c4b",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container": "#ffe9e2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Epilogue"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"],
+                        "syne": ["Syne"],
+                        "dm-sans": ["DM Sans"],
+                        "mono": ["JetBrains Mono"]
+                    },
+                    "boxShadow": {
+                        "card": "0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02)",
+                        "card-hover": "0 12px 32px 0 rgba(38, 24, 19, 0.08)"
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .step-active { border-left: 3px solid #f5620f; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface">
+<!-- SideNavBar (from JSON) -->
+<aside class="flex flex-col py-8 h-full bg-[#FFF1EC] dark:bg-stone-900 h-screen w-64 fixed left-0 top-0 overflow-y-auto">
+<div class="px-6 mb-10">
+<h1 class="text-2xl font-bold tracking-tight font-syne text-[#261813] dark:text-[#FFF8F6]">Kinetic Seller</h1>
+<p class="text-xs text-[#261813]/60 dark:text-[#FFF8F6]/60 font-dm-sans mt-1">Enterprise Tier</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-6 py-3 text-[#261813]/60 dark:text-[#FFF8F6]/60 pl-4 hover:bg-[#FFF8F6] dark:hover:bg-stone-800 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">dashboard</span>
+<span class="font-dm-sans">Dashboard</span>
+</a>
+<a class="flex items-center px-6 py-3 text-[#F5620F] font-bold border-r-4 border-[#F5620F] pl-4 hover:bg-[#FFF8F6] dark:hover:bg-stone-800 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">storefront</span>
+<span class="font-dm-sans">Listings</span>
+</a>
+<a class="flex items-center px-6 py-3 text-[#261813]/60 dark:text-[#FFF8F6]/60 pl-4 hover:bg-[#FFF8F6] dark:hover:bg-stone-800 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">shopping_cart</span>
+<span class="font-dm-sans">Orders</span>
+</a>
+<a class="flex items-center px-6 py-3 text-[#261813]/60 dark:text-[#FFF8F6]/60 pl-4 hover:bg-[#FFF8F6] dark:hover:bg-stone-800 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">bar_chart</span>
+<span class="font-dm-sans">Analytics</span>
+</a>
+<a class="flex items-center px-6 py-3 text-[#261813]/60 dark:text-[#FFF8F6]/60 pl-4 hover:bg-[#FFF8F6] dark:hover:bg-stone-800 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">settings</span>
+<span class="font-dm-sans">Settings</span>
+</a>
+</nav>
+<div class="px-6 mt-auto">
+<button class="w-full bg-primary-container text-white py-3 rounded-xl font-bold text-sm shadow-card active:opacity-80 transition-opacity">
+                Create New Listing
+            </button>
+</div>
+</aside>
+<!-- TopAppBar (from JSON) -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-40 bg-[#FFF8F6]/70 dark:bg-stone-950/70 backdrop-blur-xl shadow-card flex justify-between items-center px-8 h-20">
+<div class="flex items-center gap-4">
+<h2 class="font-syne font-extrabold text-[#261813] dark:text-[#FFF8F6] text-xl">Create New Listing</h2>
+</div>
+<div class="flex items-center gap-6">
+<button class="px-6 py-2 rounded-lg border-2 border-outline-variant text-on-surface font-bold hover:bg-surface-container-low transition-all">
+                Save Draft
+            </button>
+<div class="flex items-center gap-3 border-l pl-6 border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-[#F5620F] transition-all">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-[#F5620F] transition-all">help_outline</span>
+<img alt="User Profile" class="w-10 h-10 rounded-full border-2 border-primary-container" data-alt="Close-up portrait of a professional businessman in a sleek office setting with natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-IYT28BOkj-baUm0GQUuoU9IAmKKHb5jsgauJRjbBba1qR0-qab8UbIw7fL4JQ0FvWPgp3Etx477ZkaK4OeaVF-vVNkQtjMOmcl95L4GyOu83MN1s6TorpB71nJBiPY3gCjJ2AvIpSELuIQUdWbe4HSdyROfAlF1qK2mKN_IxVQDHbIAP3XatNO2_G8xmLeFdUFMI1pCcooASA2XJQGNhVbrUDLtNt_K42ZT_90p-QdNx2ysex8vq8tI8fP5vnwY1jiaeh_HF94g"/>
+</div>
+</div>
+</header>
+<!-- Main Content Layout -->
+<main class="ml-64 pt-20 min-h-screen">
+<div class="flex">
+<!-- Vertical Step Indicator -->
+<div class="w-72 fixed left-64 top-20 bottom-0 py-12 px-8 bg-surface-container-low">
+<div class="space-y-8 relative">
+<!-- Progress Line -->
+<div class="absolute left-[11px] top-2 bottom-2 w-0.5 bg-outline-variant/30"></div>
+<div class="relative flex items-center gap-4 text-primary font-bold">
+<div class="w-6 h-6 rounded-full bg-primary-container flex items-center justify-center text-[10px] text-white z-10">1</div>
+<span class="font-syne text-sm uppercase tracking-wider">Basics</span>
+</div>
+<div class="relative flex items-center gap-4 text-primary font-bold">
+<div class="w-6 h-6 rounded-full bg-primary-container flex items-center justify-center text-[10px] text-white z-10">2</div>
+<span class="font-syne text-sm uppercase tracking-wider">Media</span>
+</div>
+<div class="relative flex items-center gap-4 text-on-surface-variant">
+<div class="w-6 h-6 rounded-full bg-outline-variant flex items-center justify-center text-[10px] text-white z-10">3</div>
+<span class="font-dm-sans text-sm">Pricing &amp; Type</span>
+</div>
+<div class="relative flex items-center gap-4 text-on-surface-variant">
+<div class="w-6 h-6 rounded-full bg-outline-variant flex items-center justify-center text-[10px] text-white z-10">4</div>
+<span class="font-dm-sans text-sm">Variants</span>
+</div>
+<div class="relative flex items-center gap-4 text-on-surface-variant">
+<div class="w-6 h-6 rounded-full bg-outline-variant flex items-center justify-center text-[10px] text-white z-10">5</div>
+<span class="font-dm-sans text-sm">Inventory</span>
+</div>
+<div class="relative flex items-center gap-4 text-on-surface-variant">
+<div class="w-6 h-6 rounded-full bg-outline-variant flex items-center justify-center text-[10px] text-white z-10">6</div>
+<span class="font-dm-sans text-sm">Shipping</span>
+</div>
+<div class="relative flex items-center gap-4 text-on-surface-variant">
+<div class="w-6 h-6 rounded-full bg-outline-variant flex items-center justify-center text-[10px] text-white z-10">7</div>
+<span class="font-dm-sans text-sm">Preview &amp; Publish</span>
+</div>
+</div>
+</div>
+<!-- Scrollable Canvas -->
+<div class="ml-72 flex-1 p-12 max-w-5xl mx-auto">
+<!-- Section 1: Basics -->
+<section class="mb-12">
+<div class="mb-6">
+<h3 class="text-3xl font-syne font-bold text-on-surface">Listing Basics</h3>
+<p class="text-on-surface-variant mt-2 font-dm-sans">Provide the fundamental identity for your professional listing.</p>
+</div>
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-card space-y-8">
+<!-- Title Input -->
+<div class="space-y-2">
+<label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">Listing Title</label>
+<input class="w-full bg-surface-container-low border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/20 font-dm-sans" placeholder="e.g. Industrial Kinetic Desk Lamp - Limited Edition" type="text"/>
+</div>
+<!-- Category Grid -->
+<div class="grid grid-cols-3 gap-4">
+<div class="space-y-2">
+<label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">Level 1 Category</label>
+<select class="w-full bg-surface-container-low border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/20 appearance-none font-dm-sans">
+<option>Home &amp; Living</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">Level 2 Category</label>
+<select class="w-full bg-surface-container-low border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/20 font-dm-sans">
+<option>Lighting</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">Level 3 Category</label>
+<select class="w-full bg-surface-container-low border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/20 font-dm-sans">
+<option>Desk Lamps</option>
+</select>
+</div>
+</div>
+<!-- Condition Selector -->
+<div class="space-y-4">
+<label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">Condition</label>
+<div class="flex gap-4">
+<button class="flex-1 py-4 px-6 rounded-lg border-2 border-primary-container bg-primary-container/5 text-primary font-bold flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">new_releases</span> New
+                                </button>
+<button class="flex-1 py-4 px-6 rounded-lg border-2 border-transparent bg-surface-container-low text-on-surface-variant font-medium hover:border-outline-variant transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">build</span> Refurbished
+                                </button>
+<button class="flex-1 py-4 px-6 rounded-lg border-2 border-transparent bg-surface-container-low text-on-surface-variant font-medium hover:border-outline-variant transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">history</span> Used
+                                </button>
+</div>
+</div>
+<!-- Rich Text Description -->
+<div class="space-y-2">
+<label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">Product Description</label>
+<div class="border-2 border-transparent bg-surface-container-low rounded-lg overflow-hidden">
+<div class="bg-surface-container border-b border-outline-variant/20 p-2 flex gap-4">
+<button class="p-2 hover:bg-surface-container-highest rounded"><span class="material-symbols-outlined text-sm">format_bold</span></button>
+<button class="p-2 hover:bg-surface-container-highest rounded"><span class="material-symbols-outlined text-sm">format_italic</span></button>
+<button class="p-2 hover:bg-surface-container-highest rounded"><span class="material-symbols-outlined text-sm">format_list_bulleted</span></button>
+<div class="w-px h-6 bg-outline-variant/40 mx-2"></div>
+<button class="p-2 hover:bg-surface-container-highest rounded"><span class="material-symbols-outlined text-sm">link</span></button>
+</div>
+<textarea class="w-full bg-transparent border-none p-6 focus:ring-0 font-dm-sans placeholder:italic" placeholder="Describe the story, materials, and soul of your product..." rows="6"></textarea>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2: Media -->
+<section class="mb-24">
+<div class="mb-6">
+<h3 class="text-3xl font-syne font-bold text-on-surface">Gallery &amp; Media</h3>
+<p class="text-on-surface-variant mt-2 font-dm-sans">Visual narrative is everything. High-resolution imagery increases conversion by 40%.</p>
+</div>
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-card space-y-8">
+<!-- Dropzone -->
+<div class="border-2 border-dashed border-outline-variant rounded-2xl p-12 flex flex-col items-center justify-center bg-surface-container-low/30 group hover:bg-surface-container-low transition-all cursor-pointer">
+<div class="w-16 h-16 rounded-full bg-primary-container/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary-container text-4xl">cloud_upload</span>
+</div>
+<p class="text-xl font-bold font-syne text-on-surface">Drag &amp; Drop Assets</p>
+<p class="text-on-surface-variant font-dm-sans mt-1">PNG, JPG, HEIC up to 20MB</p>
+<button class="mt-6 px-8 py-3 bg-on-surface text-surface rounded-lg font-bold text-sm">Browse Files</button>
+</div>
+<!-- Image Placeholder Grid (10 total) -->
+<div class="space-y-4">
+<div class="flex justify-between items-end">
+<label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">Image Queue (0/10)</label>
+<span class="text-[10px] font-mono text-primary bg-primary-fixed px-2 py-1 rounded">OPTIMIZED FOR 4:5</span>
+</div>
+<div class="grid grid-cols-5 gap-4">
+<!-- Main Cover Slot -->
+<div class="col-span-2 row-span-2 aspect-square rounded-xl bg-surface-container-low border border-outline-variant/20 flex flex-col items-center justify-center text-outline-variant relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-br from-primary-container/5 to-transparent"></div>
+<span class="material-symbols-outlined text-4xl mb-2">image</span>
+<span class="text-xs font-bold font-syne">MAIN COVER</span>
+</div>
+<!-- Regular Slots -->
+<div class="aspect-square rounded-xl bg-surface-container-low border border-outline-variant/20 flex items-center justify-center text-outline-variant/50">
+<span class="material-symbols-outlined">add</span>
+</div>
+<div class="aspect-square rounded-xl bg-surface-container-low border border-outline-variant/20 flex items-center justify-center text-outline-variant/50">
+<span class="material-symbols-outlined">add</span>
+</div>
+<div class="aspect-square rounded-xl bg-surface-container-low border border-outline-variant/20 flex items-center justify-center text-outline-variant/50">
+<span class="material-symbols-outlined">add</span>
+</div>
+<div class="aspect-square rounded-xl bg-surface-container-low border border-outline-variant/20 flex items-center justify-center text-outline-variant/50">
+<span class="material-symbols-outlined">add</span>
+</div>
+<div class="aspect-square rounded-xl bg-surface-container-low border border-outline-variant/20 flex items-center justify-center text-outline-variant/50">
+<span class="material-symbols-outlined">add</span>
+</div>
+<div class="aspect-square rounded-xl bg-surface-container-low border border-outline-variant/20 flex items-center justify-center text-outline-variant/50">
+<span class="material-symbols-outlined">add</span>
+</div>
+</div>
+</div>
+<!-- Video URL -->
+<div class="space-y-2 pt-4">
+<label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">Product Video URL (Optional)</label>
+<div class="flex gap-2">
+<div class="flex-1 relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">play_circle</span>
+<input class="w-full bg-surface-container-low border-none rounded-lg p-4 pl-12 focus:ring-2 focus:ring-primary/20 font-dm-sans" placeholder="https://youtube.com/v/..." type="text"/>
+</div>
+<button class="px-6 bg-surface-container-high text-on-surface font-bold rounded-lg hover:bg-surface-container-highest transition-colors">Fetch</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer Navigation -->
+<div class="flex justify-between items-center pb-20 border-t border-outline-variant/10 pt-10">
+<button class="flex items-center gap-2 text-on-surface-variant font-bold hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+                        Cancel Listing
+                    </button>
+<div class="flex gap-4">
+<button class="px-10 py-4 bg-primary-container text-white rounded-xl font-bold text-lg shadow-card hover:scale-[1.02] active:scale-95 transition-all">
+                            Next: Pricing &amp; Type
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

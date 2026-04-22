@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TradeHut | Flash Sales &amp; Deals</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700;800;900&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;family=Syne:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-container": "#f5620f",
+                    "on-secondary-fixed-variant": "#005138",
+                    "outline-variant": "#e2bfb2",
+                    "tertiary-fixed": "#d9e2ff",
+                    "on-error": "#ffffff",
+                    "tertiary-container": "#558dff",
+                    "on-secondary-fixed": "#002114",
+                    "on-secondary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed-dim": "#ffb597",
+                    "surface-container-high": "#fee3d9",
+                    "error": "#ba1a1a",
+                    "secondary-container": "#60f9bd",
+                    "on-tertiary-fixed-variant": "#00429b",
+                    "on-primary-container": "#4e1900",
+                    "on-tertiary-container": "#002761",
+                    "inverse-primary": "#ffb597",
+                    "surface-tint": "#a43d00",
+                    "inverse-on-surface": "#ffede7",
+                    "surface-bright": "#fff8f6",
+                    "background": "#fff8f6",
+                    "secondary-fixed": "#63fcc0",
+                    "surface-container-low": "#fff1ec",
+                    "surface-dim": "#efd5cb",
+                    "primary-fixed": "#ffdbcd",
+                    "on-background": "#261813",
+                    "surface-container": "#ffe9e2",
+                    "on-primary-fixed": "#360f00",
+                    "tertiary": "#0058ca",
+                    "on-secondary-container": "#00714f",
+                    "on-primary": "#ffffff",
+                    "on-surface": "#261813",
+                    "outline": "#8e7165",
+                    "secondary-fixed-dim": "#3fdfa5",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed-dim": "#b0c6ff",
+                    "secondary": "#006c4b",
+                    "surface": "#fff8f6",
+                    "on-tertiary-fixed": "#001945",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#f8ddd3",
+                    "surface-container-highest": "#f8ddd3",
+                    "on-surface-variant": "#5a4137",
+                    "on-primary-fixed-variant": "#7d2d00",
+                    "primary": "#a43d00",
+                    "inverse-surface": "#3d2d26",
+                    "on-tertiary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Epilogue", "sans-serif"],
+                    "syne": ["Syne", "sans-serif"],
+                    "body": ["Plus Jakarta Sans", "sans-serif"],
+                    "label": ["Plus Jakarta Sans", "sans-serif"],
+                    "mono": ["JetBrains Mono", "monospace"]
+            }
+          },
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .shadow-card {
+            box-shadow: 0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02);
+        }
+        .shadow-card:hover {
+            box-shadow: 0 12px 32px 0 rgba(38, 24, 19, 0.08);
+        }
+        .glass-header {
+            background-color: rgba(255, 248, 246, 0.7);
+            backdrop-filter: blur(24px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-white">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 glass-header shadow-[0_4px_20px_0_rgba(38,24,19,0.04)]">
+<div class="flex justify-between items-center px-8 py-4 w-full max-w-screen-2xl mx-auto">
+<div class="flex items-center gap-8">
+<a class="text-2xl font-black text-[#F5620F] tracking-tighter font-headline" href="#">TradeHut</a>
+<nav class="hidden md:flex gap-6">
+<a class="text-stone-600 dark:text-stone-400 font-medium hover:text-[#F5620F] transition-colors duration-300" href="#">Auctions</a>
+<a class="text-[#F5620F] font-bold border-b-2 border-[#F5620F] pb-1" href="#">Deals</a>
+<a class="text-stone-600 dark:text-stone-400 font-medium hover:text-[#F5620F] transition-colors duration-300" href="#">RFQ</a>
+<a class="text-stone-600 dark:text-stone-400 font-medium hover:text-[#F5620F] transition-colors duration-300" href="#">Sell</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-lg hover:bg-[#FFF1EC] transition-colors duration-300 scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-[#FFF1EC] transition-colors duration-300 scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-on-surface-variant">shopping_cart</span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="Close up portrait of a stylish modern professional in bright studio lighting looking confident" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkyYmbxXj_lhYVrDdXlHTPGx6lT8lbY1APKZtKP2JfzSnH1raIUChk4lGTK4RPwbGaubypHEcy4nq1yXrjSEDj1bPtG1A3ndR5WZelZyb27LoXjqHaASU3OFzyYkkMZpc9DcxC0gL68BWw1zCjsGgemqPzY6hWxbwdqWX3ymnEhcoZlGXD9S3_iGPxvJ188G5QETvFb3J8PTN4U4lsWBNlqHH702WnjInUxK2lZhDQ_wMhlfLbpBCW6VMFYI3OBJ1-XWQjxKLGXGw"/>
+</div>
+</div>
+</div>
+</header>
+<main class="pt-20">
+<!-- Hero Section -->
+<section class="bg-[#141720] text-white py-20 px-8 relative overflow-hidden">
+<div class="max-w-7xl mx-auto relative z-10 grid lg:grid-cols-2 items-center gap-12">
+<div class="space-y-6">
+<div class="inline-flex items-center gap-2 bg-[#F5620F]/20 border border-[#F5620F]/30 px-4 py-1.5 rounded-full text-[#F5620F] font-mono text-sm">
+<span class="w-2 h-2 rounded-full bg-[#F5620F] animate-pulse"></span>
+                        LIVE NOW
+                    </div>
+<h1 class="text-7xl md:text-8xl font-syne font-extrabold tracking-tighter leading-none">
+                        FLASH <br/> <span class="text-[#F5620F]">SALES</span>
+</h1>
+<div class="flex flex-col gap-2">
+<p class="text-stone-400 uppercase tracking-widest text-sm font-semibold">Ends in</p>
+<div class="text-5xl md:text-6xl font-mono font-bold text-[#F5620F] tracking-tighter">
+                            02:14:37
+                        </div>
+</div>
+</div>
+<div class="relative hidden lg:block">
+<div class="absolute -top-12 -right-12 w-64 h-64 bg-[#F5620F]/10 rounded-full blur-3xl"></div>
+<img alt="Tech hardware hero" class="w-full h-auto rounded-xl shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-700" data-alt="Professional gaming workstation with neon lighting and high-end mechanical peripherals in a moody dark setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0oJgHdDO5N1wkHxXeC8OG-wBLK_hzmIus1samUOr5VJo1TlYAwsVM3b-dBpjpRM7Fm2RdKZUtj2bSJcHyF4M1UMztTPNM_aWZowIfmLhuFaztnrXD_iGrxzlJmCQNdnxgSmO5VIm0FT-BFT9d8J6eUD9Gzja9QTTJKpyex98jEl2iTP8Od_f0xUFi5D0eKx8JxFmtpLalu9RqREEFj9kAWAuaHJo5RzOu97FMtN9cRblg268Q14HFq0xjlOnFViWn11lAXK29I4o"/>
+</div>
+</div>
+<!-- Decorative background element -->
+<div class="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-surface to-transparent opacity-10"></div>
+</section>
+<!-- Filter Tabs -->
+<section class="max-w-7xl mx-auto px-8 mt-12 mb-8">
+<div class="flex flex-wrap items-center gap-4 border-b border-outline-variant/30 pb-4">
+<button class="bg-[#F5620F] text-white px-6 py-3 rounded-lg font-bold text-sm shadow-lg shadow-[#F5620F]/20">Flash Sales</button>
+<button class="bg-surface-container-low text-on-surface-variant px-6 py-3 rounded-lg font-bold text-sm hover:bg-surface-container-highest transition-colors">Daily Deals</button>
+<button class="bg-surface-container-low text-on-surface-variant px-6 py-3 rounded-lg font-bold text-sm hover:bg-surface-container-highest transition-colors">Weekly Specials</button>
+<button class="bg-surface-container-low text-on-surface-variant px-6 py-3 rounded-lg font-bold text-sm hover:bg-surface-container-highest transition-colors">Clearance</button>
+</div>
+</section>
+<!-- Flash Sales Grid -->
+<section class="max-w-7xl mx-auto px-8 pb-20">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Product Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-card transition-all duration-300 group">
+<div class="relative mb-6 overflow-hidden rounded-lg aspect-square">
+<img alt="Nike Air Max" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Close up of a vibrant red luxury sneaker on a clean minimalist background with sharp shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiZQrc22QDA1X9rrpml-7iyE26sAizW9e2UEs4iSEtkve0xRXSj-0daaMLN2CiOmIOWWktYSBmJ_2ah_1-ujWliUuzEi1isDRXKNMvQpmiAIoJQW79w9YWL6e4FO5r9SkIimL7BfEx-pGwJCAAaX8RyflRPwVq_LY24xVTxewHNmAIQBTrLqs1LdPkVedeNvvF-KxqjvNnpGkYXjBUEvvO5NWvk1i30TaQs3NBGqjOxug0-ZJraelH2RVqgkh4C4kpNKNvLXuVTwY"/>
+<div class="absolute top-4 left-4 bg-[#F5620F] text-white px-3 py-1 rounded-md font-mono font-bold text-lg animate-pulse">
+                            -50%
+                        </div>
+<div class="absolute bottom-4 left-4 right-4 bg-black/60 backdrop-blur-md text-white py-2 px-4 rounded-lg flex justify-between items-center">
+<span class="text-xs font-semibold tracking-wider">REMAINING</span>
+<span class="font-mono text-sm">00:45:12</span>
+</div>
+</div>
+<div class="space-y-4">
+<h3 class="text-xl font-headline font-bold text-on-surface">Precision Elite Runner</h3>
+<div class="flex items-baseline gap-3">
+<span class="text-2xl font-mono font-bold text-[#F5620F]">$89.00</span>
+<span class="text-stone-400 line-through font-mono text-sm">$178.00</span>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+<span>Claimed: 85%</span>
+<span class="text-[#F5620F]">Limited Stock</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-[#F5620F] w-[85%] rounded-full"></div>
+</div>
+</div>
+<button class="w-full bg-gradient-to-r from-primary to-primary-container text-white py-4 rounded-lg font-headline font-bold uppercase tracking-widest text-sm active:scale-95 transition-transform">
+                            Claim Now
+                        </button>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-card transition-all duration-300 group">
+<div class="relative mb-6 overflow-hidden rounded-lg aspect-square">
+<img alt="Premium Watch" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Minimalist wrist watch with white face and tan leather strap against a warm peach architectural surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDm3UaXxz6antrjXt7wzBMDq3AYcTKUpq95gbSeUNlwaYFZeVJw5jaa70YDHCv4gkL57qqRfGBBRVp3UjWYlrRnl8V7BMPj4n-YVXFwnOd4HiPpAGEgGyzq_9Y-5Mi4SADL3epejzHLtBFrnCmTigEob6L4d4Aapni1hr2QTwBFEzVWWy10uHkqOw4SiX3AXYEnXq-cJUjqKIXKBz89sfXoKNxtKzHWMYESf5d4ci86oUaV5KjZopYd4qm93mIEZhVzoK5P7n2dYd8"/>
+<div class="absolute top-4 left-4 bg-[#F5620F] text-white px-3 py-1 rounded-md font-mono font-bold text-lg animate-pulse">
+                            -35%
+                        </div>
+<div class="absolute bottom-4 left-4 right-4 bg-black/60 backdrop-blur-md text-white py-2 px-4 rounded-lg flex justify-between items-center">
+<span class="text-xs font-semibold tracking-wider">REMAINING</span>
+<span class="font-mono text-sm">01:12:05</span>
+</div>
+</div>
+<div class="space-y-4">
+<h3 class="text-xl font-headline font-bold text-on-surface">Chronos Series 01</h3>
+<div class="flex items-baseline gap-3">
+<span class="text-2xl font-mono font-bold text-[#F5620F]">$245.00</span>
+<span class="text-stone-400 line-through font-mono text-sm">$380.00</span>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+<span>Claimed: 42%</span>
+<span class="text-[#00C48C]">In Stock</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-[#F5620F] w-[42%] rounded-full"></div>
+</div>
+</div>
+<button class="w-full bg-gradient-to-r from-primary to-primary-container text-white py-4 rounded-lg font-headline font-bold uppercase tracking-widest text-sm active:scale-95 transition-transform">
+                            Claim Now
+                        </button>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-card transition-all duration-300 group">
+<div class="relative mb-6 overflow-hidden rounded-lg aspect-square">
+<img alt="Headphones" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Studio quality over-ear headphones on a clean tabletop with soft cinematic lighting and bokeh" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9k5iLXwNEOdK8IuhrTC_ri-B2VXxhf9_0_ZM7lkYL6noSqtNPINJnRzPjeMl1hQObAIYxNfoXMnabGpUu0FxsdufnyUwzXUgNqZIx1Zv4zooaQriSv-k7oXb-1LqtuEbVUJDPGkoImrQH8MAj4i8P0QC42JKdy8oIQnRdKWeZTcrtx9GPTrOkiVy9ftrYuTKEIcD_F6Pqzn0OAgppALwotaKuAukGCh1QjKk9XCYzpcJyKKv2UhegEBNZ2as_4nrH__Kek0Oc1Lw"/>
+<div class="absolute top-4 left-4 bg-[#F5620F] text-white px-3 py-1 rounded-md font-mono font-bold text-lg animate-pulse">
+                            -60%
+                        </div>
+<div class="absolute bottom-4 left-4 right-4 bg-black/60 backdrop-blur-md text-white py-2 px-4 rounded-lg flex justify-between items-center">
+<span class="text-xs font-semibold tracking-wider">REMAINING</span>
+<span class="font-mono text-sm">00:15:59</span>
+</div>
+</div>
+<div class="space-y-4">
+<h3 class="text-xl font-headline font-bold text-on-surface">Vibe Studio ANC</h3>
+<div class="flex items-baseline gap-3">
+<span class="text-2xl font-mono font-bold text-[#F5620F]">$120.00</span>
+<span class="text-stone-400 line-through font-mono text-sm">$300.00</span>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+<span>Claimed: 92%</span>
+<span class="text-error">Almost Gone</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-[#F5620F] w-[92%] rounded-full"></div>
+</div>
+</div>
+<button class="w-full bg-gradient-to-r from-primary to-primary-container text-white py-4 rounded-lg font-headline font-bold uppercase tracking-widest text-sm active:scale-95 transition-transform">
+                            Claim Now
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Daily Deals Section -->
+<section class="bg-surface-container-low py-20 px-8">
+<div class="max-w-7xl mx-auto">
+<div class="flex justify-between items-end mb-12">
+<div>
+<h2 class="text-4xl font-syne font-extrabold text-on-surface tracking-tighter">Daily Deals</h2>
+<p class="text-on-surface-variant mt-2 font-medium">Refreshed every 24 hours. Don't miss out.</p>
+</div>
+<a class="text-[#F5620F] font-bold uppercase tracking-widest text-sm flex items-center gap-2 group" href="#">
+                        View All <span class="material-symbols-outlined transition-transform group-hover:translate-x-1">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<!-- Daily Card 1 -->
+<div class="bg-white p-4 rounded-xl shadow-card">
+<img alt="Glasses" class="w-full aspect-square object-cover rounded-lg mb-4" data-alt="Modern designer sunglasses on a stark architectural background with high contrast shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMuyE0bFgIIAZjuk0z-grmhovkjjxqPG7izpUVF4SUBi9brbkoypULZrSob59Vjjy19kKLtfxO4VIEC9ckL4lYgEH-De2z5lg2pkqTsTP4vG9EOpKUuK7vACoqHaUt4h9wrjNuCPBMxhvaPshIuKSKB6TgVu8T8JOTQeDCdXiCHHHqNhN1i5q3pdBB78QJrkxem7y5U5PMqY4-2qw4HDYbYyCi2Anrrp1E-70BWXezcobrwpRT15d7T2PMrGjMhZnJHDHCYEnBHiY"/>
+<div class="font-mono text-sm text-[#F5620F] mb-1">SAVE $45</div>
+<h4 class="font-bold text-on-surface line-clamp-1">Retro Frame Shades</h4>
+<div class="font-mono font-bold text-lg mt-2">$129.00</div>
+</div>
+<!-- Daily Card 2 -->
+<div class="bg-white p-4 rounded-xl shadow-card">
+<img alt="Tablet" class="w-full aspect-square object-cover rounded-lg mb-4" data-alt="Close up of a sleek silver tablet device showing a minimalist creative app interface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQqiXwI5OKhfxGNJf8I_o72_982BnMk5KqXhDjoaHjb2-VNq-hw7pHh5OqZ77tfbk3zKdrS-Ii--fm7pgvouk8b1XqjL1v-6GBbAil_uDIbA2LenHLZIWDSgtNARRGBJiPJJNbc16-0FymITrFLhoGvj0ATqs9oixFxfv-hKIen5ZFEUtXMAyKySELHQLsvugJuCSRepLe1Y4IQ0JZWutajnhoi5YEYXJTNnhuSJiD-QNVsuccBGI4ySHDl3_Vx1YECysCEGdhDpI"/>
+<div class="font-mono text-sm text-[#F5620F] mb-1">SAVE $120</div>
+<h4 class="font-bold text-on-surface line-clamp-1">Pro Slate 12"</h4>
+<div class="font-mono font-bold text-lg mt-2">$849.00</div>
+</div>
+<!-- Daily Card 3 -->
+<div class="bg-white p-4 rounded-xl shadow-card">
+<img alt="Camera" class="w-full aspect-square object-cover rounded-lg mb-4" data-alt="Classic vintage film camera on a wooden desk with soft natural window lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCshTJo1fwuyPEiAKdOJrwFnoSE19iNLPRJ9ugpBA7IX6fseRugyKOpDYm3h-w01T3RhtXXKI-f19aiT9DBE7-tBxTNAcnQr42WoySXG7peEg5qwkdGr0OcEdKjVg3XzDrVIRbG7crmc-6t7YE184MDsj0BADSPbjYkHLoml7KbKDJu0ydP1TFh7cOxiEvFOiAaVCEu5FU3-B42pR-K-Gp5fBh-yOMYCxgfsRUr8u8xug18SQdbmJDOeok4js1aqhAmP9k5SCKam_U"/>
+<div class="font-mono text-sm text-[#F5620F] mb-1">SAVE $80</div>
+<h4 class="font-bold text-on-surface line-clamp-1">Optic X-7 Camera</h4>
+<div class="font-mono font-bold text-lg mt-2">$315.00</div>
+</div>
+<!-- Daily Card 4 -->
+<div class="bg-white p-4 rounded-xl shadow-card">
+<img alt="Phone" class="w-full aspect-square object-cover rounded-lg mb-4" data-alt="Elegant luxury smartphone resting on a marble surface with dramatic overhead lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAi1Qnolxodi60eZwTaw6kjCmHmMr3t1vSLzDZTCzKyRPlV4O_9i1hkE1fIPzjne4aCP-YQYGFQK53SCCEPY9QujyrmSREjWqQLw7Wx1zS4dLGHDb6mrcDMxMamfCxMXvUTEVFRhbzFDR9dGwlwtASZCv5Tna2sX8YP-Z32DW3kUv8MK3BPUSHB5sQBInRpbwPU4uUXjGEk2VaV23-GodCPFDqwyiFX2aGVfpDHSI9lOLoi_P241iqLBu2wSb-RdsL0nwKPtBZ26k"/>
+<div class="font-mono text-sm text-[#F5620F] mb-1">SAVE $200</div>
+<h4 class="font-bold text-on-surface line-clamp-1">Nexus Prime Pro</h4>
+<div class="font-mono font-bold text-lg mt-2">$999.00</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Weekly Specials Bento Preview -->
+<section class="py-20 px-8 max-w-7xl mx-auto">
+<h2 class="text-4xl font-syne font-extrabold text-on-surface tracking-tighter mb-12">Weekly Specials</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Large Highlight Card -->
+<div class="md:col-span-2 relative bg-surface-container-highest rounded-2xl overflow-hidden min-h-[400px] flex items-center group">
+<img alt="Sportswear" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="Modern athletic wear displayed artistically on a curved geometric platform with dynamic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_g2sVCBNj96INTzSJVQ1FS4wGpKZSQ7g-9n6rrdHYH9DynBTONl_kLjqW9zBXuEcEG_P-IMVPrCQMhlsVy5xZRpunCxh3vOffZF78pY5lv6zuN8OZNdeQzAMFaF7vU0O64XNl5whbUiLW2SWCPNzQJgsns0KmztCYCBi3ZeSrw-ix596odYz9DawDd-bs7DVSUkitxYMqDdTTXeGAGwp57tiXSOcdFVYNP3Pk4jfmI8KU1mMGBQn5op1IumiUT83UaIjpw0dyWc8"/>
+<div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent"></div>
+<div class="relative z-10 p-12 max-w-md space-y-6 text-white">
+<span class="bg-[#00C48C] text-white px-4 py-1 rounded-full font-bold text-xs uppercase tracking-widest">Featured Curator Deal</span>
+<h3 class="text-5xl font-headline font-bold leading-tight">The Performance Collection</h3>
+<p class="text-stone-300 font-medium">Upgrade your gear with up to 40% off across the entire premium athletic range.</p>
+<button class="bg-white text-black px-8 py-3 rounded-lg font-bold hover:bg-[#F5620F] hover:text-white transition-colors duration-300">Shop Collection</button>
+</div>
+</div>
+<!-- Stacked Secondary Cards -->
+<div class="space-y-8">
+<div class="bg-surface-container-low rounded-2xl p-6 h-[184px] flex gap-4 items-center group">
+<div class="flex-1 space-y-2">
+<span class="text-[#2979FF] font-mono text-xs font-bold">UP TO 20% OFF</span>
+<h4 class="font-headline font-bold text-lg leading-tight">Smart Home Essentials</h4>
+<a class="text-sm font-bold border-b border-on-surface pb-0.5 inline-block" href="#">Explore</a>
+</div>
+<img alt="Smart Home" class="w-24 h-24 object-cover rounded-xl group-hover:rotate-6 transition-transform" data-alt="Sleek modern smart home hub and speaker on a clean minimal shelf" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRWTzV5f7OshW51mk2FdiqEuTp5OUON_vwqdsXKEZ3ktHdRvnQ9QJCXfg151F-7QzJzBuowFjY_312E7z-04vRkfEqL8q3KcMnZKA45GFf936CaD0iKxHx928sfXLvNKfxv-XLb1E5bdrIcngCGUu71I6u2hJ_okKlTM8kSm6txE8BPtGchVYCS9P3aUo2oOgC7T6gvlNd_2zW4yzsX20aKdfva3OMiUZIPG6ZyYlxfUoE7KHrp5fYG6yk_BHtK_jj6iJkG1v6lkk"/>
+</div>
+<div class="bg-surface-container-low rounded-2xl p-6 h-[184px] flex gap-4 items-center group">
+<div class="flex-1 space-y-2">
+<span class="text-[#2979FF] font-mono text-xs font-bold">UP TO 35% OFF</span>
+<h4 class="font-headline font-bold text-lg leading-tight">Acoustic Audio Gear</h4>
+<a class="text-sm font-bold border-b border-on-surface pb-0.5 inline-block" href="#">Explore</a>
+</div>
+<img alt="Audio" class="w-24 h-24 object-cover rounded-xl group-hover:-rotate-6 transition-transform" data-alt="Minimalist wooden bluetooth speaker with brass accents in a sunlit room" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBduO95QymOrXjI7wLbXO3LwdU7GChkt-kN6kwgK0t-Y9Tb3AfeJqBJa2f3Thy3rB4HH7TRDkB_iEFs1KOloX4f06KSUp_vAwVvbjlUIAcIuJmqUlP_8a70b5EAvlofV4SVAIc3gQX5HLyDLA9NIRoUe7AXXAjqcw_wgHZRRkty_A42sbLPaK_YHkITB8yF-Y2KYaA4mp-2u6ykUy36iQACaohwDbL2T0q7gbuxrHQ2z4qbBU85iz0fZQ5VCwTwUOBC7i4zmrQvuMQ"/>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full mt-auto py-12 bg-[#FFF1EC] dark:bg-stone-950">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 px-12 max-w-7xl mx-auto">
+<div class="space-y-4">
+<div class="text-lg font-bold text-stone-900 dark:text-white font-headline">TradeHut</div>
+<p class="text-stone-500 font-medium text-sm leading-relaxed">
+                    The next generation of high-frequency asset trading. Secure, fast, and transparent.
+                </p>
+</div>
+<div class="space-y-4">
+<h5 class="font-['DM_Sans'] text-sm uppercase tracking-widest text-[#F5620F] font-bold">Navigation</h5>
+<ul class="space-y-2">
+<li><a class="text-stone-500 hover:text-[#F5620F] transition-transform duration-200 hover:translate-x-1 inline-block text-sm" href="#">Terms of Service</a></li>
+<li><a class="text-stone-500 hover:text-[#F5620F] transition-transform duration-200 hover:translate-x-1 inline-block text-sm" href="#">Privacy Policy</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h5 class="font-['DM_Sans'] text-sm uppercase tracking-widest text-[#F5620F] font-bold">Support</h5>
+<ul class="space-y-2">
+<li><a class="text-stone-500 hover:text-[#F5620F] transition-transform duration-200 hover:translate-x-1 inline-block text-sm" href="#">Contact Support</a></li>
+<li><a class="text-stone-500 hover:text-[#F5620F] transition-transform duration-200 hover:translate-x-1 inline-block text-sm" href="#">Technical Specs</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h5 class="font-['DM_Sans'] text-sm uppercase tracking-widest text-[#F5620F] font-bold">Newsletter</h5>
+<div class="flex">
+<input class="bg-white border-0 rounded-l-lg w-full text-sm focus:ring-1 focus:ring-primary-container" placeholder="Email" type="email"/>
+<button class="bg-primary text-white px-4 rounded-r-lg">
+<span class="material-symbols-outlined text-sm">send</span>
+</button>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-12 mt-12 pt-8 border-t border-outline-variant/20 text-center">
+<p class="font-['DM_Sans'] text-sm uppercase tracking-widest text-stone-500">
+                © 2024 TradeHut Kinetic Gallery. Built for high-frequency trading.
+            </p>
+</div>
+</footer>
+</body></html>

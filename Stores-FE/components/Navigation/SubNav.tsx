@@ -1,413 +1,540 @@
 'use client'
 
-import { Fragment } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { Popover, Transition, PopoverButton, PopoverPanel } from '@headlessui/react'
-import { 
-    Shield, 
-    Star, 
-    HelpCircle, 
-    Smartphone, 
+import {
+    Shield,
+    Star,
+    HelpCircle,
     Store,
     ChevronDown,
     Grid3x3,
-    Package,
     Award,
     Truck,
     ShieldCheck,
     BadgeCheck,
-    Lock
+    Lock,
+    Flame,
+    Tag,
+    Menu,
+    Gavel,
+    X,
+    ArrowRight,
+    Zap,
 } from 'lucide-react'
 
-export default function SubNav() {
-    const categories = [
-        { 
-            name: 'Electronics & Accessories', 
-            icon: '📱', 
-            subcategories: [
-                { name: 'Smartphones', count: 1240 },
-                { name: 'Laptops & Computers', count: 856 },
-                { name: 'Tablets & E-readers', count: 432 },
-                { name: 'Audio & Headphones', count: 678 },
-                { name: 'Cameras & Photo', count: 345 },
-                { name: 'Wearables & Smartwatches', count: 234 },
-            ]
-        },
-        { 
-            name: 'Fashion & Apparel', 
-            icon: '👔', 
-            subcategories: [
-                { name: 'Men\'s Clothing', count: 2100 },
-                { name: 'Women\'s Clothing', count: 3200 },
-                { name: 'Kids & Baby', count: 1450 },
-                { name: 'Shoes & Footwear', count: 980 },
-                { name: 'Bags & Accessories', count: 760 },
-                { name: 'Jewelry & Watches', count: 540 },
-            ]
-        },
-        { 
-            name: 'Home & Garden', 
-            icon: '🏠', 
-            subcategories: [
-                { name: 'Furniture', count: 1890 },
-                { name: 'Kitchen & Dining', count: 1240 },
-                { name: 'Bedding & Bath', count: 870 },
-                { name: 'Home Decor', count: 1560 },
-                { name: 'Garden & Outdoor', count: 450 },
-                { name: 'Tools & Home Improvement', count: 720 },
-            ]
-        },
-        { 
-            name: 'Sports & Outdoors', 
-            icon: '⚽', 
-            subcategories: [
-                { name: 'Exercise & Fitness', count: 890 },
-                { name: 'Camping & Hiking', count: 560 },
-                { name: 'Sports Equipment', count: 1230 },
-                { name: 'Cycling', count: 340 },
-                { name: 'Water Sports', count: 210 },
-                { name: 'Team Sports', count: 670 },
-            ]
-        },
-        { 
-            name: 'Health & Beauty', 
-            icon: '💄', 
-            subcategories: [
-                { name: 'Skincare', count: 1450 },
-                { name: 'Makeup & Cosmetics', count: 1780 },
-                { name: 'Hair Care', count: 890 },
-                { name: 'Fragrances', count: 560 },
-                { name: 'Personal Care', count: 1120 },
-                { name: 'Healthcare Supplies', count: 430 },
-            ]
-        },
-        { 
-            name: 'Toys & Games', 
-            icon: '🎮', 
-            subcategories: [
-                { name: 'Video Games & Consoles', count: 780 },
-                { name: 'Action Figures & Dolls', count: 560 },
-                { name: 'Board Games & Puzzles', count: 340 },
-                { name: 'Educational Toys', count: 450 },
-                { name: 'RC & Drones', count: 230 },
-                { name: 'Outdoor Play', count: 380 },
-            ]
-        },
-        { 
-            name: 'Books & Media', 
-            icon: '📚', 
-            subcategories: [
-                { name: 'Books', count: 3400 },
-                { name: 'Music & Vinyl', count: 890 },
-                { name: 'Movies & TV', count: 1230 },
-                { name: 'Magazines', count: 340 },
-                { name: 'E-books & Audiobooks', count: 1560 },
-                { name: 'Sheet Music', count: 120 },
-            ]
-        },
-        { 
-            name: 'Automotive', 
-            icon: '🚗', 
-            subcategories: [
-                { name: 'Car Parts & Accessories', count: 2340 },
-                { name: 'Motorcycle Parts', count: 890 },
-                { name: 'Tools & Equipment', count: 560 },
-                { name: 'Car Electronics', count: 780 },
-                { name: 'Tires & Wheels', count: 450 },
-                { name: 'Exterior Accessories', count: 340 },
-            ]
-        },
-    ]
+// ─── Types ───────────────────────────────────────────────────────────────────
 
-    const featuredItems = [
-        {
-            title: 'Trade Assurance',
-            description: 'Order protection from payment to delivery',
-            icon: ShieldCheck,
-            color: 'text-green-500',
-            bgColor: 'bg-green-50',
-        },
-        {
-            title: 'Verified Suppliers',
-            description: 'Connect with trusted, certified suppliers',
-            icon: BadgeCheck,
-            color: 'text-blue-500',
-            bgColor: 'bg-blue-50',
-        },
-        {
-            title: 'Quality Inspection',
-            description: 'Professional quality control services',
-            icon: Award,
-            color: 'text-purple-500',
-            bgColor: 'bg-purple-50',
-        },
-        {
-            title: 'Secure Payment',
-            description: 'Multiple secure payment options',
-            icon: Lock,
-            color: 'text-orange-500',
-            bgColor: 'bg-orange-50',
-        },
-    ]
+type Subcategory = { name: string; count: number }
+type Category = { name: string; icon: string; subcategories: Subcategory[] }
+type FeaturedItem = {
+    title: string
+    description: string
+    icon: React.ElementType
+    color: string
+    bgColor: string
+    href: string
+}
+type ProtectionFeature = {
+    title: string
+    description: string
+    icon: React.ElementType
+}
 
-    const protectionFeatures = [
-        {
-            title: 'Payment Protection',
-            description: 'Your money is safe until you receive your order',
-            icon: ShieldCheck,
-        },
-        {
-            title: 'Product Quality',
-            description: 'Guaranteed product quality or full refund',
-            icon: Award,
-        },
-        {
-            title: 'On-time Shipping',
-            description: 'Receive your order on time or get compensated',
-            icon: Truck,
-        },
-        {
-            title: 'Dispute Resolution',
-            description: '24/7 support to help resolve any issues',
-            icon: HelpCircle,
-        },
-    ]
+// ─── Hook: hover + click popover ─────────────────────────────────────────────
+// Desktop: opens on mouseenter, closes after a short delay on mouseleave
+// so the cursor can travel into the panel without it snapping shut.
+// Mobile: purely click-driven (no hover events on touch screens).
+
+function useHoverPopover(delay = 120) {
+    const [open, setOpen] = useState(false)
+    const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+    const clear = () => { if (timer.current) clearTimeout(timer.current) }
+
+    const onMouseEnter = useCallback(() => { clear(); setOpen(true) }, [])
+    const onMouseLeave = useCallback(() => {
+        clear()
+        timer.current = setTimeout(() => setOpen(false), delay)
+    }, [delay])
+    const onClick = useCallback(() => setOpen((v) => !v), [])
+    const close = useCallback(() => setOpen(false), [])
+
+    useEffect(() => () => clear(), [])
+
+    return { open, onMouseEnter, onMouseLeave, onClick, close }
+}
+
+// ─── Reusable HoverPopover wrapper ───────────────────────────────────────────
+
+function HoverPopover({
+    trigger,
+    panel,
+    className = '',
+}: {
+    trigger: (open: boolean) => React.ReactNode
+    panel: (close: () => void) => React.ReactNode
+    className?: string
+}) {
+    const { open, onMouseEnter, onMouseLeave, onClick, close } = useHoverPopover()
 
     return (
-        <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm">
-            <div className="container mx-auto px-2 sm:px-4">
-                <div className="flex items-center justify-between h-10 sm:h-12">
-                    {/* Left Section - Main Categories */}
-                    <div className="flex items-center gap-1 sm:gap-2 md:gap-4 overflow-x-auto flex-1 min-w-0" style={{ overflowY: 'visible' }}>
-                        {/* All Categories Mega Dropdown */}
-                        <Popover className="relative">
-                            {({ open }) => (
-                                <>
-                                    <PopoverButton
-                                        className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors font-medium text-gray-900 dark:text-white outline-none text-xs sm:text-sm whitespace-nowrap"
-                                    >
-                                        <Grid3x3 className="h-3 w-3 sm:h-4 sm:w-4" />
-                                        <span className="hidden sm:inline">All categories</span>
-                                        <span className="sm:hidden">Categories</span>
-                                        <ChevronDown className={`h-3 w-3 sm:h-4 sm:w-4 transition-transform ${open ? 'rotate-180' : ''}`} />
-                                    </PopoverButton>
+        <div
+            className={`relative ${className}`}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+        >
+            <button onClick={onClick} aria-expanded={open} className="outline-none focus-visible:ring-2 focus-visible:ring-orange-500 rounded">
+                {trigger(open)}
+            </button>
 
-                                    <Transition
-                                        as={Fragment}
-                                        enter="transition ease-out duration-200"
-                                        enterFrom="opacity-0 translate-y-1"
-                                        enterTo="opacity-100 translate-y-0"
-                                        leave="transition ease-in duration-150"
-                                        leaveFrom="opacity-100 translate-y-0"
-                                        leaveTo="opacity-0 translate-y-1"
-                                    >
-                                        <PopoverPanel className="absolute left-0 z-[100] mt-3 w-screen max-w-5xl transform -translate-x-0">
-                                            <div className=" rounded-lg shadow-2xl ring-1 ring-black ring-opacity-5">
-                                                <div className="relative bg-white dark:bg-gray-800 p-6">
-                                                    <div className="grid grid-cols-4 gap-6">
-                                                        {categories.map((category, index) => (
-                                                            <div key={index} className="group">
-                                                                <Link
-                                                                    href={`/products?category=${category.name.toLowerCase().replace(/\s+/g, '-')}`}
-                                                                    className="flex items-center gap-2 mb-3 font-semibold text-gray-900 dark:text-white hover:text-primary-500 transition-colors"
-                                                                >
-                                                                    <span className="text-2xl">{category.icon}</span>
-                                                                    <span className="text-sm">{category.name}</span>
-                                                                </Link>
-                                                                <ul className="space-y-2">
-                                                                    {category.subcategories.map((sub, subIndex) => (
-                                                                        <li key={subIndex}>
-                                                                            <Link
-                                                                                href={`/products?category=${sub.name.toLowerCase().replace(/\s+/g, '-')}`}
-                                                                                className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 transition-colors flex items-center justify-between group/item"
-                                                                            >
-                                                                                <span>{sub.name}</span>
-                                                                                <span className="text-xs text-gray-400 opacity-0 group-hover/item:opacity-100 transition-opacity">
-                                                                                    {sub.count}
-                                                                                </span>
-                                                                            </Link>
-                                                                        </li>
-                                                                    ))}
-                                                                </ul>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </PopoverPanel>
-                                    </Transition>
-                                </>
-                            )}
-                        </Popover>
-
-                        {/* Featured Selections Mega Dropdown */}
-                        <Popover className="relative hidden md:block">
-                            {({ open }) => (
-                                <>
-                                    <PopoverButton
-                                        className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors text-gray-700 dark:text-gray-300 hover:text-primary-500 font-medium outline-none text-xs sm:text-sm whitespace-nowrap"
-                                    >
-                                        <Star className="h-3 w-3 sm:h-4 sm:w-4" />
-                                        <span className="hidden lg:inline">Featured selections</span>
-                                        <span className="lg:hidden">Featured</span>
-                                        <ChevronDown className={`h-3 w-3 sm:h-4 sm:w-4 transition-transform ${open ? 'rotate-180' : ''}`} />
-                                    </PopoverButton>
-
-                                    <Transition
-                                        as={Fragment}
-                                        enter="transition ease-out duration-200"
-                                        enterFrom="opacity-0 translate-y-1"
-                                        enterTo="opacity-100 translate-y-0"
-                                        leave="transition ease-in duration-150"
-                                        leaveFrom="opacity-100 translate-y-0"
-                                        leaveTo="opacity-0 translate-y-1"
-                                    >
-                                        <PopoverPanel className="absolute left-0 z-[100] mt-3 w-screen max-w-md transform -translate-x-0">
-                                            <div className=" rounded-lg shadow-2xl ring-1 ring-black ring-opacity-5">
-                                                <div className="relative bg-white dark:bg-gray-800 p-6">
-                                                    <div className="space-y-4">
-                                                        {featuredItems.map((item, index) => {
-                                                            const Icon = item.icon
-                                                            return (
-                                                                <Link
-                                                                    key={index}
-                                                                    href="/featured"
-                                                                    className="flex items-start gap-4 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group"
-                                                                >
-                                                                    <div className={`p-3 rounded-lg ${item.bgColor} dark:bg-gray-700`}>
-                                                                        <Icon className={`h-6 w-6 ${item.color} dark:text-white`} />
-                                                                    </div>
-                                                                    <div className="flex-1">
-                                                                        <h4 className="font-semibold text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors">
-                                                                            {item.title}
-                                                                        </h4>
-                                                                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                                                            {item.description}
-                                                                        </p>
-                                                                    </div>
-                                                                </Link>
-                                                            )
-                                                        })}
-                                                    </div>
-                                                    <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                                                        <Link
-                                                            href="/featured"
-                                                            className="text-sm font-semibold text-primary-500 hover:text-primary-600 flex items-center gap-2"
-                                                        >
-                                                            View all featured products
-                                                            <ChevronDown className="h-4 w-4 -rotate-90" />
-                                                        </Link>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </PopoverPanel>
-                                    </Transition>
-                                </>
-                            )}
-                        </Popover>
-
-                        {/* Order Protection Mega Dropdown */}
-                        <Popover className="relative hidden lg:block">
-                            {({ open }) => (
-                                <>
-                                    <PopoverButton
-                                        className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors text-gray-700 dark:text-gray-300 hover:text-primary-500 font-medium outline-none text-xs sm:text-sm whitespace-nowrap"
-                                    >
-                                        <Shield className="h-3 w-3 sm:h-4 sm:w-4" />
-                                        <span>Order protections</span>
-                                        <ChevronDown className={`h-3 w-3 sm:h-4 sm:w-4 transition-transform ${open ? 'rotate-180' : ''}`} />
-                                    </PopoverButton>
-
-                                    <Transition
-                                        as={Fragment}
-                                        enter="transition ease-out duration-200"
-                                        enterFrom="opacity-0 translate-y-1"
-                                        enterTo="opacity-100 translate-y-0"
-                                        leave="transition ease-in duration-150"
-                                        leaveFrom="opacity-100 translate-y-0"
-                                        leaveTo="opacity-0 translate-y-1"
-                                    >
-                                        <PopoverPanel className="absolute left-0 z-[100] mt-3 w-screen max-w-lg transform -translate-x-0">
-                                            <div className=" rounded-lg shadow-2xl ring-1 ring-black ring-opacity-5">
-                                                <div className="relative bg-white dark:bg-gray-800">
-                                                    <div className="bg-gradient-to-r from-primary-500 to-primary-600 p-6 text-white">
-                                                        <h3 className="text-xl font-bold mb-2">Trade Assurance</h3>
-                                                        <p className="text-sm text-white/90">
-                                                            Comprehensive protection for your orders from payment to delivery
-                                                        </p>
-                                                    </div>
-                                                    <div className="p-6">
-                                                        <div className="grid grid-cols-2 gap-4">
-                                                            {protectionFeatures.map((feature, index) => {
-                                                                const Icon = feature.icon
-                                                                return (
-                                                                    <div key={index} className="flex flex-col items-center text-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                                                                        <div className="p-3 rounded-full bg-primary-50 dark:bg-gray-700 mb-3">
-                                                                            <Icon className="h-6 w-6 text-primary-500" />
-                                                                        </div>
-                                                                        <h4 className="font-semibold text-sm text-gray-900 dark:text-white mb-1">
-                                                                            {feature.title}
-                                                                        </h4>
-                                                                        <p className="text-xs text-gray-600 dark:text-gray-400">
-                                                                            {feature.description}
-                                                                        </p>
-                                                                    </div>
-                                                                )
-                                                            })}
-                                                        </div>
-                                                        <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                                                            <Link
-                                                                href="/protection"
-                                                                className="block w-full text-center py-2 px-4 bg-primary-500 hover:bg-primary-600 text-white font-semibold rounded-lg transition-colors"
-                                                            >
-                                                                Learn More
-                                                            </Link>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </PopoverPanel>
-                                    </Transition>
-                                </>
-                            )}
-                        </Popover>
+            {open && (
+                <>
+                    {/* Invisible bridge: prevents the gap between button and panel from triggering mouseleave */}
+                    <div className="absolute left-0 top-full h-3 w-full z-[199]" />
+                    <div
+                        className="absolute left-0 z-[200] mt-3"
+                        style={{ animation: 'subnavDrop 0.18s cubic-bezier(0.16,1,0.3,1) forwards' }}
+                        onMouseEnter={onMouseEnter}
+                        onMouseLeave={onMouseLeave}
+                    >
+                        {panel(close)}
                     </div>
+                </>
+            )}
+        </div>
+    )
+}
 
-                    {/* Right Section - Secondary Links */}
-                    <div className="hidden xl:flex items-center gap-3 lg:gap-4 xl:gap-6 text-xs lg:text-sm">
-                        <Link
-                            href="/buyer-central"
-                            className="text-gray-700 dark:text-gray-300 hover:text-primary-500 transition-colors font-medium whitespace-nowrap"
-                        >
-                            Buyer Central
-                        </Link>
-                       
-                        {/* Help */}
-                        <div className="hidden sm:flex items-center gap-1 lg:gap-2 text-gray-700 dark:text-gray-300">
-                            <HelpCircle className="h-3 w-3 lg:h-4 lg:w-4" />
-                            <select
-                                // value={}
-                                // onChange={}
-                                className="bg-transparent border-none text-gray-700 dark:text-gray-300 focus:outline-none cursor-pointer font-medium text-xs lg:text-sm"
-                            >
-                                <option value="USD" className="bg-gray-800 text-white">Help</option>
-                                <option value="EUR" className="bg-gray-800 text-white">EUR</option>
-                                <option value="GBP" className="bg-gray-800 text-white">GBP</option>
-                                <option value="GHS" className="bg-gray-800 text-white">GHS</option>
-                            </select>
+// ─── Data ─────────────────────────────────────────────────────────────────────
+
+const categories: Category[] = [
+    {
+        name: 'Electronics',
+        icon: '📱',
+        subcategories: [
+            { name: 'Smartphones', count: 1240 },
+            { name: 'Laptops & Computers', count: 856 },
+            { name: 'Tablets & E-readers', count: 432 },
+            { name: 'Audio & Headphones', count: 678 },
+            { name: 'Cameras & Photo', count: 345 },
+            { name: 'Wearables', count: 234 },
+        ],
+    },
+    {
+        name: 'Fashion',
+        icon: '👔',
+        subcategories: [
+            { name: "Men's Clothing", count: 2100 },
+            { name: "Women's Clothing", count: 3200 },
+            { name: 'Kids & Baby', count: 1450 },
+            { name: 'Shoes & Footwear', count: 980 },
+            { name: 'Bags & Accessories', count: 760 },
+            { name: 'Jewelry & Watches', count: 540 },
+        ],
+    },
+    {
+        name: 'Home & Garden',
+        icon: '🏠',
+        subcategories: [
+            { name: 'Furniture', count: 1890 },
+            { name: 'Kitchen & Dining', count: 1240 },
+            { name: 'Bedding & Bath', count: 870 },
+            { name: 'Home Decor', count: 1560 },
+            { name: 'Garden & Outdoor', count: 450 },
+            { name: 'Tools & Improvement', count: 720 },
+        ],
+    },
+    {
+        name: 'Sports',
+        icon: '⚽',
+        subcategories: [
+            { name: 'Exercise & Fitness', count: 890 },
+            { name: 'Camping & Hiking', count: 560 },
+            { name: 'Sports Equipment', count: 1230 },
+            { name: 'Cycling', count: 340 },
+            { name: 'Water Sports', count: 210 },
+            { name: 'Team Sports', count: 670 },
+        ],
+    },
+    {
+        name: 'Health & Beauty',
+        icon: '💄',
+        subcategories: [
+            { name: 'Skincare', count: 1450 },
+            { name: 'Makeup & Cosmetics', count: 1780 },
+            { name: 'Hair Care', count: 890 },
+            { name: 'Fragrances', count: 560 },
+            { name: 'Personal Care', count: 1120 },
+            { name: 'Healthcare Supplies', count: 430 },
+        ],
+    },
+    {
+        name: 'Toys & Games',
+        icon: '🎮',
+        subcategories: [
+            { name: 'Video Games & Consoles', count: 780 },
+            { name: 'Action Figures & Dolls', count: 560 },
+            { name: 'Board Games & Puzzles', count: 340 },
+            { name: 'Educational Toys', count: 450 },
+            { name: 'RC & Drones', count: 230 },
+            { name: 'Outdoor Play', count: 380 },
+        ],
+    },
+    {
+        name: 'Books & Media',
+        icon: '📚',
+        subcategories: [
+            { name: 'Books', count: 3400 },
+            { name: 'Music & Vinyl', count: 890 },
+            { name: 'Movies & TV', count: 1230 },
+            { name: 'Magazines', count: 340 },
+            { name: 'E-books & Audiobooks', count: 1560 },
+            { name: 'Sheet Music', count: 120 },
+        ],
+    },
+    {
+        name: 'Automotive',
+        icon: '🚗',
+        subcategories: [
+            { name: 'Car Parts & Accessories', count: 2340 },
+            { name: 'Motorcycle Parts', count: 890 },
+            { name: 'Tools & Equipment', count: 560 },
+            { name: 'Car Electronics', count: 780 },
+            { name: 'Tires & Wheels', count: 450 },
+            { name: 'Exterior Accessories', count: 340 },
+        ],
+    },
+]
+
+const featuredItems: FeaturedItem[] = [
+    { title: 'Trade Assurance', description: 'Order protection from payment to delivery', icon: ShieldCheck, color: 'text-emerald-500', bgColor: 'bg-emerald-50 dark:bg-emerald-900/30', href: '/featured/trade-assurance' },
+    { title: 'Verified Suppliers', description: 'Connect with trusted, certified suppliers', icon: BadgeCheck, color: 'text-blue-500', bgColor: 'bg-blue-50 dark:bg-blue-900/30', href: '/featured/verified-suppliers' },
+    { title: 'Quality Inspection', description: 'Professional quality control services', icon: Award, color: 'text-violet-500', bgColor: 'bg-violet-50 dark:bg-violet-900/30', href: '/featured/quality' },
+    { title: 'Secure Payment', description: 'Multiple secure payment options', icon: Lock, color: 'text-amber-500', bgColor: 'bg-amber-50 dark:bg-amber-900/30', href: '/featured/payment' },
+]
+
+const protectionFeatures: ProtectionFeature[] = [
+    { title: 'Payment Protection', description: 'Your money is safe until you receive your order', icon: ShieldCheck },
+    { title: 'Product Quality', description: 'Guaranteed product quality or full refund', icon: Award },
+    { title: 'On-time Shipping', description: 'Receive your order on time or get compensated', icon: Truck },
+    { title: 'Dispute Resolution', description: '24/7 support to help resolve any issues', icon: HelpCircle },
+]
+
+// ─── SubNav ───────────────────────────────────────────────────────────────────
+
+export default function SubNav() {
+    const [mobileOpen, setMobileOpen] = useState(false)
+    const [expandedCat, setExpandedCat] = useState<number | null>(null)
+
+    // Close mobile menu on resize to desktop
+    useEffect(() => {
+        const handler = () => { if (window.innerWidth >= 768) setMobileOpen(false) }
+        window.addEventListener('resize', handler)
+        return () => window.removeEventListener('resize', handler)
+    }, [])
+
+    return (
+        <>
+            <style>{`
+                @keyframes subnavDrop {
+                    from { opacity: 0; transform: translateY(8px) scale(0.97); }
+                    to   { opacity: 1; transform: translateY(0)   scale(1); }
+                }
+            `}</style>
+
+            <nav className="bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 shadow-sm relative z-50">
+                <div className="max-w-screen-2xl mx-auto px-3 sm:px-6">
+                    <div className="flex items-center h-11 gap-1">
+
+                        {/* ════════════════════ DESKTOP LEFT ════════════════════ */}
+                        <div className="hidden md:flex items-center gap-0.5 flex-1 min-w-0">
+
+                            {/* ── All Categories ── */}
+                            <HoverPopover
+                                trigger={(open) => (
+                                    <span className={`flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-bold transition-all whitespace-nowrap
+                                        ${open ? 'bg-orange-500 text-white shadow-md shadow-orange-200 dark:shadow-none' : 'text-gray-800 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+                                    >
+                                        <Grid3x3 className="h-4 w-4 shrink-0" />
+                                        <span className="hidden lg:inline">All Categories</span>
+                                        <span className="lg:hidden">Categories</span>
+                                        <ChevronDown className={`h-3.5 w-3.5 ml-0.5 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+                                    </span>
+                                )}
+                                panel={(close) => (
+                                    <div className="w-[800px] xl:w-[960px] rounded-xl shadow-2xl ring-1 ring-black/[0.08] dark:ring-white/10 bg-white dark:bg-gray-900 overflow-hidden">
+                                        {/* Panel header */}
+                                        <div className="flex items-center justify-between px-5 py-2.5 bg-gray-50 dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800">
+                                            <span className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-500">Browse All Categories</span>
+                                            <Link href="/categories" onClick={close} className="text-xs font-semibold text-orange-500 hover:text-orange-600 flex items-center gap-1 transition-colors">
+                                                View all <ArrowRight className="h-3 w-3" />
+                                            </Link>
+                                        </div>
+                                        {/* Category grid */}
+                                        <div className="grid grid-cols-3 xl:grid-cols-4 divide-x divide-gray-100 dark:divide-gray-800 max-h-[72vh] overflow-y-auto">
+                                            {categories.map((cat, i) => (
+                                                <div key={i} className="p-4 hover:bg-orange-50/60 dark:hover:bg-orange-900/10 transition-colors">
+                                                    <Link
+                                                        href={`/products?category=${encodeURIComponent(cat.name)}`}
+                                                        onClick={close}
+                                                        className="flex items-center gap-2 mb-3 group"
+                                                    >
+                                                        <span className="text-xl leading-none">{cat.icon}</span>
+                                                        <span className="text-sm font-bold text-gray-900 dark:text-white group-hover:text-orange-500 transition-colors">{cat.name}</span>
+                                                    </Link>
+                                                    <ul className="space-y-1.5">
+                                                        {cat.subcategories.map((sub, j) => (
+                                                            <li key={j}>
+                                                                <Link
+                                                                    href={`/products?category=${encodeURIComponent(sub.name)}`}
+                                                                    onClick={close}
+                                                                    className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors group/s"
+                                                                >
+                                                                    <span>{sub.name}</span>
+                                                                    <span className="text-gray-300 dark:text-gray-700 group-hover/s:text-orange-300 tabular-nums transition-colors">
+                                                                        {sub.count.toLocaleString()}
+                                                                    </span>
+                                                                </Link>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            />
+
+                            {/* ── Featured ── */}
+                            <HoverPopover
+                                trigger={(open) => (
+                                    <span className={`flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap
+                                        ${open ? 'text-orange-500 bg-orange-50 dark:bg-orange-900/20' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+                                    >
+                                        <Star className="h-3.5 w-3.5 shrink-0" />
+                                        <span className="hidden lg:inline">Featured</span>
+                                        <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+                                    </span>
+                                )}
+                                panel={(close) => (
+                                    <div className="w-80 rounded-xl shadow-2xl ring-1 ring-black/[0.08] dark:ring-white/10 bg-white dark:bg-gray-900 overflow-hidden">
+                                        <div className="px-4 py-2.5 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
+                                            <span className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-500">Featured Programs</span>
+                                        </div>
+                                        <div className="p-2 space-y-0.5">
+                                            {featuredItems.map((item, i) => {
+                                                const Icon = item.icon
+                                                return (
+                                                    <Link key={i} href={item.href} onClick={close}
+                                                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group"
+                                                    >
+                                                        <div className={`p-2 rounded-lg ${item.bgColor} shrink-0`}>
+                                                            <Icon className={`h-5 w-5 ${item.color}`} />
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-orange-500 transition-colors">{item.title}</p>
+                                                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 leading-snug">{item.description}</p>
+                                                        </div>
+                                                    </Link>
+                                                )
+                                            })}
+                                        </div>
+                                        <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-800">
+                                            <Link href="/featured" onClick={close} className="text-xs font-semibold text-orange-500 hover:text-orange-600 flex items-center gap-1 transition-colors">
+                                                View all featured <ArrowRight className="h-3 w-3" />
+                                            </Link>
+                                        </div>
+                                    </div>
+                                )}
+                            />
+
+                            {/* ── Order Protection ── */}
+                            <HoverPopover
+                                className="hidden lg:block"
+                                trigger={(open) => (
+                                    <span className={`flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap
+                                        ${open ? 'text-orange-500 bg-orange-50 dark:bg-orange-900/20' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+                                    >
+                                        <Shield className="h-3.5 w-3.5 shrink-0" />
+                                        <span>Order Protection</span>
+                                        <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+                                    </span>
+                                )}
+                                panel={(close) => (
+                                    <div className="w-[420px] rounded-xl shadow-2xl ring-1 ring-black/[0.08] dark:ring-white/10 bg-white dark:bg-gray-900 overflow-hidden">
+                                        <div className="bg-gradient-to-br from-orange-500 to-rose-500 px-5 py-4 text-white">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <ShieldCheck className="h-5 w-5" />
+                                                <h3 className="text-base font-bold">Trade Assurance</h3>
+                                            </div>
+                                            <p className="text-sm text-white/85 leading-snug">
+                                                Comprehensive protection for every order — from payment to your door.
+                                            </p>
+                                        </div>
+                                        <div className="p-4 grid grid-cols-2 gap-2">
+                                            {protectionFeatures.map((f, i) => {
+                                                const Icon = f.icon
+                                                return (
+                                                    <div key={i} className="p-3 rounded-lg border border-gray-100 dark:border-gray-800 hover:border-orange-200 dark:hover:border-orange-800 hover:bg-orange-50/50 dark:hover:bg-orange-900/10 transition-all group">
+                                                        <Icon className="h-5 w-5 text-orange-500 mb-2" />
+                                                        <p className="text-xs font-semibold text-gray-900 dark:text-white group-hover:text-orange-500 transition-colors">{f.title}</p>
+                                                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 leading-snug">{f.description}</p>
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
+                                        <div className="px-4 pb-4">
+                                            <Link href="/protection" onClick={close}
+                                                className="flex items-center justify-center gap-2 w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg transition-colors"
+                                            >
+                                                Learn More <ArrowRight className="h-4 w-4" />
+                                            </Link>
+                                        </div>
+                                    </div>
+                                )}
+                            />
+
+                            {/* ── Quick links ── */}
+                            <Link href="/deals" className="hidden xl:flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors whitespace-nowrap">
+                                <Flame className="h-3.5 w-3.5 text-orange-500" />
+                                Today's Deals
+                            </Link>
+                            <Link href="/new-arrivals" className="hidden xl:flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors whitespace-nowrap">
+                                <Zap className="h-3.5 w-3.5 text-orange-500" />
+                                New Arrivals
+                            </Link>
                         </div>
-                        
-                        <Link
-                            href="/sell"
-                            className="text-gray-700 dark:text-gray-300 hover:text-primary-500 transition-colors font-medium flex items-center gap-1 whitespace-nowrap"
-                        >
-                            <Store className="h-3 w-3 lg:h-4 lg:w-4" />
-                            <span className="hidden lg:inline">Sell ON TradeHutStores</span>
-                            <span className="lg:hidden">Sell</span>
-                        </Link>
+
+                        {/* ════════════════════ DESKTOP RIGHT ════════════════════ */}
+                        <div className="hidden md:flex items-center gap-1 ml-auto shrink-0">
+                            <Link href="/buyer-central" className="px-3 py-2 rounded-md text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 font-medium transition-colors whitespace-nowrap">
+                                Buyer Central
+                            </Link>
+                            <Link href="/help" className="flex items-center gap-1.5 px-3 py-2 rounded-md text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 font-medium transition-colors whitespace-nowrap">
+                                <HelpCircle className="h-3.5 w-3.5" />
+                                Help
+                            </Link>
+                            <Link href="/sell" className="flex items-center gap-1.5 px-3 py-2 ml-1 rounded-md bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white text-sm font-bold transition-colors whitespace-nowrap shadow-sm">
+                                <Store className="h-3.5 w-3.5" />
+                                <span className="hidden lg:inline">Start Selling</span>
+                                <span className="lg:hidden">Sell</span>
+                            </Link>
+                        </div>
+
+                        {/* ════════════════════ MOBILE ════════════════════ */}
+                        <div className="md:hidden flex items-center justify-between w-full">
+                            {/* Hamburger */}
+                            <button
+                                onClick={() => setMobileOpen((v) => !v)}
+                                aria-label="Toggle menu"
+                                aria-expanded={mobileOpen}
+                                className="flex items-center gap-2 px-2 py-1.5 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                            >
+                                {mobileOpen
+                                    ? <X className="h-5 w-5 text-orange-500" />
+                                    : <Grid3x3 className="h-4 w-4 text-orange-500" />
+                                }
+                                <span className="text-sm font-semibold">{mobileOpen ? 'Close' : 'Menu'}</span>
+                            </button>
+
+                            {/* Mobile quick actions */}
+                            <div className="flex items-center gap-1">
+                                <Link href="/deals" className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-semibold text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors">
+                                    <Flame className="h-3.5 w-3.5" />
+                                    Deals
+                                </Link>
+                                <Link href="/deals" className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-semibold text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors">
+                                    <Gavel className="h-3.5 w-3.5" />
+                                    Bid Zone
+                                </Link>
+                                <Link href="/help" className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                                    <HelpCircle className="h-3.5 w-3.5" />
+                                    Help
+                                </Link>
+                                <Link href="/sell" className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold transition-colors shadow-sm">
+                                    <Store className="h-3 w-3" />
+                                    Sell
+                                </Link>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
+
+                {/* ════════════════════ MOBILE DRAWER ════════════════════ */}
+                {mobileOpen && (
+                    <div className="md:hidden border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 max-h-[80vh] overflow-y-auto">
+
+                        {/* Category accordion */}
+                        <div className="px-3 pt-3 pb-1">
+                            <p className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-600 mb-2 px-1">Browse Categories</p>
+                            {categories.map((cat, i) => (
+                                <div key={i}>
+                                    <button
+                                        onClick={() => setExpandedCat(expandedCat === i ? null : i)}
+                                        className="flex items-center justify-between w-full px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+                                    >
+                                        <span className="flex items-center gap-2.5 text-sm font-semibold text-gray-800 dark:text-gray-200">
+                                            <span className="text-base leading-none">{cat.icon}</span>
+                                            {cat.name}
+                                        </span>
+                                        <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${expandedCat === i ? 'rotate-180 text-orange-500' : ''}`} />
+                                    </button>
+
+                                    {expandedCat === i && (
+                                        <div className="ml-9 mb-1 grid grid-cols-2 gap-x-3 gap-y-0.5 pb-2">
+                                            {cat.subcategories.map((sub, j) => (
+                                                <Link
+                                                    key={j}
+                                                    href={`/products?category=${encodeURIComponent(sub.name)}`}
+                                                    onClick={() => setMobileOpen(false)}
+                                                    className="flex items-center justify-between py-1.5 pr-2 text-xs text-gray-500 dark:text-gray-400 hover:text-orange-500 transition-colors"
+                                                >
+                                                    <span>{sub.name}</span>
+                                                    <span className="text-gray-300 dark:text-gray-700 tabular-nums">{sub.count.toLocaleString()}</span>
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Quick links */}
+                        <div className="border-t border-gray-100 dark:border-gray-800 px-3 py-2">
+                            <p className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-600 mb-2 px-1 pt-1">Quick Links</p>
+                            {[
+                                { href: '/new-arrivals', icon: Zap, label: 'New Arrivals' },
+                                { href: '/featured', icon: Star, label: 'Featured Selections' },
+                                { href: '/protection', icon: Shield, label: 'Order Protection' },
+                                { href: '/buyer-central', icon: Tag, label: 'Buyer Central' },
+                            ].map(({ href, icon: Icon, label }) => (
+                                <Link
+                                    key={href}
+                                    href={href}
+                                    onClick={() => setMobileOpen(false)}
+                                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-orange-500 transition-colors"
+                                >
+                                    <Icon className="h-4 w-4 text-gray-400 shrink-0" />
+                                    {label}
+                                </Link>
+                            ))}
+                        </div>
+
+                        {/* Mobile CTA */}
+                        <div className="px-3 py-3 border-t border-gray-100 dark:border-gray-800">
+                            <Link
+                                href="/sell"
+                                onClick={() => setMobileOpen(false)}
+                                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 text-white font-bold text-sm shadow-lg shadow-orange-200 dark:shadow-none hover:opacity-90 active:opacity-95 transition-opacity"
+                            >
+                                <Store className="h-4 w-4" />
+                                Start Selling on TradeHutStores
+                            </Link>
+                        </div>
+                    </div>
+                )}
+            </nav>
+        </>
     )
 }

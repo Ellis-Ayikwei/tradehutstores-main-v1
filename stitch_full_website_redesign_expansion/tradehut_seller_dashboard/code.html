@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kinetic Seller Dashboard | TradeHut</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Syne:wght@700;800&amp;family=JetBrains+Mono:wght@500&amp;family=DM+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#60f9bd",
+                        "error-container": "#ffdad6",
+                        "outline": "#8e7165",
+                        "on-tertiary-fixed-variant": "#00429b",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-background": "#261813",
+                        "outline-variant": "#e2bfb2",
+                        "on-primary-fixed-variant": "#7d2d00",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#fff8f6",
+                        "primary-container": "#f5620f",
+                        "on-secondary-container": "#00714f",
+                        "on-secondary-fixed-variant": "#005138",
+                        "tertiary-fixed-dim": "#b0c6ff",
+                        "secondary-fixed": "#63fcc0",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#d9e2ff",
+                        "on-primary-fixed": "#360f00",
+                        "tertiary": "#0058ca",
+                        "surface-container": "#ffe9e2",
+                        "secondary": "#006c4b",
+                        "inverse-surface": "#3d2d26",
+                        "primary-fixed-dim": "#ffb597",
+                        "inverse-primary": "#ffb597",
+                        "surface-container-highest": "#f8ddd3",
+                        "surface-container-low": "#fff1ec",
+                        "inverse-on-surface": "#ffede7",
+                        "on-secondary-fixed": "#002114",
+                        "surface-bright": "#fff8f6",
+                        "on-surface-variant": "#5a4137",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#002761",
+                        "on-surface": "#261813",
+                        "surface-tint": "#a43d00",
+                        "primary": "#a43d00",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed-dim": "#3fdfa5",
+                        "tertiary-container": "#558dff",
+                        "surface-dim": "#efd5cb",
+                        "error": "#ba1a1a",
+                        "background": "#fff8f6",
+                        "on-tertiary-fixed": "#001945",
+                        "primary-fixed": "#ffdbcd",
+                        "surface-variant": "#f8ddd3",
+                        "surface-container-high": "#fee3d9",
+                        "on-primary-container": "#4e1900"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Epilogue"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .shadow-card {
+            box-shadow: 0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02);
+        }
+        .shadow-card:hover {
+            box-shadow: 0 12px 32px 0 rgba(38, 24, 19, 0.08);
+        }
+        .glass-header {
+            background: rgba(255, 248, 246, 0.7);
+            backdrop-filter: blur(24px);
+        }
+        .kinetic-gradient {
+            background: linear-gradient(135deg, #a43d00 0%, #f5620f 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface">
+<div class="flex min-h-screen">
+<!-- SideNavBar Component -->
+<aside class="h-screen w-64 hidden md:flex flex-col sticky left-0 top-0 border-r-0 bg-[#FFF8F6] dark:bg-stone-950 font-['Epilogue'] tracking-tight py-8 px-4">
+<div class="mb-10 px-2">
+<span class="text-2xl font-bold text-[#261813] dark:text-[#FFF8F6] font-['Syne']">Kinetic Seller</span>
+<div class="mt-2 flex items-center gap-3">
+<img class="w-10 h-10 rounded-lg object-cover" data-alt="Professional portrait of a male business owner with a friendly expression in a modern office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEgEo4q_YHGM6RAWyIVH9pubY4ugkYistI7KpT8xaRjC71FUsyzLZIUk-ZMgu_AUV23P7-XAMzcZusk37j3LC280TNj2sPdVeo2N3NY6MolPjNvf_UCFEe_Q6rrncHR1PgUixlbqjO7y5VQMP168C6NFjh1FqSnAxiJMNAHpItOAg2nouE6XdI1tnoqXCXASz78zapRhXrtE6o6wKkSdQpN15_RehAtnhgBc-QYCBmxJw1xYM9iU_WrpcPGs8Hi1XbGOhO_Qpa6S8"/>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-on-surface">Verified Merchant</span>
+<span class="text-[10px] opacity-60 uppercase tracking-widest">Premium Tier</span>
+</div>
+</div>
+</div>
+<nav class="space-y-1 flex-1">
+<!-- Dashboard is ACTIVE -->
+<a class="flex items-center gap-3 px-4 py-3 text-[#F5620F] font-bold border-r-4 border-[#F5620F] bg-[#FFF1EC] dark:bg-stone-900 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#261813] opacity-70 hover:opacity-100 hover:bg-[#FFF1EC] dark:hover:bg-stone-900 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="list_alt">list_alt</span>
+<span>Listings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#261813] opacity-70 hover:opacity-100 hover:bg-[#FFF1EC] dark:hover:bg-stone-900 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+<span>Orders</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#261813] opacity-70 hover:opacity-100 hover:bg-[#FFF1EC] dark:hover:bg-stone-900 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="mail">mail</span>
+<span>Messages</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#261813] opacity-70 hover:opacity-100 hover:bg-[#FFF1EC] dark:hover:bg-stone-900 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span>Payouts</span>
+</a>
+</nav>
+<button class="mt-4 kinetic-gradient text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-all">
+<span class="material-symbols-outlined">add_circle</span>
+                Add Listing
+            </button>
+<div class="mt-auto pt-8 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-[#261813] opacity-70 hover:opacity-100 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#261813] opacity-70 hover:opacity-100 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span>Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 min-w-0 pb-20 md:pb-12">
+<!-- TopAppBar -->
+<header class="sticky top-0 w-full z-40 glass-header flex justify-between items-center px-6 h-16 w-full shadow-sm">
+<div class="flex items-center gap-4">
+<span class="text-xl font-black text-[#261813] dark:text-[#FFF8F6] font-['Syne'] md:hidden">Kinetic</span>
+<h1 class="text-on-surface font-headline font-bold text-xl hidden md:block">Seller Dashboard</h1>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden lg:flex items-center gap-8 font-['DM_Sans'] text-sm uppercase tracking-widest text-on-surface/60">
+<a class="hover:text-primary-container transition-colors" href="#">Inventory</a>
+<a class="hover:text-primary-container transition-colors" href="#">Analytics</a>
+<a class="hover:text-primary-container transition-colors" href="#">Customers</a>
+</div>
+<div class="flex items-center gap-3 border-l pl-6 border-outline-variant/20">
+<button class="material-symbols-outlined p-2 text-on-surface/60 hover:text-primary transition-colors">notifications</button>
+<button class="material-symbols-outlined p-2 text-on-surface/60 hover:text-primary transition-colors">account_circle</button>
+</div>
+</div>
+</header>
+<div class="p-6 md:p-8 space-y-8 max-w-7xl mx-auto">
+<!-- KPI Bar -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- GMV -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-card group">
+<div class="flex justify-between items-start mb-4">
+<span class="text-on-surface-variant font-label text-sm uppercase tracking-wider">Gross Merchandise Value</span>
+<span class="material-symbols-outlined text-[#00C48C]">trending_up</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-['JetBrains_Mono'] font-bold text-on-surface">$42,910.00</span>
+<span class="text-[#00C48C] text-xs font-bold">+12.5%</span>
+</div>
+</div>
+<!-- Active Listings -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-card">
+<div class="flex justify-between items-start mb-4">
+<span class="text-on-surface-variant font-label text-sm uppercase tracking-wider">Active Listings</span>
+<span class="material-symbols-outlined text-primary-container">layers</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-['JetBrains_Mono'] font-bold text-on-surface">184</span>
+<span class="text-on-surface-variant text-xs opacity-60">Items</span>
+</div>
+</div>
+<!-- Pending Orders -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-card">
+<div class="flex justify-between items-start mb-4">
+<span class="text-on-surface-variant font-label text-sm uppercase tracking-wider">Pending Orders</span>
+<span class="material-symbols-outlined text-tertiary">local_shipping</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-['JetBrains_Mono'] font-bold text-on-surface">23</span>
+<span class="text-error text-xs font-bold">Priority: 4</span>
+</div>
+</div>
+<!-- Unread Messages -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-card border-l-4 border-primary-container">
+<div class="flex justify-between items-start mb-4">
+<span class="text-on-surface-variant font-label text-sm uppercase tracking-wider">Unread Messages</span>
+<span class="material-symbols-outlined text-primary-container">chat_bubble</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-['JetBrains_Mono'] font-bold text-on-surface">12</span>
+<span class="bg-primary-container text-white px-2 py-0.5 rounded text-[10px] font-bold">NEW</span>
+</div>
+</div>
+</div>
+<!-- Charts Section -->
+<div class="flex flex-col lg:flex-row gap-6">
+<!-- Sales Chart (2/3) -->
+<div class="lg:w-2/3 bg-surface-container-lowest rounded-xl shadow-card p-8">
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+<div>
+<h3 class="font-headline font-bold text-xl text-on-surface">Sales Performance</h3>
+<p class="text-sm text-on-surface-variant opacity-70">Revenue trajectory over time</p>
+</div>
+<div class="flex bg-surface-container-low p-1 rounded-lg">
+<button class="px-4 py-1.5 text-xs font-bold rounded-md bg-white text-primary-container shadow-sm">7d</button>
+<button class="px-4 py-1.5 text-xs font-bold rounded-md text-on-surface-variant hover:text-on-surface transition-colors">30d</button>
+<button class="px-4 py-1.5 text-xs font-bold rounded-md text-on-surface-variant hover:text-on-surface transition-colors">90d</button>
+</div>
+</div>
+<!-- Mock Chart Visualization -->
+<div class="h-64 flex items-end justify-between gap-2 px-2">
+<div class="w-full bg-surface-container-high rounded-t-lg transition-all hover:bg-primary-container/20" style="height: 60%;"></div>
+<div class="w-full bg-surface-container-high rounded-t-lg transition-all hover:bg-primary-container/20" style="height: 45%;"></div>
+<div class="w-full bg-surface-container-high rounded-t-lg transition-all hover:bg-primary-container/20" style="height: 80%;"></div>
+<div class="w-full bg-primary-container rounded-t-lg shadow-lg" style="height: 95%;"></div>
+<div class="w-full bg-surface-container-high rounded-t-lg transition-all hover:bg-primary-container/20" style="height: 55%;"></div>
+<div class="w-full bg-surface-container-high rounded-t-lg transition-all hover:bg-primary-container/20" style="height: 70%;"></div>
+<div class="w-full bg-surface-container-high rounded-t-lg transition-all hover:bg-primary-container/20" style="height: 85%;"></div>
+</div>
+<div class="flex justify-between mt-4 text-[10px] uppercase tracking-widest text-on-surface-variant opacity-60 font-bold px-2">
+<span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+</div>
+</div>
+<!-- Payout Balance (1/3) -->
+<div class="lg:w-1/3 bg-on-background text-white rounded-xl shadow-card overflow-hidden relative p-8 flex flex-col justify-between">
+<div class="relative z-10">
+<div class="flex justify-between items-center mb-6">
+<span class="font-label text-xs uppercase tracking-widest opacity-60">Available Balance</span>
+<span class="material-symbols-outlined text-secondary-fixed">account_balance_wallet</span>
+</div>
+<div class="space-y-1">
+<span class="text-4xl font-['JetBrains_Mono'] font-bold">$12,450.80</span>
+<p class="text-sm text-surface-variant/50">Next payout scheduled: Oct 24, 2023</p>
+</div>
+</div>
+<div class="mt-8 relative z-10 space-y-4">
+<button class="w-full bg-secondary text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-secondary-fixed-dim transition-colors">
+<span class="material-symbols-outlined">payments</span>
+                                Withdraw Funds
+                            </button>
+<a class="block text-center text-xs font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors" href="#">
+                                View Payout History
+                            </a>
+</div>
+<!-- Abstract Decorative Element -->
+<div class="absolute -right-8 -top-8 w-48 h-48 bg-primary-container/10 rounded-full blur-3xl"></div>
+<div class="absolute -left-8 -bottom-8 w-48 h-48 bg-secondary/10 rounded-full blur-3xl"></div>
+</div>
+</div>
+<!-- Recent Orders Table -->
+<div class="bg-surface-container-lowest rounded-xl shadow-card overflow-hidden">
+<div class="p-6 border-b border-outline-variant/10 flex justify-between items-center">
+<h3 class="font-headline font-bold text-xl text-on-surface">Recent Orders</h3>
+<button class="text-primary-container text-sm font-bold flex items-center gap-1 hover:underline">
+                            View All <span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="px-6 py-4 text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Order ID</th>
+<th class="px-6 py-4 text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Product</th>
+<th class="px-6 py-4 text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Status</th>
+<th class="px-6 py-4 text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Date</th>
+<th class="px-6 py-4 text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Amount</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="px-6 py-4 font-['JetBrains_Mono'] text-sm text-on-surface">#TRH-8291</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-md bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Minimalist white professional watch on a clean studio background with soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4UOpDCXPGz9cZzrE-LiRhgoLahA_bK3-588C5ErpnhaNGEbNh1IU3yv6IEhcbh9lQlY_cmbGP7qVQBO19n2a7e-1Y4efJYiu4sjRHiYmJsZsmhRqiFummMZ7BV595o3qnD-yDeKhli9RXwCM4dhnmHSt9fRDYjnTonSZ_xwakVvuipr0Pm6Mw-VIXsIfIx5KGh76FJEuzjX3FMsmCxYAjNfn-Pruc4UwMsjJcrZUmrqOKeVCZpDtC2NdNfCECftGF04fZoc25KmI"/>
+</div>
+<span class="font-medium text-sm">Titanium Chronograph</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-secondary-container text-on-secondary-container uppercase">Processing</span>
+</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">Oct 18, 2023</td>
+<td class="px-6 py-4 font-['JetBrains_Mono'] font-bold text-on-surface">$599.00</td>
+</tr>
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="px-6 py-4 font-['JetBrains_Mono'] text-sm text-on-surface">#TRH-8290</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-md bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Premium wireless over-ear headphones in matte black finish on a modern desk" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOsrZzV7aB30nx5fRNE7azc4Mn8LFqbe2-YSrTLyIsFi-OytD-4iyp8B1jI2uRd3rxFtwNcjxGjDnoy7fbHDfb1yMYyfmr5RF_o_W_aPtuR_B7F9UPfmlm-NLJx6y4G2vmDpct8BF0NFQAyVDxAb1fWsKT7jRRpU9zb76mE6HO98TO_1hHhOseXF3zZOGMjerTIG9gWZzga80Eg8Hl3wNI_uoJPWwXfkQbkTtaXgwEwjX4Af4em8U_uF_bOH0cHr_H851h_MioRgw"/>
+</div>
+<span class="font-medium text-sm">Studio ANC Headphones</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-surface-container-highest text-on-surface-variant uppercase tracking-wider">Shipped</span>
+</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">Oct 17, 2023</td>
+<td class="px-6 py-4 font-['JetBrains_Mono'] font-bold text-on-surface">$249.50</td>
+</tr>
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="px-6 py-4 font-['JetBrains_Mono'] text-sm text-on-surface">#TRH-8288</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-md bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Dynamic shot of red athletic sneakers with striking orange accents on a bright background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjA_-2HMV3R22pyN2115fm_3PnAGQ_VkvjJV_2VpIg2Z_i0IOs39fP5vj2Qzw4WnZba-c1Y51Ci6UvTjAXHcJDvHZgYurXsY-80Hto4DNAAQE7tScoOgn3ksZECL2tDJ9zAV4IL4_mHEcEIXyc6yZL_oHQ6Rsbzlh9zMtccLbRDBUNQjycq45iOkUwaCg33h019gl7R91ciuAc6k-UcmaE_cn_YeYKcoQ8HRA-HcCmpseVom_MRsT7Q0ijHdb690ZYUFLL8-_HghY"/>
+</div>
+<span class="font-medium text-sm">Velocity Sport Runner</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-error-container text-on-error-container uppercase">Refunded</span>
+</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">Oct 16, 2023</td>
+<td class="px-6 py-4 font-['JetBrains_Mono'] font-bold text-on-surface">$120.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Listing Health Alerts -->
+<div class="bg-surface-container-low p-6 rounded-xl border-l-4 border-tertiary">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+<div class="flex items-start gap-4">
+<div class="bg-tertiary/10 p-2 rounded-lg text-tertiary">
+<span class="material-symbols-outlined">health_metrics</span>
+</div>
+<div>
+<h4 class="font-headline font-bold text-on-surface">Listing Health Update</h4>
+<p class="text-sm text-on-surface-variant mt-1">4 listings have low-quality images and may be suppressed from search results soon. Optimization recommended.</p>
+</div>
+</div>
+<button class="bg-surface-container-lowest text-tertiary border border-tertiary/20 px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-tertiary hover:text-white transition-all whitespace-nowrap">
+                            Review Listings
+                        </button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- BottomNavBar for Mobile -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 pb-safe md:hidden bg-[#FFF8F6] dark:bg-stone-950 z-50 rounded-t-2xl border-t border-[#FFF1EC]/10 shadow-[0_-4px_20px_0_rgba(38,24,19,0.04)]">
+<a class="flex flex-col items-center justify-center bg-[#FFF1EC] dark:bg-stone-900 text-[#F5620F] rounded-xl px-4 py-1 font-['DM_Sans'] text-[10px] font-bold scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+<span>Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#261813] dark:text-[#FFF8F6] opacity-50 font-['DM_Sans'] text-[10px] font-bold scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="format_list_bulleted">format_list_bulleted</span>
+<span>Listings</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#261813] dark:text-[#FFF8F6] opacity-50 font-['DM_Sans'] text-[10px] font-bold scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span>Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#261813] dark:text-[#FFF8F6] opacity-50 font-['DM_Sans'] text-[10px] font-bold scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+<span>Messages</span>
+</a>
+</nav>
+</body></html>

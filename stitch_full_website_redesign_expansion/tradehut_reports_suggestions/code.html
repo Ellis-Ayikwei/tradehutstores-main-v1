@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gallery Support | Control Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#002114",
+                    "primary-fixed": "#ffdbcd",
+                    "surface-container-highest": "#f8ddd3",
+                    "on-secondary": "#ffffff",
+                    "surface-dim": "#efd5cb",
+                    "tertiary-fixed-dim": "#b0c6ff",
+                    "surface-container-low": "#fff1ec",
+                    "on-primary-container": "#4e1900",
+                    "surface-variant": "#f8ddd3",
+                    "primary": "#a43d00",
+                    "on-tertiary-fixed": "#001945",
+                    "on-tertiary-container": "#002761",
+                    "on-surface-variant": "#5a4137",
+                    "inverse-surface": "#3d2d26",
+                    "surface": "#fff8f6",
+                    "secondary-fixed-dim": "#3fdfa5",
+                    "secondary": "#006c4b",
+                    "surface-container-high": "#fee3d9",
+                    "inverse-on-surface": "#ffede7",
+                    "on-error-container": "#93000a",
+                    "background": "#fff8f6",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-container": "#00714f",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-bright": "#fff8f6",
+                    "primary-fixed-dim": "#ffb597",
+                    "inverse-primary": "#ffb597",
+                    "secondary-fixed": "#63fcc0",
+                    "on-error": "#ffffff",
+                    "on-primary-fixed": "#360f00",
+                    "tertiary-container": "#558dff",
+                    "primary-container": "#f5620f",
+                    "error-container": "#ffdad6",
+                    "surface-container": "#ffe9e2",
+                    "outline": "#8e7165",
+                    "secondary-container": "#60f9bd",
+                    "on-background": "#261813",
+                    "tertiary-fixed": "#d9e2ff",
+                    "on-surface": "#261813",
+                    "surface-tint": "#a43d00",
+                    "outline-variant": "#e2bfb2",
+                    "on-secondary-fixed-variant": "#005138",
+                    "on-tertiary-fixed-variant": "#00429b",
+                    "on-primary-fixed-variant": "#7d2d00",
+                    "tertiary": "#0058ca",
+                    "error": "#ba1a1a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Syne", "sans-serif"],
+                    "body": ["Plus Jakarta Sans", "sans-serif"],
+                    "label": ["Plus Jakarta Sans", "sans-serif"],
+                    "mono": ["JetBrains Mono", "monospace"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+        }
+        .kinetic-shadow {
+            box-shadow: 0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02);
+        }
+        .kinetic-shadow:hover {
+            box-shadow: 0 12px 32px 0 rgba(38, 24, 19, 0.08);
+        }
+        .ghost-border {
+            border: 1px solid rgba(226, 191, 178, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased">
+<!-- TopAppBar Shell -->
+<nav class="fixed top-0 w-full z-50 h-20 bg-[#FFF8F6]/70 dark:bg-stone-950/70 backdrop-blur-xl shadow-[0_4px_20px_0_rgba(38,24,19,0.04)]">
+<div class="flex justify-between items-center px-8 w-full max-w-[1920px] mx-auto h-full">
+<div class="text-2xl font-black font-headline text-[#261813] dark:text-white tracking-tighter">
+                Gallery Support
+            </div>
+<div class="flex items-center gap-6">
+<div class="relative hidden md:flex items-center">
+<input class="bg-surface-container-low border-none rounded-lg px-4 py-2 w-64 focus:ring-1 focus:ring-primary/20 text-sm" placeholder="Search resources..." type="text"/>
+</div>
+<div class="flex gap-4">
+<button class="material-symbols-outlined p-2 rounded-full hover:bg-surface-container-low transition-colors text-on-surface-variant">notifications</button>
+<button class="material-symbols-outlined p-2 rounded-full hover:bg-surface-container-low transition-colors text-on-surface-variant">help_outline</button>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Professional studio portrait of a woman with a clean aesthetic and neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWQDij9_Ypb9X5uDgbxQSvTUlp39rWP3T7oLW8cz3Q4eXfDBLPBFqSEiZRP2MrERSOdnBWK38IVW3tI2B7HrBtGN8Sm2Eo-uKtWdPj4EarrJMKhYR2-uUmV6DghnelyUjYDa5_VLBwdSge_NfxY9I5R48jl5SlB84CmKDdIkh23fGMmnZK7_YuPWhz8BX5ZdHxP557O7cpoL7q9BKkY4eXp3zD8YV5CTwOkFPDYSpYyAdhMCplxPROIbOBF7F5iHj2H00aB9V0yeI"/>
+</div>
+</div>
+</div>
+</div>
+</nav>
+<div class="flex min-h-screen pt-20">
+<!-- SideNavBar Shell -->
+<aside class="h-screen w-72 fixed left-0 top-0 pt-24 bg-[#FFF1EC] dark:bg-stone-900 overflow-y-auto hidden md:block">
+<div class="px-6 mb-8">
+<h2 class="font-headline text-lg font-bold text-[#F5620F]">Control Center</h2>
+<p class="text-xs text-on-surface-variant/60">Manage your account</p>
+</div>
+<nav class="flex flex-col gap-1 pr-4">
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">assignment_return</span>
+<span class="font-medium text-sm">Returns/Refunds</span>
+</a>
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">rate_review</span>
+<span class="font-medium text-sm">Feedback</span>
+</a>
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">group_add</span>
+<span class="font-medium text-sm">Invite Friends</span>
+</a>
+<a class="bg-white dark:bg-stone-800 text-[#F5620F] font-bold rounded-r-xl shadow-[4px_0_12px_rgba(245,98,15,0.1)] px-6 py-3 flex items-center gap-4 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">flag</span>
+<span class="font-medium text-sm">Manage Reports</span>
+</a>
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">lightbulb</span>
+<span class="font-medium text-sm">Suggestions</span>
+</a>
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">help_center</span>
+<span class="font-medium text-sm">DS Center</span>
+</a>
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-medium text-sm">Penalties Info</span>
+</a>
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">warning</span>
+<span class="font-medium text-sm">Safety Alerts</span>
+</a>
+</nav>
+<div class="mt-auto p-6">
+<button class="w-full bg-primary-container text-white font-bold py-3 rounded-xl kinetic-shadow hover:scale-[1.02] active:scale-[0.98] transition-all">
+                    Upgrade Plan
+                </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-72 p-8 lg:p-12 max-w-[1600px]">
+<!-- Hero Header -->
+<header class="mb-12 relative">
+<div class="absolute -top-12 -left-12 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10"></div>
+<h1 class="font-headline text-5xl md:text-6xl font-extrabold tracking-tighter mb-4 text-on-surface">
+                    Manage Reports
+                </h1>
+<p class="text-on-surface-variant max-w-2xl text-lg leading-relaxed">
+                    Track the status of your inquiries regarding listings, sellers, or platform safety. Review historical data and resolve outstanding issues.
+                </p>
+</header>
+<!-- Stats Bar -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+<div class="bg-surface-container-low p-6 rounded-xl kinetic-shadow">
+<span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60 block mb-2">Total Reports</span>
+<div class="font-mono text-3xl font-bold text-primary">024</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl kinetic-shadow">
+<span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60 block mb-2">In Review</span>
+<div class="font-mono text-3xl font-bold text-secondary">003</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl kinetic-shadow">
+<span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60 block mb-2">Resolved</span>
+<div class="font-mono text-3xl font-bold text-on-surface">021</div>
+</div>
+<div class="bg-primary/5 p-6 rounded-xl kinetic-shadow border border-primary/10">
+<span class="text-xs font-bold uppercase tracking-widest text-primary block mb-2">Efficiency Rating</span>
+<div class="font-mono text-3xl font-bold text-primary">98.2%</div>
+</div>
+</div>
+<!-- Bento Grid Content -->
+<div class="grid grid-cols-12 gap-8">
+<!-- Active Reports List (Large Column) -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-6">
+<div class="flex justify-between items-end mb-2">
+<h3 class="font-headline text-2xl font-bold">Active Records</h3>
+<div class="flex gap-2">
+<button class="px-4 py-2 rounded-full bg-surface-container-high text-xs font-bold text-on-surface-variant hover:bg-primary-container hover:text-white transition-all">All Time</button>
+<button class="px-4 py-2 rounded-full bg-surface-container-high text-xs font-bold text-on-surface-variant hover:bg-primary-container hover:text-white transition-all">Last 30 Days</button>
+</div>
+</div>
+<!-- Report Item 1 -->
+<div class="group relative bg-surface-container-lowest p-6 rounded-2xl kinetic-shadow flex flex-col md:flex-row gap-6 transition-all border border-transparent hover:border-primary/10">
+<div class="w-full md:w-32 h-32 rounded-xl bg-surface-container-low overflow-hidden shrink-0">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Modern abstract painting with vibrant orange and blue brushstrokes on a white canvas" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_o9VuDamp2h0SKb-HdOmfvbS0BCFIIJtPjKq9cDnpEZKomRojVWd-9KQawKiNjJ9XO12hjv86PgBJy1PvP3ardQOEfqvG8DtHQaBxU92zonO_3V0hUBCneuuOqHNs8aYDlswiRYd5ztr7LqJQ1_GEWEG4h2QeMKfykfj9Cxel4Dv3mTdNbvfATgFnxJbCLq-U_fUHusVmqWH5qM4_wQzPF37A6BkBh82oBIu7L3NFVL3xlz2pxwVoFc1jGe_7JEu3YGqnge5kddo"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-2">
+<div>
+<span class="font-mono text-xs text-primary mb-1 block">#REF-88291-K</span>
+<h4 class="font-headline text-xl font-bold">Listing Inaccuracy: "Solaris #4"</h4>
+</div>
+<span class="bg-secondary/10 text-secondary text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-tighter">In Review</span>
+</div>
+<p class="text-sm text-on-surface-variant mb-4 line-clamp-2">Reported discrepancy between listed dimensions and physical canvas size. Evidence uploaded on Oct 24th.</p>
+<div class="flex items-center gap-4">
+<button class="text-xs font-bold text-primary flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-sm">visibility</span> View Case Details
+                                </button>
+<span class="text-xs text-on-surface-variant/40">Filed: Oct 24, 2023</span>
+</div>
+</div>
+</div>
+<!-- Report Item 2 -->
+<div class="group relative bg-surface-container-lowest p-6 rounded-2xl kinetic-shadow flex flex-col md:flex-row gap-6 transition-all border border-transparent hover:border-primary/10">
+<div class="w-full md:w-32 h-32 rounded-xl bg-surface-container-low overflow-hidden shrink-0">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Minimalist sculpture of smooth white ceramic material on a dark wooden pedestal" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDEookIPy1ht5dmiatfvUKmWyJ-8Twf-N976olB5cA4U_kRjfO2wIArhL_cDgHf6aJtePAArtOPXQTg07Mf-oO3yoOwoOaP7IYrAUwJ-l2xav7n4X-jTykd5-Tk8RBixyH8p9bwemzsTjclFvQRHhnWkW0XqSTYsZ1ZiK9Vd5oPm8GrNeWRJJhFeC_s9XN1awn-y-D95aZGZGaA2gEg0g7wD-vTTWIF6VrMhRa5O_uSJQaDFsayAgrkgyyd3uUm1ngJ5f_0d6r7mM"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-2">
+<div>
+<span class="font-mono text-xs text-primary mb-1 block">#REF-88102-S</span>
+<h4 class="font-headline text-xl font-bold">Seller Conduct: Artisan Collective</h4>
+</div>
+<span class="bg-on-surface-variant/10 text-on-surface-variant text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-tighter">Resolved</span>
+</div>
+<p class="text-sm text-on-surface-variant mb-4 line-clamp-2">Unresponsive seller after payment confirmation. Platform mediation completed successfully with a full refund.</p>
+<div class="flex items-center gap-4">
+<button class="text-xs font-bold text-primary flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-sm">verified</span> View Outcome
+                                </button>
+<span class="text-xs text-on-surface-variant/40">Filed: Oct 12, 2023</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Suggestions Panel (Sidebar) -->
+<div class="col-span-12 lg:col-span-4">
+<div class="sticky top-28 bg-surface-container-low rounded-3xl p-8 border border-white/50 kinetic-shadow">
+<h3 class="font-headline text-2xl font-bold mb-6">Platform Suggestions</h3>
+<p class="text-sm text-on-surface-variant mb-8 leading-relaxed">
+                            Your voice helps us curate a better gallery experience. Submit technical improvements or feature requests below.
+                        </p>
+<form class="flex flex-col gap-6">
+<div>
+<label class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block mb-2 ml-1">Category</label>
+<select class="w-full bg-surface-container-lowest border-none rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary/20 appearance-none">
+<option>User Experience (UX)</option>
+<option>Bidding Mechanics</option>
+<option>Shipping &amp; Logistics</option>
+<option>Artist Visibility</option>
+</select>
+</div>
+<div>
+<label class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block mb-2 ml-1">Your Proposal</label>
+<textarea class="w-full bg-surface-container-lowest border-none rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary/20 resize-none" placeholder="Describe your suggestion..." rows="4"></textarea>
+</div>
+<button class="w-full bg-primary text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-primary/20 hover:-translate-y-0.5 transition-all active:translate-y-0" type="submit">
+                                Submit Suggestion
+                            </button>
+</form>
+<div class="mt-12 pt-8 border-t border-on-surface-variant/5">
+<h4 class="text-xs font-bold uppercase tracking-widest text-primary mb-4">Top Community Ideas</h4>
+<div class="space-y-4">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary text-lg">thumb_up</span>
+<div>
+<p class="text-xs font-bold">Augmented Reality Preview</p>
+<p class="text-[10px] text-on-surface-variant/60">Under Consideration by Dev Team</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary text-lg">thumb_up</span>
+<div>
+<p class="text-xs font-bold">Dark Mode Editorial View</p>
+<p class="text-[10px] text-on-surface-variant/60">Planned for Q1 Update</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Kinetic Divider -->
+<div class="my-16 h-px w-full bg-gradient-to-r from-transparent via-on-surface-variant/10 to-transparent"></div>
+<!-- Frequently Asked Questions / Resources (Tonal Layout) -->
+<section class="mb-20">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="col-span-1">
+<h2 class="font-headline text-3xl font-bold tracking-tight mb-4">Support Guidelines</h2>
+<p class="text-sm text-on-surface-variant">Our commitment to safety and transparency is built on direct user feedback.</p>
+</div>
+<div class="col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
+<div class="p-6 rounded-2xl bg-surface-container-lowest kinetic-shadow">
+<span class="material-symbols-outlined text-primary mb-3">gavel</span>
+<h5 class="font-bold mb-2">Fair Usage Policy</h5>
+<p class="text-xs text-on-surface-variant leading-relaxed">Understanding how we evaluate reports and ensure unbiased mediation for all gallery members.</p>
+</div>
+<div class="p-6 rounded-2xl bg-surface-container-lowest kinetic-shadow">
+<span class="material-symbols-outlined text-primary mb-3">history_edu</span>
+<h5 class="font-bold mb-2">Mediation Process</h5>
+<p class="text-xs text-on-surface-variant leading-relaxed">A step-by-step guide on what happens after you file a report and how we reach resolutions.</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+</div>
+<!-- Floating Action Button - Supressed as per rules on Detail/Settings/Transactional screens -->
+<!-- However, if this is considered a 'Dashboard' for reports, we might include a specific action -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50">
+<span class="material-symbols-outlined">add_comment</span>
+</button>
+</body></html>

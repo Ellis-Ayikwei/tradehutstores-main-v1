@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800;900&amp;family=DM+Sans:wght@400;500;700&amp;family=JetBrains+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-container": "#002761",
+                    "on-surface": "#261813",
+                    "surface-bright": "#fff8f6",
+                    "on-surface-variant": "#5a4137",
+                    "on-secondary-fixed": "#002114",
+                    "on-primary": "#ffffff",
+                    "surface-container-low": "#fff1ec",
+                    "inverse-on-surface": "#ffede7",
+                    "surface-container-highest": "#f8ddd3",
+                    "surface-variant": "#f8ddd3",
+                    "on-primary-container": "#4e1900",
+                    "surface-container-high": "#fee3d9",
+                    "error": "#ba1a1a",
+                    "background": "#fff8f6",
+                    "primary-fixed": "#ffdbcd",
+                    "on-tertiary-fixed": "#001945",
+                    "on-secondary": "#ffffff",
+                    "tertiary-container": "#558dff",
+                    "surface-dim": "#efd5cb",
+                    "secondary-fixed-dim": "#3fdfa5",
+                    "surface-tint": "#a43d00",
+                    "primary": "#a43d00",
+                    "on-secondary-fixed-variant": "#005138",
+                    "secondary-fixed": "#63fcc0",
+                    "tertiary-fixed-dim": "#b0c6ff",
+                    "surface-container-lowest": "#ffffff",
+                    "surface": "#fff8f6",
+                    "primary-container": "#f5620f",
+                    "on-secondary-container": "#00714f",
+                    "outline-variant": "#e2bfb2",
+                    "on-tertiary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "on-background": "#261813",
+                    "on-primary-fixed-variant": "#7d2d00",
+                    "outline": "#8e7165",
+                    "on-tertiary-fixed-variant": "#00429b",
+                    "secondary-container": "#60f9bd",
+                    "error-container": "#ffdad6",
+                    "inverse-surface": "#3d2d26",
+                    "inverse-primary": "#ffb597",
+                    "primary-fixed-dim": "#ffb597",
+                    "surface-container": "#ffe9e2",
+                    "secondary": "#006c4b",
+                    "tertiary": "#0058ca",
+                    "tertiary-fixed": "#d9e2ff",
+                    "on-primary-fixed": "#360f00",
+                    "on-error-container": "#93000a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Epilogue"],
+                    "body": ["DM Sans"],
+                    "label": ["Plus Jakarta Sans"],
+                    "mono": ["JetBrains Mono"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .shadow-card {
+            box-shadow: 0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02);
+        }
+        .shadow-card-hover:hover {
+            box-shadow: 0 12px 32px 0 rgba(38, 24, 19, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-white">
+<!-- TopAppBar -->
+<header class="sticky top-0 w-full z-50 bg-[#FFF8F6]/70 dark:bg-zinc-950/70 backdrop-blur-xl shadow-[0_4px_20px_0_rgba(38,24,19,0.04)]">
+<div class="flex justify-between items-center px-8 py-4 w-full">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black text-[#261813] dark:text-zinc-100 font-['Epilogue'] tracking-tighter">Kinetic Seller</span>
+<nav class="hidden md:flex gap-6">
+<a class="text-[#261813]/60 dark:text-zinc-400 hover:bg-[#FFF1EC] transition-colors px-3 py-1 rounded-lg" href="#">Dashboard</a>
+<a class="text-[#F5620F] border-b-2 border-[#F5620F] pb-1 font-bold" href="#">Inventory</a>
+<a class="text-[#261813]/60 dark:text-zinc-400 hover:bg-[#FFF1EC] transition-colors px-3 py-1 rounded-lg" href="#">Active Bids</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="bg-[#FFF1EC] dark:bg-zinc-900 rounded-full px-4 py-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-48" placeholder="Search inventory..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-[#261813]/60 hover:bg-[#FFF1EC] p-2 rounded-full transition-transform active:scale-90">notifications</button>
+<button class="material-symbols-outlined text-[#261813]/60 hover:bg-[#FFF1EC] p-2 rounded-full transition-transform active:scale-90">account_circle</button>
+</div>
+</div>
+</header>
+<div class="flex min-h-screen">
+<!-- SideNav: Stepper Layout -->
+<aside class="fixed left-0 top-20 h-[calc(100vh-5rem)] w-72 bg-surface-container-low flex flex-col px-6 py-8 gap-8 overflow-y-auto hidden lg:flex">
+<div class="space-y-1">
+<h3 class="font-headline font-bold text-lg tracking-tight px-2">Listing Progress</h3>
+<p class="text-on-surface-variant text-xs px-2 opacity-70">Follow the journey to market</p>
+</div>
+<nav class="flex flex-col gap-1">
+<!-- Step 1-6: Completed -->
+<div class="flex items-center gap-4 px-3 py-4 opacity-60">
+<div class="w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="font-medium text-sm">Product Category</span>
+</div>
+<div class="flex items-center gap-4 px-3 py-4 opacity-60">
+<div class="w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="font-medium text-sm">Basic Info</span>
+</div>
+<div class="flex items-center gap-4 px-3 py-4 opacity-60">
+<div class="w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="font-medium text-sm">Media Upload</span>
+</div>
+<div class="flex items-center gap-4 px-3 py-4 opacity-60">
+<div class="w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="font-medium text-sm">Detailed Specs</span>
+</div>
+<div class="flex items-center gap-4 px-3 py-4 opacity-60">
+<div class="w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="font-medium text-sm">Pricing Strategy</span>
+</div>
+<div class="flex items-center gap-4 px-3 py-4 opacity-60">
+<div class="w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="font-medium text-sm">Shipping &amp; Handling</span>
+</div>
+<!-- Step 7: Active -->
+<div class="flex items-center gap-4 px-3 py-4 bg-primary-container text-white rounded-xl shadow-lg shadow-primary/20">
+<div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center font-bold text-xs">07</div>
+<span class="font-headline font-bold text-sm">Preview &amp; Publish</span>
+</div>
+</nav>
+<div class="mt-auto p-4 bg-surface-container-highest rounded-xl border border-outline-variant/15">
+<p class="text-xs font-medium text-on-surface-variant leading-relaxed">Your progress is automatically saved as a draft.</p>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 lg:ml-72 p-8 lg:p-12 max-w-7xl mx-auto w-full">
+<header class="mb-12">
+<h1 class="font-headline text-4xl font-black text-on-surface tracking-tighter mb-2 italic">Preview &amp; Publish</h1>
+<p class="text-on-surface-variant text-lg">Review your listing details before going live.</p>
+</header>
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+<!-- Left Column: Details -->
+<div class="xl:col-span-2 space-y-12">
+<!-- Listing Summary Section -->
+<section class="space-y-6">
+<div class="flex items-center justify-between">
+<h2 class="font-headline text-xl font-bold uppercase tracking-widest text-primary">Listing Summary</h2>
+<button class="text-primary text-sm font-bold flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-sm">edit</span> Edit
+                            </button>
+</div>
+<div class="bg-surface-container-lowest rounded-2xl p-8 shadow-card flex flex-col md:flex-row gap-8 items-start">
+<div class="w-full md:w-48 aspect-square rounded-xl overflow-hidden bg-surface-container-low group relative">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="Modern high-end industrial espresso machine with chrome finish on a dark minimalist background with soft cinematic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGFE06rcTBvemKjfDNjdOZg7OgRrUz6rpYHjJcxUMntKHR3Q7Higzp_-8ev95doUtTTEVJSksZDv35HxGFn4Kn5EQb8RZhnfMmZghjca1jBF47DV-RiSOJJ6EKnIWJc6WozoZNb_ysvvQOhYVGxg3nF_iKRgWT6M9gKzvzPgyjqQPwsDV63uJ18uCT7-ikZr7m19iWFQi4NooNA0bD9RhMK8j2VBNUIZtNkqF9rDJzpMUiogKF8WavbgwEvANskDg88A3MGkD7GMA"/>
+<div class="absolute inset-0 bg-black/5"></div>
+</div>
+<div class="flex-1 space-y-4">
+<div>
+<span class="px-3 py-1 bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase tracking-widest rounded-full">Industrial Kitchen</span>
+<h3 class="font-headline text-3xl font-bold mt-2 tracking-tight">Vortex Series X1 Precision Espresso Engine</h3>
+</div>
+<p class="text-on-surface-variant leading-relaxed line-clamp-3">
+                                    Engineering grade espresso delivery system featuring a dual-boiler configuration, PID temperature control, and a bespoke pressure profiling system. Finished in satin midnight chrome with hand-turned walnut accents.
+                                </p>
+</div>
+</div>
+</section>
+<!-- Details & Media Grid -->
+<section class="space-y-6">
+<div class="flex items-center justify-between">
+<h2 class="font-headline text-xl font-bold uppercase tracking-widest text-primary">Details &amp; Media</h2>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="aspect-square rounded-xl overflow-hidden bg-surface-container-low shadow-card-hover transition-all">
+<img class="w-full h-full object-cover" data-alt="Close-up of wooden texture detail on a premium coffee machine with morning sun light casting soft shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOSIrvYePKtIao1d8AKCBDK6r1-ggP1pkCULclSllGza14DFuBduYVBC9aFhscGtwVf5Vkah73UeP7UWbvp8_DHZpzEo9DzAZcQgSMMJRgRP_ab1aAJoSiWm8auzVBByyLM5jSPcUejs2Z8ZvJ8rAE36cDVJUbTXB7mn5diXurgUR36B6OqB2AMAmsl0FMY8mMGXqmn9g7LTeZKEsLZ-5n2-jmMymNislyXqjkTo3Un9_hFJxWEyKsZagWxj6sDQgsoZFaQJ6NOHM"/>
+</div>
+<div class="aspect-square rounded-xl overflow-hidden bg-surface-container-low shadow-card-hover transition-all">
+<img class="w-full h-full object-cover" data-alt="Artisanal coffee being poured into a ceramic cup with perfect crema and steam rising in a bright cafe setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuChJGKrQs5R2pqbBogqbBHty-XkZ-2D0PDQmR2KD7ZY2smzFBs4SLEzRZlV9uZf4en9a2lWHPM4cUfLCBDPbsY9629Q0mpl06hY00wwDpwCzmV9YGNXay-19RmucynkdgSffzHAac8EkYjega8k3ub0EwrJxgVic_gQwDlLe8XYUHj6aLGNaNEIb3DfyMKDPRDVzrkXkK39d2mOgGs-SAcDJIZludwrJgbbuCJpKiksULsUjKabQg5W9MbUK2qzK5XuKHEMYOzdtLc"/>
+</div>
+<div class="aspect-square rounded-xl overflow-hidden bg-surface-container-low shadow-card-hover transition-all">
+<img class="w-full h-full object-cover" data-alt="Detailed view of coffee machine pressure gauges and chrome controls in a moody dark kitchen interior" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3pEHd9l0UM2ivaaqFuP2YHeSTgROPd-bmttIDO5NjFa33_umUvYgbxE--Ip-HGZ3uwEpukH-2j7HuZ7Qjm_oHq3k0bDkNQbgOZOj4tzXGk3wk9H_fDXMRqHV6nfO6qrVGUjfuXixFrHrciPXU_GU-KhTUWoYVDdkM4H8LtVteSAG0pRToMBVnK-67hNywq2RvQqJWZJ2TPmYKCNNbHR5R4oyY3w042AkYaJiFI2XXhTx9PTg1biIwvfqpefvgvJkRaHI07wzjdmc"/>
+</div>
+<div class="aspect-square rounded-xl bg-surface-container-highest border-2 border-dashed border-outline-variant/30 flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-3xl mb-1">add_a_photo</span>
+<span class="text-[10px] font-bold uppercase">+4 More</span>
+</div>
+</div>
+</section>
+<!-- Inventory & Shipping -->
+<section class="space-y-6">
+<h2 class="font-headline text-xl font-bold uppercase tracking-widest text-primary">Inventory &amp; Logistics</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-surface-container-lowest p-6 rounded-2xl shadow-card flex items-start gap-4">
+<div class="bg-surface-container-low p-3 rounded-xl">
+<span class="material-symbols-outlined text-primary">inventory_2</span>
+</div>
+<div>
+<p class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-1">Stock Availability</p>
+<p class="text-xl font-headline font-bold">12 Units Ready</p>
+<p class="text-sm text-on-surface-variant opacity-70">Warehouse: Berlin-01</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-2xl shadow-card flex items-start gap-4">
+<div class="bg-surface-container-low p-3 rounded-xl">
+<span class="material-symbols-outlined text-primary">local_shipping</span>
+</div>
+<div>
+<p class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-1">Shipping Profile</p>
+<p class="text-xl font-headline font-bold">Standard Global</p>
+<p class="text-sm text-on-surface-variant opacity-70">3-5 Business Days Delivery</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Sticky Pricing & Action Card -->
+<div class="xl:col-span-1">
+<div class="sticky top-32 space-y-6">
+<div class="bg-surface-container-lowest rounded-3xl p-8 shadow-2xl shadow-primary/5 border border-primary/5">
+<div class="flex justify-between items-start mb-8">
+<div>
+<span class="px-3 py-1 bg-[#FFF1EC] text-primary text-[10px] font-bold uppercase tracking-widest rounded-full">Fixed Price Mode</span>
+<h3 class="font-headline text-lg font-bold mt-3">Final Valuation</h3>
+</div>
+<span class="material-symbols-outlined text-primary text-3xl">verified</span>
+</div>
+<div class="space-y-4 mb-8">
+<div class="flex justify-between items-baseline">
+<span class="text-on-surface-variant">Base Price</span>
+<span class="font-mono text-2xl font-bold">$4,850.00</span>
+</div>
+<div class="flex justify-between items-baseline">
+<span class="text-on-surface-variant">Seller Fee (2%)</span>
+<span class="font-mono text-on-surface-variant">-$97.00</span>
+</div>
+<div class="pt-4 border-t border-outline-variant/20 flex justify-between items-baseline">
+<span class="font-bold">You Receive</span>
+<span class="font-mono text-3xl font-black text-primary">$4,753.00</span>
+</div>
+</div>
+<div class="space-y-3 mb-8">
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Active Variants</p>
+<div class="flex gap-2">
+<span class="px-2 py-1 bg-surface-container-low text-[11px] font-medium rounded-md">Chrome</span>
+<span class="px-2 py-1 bg-surface-container-low text-[11px] font-medium rounded-md">Walnut</span>
+<span class="px-2 py-1 bg-surface-container-low text-[11px] font-medium rounded-md">220V</span>
+</div>
+</div>
+<div class="space-y-4">
+<button class="w-full py-4 bg-gradient-to-r from-[#a43d00] to-[#F5620F] text-white rounded-xl font-headline font-extrabold text-lg shadow-lg shadow-primary/30 transition-transform active:scale-95">
+                                    Publish Listing
+                                </button>
+<button class="w-full py-4 text-on-surface-variant font-bold hover:bg-surface-container-low rounded-xl transition-colors">
+                                    Save as Draft
+                                </button>
+</div>
+<p class="mt-6 text-[10px] text-center text-on-surface-variant leading-relaxed px-4">
+                                By publishing, you agree to Kinetic's <a class="underline" href="#">Terms of Sale</a> and confirm the authenticity of this item.
+                            </p>
+</div>
+<!-- Visibility Hint -->
+<div class="p-6 bg-[#00C48C]/5 rounded-2xl border border-[#00C48C]/10 flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-[#00C48C] text-white flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">trending_up</span>
+</div>
+<div>
+<h4 class="font-bold text-sm text-[#006c4b]">High Demand Detected</h4>
+<p class="text-xs text-[#006c4b]/80">Similar items sell within 48 hours.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 pb-safe bg-[#FFF8F6]/80 dark:bg-zinc-950/80 backdrop-blur-lg lg:hidden z-50 border-t border-[#261813]/5">
+<button class="flex flex-col items-center justify-center text-[#261813]/40">
+<span class="material-symbols-outlined">home</span>
+<span class="font-['Epilogue'] text-[10px] uppercase tracking-widest mt-1">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-[#FFF1EC] text-[#F5620F] rounded-2xl px-4 py-1">
+<span class="material-symbols-outlined">list_alt</span>
+<span class="font-['Epilogue'] text-[10px] uppercase tracking-widest mt-1">Listings</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#261813]/40">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-['Epilogue'] text-[10px] uppercase tracking-widest mt-1">Bids</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#261813]/40">
+<span class="material-symbols-outlined">person</span>
+<span class="font-['Epilogue'] text-[10px] uppercase tracking-widest mt-1">Account</span>
+</button>
+</nav>
+</body></html>

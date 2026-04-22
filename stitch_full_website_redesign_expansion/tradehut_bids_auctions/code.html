@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&amp;family=Syne:wght@400;700;800&amp;family=JetBrains+Mono:wght@400;700&amp;family=DM+Sans:wght@400;500;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "background": "#fff8f6",
+                    "on-error": "#ffffff",
+                    "surface-container-highest": "#f8ddd3",
+                    "surface-container-low": "#fff1ec",
+                    "surface-container-high": "#fee3d9",
+                    "outline-variant": "#e2bfb2",
+                    "on-surface-variant": "#5a4137",
+                    "on-secondary-fixed-variant": "#005138",
+                    "surface-tint": "#a43d00",
+                    "primary-fixed-dim": "#ffb597",
+                    "outline": "#8e7165",
+                    "on-tertiary-fixed": "#001945",
+                    "tertiary-fixed-dim": "#b0c6ff",
+                    "on-error-container": "#93000a",
+                    "surface-container": "#ffe9e2",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#ffb597",
+                    "secondary-fixed-dim": "#3fdfa5",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary-container": "#4e1900",
+                    "tertiary": "#0058ca",
+                    "on-tertiary-fixed-variant": "#00429b",
+                    "on-secondary-container": "#00714f",
+                    "primary-container": "#f5620f",
+                    "error": "#ba1a1a",
+                    "inverse-on-surface": "#ffede7",
+                    "error-container": "#ffdad6",
+                    "secondary-fixed": "#63fcc0",
+                    "tertiary-container": "#558dff",
+                    "secondary": "#006c4b",
+                    "primary": "#a43d00",
+                    "surface-bright": "#fff8f6",
+                    "surface-dim": "#efd5cb",
+                    "secondary-container": "#60f9bd",
+                    "on-background": "#261813",
+                    "on-secondary-fixed": "#002114",
+                    "surface": "#fff8f6",
+                    "on-surface": "#261813",
+                    "on-primary-fixed-variant": "#7d2d00",
+                    "tertiary-fixed": "#d9e2ff",
+                    "primary-fixed": "#ffdbcd",
+                    "on-tertiary-container": "#002761",
+                    "on-primary-fixed": "#360f00",
+                    "surface-variant": "#f8ddd3",
+                    "on-tertiary": "#ffffff",
+                    "inverse-surface": "#3d2d26",
+                    "bid-green": "#00C48C",
+                    "bid-red": "#FF4D4D",
+                    "bid-amber": "#FFB800"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Syne", "sans-serif"],
+                    "body": ["DM Sans", "sans-serif"],
+                    "label": ["Plus Jakarta Sans", "sans-serif"],
+                    "mono": ["JetBrains Mono", "monospace"]
+            },
+            "boxShadow": {
+                "card": "0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02)",
+                "card-hover": "0 12px 32px 0 rgba(38, 24, 19, 0.08)"
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .headlines-font-syne { font-family: 'Syne', sans-serif; }
+        .mono-font-jetbrains { font-family: 'JetBrains Mono', monospace; }
+        .glass-header { backdrop-filter: blur(24px); }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#FFF8F6]/70 dark:bg-stone-950/70 backdrop-blur-xl shadow-[0_4px_20px_0_rgba(38,24,19,0.04)] h-20 flex justify-between items-center px-8 font-['Epilogue']">
+<div class="text-2xl font-black tracking-tighter text-stone-900 dark:text-stone-50 font-['Syne']">TradeHut</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-stone-600 dark:text-stone-400 font-medium hover:text-stone-900 transition-all duration-300" href="#">Marketplace</a>
+<a class="text-[#F5620F] font-bold border-b-2 border-[#F5620F] pb-1" href="#">Auctions</a>
+<a class="text-stone-600 dark:text-stone-400 font-medium hover:text-stone-900 transition-all duration-300" href="#">RFQs</a>
+</nav>
+<div class="flex items-center gap-6">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/20 w-64 text-sm" placeholder="Search assets..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">shopping_cart</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-fixed">
+<img alt="User avatar" data-alt="close-up portrait of a professional man with a stylish haircut and glasses in a minimalist art style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfmDSIc26QSSujUeplaZJ8qbweXJNpIX-9nJdTmXCNZ3zSdcB0GtufiDoYSUYzLNLqyWUjwYWUzkGNJAVtLfN44zoqlFRnuIJNub0crsGTXL0n1oYH25g4lOYCSdmYBu8roV9YpU2jK8rljPDLthk27Zq9RcMb3ku7CflM11VxrBL-Jdo4AqKBzKd-kJ3NRWLeN_cldjccuxiO0bOwiKyQphVXlXG6x9fqNKsv9OcJxr77TvtYTaao0307_ku100QwEVWWQMEVhvY"/>
+</div>
+</div>
+</div>
+</header>
+<main class="pt-28 pb-12 px-8 max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-[280px_1fr] gap-8">
+<!-- SideNavBar -->
+<aside class="sticky top-24 h-[calc(100vh-6rem)] w-72 rounded-r-2xl bg-[#FFF8F6] dark:bg-stone-950 flex flex-col gap-2 p-6 overflow-y-auto">
+<div class="mb-8 px-4">
+<h2 class="font-headline text-xl font-bold text-on-surface">Account Settings</h2>
+<p class="text-xs font-['DM_Sans'] uppercase tracking-widest text-on-surface-variant opacity-70 mt-1">Manage your Kinetic profile</p>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="text-stone-500 dark:text-stone-400 px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span class="font-['DM_Sans'] uppercase tracking-widest text-[10px] font-bold">Orders</span>
+</a>
+<a class="bg-white dark:bg-stone-900 text-[#F5620F] shadow-card rounded-xl px-4 py-3 flex items-center gap-3 transition-all" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-['DM_Sans'] uppercase tracking-widest text-[10px] font-bold">Bids &amp; Auctions</span>
+</a>
+<a class="text-stone-500 dark:text-stone-400 px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">request_quote</span>
+<span class="font-['DM_Sans'] uppercase tracking-widest text-[10px] font-bold">My Requests</span>
+</a>
+<a class="text-stone-500 dark:text-stone-400 px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">favorite</span>
+<span class="font-['DM_Sans'] uppercase tracking-widest text-[10px] font-bold">Wishlist</span>
+</a>
+<a class="text-stone-500 dark:text-stone-400 px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">location_on</span>
+<span class="font-['DM_Sans'] uppercase tracking-widest text-[10px] font-bold">Addresses</span>
+</a>
+<a class="text-stone-500 dark:text-stone-400 px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">credit_card</span>
+<span class="font-['DM_Sans'] uppercase tracking-widest text-[10px] font-bold">Payment Methods</span>
+</a>
+<a class="text-stone-500 dark:text-stone-400 px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">notifications_active</span>
+<span class="font-['DM_Sans'] uppercase tracking-widest text-[10px] font-bold">Notifications</span>
+</a>
+<a class="text-stone-500 dark:text-stone-400 px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">shield</span>
+<span class="font-['DM_Sans'] uppercase tracking-widest text-[10px] font-bold">Security</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-outline-variant/10">
+<button class="w-full py-3 px-4 rounded-xl text-on-surface-variant font-bold text-[10px] uppercase tracking-widest flex items-center gap-3 hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">logout</span>
+                    Logout
+                </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<section class="space-y-8">
+<header class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h1 class="text-4xl font-headline font-black tracking-tight text-on-surface">Active Bids</h1>
+<p class="text-on-surface-variant mt-2 font-medium">You are currently participating in 4 auctions.</p>
+</div>
+<div class="flex gap-3">
+<div class="bg-surface-container-low px-4 py-2 rounded-xl flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-bid-green"></span>
+<span class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Winning: 2</span>
+</div>
+<div class="bg-surface-container-low px-4 py-2 rounded-xl flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-bid-red"></span>
+<span class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Outbid: 2</span>
+</div>
+</div>
+</header>
+<!-- Bids Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<!-- Card 1: Winning -->
+<div class="bg-surface-container-lowest rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 p-6 flex flex-col md:flex-row gap-6 group overflow-hidden relative">
+<div class="absolute top-4 right-4 z-10">
+<span class="bg-bid-green/10 text-bid-green px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">stars</span>
+                            Winning
+                        </span>
+</div>
+<div class="w-full md:w-40 h-40 rounded-xl overflow-hidden shrink-0">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="minimalist studio photography of a high-end designer watch with silver casing and black leather strap on white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCo_ulCsTyo0os3oJVEk5PzrjLNC-mHsE-PymTs9isRAmkmKWfIURczlwq1lQ4uzsY4GZFSifOfqiYXKoFrds6LFtsCUDEpZKaJ_LwYDh8iKQoZl69cp3_CrxbqgtqRYKIrsW86ckAXAnO-zlzXNHI7PQwYZZlNtqZOhSY9KwHWEHr89lJNvxPLg_ayBkVxP2jc95P53LL1iS5Ky7FWJAqmnc0qBidMyPimA3VoH4P348T1Rzc63XqyW5NUwgZz6dZYMeCgB7JQ1pI"/>
+</div>
+<div class="flex flex-col justify-between flex-1">
+<div>
+<span class="text-[10px] font-bold text-primary tracking-widest uppercase">Chronograph Collection</span>
+<h3 class="text-xl font-headline font-bold text-on-surface mt-1">Aura Limited Edition v.2</h3>
+<div class="flex items-center gap-4 mt-4">
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter opacity-60">Current Bid</p>
+<p class="text-2xl font-mono font-bold text-on-surface mt-0.5">$2,450.00</p>
+</div>
+<div class="w-px h-8 bg-outline-variant/20"></div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter opacity-60">Your Max</p>
+<p class="text-lg font-mono font-medium text-on-surface-variant mt-0.5">$3,200.00</p>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between mt-6 pt-4 border-t border-outline-variant/10">
+<div class="flex items-center gap-2 text-bid-amber">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span class="font-mono text-sm font-bold">04h 22m 11s</span>
+</div>
+<button class="bg-surface-container-low text-on-surface font-bold text-[10px] uppercase tracking-widest px-4 py-2 rounded-lg hover:bg-surface-container-high transition-colors">Increase Bid</button>
+</div>
+</div>
+</div>
+<!-- Card 2: Outbid -->
+<div class="bg-surface-container-lowest rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 p-6 flex flex-col md:flex-row gap-6 group overflow-hidden relative">
+<div class="absolute top-4 right-4 z-10">
+<span class="bg-bid-red/10 text-bid-red px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">warning</span>
+                            Outbid
+                        </span>
+</div>
+<div class="w-full md:w-40 h-40 rounded-xl overflow-hidden shrink-0 bg-surface-container-low">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="professional product photography of a premium leather motorcycle jacket in cognac brown color with brass hardware" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdlZPNicoNmafqF8o235lFKOS09VK5cGz2Ewjzhp6lng1xRDH6wBK8_qRWarEc3uM21xaaOnisKKIENeK3JbgKGmmwc3cSyozTkoBuQqyp998RLs0DwZRUbX8VZMRokVdVDmm2ZE1uSCVYnuVdpvVh7kuT1fzkiJfoMQpaKFTOhRn58Qp5fYt-6OEOf5RbIhp7vMl7yxr_FeYHpdErkBdSUjgHgPOpQrqgqtN4hfNpdCptP9SI6ZUOp8TPAgygV28vIbHGQ7KZAS0"/>
+</div>
+<div class="flex flex-col justify-between flex-1">
+<div>
+<span class="text-[10px] font-bold text-primary tracking-widest uppercase">Heritage Outerwear</span>
+<h3 class="text-xl font-headline font-bold text-on-surface mt-1">Sienna Calfskin Rider</h3>
+<div class="flex items-center gap-4 mt-4">
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter opacity-60">Current Bid</p>
+<p class="text-2xl font-mono font-bold text-bid-red mt-0.5">$895.00</p>
+</div>
+<div class="w-px h-8 bg-outline-variant/20"></div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter opacity-60">Your Last</p>
+<p class="text-lg font-mono font-medium text-on-surface-variant mt-0.5">$850.00</p>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between mt-6 pt-4 border-t border-outline-variant/10">
+<div class="flex items-center gap-2 text-bid-red">
+<span class="material-symbols-outlined text-sm">alarm_on</span>
+<span class="font-mono text-sm font-bold">00h 14m 52s</span>
+</div>
+<button class="bg-bid-green text-white font-bold text-[10px] uppercase tracking-widest px-6 py-2 rounded-lg hover:opacity-90 transition-opacity">Counter Bid</button>
+</div>
+</div>
+</div>
+<!-- Card 3: Outbid (Closing soon) -->
+<div class="bg-surface-container-lowest rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 p-6 flex flex-col md:flex-row gap-6 group overflow-hidden relative border-l-4 border-bid-red">
+<div class="absolute top-4 right-4 z-10">
+<span class="bg-bid-red text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
+                            Closing Soon
+                        </span>
+</div>
+<div class="w-full md:w-40 h-40 rounded-xl overflow-hidden shrink-0">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="dynamic shot of a crimson red athletic sneaker with high-performance texture and sleek silhouette on dark platform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBm-r9WKh87Nhgzh9AZWCa0EP4YqYbiHn2SB3ocxSdfeiaP9tqyGW3ZrF2mKu_WFCz_dfyw_LQmq40b4RCIrn1hV1KUKqsQkR4KaDl5d2mnD-36VdXxIB0p5zZY5JebKlkzKJk1IrIrbMurJ0dVcPwErUw39zT4NDh7Rln0RMb_pBQ0hDz8M75NZVfNPPtEDi_33rSflwqE3yjUw5jFtXj1_zKMS3PJ9C8juk6NjwGS-_ePJOTjjMvUnqmGZSN2u7upfeSBolnEpE"/>
+</div>
+<div class="flex flex-col justify-between flex-1">
+<div>
+<span class="text-[10px] font-bold text-primary tracking-widest uppercase">Performance Gear</span>
+<h3 class="text-xl font-headline font-bold text-on-surface mt-1">Aero-V Velocity Core</h3>
+<div class="flex items-center gap-4 mt-4">
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter opacity-60">Current Bid</p>
+<p class="text-2xl font-mono font-bold text-bid-red mt-0.5">$420.00</p>
+</div>
+<div class="w-px h-8 bg-outline-variant/20"></div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter opacity-60">Your Last</p>
+<p class="text-lg font-mono font-medium text-on-surface-variant mt-0.5">$380.00</p>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between mt-6 pt-4 border-t border-outline-variant/10">
+<div class="flex items-center gap-2 text-bid-red">
+<span class="material-symbols-outlined text-sm">bolt</span>
+<span class="font-mono text-sm font-bold">00h 02m 41s</span>
+</div>
+<button class="bg-bid-green text-white font-bold text-[10px] uppercase tracking-widest px-6 py-2 rounded-lg hover:opacity-90 transition-opacity shadow-lg shadow-bid-green/20">Bid Now</button>
+</div>
+</div>
+</div>
+<!-- Card 4: Winning -->
+<div class="bg-surface-container-lowest rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 p-6 flex flex-col md:flex-row gap-6 group overflow-hidden relative">
+<div class="absolute top-4 right-4 z-10">
+<span class="bg-bid-green/10 text-bid-green px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">stars</span>
+                            Winning
+                        </span>
+</div>
+<div class="w-full md:w-40 h-40 rounded-xl overflow-hidden shrink-0">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="top-down high-end smartphone on a marble surface with soft atmospheric lighting reflecting on the screen" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7sjbwjdgD4SEeux9Z0gebYF0DpTG69RUtDnvUNYzjqiTOh6eM2Duv84j73zVaioIFRhjRG_m3-5baXsKCHFvnkNOlsEa_9cK0glW9oMsTAj-a_CCpJ1VRqTvk3cw3ogRx1c5Rxp7CK1svZsLIm5EpiFAnkSXx3XcV-TDoDmwEQdoitsVDa87SDpkqKc0cNdITiBCqdnkEdihOAmmCuUT2g90R6kxLE-9MgO2XS39LaR91vI87_Y_-D-8-8x7RzCGxMkMO_1LGrOA"/>
+</div>
+<div class="flex flex-col justify-between flex-1">
+<div>
+<span class="text-[10px] font-bold text-primary tracking-widest uppercase">Tech / Mobile</span>
+<h3 class="text-xl font-headline font-bold text-on-surface mt-1">Titanium Flux X1</h3>
+<div class="flex items-center gap-4 mt-4">
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter opacity-60">Current Bid</p>
+<p class="text-2xl font-mono font-bold text-on-surface mt-0.5">$1,150.00</p>
+</div>
+<div class="w-px h-8 bg-outline-variant/20"></div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter opacity-60">Starting</p>
+<p class="text-lg font-mono font-medium text-on-surface-variant mt-0.5">$900.00</p>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between mt-6 pt-4 border-t border-outline-variant/10">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span class="font-mono text-sm font-bold">2d 08h 33m</span>
+</div>
+<button class="bg-surface-container-low text-on-surface font-bold text-[10px] uppercase tracking-widest px-4 py-2 rounded-lg hover:bg-surface-container-high transition-colors">Increase Bid</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Recently Closed Section (Asymmetric Bento) -->
+<div class="mt-12">
+<h2 class="text-2xl font-headline font-bold text-on-surface mb-6">Recently Closed</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="md:col-span-2 bg-surface-container-low rounded-2xl p-8 flex flex-col md:flex-row items-center gap-8 border border-outline-variant/5">
+<div class="flex-1 order-2 md:order-1">
+<span class="bg-on-surface text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">Auction Won</span>
+<h3 class="text-3xl font-headline font-black text-on-surface mt-4 leading-tight">Vintage Film Camera Series-04</h3>
+<p class="text-on-surface-variant mt-2 font-['DM_Sans']">Your winning bid of <span class="font-mono font-bold text-on-surface">$1,420.00</span> has been processed. Shipment is scheduled for Tomorrow.</p>
+<div class="flex gap-4 mt-8">
+<button class="bg-primary text-white font-bold text-[10px] uppercase tracking-widest px-8 py-3 rounded-lg shadow-lg shadow-primary/20">Track Shipping</button>
+<button class="bg-white text-on-surface font-bold text-[10px] uppercase tracking-widest px-8 py-3 rounded-lg border border-outline-variant/20 hover:bg-surface-container-lowest">View Invoice</button>
+</div>
+</div>
+<div class="w-full md:w-64 h-64 rounded-2xl overflow-hidden order-1 md:order-2 shadow-card-hover">
+<img class="w-full h-full object-cover" data-alt="vintage 35mm film camera with intricate mechanical details on a rustic wooden surface with soft bokeh light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxCNUkdVbVwqoI07_ZxfoET_BSupkMJrzToF3dMSG9UsnWxfJzwRoyeRYq9ayFZ5aia24TSorlYCKqjN6L9CH7eFBZmFBR0ch5MLyUya-5fHemeAmbZcc-nOkoJWBvZgZYZcXWix5u9QSYK4hzYxjrMWv_AhHim_I45HR_fft7R_p8N3m-ZQ27NDoHJZYi-D6GMt4OkzA5iI5KpdgtEfN-VhKfyTtKwH8Y1FuUlGzxJ1c2Js0Uc-03HZeYsmRldzquOVI-2N9vkg4"/>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-2xl p-8 flex flex-col justify-between border border-outline-variant/5">
+<div>
+<span class="bg-outline-variant/30 text-on-surface-variant px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">Sold Elsewhere</span>
+<h3 class="text-xl font-headline font-bold text-on-surface mt-4">Modular Synth Deck</h3>
+<p class="text-xs text-on-surface-variant mt-1">Closed at $3,450.00</p>
+</div>
+<div class="mt-8 flex justify-center">
+<img class="w-32 h-32 object-cover rounded-xl rotate-3 grayscale opacity-60" data-alt="electronic music modular synthesizer with many patch cables and glowing led lights in a dark studio" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCITacJ825bLgfD9pyoaX1iY-p3ZhlzGvPSXzlv6-rDp9fzY5iZPTKHdP-J58N6hbDsRx7yPA4Vg3FLiW-_u17_1fAN61bTIRc7OfjTwRCkHgarfdEcuz7PCjw3d0_v42vPUtqOPHeG5W80xJPv_z6NodUa3RjTLbZ018ZXAan6_bQDOiIBGpWnTDLGz9HLB-SnSSjknn4ja3_agFS9_dTL8VJf7IVtiu5wpNbzIqvTO9JBmWQJes4XLLeaJ2JKtHPI0lp33S9Zq3s"/>
+</div>
+<button class="w-full mt-6 py-3 border border-outline-variant/20 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all">Find Similar</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Contextual FAB (Only for Home/Dashboard/Auctions) -->
+<button class="fixed bottom-8 right-8 w-16 h-16 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center transition-transform hover:scale-110 active:scale-95 group z-40">
+<span class="material-symbols-outlined text-3xl">add</span>
+<span class="absolute right-20 bg-on-surface text-white px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">New Listing</span>
+</button>
+</body></html>

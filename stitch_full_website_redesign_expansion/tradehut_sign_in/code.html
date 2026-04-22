@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;700;900&amp;family=DM+Sans:wght@400;500;700&amp;family=JetBrains+Mono:wght@400;700&amp;family=Syne:wght@400;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed-dim": "#3fdfa5",
+                    "secondary": "#006c4b",
+                    "on-surface-variant": "#5a4137",
+                    "inverse-surface": "#3d2d26",
+                    "surface": "#fff8f6",
+                    "on-tertiary-fixed": "#001945",
+                    "on-tertiary-container": "#002761",
+                    "on-primary-container": "#4e1900",
+                    "surface-container-low": "#fff1ec",
+                    "tertiary-fixed-dim": "#b0c6ff",
+                    "surface-dim": "#efd5cb",
+                    "surface-variant": "#f8ddd3",
+                    "primary": "#a43d00",
+                    "surface-container-highest": "#f8ddd3",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed": "#ffdbcd",
+                    "on-secondary-fixed": "#002114",
+                    "tertiary": "#0058ca",
+                    "error": "#ba1a1a",
+                    "on-tertiary-fixed-variant": "#00429b",
+                    "on-primary-fixed-variant": "#7d2d00",
+                    "tertiary-fixed": "#d9e2ff",
+                    "surface-tint": "#a43d00",
+                    "on-secondary-fixed-variant": "#005138",
+                    "outline-variant": "#e2bfb2",
+                    "on-surface": "#261813",
+                    "secondary-container": "#60f9bd",
+                    "outline": "#8e7165",
+                    "on-background": "#261813",
+                    "primary-container": "#f5620f",
+                    "tertiary-container": "#558dff",
+                    "error-container": "#ffdad6",
+                    "surface-container": "#ffe9e2",
+                    "on-primary-fixed": "#360f00",
+                    "on-error": "#ffffff",
+                    "secondary-fixed": "#63fcc0",
+                    "on-secondary-container": "#00714f",
+                    "on-tertiary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "background": "#fff8f6",
+                    "inverse-primary": "#ffb597",
+                    "surface-bright": "#fff8f6",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed-dim": "#ffb597",
+                    "on-primary": "#ffffff",
+                    "surface-container-high": "#fee3d9",
+                    "inverse-on-surface": "#ffede7"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Epilogue"],
+                    "body": ["Plus Jakarta Sans"],
+                    "label": ["Plus Jakarta Sans"],
+                    "syne": ["Syne"],
+                    "mono": ["JetBrains Mono"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .noise-overlay {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.05;
+            pointer-events: none;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .ghost-border {
+            border: 1px solid rgba(142, 113, 101, 0.15);
+        }
+        .kinetic-gradient {
+            background: linear-gradient(135deg, #a43d00 0%, #f5620f 100%);
+        }
+    </style>
+</head>
+<body class="bg-[#0a0a0a] min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden font-body">
+<!-- Background Noise & Visual Texture -->
+<div class="absolute inset-0 noise-overlay"></div>
+<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 blur-[120px] rounded-full"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary/10 blur-[120px] rounded-full"></div>
+<!-- Main Auth Container -->
+<main class="w-full max-w-[400px] z-10">
+<!-- Logo Section -->
+<div class="flex flex-col items-center mb-10">
+<div class="w-16 h-16 bg-surface-container-lowest rounded-xl flex items-center justify-center mb-4 shadow-2xl relative overflow-hidden group">
+<div class="absolute inset-0 kinetic-gradient opacity-10 group-hover:opacity-20 transition-opacity"></div>
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="storefront">storefront</span>
+</div>
+<h1 class="font-headline text-3xl font-black tracking-tighter text-stone-50">TradeHut</h1>
+<p class="text-stone-500 text-sm mt-1 font-mono tracking-tight uppercase">Architectural precision in commerce.</p>
+</div>
+<!-- Auth Card -->
+<div class="bg-stone-900/40 backdrop-blur-2xl rounded-2xl p-8 shadow-[0_24px_48px_-12px_rgba(0,0,0,0.5)] ghost-border relative overflow-hidden">
+<!-- Tabs -->
+<div class="flex gap-1 bg-stone-950/50 p-1 rounded-lg mb-8">
+<button class="flex-1 py-2 text-sm font-bold rounded-md transition-all kinetic-gradient text-white">
+                    Login
+                </button>
+<button class="flex-1 py-2 text-sm font-medium text-stone-400 hover:text-stone-200 transition-all">
+                    Register
+                </button>
+</div>
+<!-- Social Auth -->
+<div class="grid grid-cols-2 gap-4 mb-8">
+<button class="flex items-center justify-center gap-2 py-3 px-4 bg-stone-800 hover:bg-stone-700 transition-colors rounded-lg group">
+<img alt="" class="w-5 h-5" data-alt="Google company logo emblem colorful G symbol on white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGMytW7VM4r0VGEVgfBiXTvcH-EeQ2b9h6oA0dcIq15gyyycYkNGMQGwls17w8QKRCdFJ-3K_X7TN6HI2mRzfEryEJtjY4KbVAcNUtT27q2bNu0trMiemckawC1y-NSN44CcBGrUtjJfYntQq_bScx7mYB31woskUpU5F0veqxFJkanvCPPVPh011Z4oz5lqyIAO5MxlJPqmauDwFGE3dPpb2M0amfIlR-4WsU7jx2jIcSkYkXNYaT7GCPKMW__TNwCyp90XFGDuo"/>
+<span class="text-stone-300 text-sm font-medium">Google</span>
+</button>
+<button class="flex items-center justify-center gap-2 py-3 px-4 bg-stone-800 hover:bg-stone-700 transition-colors rounded-lg group">
+<span class="material-symbols-outlined text-stone-300 text-xl" data-icon="apple">ios</span>
+<span class="text-stone-300 text-sm font-medium">Apple</span>
+</button>
+</div>
+<div class="relative flex items-center mb-8">
+<div class="flex-grow border-t border-stone-800"></div>
+<span class="flex-shrink mx-4 text-stone-600 text-[10px] font-mono uppercase tracking-widest">Or continue with</span>
+<div class="flex-grow border-t border-stone-800"></div>
+</div>
+<!-- Form -->
+<form class="space-y-6" onsubmit="return false;">
+<div class="space-y-2">
+<label class="text-[11px] font-bold text-stone-400 uppercase tracking-widest ml-1">Email Address</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-stone-500 text-xl" data-icon="mail">mail</span>
+<input class="w-full bg-stone-950 border-none rounded-lg py-4 pl-12 pr-4 text-stone-100 placeholder:text-stone-600 focus:ring-1 focus:ring-primary/50 transition-all font-body text-sm" placeholder="name@company.com" type="email"/>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-center px-1">
+<label class="text-[11px] font-bold text-stone-400 uppercase tracking-widest">Password</label>
+<a class="text-[10px] font-bold text-primary hover:text-primary-container transition-colors uppercase tracking-widest" href="#">Forgot?</a>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-stone-500 text-xl" data-icon="lock">lock</span>
+<input class="w-full bg-stone-950 border-none rounded-lg py-4 pl-12 pr-12 text-stone-100 placeholder:text-stone-600 focus:ring-1 focus:ring-primary/50 transition-all font-body text-sm" placeholder="••••••••" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-stone-600 hover:text-stone-400 transition-colors" type="button">
+<span class="material-symbols-outlined text-xl" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-3 px-1">
+<input class="w-4 h-4 rounded bg-stone-950 border-stone-800 text-primary focus:ring-offset-stone-900 focus:ring-primary" id="remember" type="checkbox"/>
+<label class="text-xs text-stone-400 select-none" for="remember">Remember this device for 30 days</label>
+</div>
+<button class="w-full py-4 rounded-lg kinetic-gradient text-white font-syne font-bold text-sm tracking-wide shadow-lg shadow-primary/20 hover:shadow-primary/40 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                    Sign In to Dashboard
+                    <span class="material-symbols-outlined text-lg" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</form>
+</div>
+<!-- Secondary Links -->
+<div class="mt-8 flex flex-col items-center gap-4">
+<p class="text-stone-500 text-xs">
+                By signing in, you agree to our 
+                <a class="text-stone-300 hover:text-white transition-colors underline underline-offset-4" href="#">Terms of Service</a>
+</p>
+<div class="flex items-center gap-6 mt-4">
+<a class="text-stone-600 hover:text-stone-400 text-[10px] font-mono tracking-tighter transition-colors" href="#">HELP CENTER</a>
+<span class="w-1 h-1 bg-stone-800 rounded-full"></span>
+<a class="text-stone-600 hover:text-stone-400 text-[10px] font-mono tracking-tighter transition-colors" href="#">RFQ PORTAL</a>
+<span class="w-1 h-1 bg-stone-800 rounded-full"></span>
+<a class="text-stone-600 hover:text-stone-400 text-[10px] font-mono tracking-tighter transition-colors" href="#">SYSTEM STATUS</a>
+</div>
+</div>
+</main>
+<!-- Aesthetic Decorative Element -->
+<div class="fixed bottom-12 left-12 hidden lg:block">
+<div class="flex flex-col gap-1">
+<div class="text-stone-700 font-mono text-[10px] tracking-[0.2em] uppercase">Security Protocol</div>
+<div class="flex gap-2 items-center">
+<div class="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_rgba(0,196,140,0.4)] animate-pulse"></div>
+<div class="text-stone-500 font-mono text-[9px]">ENCRYPTED SSL CONNECTION ACTIVE</div>
+</div>
+</div>
+</div>
+<!-- Background Card Suggestion (Layering Principle) -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[580px] bg-white/5 rounded-[32px] rotate-3 -z-10 blur-xl"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[600px] bg-primary/5 rounded-[32px] -rotate-6 -z-10 blur-2xl"></div>
+<footer class="fixed bottom-8 w-full text-center pointer-events-none">
+<p class="text-stone-700 font-mono text-[9px] tracking-widest uppercase">© 2024 TradeHut Stores. Architectural Precision in Commerce.</p>
+</footer>
+</body></html>

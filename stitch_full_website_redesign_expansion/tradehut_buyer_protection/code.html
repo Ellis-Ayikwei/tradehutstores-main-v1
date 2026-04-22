@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Buyer Protection | KINETIC_MARKET</title>
+<!-- Typography: Syne for Headlines, DM Sans for Body, JetBrains Mono for Data -->
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&amp;family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&amp;family=JetBrains+Mono:wght@500&amp;family=Epilogue:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary-container": "#002761",
+                        "on-surface": "#261813",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed": "#002114",
+                        "surface-bright": "#fff8f6",
+                        "on-surface-variant": "#5a4137",
+                        "surface-container-low": "#fff1ec",
+                        "inverse-on-surface": "#ffede7",
+                        "surface-container-highest": "#f8ddd3",
+                        "surface-container-high": "#fee3d9",
+                        "on-primary-container": "#4e1900",
+                        "surface-variant": "#f8ddd3",
+                        "on-tertiary-fixed": "#001945",
+                        "primary-fixed": "#ffdbcd",
+                        "error": "#ba1a1a",
+                        "background": "#fff8f6",
+                        "secondary-fixed-dim": "#3fdfa5",
+                        "tertiary-container": "#558dff",
+                        "surface-dim": "#efd5cb",
+                        "on-secondary": "#ffffff",
+                        "primary": "#a43d00",
+                        "surface-tint": "#a43d00",
+                        "tertiary-fixed-dim": "#b0c6ff",
+                        "secondary-fixed": "#63fcc0",
+                        "on-secondary-fixed-variant": "#005138",
+                        "on-secondary-container": "#00714f",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#fff8f6",
+                        "primary-container": "#f5620f",
+                        "on-primary-fixed-variant": "#7d2d00",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-background": "#261813",
+                        "outline-variant": "#e2bfb2",
+                        "secondary-container": "#60f9bd",
+                        "error-container": "#ffdad6",
+                        "outline": "#8e7165",
+                        "on-tertiary-fixed-variant": "#00429b",
+                        "primary-fixed-dim": "#ffb597",
+                        "inverse-primary": "#ffb597",
+                        "inverse-surface": "#3d2d26",
+                        "secondary": "#006c4b",
+                        "surface-container": "#ffe9e2",
+                        "tertiary-fixed": "#d9e2ff",
+                        "on-primary-fixed": "#360f00",
+                        "tertiary": "#0058ca",
+                        "on-error-container": "#93000a",
+                        "bid-green": "#00C48C",
+                        "request-blue": "#2979FF"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        "headline": ["Syne", "Epilogue", "sans-serif"],
+                        "body": ["DM Sans", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .font-syne { font-family: 'Syne', sans-serif; }
+        .font-dm-sans { font-family: 'DM Sans', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        
+        .shadow-card { box-shadow: 0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02); }
+        .shadow-card-hover:hover { box-shadow: 0 12px 32px 0 rgba(38, 24, 19, 0.08); }
+        
+        .glass-header {
+            background: rgba(255, 248, 246, 0.7);
+            backdrop-filter: blur(24px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-white">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 glass-header">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-screen-2xl mx-auto">
+<div class="text-2xl font-bold tracking-tighter text-[#261813] font-syne">
+                KINETIC_MARKET
+            </div>
+<nav class="hidden md:flex items-center space-x-8">
+<a class="text-[#261813]/70 font-medium hover:text-orange-600 transition-colors" href="#">Marketplace</a>
+<a class="text-[#261813]/70 font-medium hover:text-orange-600 transition-colors" href="#">Auctions</a>
+<a class="text-[#261813]/70 font-medium hover:text-orange-600 transition-colors" href="#">RFQ</a>
+<a class="text-orange-600 font-bold border-b-2 border-orange-600 pb-1" href="#">Protection</a>
+<a class="text-[#261813]/70 font-medium hover:text-orange-600 transition-colors" href="#">Verify</a>
+</nav>
+<div class="flex items-center space-x-4">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:bg-surface-container-low p-2 rounded-md transition-all">security</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:bg-surface-container-low p-2 rounded-md transition-all">notifications</span>
+<button class="bg-gradient-to-r from-primary to-primary-container text-white px-6 py-2 rounded-md font-bold text-sm tracking-tight scale-95 active:opacity-80 transition-transform">
+                    Connect Wallet
+                </button>
+</div>
+</div>
+</header>
+<main class="pt-24">
+<!-- Hero Section -->
+<section class="relative overflow-hidden px-6 py-20 lg:py-32 bg-surface">
+<div class="max-w-7xl mx-auto relative z-10">
+<div class="flex flex-col items-center text-center max-w-4xl mx-auto">
+<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary-container text-on-secondary-container font-mono text-xs mb-8 tracking-wider uppercase">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+                        Institutional Escrow Active
+                    </div>
+<h1 class="text-5xl lg:text-7xl font-syne font-extrabold tracking-tight text-on-surface mb-8 leading-[1.1]">
+                        Trade with Absolute <br/>
+<span class="text-primary-container">Mathematical Certainty.</span>
+</h1>
+<p class="text-xl text-on-surface-variant font-dm-sans max-w-2xl mb-12 leading-relaxed">
+                        Every transaction on Kinetic Market is secured by a multi-signature escrow protocol. Funds are only released when you verify the asset meets the exact technical specifications.
+                    </p>
+<div class="flex flex-col sm:flex-row gap-4">
+<button class="bg-primary text-white px-8 py-4 rounded-md font-syne font-bold hover:bg-primary-container transition-all flex items-center gap-3">
+                            Start Secure Trading
+                            <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<button class="px-8 py-4 rounded-md font-syne font-bold text-on-surface hover:bg-surface-container-low transition-all border-outline-variant/15 border border-solid">
+                            View Security Specs
+                        </button>
+</div>
+</div>
+</div>
+<!-- Background Decorative Element -->
+<div class="absolute -top-24 -right-24 w-96 h-96 bg-primary/5 blur-3xl rounded-full"></div>
+<div class="absolute -bottom-24 -left-24 w-96 h-96 bg-tertiary/5 blur-3xl rounded-full"></div>
+</section>
+<!-- Protection Pillars (Bento-style Grid) -->
+<section class="px-6 py-24 bg-surface-container-low">
+<div class="max-w-7xl mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Pillar 1 -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-card hover:translate-y-[-4px] transition-all">
+<div class="w-14 h-14 bg-bid-green/10 text-bid-green flex items-center justify-center rounded-lg mb-6">
+<span class="material-symbols-outlined text-3xl">verified</span>
+</div>
+<h3 class="text-2xl font-syne font-bold mb-4">Authenticity Guarantee</h3>
+<p class="text-on-surface-variant leading-relaxed mb-6">
+                            Our proprietary verification engine cross-references serial numbers, chain history, and physical condition reports before any listing goes live.
+                        </p>
+<ul class="space-y-3 font-mono text-xs text-on-surface-variant">
+<li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-bid-green rounded-full"></span> AIS-7 COMPLIANT</li>
+<li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-bid-green rounded-full"></span> PHYSICAL ASSET TRACKING</li>
+</ul>
+</div>
+<!-- Pillar 2 -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-card hover:translate-y-[-4px] transition-all">
+<div class="w-14 h-14 bg-request-blue/10 text-request-blue flex items-center justify-center rounded-lg mb-6">
+<span class="material-symbols-outlined text-3xl">account_balance</span>
+</div>
+<h3 class="text-2xl font-syne font-bold mb-4">Secure Payments</h3>
+<p class="text-on-surface-variant leading-relaxed mb-6">
+                            Your capital is held in a bankruptcy-remote, insured escrow account. We support major fiat currencies and top-tier stablecoins with instant settlement.
+                        </p>
+<ul class="space-y-3 font-mono text-xs text-on-surface-variant">
+<li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-request-blue rounded-full"></span> 256-BIT ENCRYPTION</li>
+<li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-request-blue rounded-full"></span> SOC2 TYPE II CERTIFIED</li>
+</ul>
+</div>
+<!-- Pillar 3 -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-card hover:translate-y-[-4px] transition-all">
+<div class="w-14 h-14 bg-primary/10 text-primary flex items-center justify-center rounded-lg mb-6">
+<span class="material-symbols-outlined text-3xl">gavel</span>
+</div>
+<h3 class="text-2xl font-syne font-bold mb-4">Dispute Resolution</h3>
+<p class="text-on-surface-variant leading-relaxed mb-6">
+                            If an asset doesn't match the description, our institutional-grade arbitration panel intervenes within 24 hours to ensure a fair resolution.
+                        </p>
+<ul class="space-y-3 font-mono text-xs text-on-surface-variant">
+<li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary rounded-full"></span> 24H RESPONSE TIME</li>
+<li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary rounded-full"></span> FULL REFUND PROTECTION</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<!-- How it Works (Timeline) -->
+<section class="px-6 py-24 bg-surface relative">
+<div class="max-w-7xl mx-auto">
+<div class="text-center mb-20">
+<h2 class="text-4xl font-syne font-bold mb-4">The Escrow Lifecycle</h2>
+<p class="text-on-surface-variant">Four stages of institutional-grade security.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 relative">
+<!-- Connector line -->
+<div class="hidden md:block absolute top-12 left-0 w-full h-[2px] bg-outline-variant/20 -z-0"></div>
+<!-- Step 1 -->
+<div class="relative z-10 flex flex-col items-center text-center">
+<div class="w-24 h-24 rounded-full bg-surface-container-highest border-4 border-surface flex items-center justify-center mb-6 shadow-sm">
+<span class="material-symbols-outlined text-4xl text-primary">shopping_cart</span>
+</div>
+<span class="font-mono text-xs text-primary mb-2">STAGE 01</span>
+<h4 class="font-syne font-bold text-lg mb-2">Commit Order</h4>
+<p class="text-sm text-on-surface-variant">Buyer commits funds to the smart escrow vault.</p>
+</div>
+<!-- Step 2 -->
+<div class="relative z-10 flex flex-col items-center text-center">
+<div class="w-24 h-24 rounded-full bg-surface-container-highest border-4 border-surface flex items-center justify-center mb-6 shadow-sm">
+<span class="material-symbols-outlined text-4xl text-primary">lock</span>
+</div>
+<span class="font-mono text-xs text-primary mb-2">STAGE 02</span>
+<h4 class="font-syne font-bold text-lg mb-2">Escrow Lock</h4>
+<p class="text-sm text-on-surface-variant">Funds are cryptographically locked until verification.</p>
+</div>
+<!-- Step 3 -->
+<div class="relative z-10 flex flex-col items-center text-center">
+<div class="w-24 h-24 rounded-full bg-surface-container-highest border-4 border-surface flex items-center justify-center mb-6 shadow-sm">
+<span class="material-symbols-outlined text-4xl text-primary">fact_check</span>
+</div>
+<span class="font-mono text-xs text-primary mb-2">STAGE 03</span>
+<h4 class="font-syne font-bold text-lg mb-2">Buyer Verify</h4>
+<p class="text-sm text-on-surface-variant">Buyer receives asset and confirms technical specs.</p>
+</div>
+<!-- Step 4 -->
+<div class="relative z-10 flex flex-col items-center text-center">
+<div class="w-24 h-24 rounded-full bg-bid-green text-white border-4 border-surface flex items-center justify-center mb-6 shadow-md">
+<span class="material-symbols-outlined text-4xl">payments</span>
+</div>
+<span class="font-mono text-xs text-bid-green mb-2">STAGE 04</span>
+<h4 class="font-syne font-bold text-lg mb-2">Payout Release</h4>
+<p class="text-sm text-on-surface-variant">Seller receives payment upon final confirmation.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Trust Signals (Logo Strip) -->
+<section class="px-6 py-16 bg-surface-container-low/50">
+<div class="max-w-7xl mx-auto flex flex-wrap justify-center items-center gap-12 lg:gap-24 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+<div class="flex items-center gap-2 font-syne font-extrabold text-2xl">
+<span class="material-symbols-outlined text-primary">shield_with_heart</span> SECURE_PAY
+                </div>
+<div class="flex items-center gap-2 font-syne font-extrabold text-2xl">
+<span class="material-symbols-outlined text-primary">gpp_maybe</span> LLOYDS_INSURED
+                </div>
+<div class="flex items-center gap-2 font-syne font-extrabold text-2xl">
+<span class="material-symbols-outlined text-primary">policy</span> ARBITRA_GLO
+                </div>
+<div class="flex items-center gap-2 font-syne font-extrabold text-2xl">
+<span class="material-symbols-outlined text-primary">cloud_done</span> PROTOCOL_SAFE
+                </div>
+</div>
+</section>
+<!-- FAQ Section -->
+<section class="px-6 py-24 bg-surface">
+<div class="max-w-3xl mx-auto">
+<h2 class="text-4xl font-syne font-bold mb-12 text-center">Frequently Asked Questions</h2>
+<div class="space-y-4">
+<!-- FAQ Item 1 -->
+<div class="bg-surface-container-low rounded-xl overflow-hidden">
+<div class="p-6 flex justify-between items-center cursor-pointer">
+<h5 class="font-syne font-bold">What happens if the item is counterfeit?</h5>
+<span class="material-symbols-outlined text-on-surface-variant">add</span>
+</div>
+<div class="px-6 pb-6 text-on-surface-variant text-sm leading-relaxed">
+                            Our Authenticity Guarantee ensures that if an item is proven to be counterfeit by our verification panel, you receive a 100% refund immediately, and the seller is permanently flagged or removed from the platform.
+                        </div>
+</div>
+<!-- FAQ Item 2 -->
+<div class="bg-surface-container-low rounded-xl overflow-hidden">
+<div class="p-6 flex justify-between items-center cursor-pointer">
+<h5 class="font-syne font-bold">How long does the escrow period last?</h5>
+<span class="material-symbols-outlined text-on-surface-variant">add</span>
+</div>
+</div>
+<!-- FAQ Item 3 -->
+<div class="bg-surface-container-low rounded-xl overflow-hidden">
+<div class="p-6 flex justify-between items-center cursor-pointer">
+<h5 class="font-syne font-bold">Are my funds insured while in escrow?</h5>
+<span class="material-symbols-outlined text-on-surface-variant">add</span>
+</div>
+</div>
+<!-- FAQ Item 4 -->
+<div class="bg-surface-container-low rounded-xl overflow-hidden">
+<div class="p-6 flex justify-between items-center cursor-pointer">
+<h5 class="font-syne font-bold">Who covers the shipping costs during a dispute?</h5>
+<span class="material-symbols-outlined text-on-surface-variant">add</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Final CTA Card -->
+<section class="px-6 py-24">
+<div class="max-w-7xl mx-auto">
+<div class="relative bg-on-surface text-surface p-12 lg:p-20 rounded-[2rem] overflow-hidden">
+<div class="relative z-10 lg:w-2/3">
+<h2 class="text-4xl lg:text-5xl font-syne font-bold mb-8 leading-tight">Ready for a higher standard of trading?</h2>
+<p class="text-xl opacity-80 mb-10 font-dm-sans leading-relaxed">
+                            Join 5,000+ institutional and private collectors who rely on Kinetic Market for high-value asset acquisition.
+                        </p>
+<div class="flex flex-wrap gap-4">
+<button class="bg-primary text-white px-8 py-4 rounded-md font-syne font-bold hover:bg-primary-container transition-all">
+                                Open Secure Account
+                            </button>
+<button class="px-8 py-4 rounded-md font-syne font-bold border border-surface/30 hover:bg-surface/10 transition-all">
+                                Contact Security Team
+                            </button>
+</div>
+</div>
+<!-- Decorative Graphic -->
+<div class="absolute top-0 right-0 h-full w-1/3 hidden lg:block">
+<div class="w-full h-full bg-gradient-to-l from-primary/20 to-transparent"></div>
+<img class="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-50" data-alt="close up of sophisticated server hardware with glowing blue and orange data indicator lights representing secure computing" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAK400tHVtTinw8htDCn7RTTybw_7V4liHsPKCSLOFMH1sl4-ehPeo-NqOLRICpc1oV_9X4CKFLDKahClnlyoA204ZeA-09PXIg59_hnu5SmDAewxsvoh0ZuSif8Rqk5O5q3jWq9vG-z1SggPxEbKEAFvu8GkX8OAYVBuQDSiTJlXR46rq6G11YHg7N-XQYrKwSRKaxHpiheaEZmVBre7kdx086vEBF0lFIVt--_cwu6oQNVK3uqd2BnLaRwVxZ0-a9NwbNlafd8EQ"/>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full mt-auto py-12 bg-surface-container-low border-t border-orange-200/20">
+<div class="flex flex-col md:flex-row justify-between items-center px-8 max-w-7xl mx-auto space-y-4 md:space-y-0">
+<div class="font-syne font-bold text-orange-600 text-lg">
+                KINETIC GALLERY
+            </div>
+<nav class="flex flex-wrap justify-center gap-8 text-sm font-dm-sans">
+<a class="text-[#261813]/60 hover:text-orange-600 transition-colors" href="#">Security Protocol</a>
+<a class="text-[#261813]/60 hover:text-orange-600 transition-colors" href="#">Privacy Policy</a>
+<a class="text-[#261813]/60 hover:text-orange-600 transition-colors" href="#">Verified Sellers</a>
+<a class="text-[#261813]/60 hover:text-orange-600 transition-colors" href="#">Dispute Resolution</a>
+<a class="text-[#261813]/60 hover:text-orange-600 transition-colors" href="#">API Docs</a>
+</nav>
+<div class="text-[#261813]/60 font-dm-sans text-sm tracking-wide">
+                © 2024 Kinetic Gallery. Secured by Institutional Escrow.
+            </div>
+</div>
+</footer>
+</body></html>

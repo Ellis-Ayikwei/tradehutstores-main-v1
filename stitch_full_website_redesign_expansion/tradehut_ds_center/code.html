@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DS Center | TradeHut Kinetic System</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&amp;family=DM+Sans:wght@400;500;700&amp;family=JetBrains+Mono:wght@400;700&amp;family=Epilogue:wght@400;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#002114",
+                    "primary-fixed": "#ffdbcd",
+                    "surface-container-highest": "#f8ddd3",
+                    "on-secondary": "#ffffff",
+                    "surface-dim": "#efd5cb",
+                    "tertiary-fixed-dim": "#b0c6ff",
+                    "surface-container-low": "#fff1ec",
+                    "on-primary-container": "#4e1900",
+                    "surface-variant": "#f8ddd3",
+                    "primary": "#a43d00",
+                    "on-tertiary-fixed": "#001945",
+                    "on-tertiary-container": "#002761",
+                    "on-surface-variant": "#5a4137",
+                    "inverse-surface": "#3d2d26",
+                    "surface": "#fff8f6",
+                    "secondary-fixed-dim": "#3fdfa5",
+                    "secondary": "#006c4b",
+                    "surface-container-high": "#fee3d9",
+                    "inverse-on-surface": "#ffede7",
+                    "on-error-container": "#93000a",
+                    "background": "#fff8f6",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-container": "#00714f",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-bright": "#fff8f6",
+                    "primary-fixed-dim": "#ffb597",
+                    "inverse-primary": "#ffb597",
+                    "secondary-fixed": "#63fcc0",
+                    "on-error": "#ffffff",
+                    "on-primary-fixed": "#360f00",
+                    "tertiary-container": "#558dff",
+                    "primary-container": "#f5620f",
+                    "error-container": "#ffdad6",
+                    "surface-container": "#ffe9e2",
+                    "outline": "#8e7165",
+                    "secondary-container": "#60f9bd",
+                    "on-background": "#261813",
+                    "tertiary-fixed": "#d9e2ff",
+                    "on-surface": "#261813",
+                    "surface-tint": "#a43d00",
+                    "outline-variant": "#e2bfb2",
+                    "on-secondary-fixed-variant": "#005138",
+                    "on-tertiary-fixed-variant": "#00429b",
+                    "on-primary-fixed-variant": "#7d2d00",
+                    "tertiary": "#0058ca",
+                    "error": "#ba1a1a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Epilogue"],
+                    "body": ["Plus Jakarta Sans"],
+                    "label": ["Plus Jakarta Sans"],
+                    "mono": ["JetBrains Mono"],
+                    "syne": ["Syne"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-header {
+            background: rgba(255, 248, 246, 0.7);
+            backdrop-filter: blur(24px);
+        }
+        .signature-glow {
+            background: linear-gradient(135deg, #a43d00 0%, #f5620f 100%);
+        }
+        .shadow-card {
+            box-shadow: 0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02);
+        }
+        .shadow-card:hover {
+            box-shadow: 0 12px 32px 0 rgba(38, 24, 19, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-white">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 h-20 glass-header shadow-[0_4px_20px_0_rgba(38,24,19,0.04)]">
+<div class="flex justify-between items-center px-8 w-full max-w-[1920px] mx-auto h-full">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black font-syne text-on-surface tracking-tighter">Gallery Support</span>
+<nav class="hidden md:flex gap-6 items-center">
+<a class="text-on-surface/60 font-medium hover:text-primary transition-colors duration-300" href="#">Docs</a>
+<a class="text-primary font-bold border-b-2 border-primary" href="#">DS Center</a>
+<a class="text-on-surface/60 font-medium hover:text-primary transition-colors duration-300" href="#">Tokens</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="bg-surface-container-low px-4 py-2 rounded-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-outline">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm font-medium" placeholder="Search DS..." type="text"/>
+</div>
+<button class="p-2 hover:bg-surface-container-low rounded-lg transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+<button class="p-2 hover:bg-surface-container-low rounded-lg transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">help_outline</span>
+</button>
+<img alt="User profile avatar" class="w-10 h-10 rounded-full object-cover border-2 border-surface-container-high" data-alt="Professional portrait of a design director in a creative studio setting with soft natural window lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBb3lrZ5NLxm2zc72gV8Y466SF4tGEMcvwhyztItRn580685oPhC5UTmdwaseILQ4rW-QijmvxWhjLgNrvsr6l0Hxo--1SWmy8tsc8enFuRNtgSFhvtAbDBuYBvURWTFjo2FlLPiJwwEZFFqRV0rjcSYjcZyKwmZWxMs8cP5XMzhFVbtOm69Sc2LXNl-1TmdZqshQ1U6zfdWckqhNSJQu64iFS5ox60XVGUztBFcLPFu5IcEsa2IwsbQZ8M6_ihBp12e1KxrPBAJSQ"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="h-screen w-72 fixed left-0 top-0 pt-24 bg-surface-container-low hidden md:flex flex-col gap-1 pr-4">
+<div class="px-6 mb-8">
+<h2 class="font-syne text-lg font-bold text-primary">Control Center</h2>
+<p class="text-xs text-on-surface/60 uppercase tracking-widest font-bold mt-1">Manage your account</p>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="text-on-surface/70 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-primary transition-all duration-300" href="#">
+<span class="material-symbols-outlined">assignment_return</span>
+<span class="text-sm font-medium">Returns/Refunds</span>
+</a>
+<a class="text-on-surface/70 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-primary transition-all duration-300" href="#">
+<span class="material-symbols-outlined">rate_review</span>
+<span class="text-sm font-medium">Feedback</span>
+</a>
+<a class="text-on-surface/70 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-primary transition-all duration-300" href="#">
+<span class="material-symbols-outlined">group_add</span>
+<span class="text-sm font-medium">Invite Friends</span>
+</a>
+<a class="text-on-surface/70 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-primary transition-all duration-300" href="#">
+<span class="material-symbols-outlined">flag</span>
+<span class="text-sm font-medium">Manage Reports</span>
+</a>
+<a class="text-on-surface/70 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-primary transition-all duration-300" href="#">
+<span class="material-symbols-outlined">lightbulb</span>
+<span class="text-sm font-medium">Suggestions</span>
+</a>
+<a class="bg-white text-primary font-bold rounded-r-xl shadow-[4px_0_12px_rgba(245,98,15,0.1)] px-6 py-3 flex items-center gap-4" href="#">
+<span class="material-symbols-outlined">help_center</span>
+<span class="text-sm">DS Center</span>
+</a>
+<a class="text-on-surface/70 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-primary transition-all duration-300" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<span class="text-sm font-medium">Penalties Info</span>
+</a>
+<a class="text-on-surface/70 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-primary transition-all duration-300" href="#">
+<span class="material-symbols-outlined">warning</span>
+<span class="text-sm font-medium">Safety Alerts</span>
+</a>
+</nav>
+<div class="mt-auto p-6">
+<button class="w-full signature-glow text-white py-3 rounded-xl font-syne font-bold shadow-lg active:scale-[0.98] transition-transform">
+                Upgrade Plan
+            </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-72 pt-24 min-h-screen px-8 pb-12">
+<div class="max-w-6xl mx-auto">
+<!-- Hero Section -->
+<section class="mb-12 relative overflow-hidden rounded-3xl bg-surface-container-low p-12">
+<div class="relative z-10 max-w-2xl">
+<span class="text-primary font-mono text-sm tracking-tighter mb-4 block">V2.1 KINETIC SYSTEM</span>
+<h1 class="font-syne text-5xl font-black text-on-surface tracking-tighter leading-tight mb-6">
+                        The Kinetic Gallery <br/><span class="text-primary">Design System Center</span>
+</h1>
+<p class="text-lg text-on-surface-variant leading-relaxed mb-8">
+                        The architectural backbone of TradeHut. A system built on intentional asymmetry, tonal depth, and the fluid movement of the global marketplace.
+                    </p>
+<div class="flex gap-4">
+<button class="signature-glow text-white px-8 py-4 rounded-xl font-syne font-bold shadow-card active:scale-[0.95] transition-all">
+                            Browse Components
+                        </button>
+<button class="bg-surface-container-lowest text-on-surface px-8 py-4 rounded-xl font-syne font-bold shadow-card hover:bg-white active:scale-[0.95] transition-all">
+                            Download Assets
+                        </button>
+</div>
+</div>
+<!-- Abstract Decorative Element -->
+<div class="absolute -right-20 -top-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
+<div class="absolute right-0 bottom-0 w-1/3 h-full overflow-hidden opacity-20 pointer-events-none">
+<img class="object-cover w-full h-full grayscale hover:grayscale-0 transition-all duration-700" data-alt="Abstract 3D architectural rendering with fluid shapes and orange accents in a minimalist white space" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6JppBJIoZal5piqXQSjGLrayIRTniUpM4nAUjPl5fRMyZRFnGi0NboNq7r_nfPEza5jaCaJBDmTpr7XN5xZLFbT5Q8VwNK4FlEooQtgoTtFLlzwrax-V78Nw5nngsV1mjRblbDpaDl-wR5x0FbhE_AQuKRYvB6nrfStoZn0Xfwc4EUq5wGD3UOSxX4DdSRxDPG26Nep5r9VYQj1djthbIJ7VcDuJAaAZuJq48h8Tlu1Bl40mHMOV0t80mhY1URWGyt3tSp5K6-Kg"/>
+</div>
+</section>
+<!-- Bento Grid of Design Assets -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+<!-- Primary Token Card -->
+<div class="md:col-span-2 bg-surface-container-lowest p-8 rounded-3xl shadow-card flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-8">
+<h3 class="font-syne text-2xl font-bold">Brand Identity Tokens</h3>
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase">Standard</span>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="space-y-2">
+<div class="h-20 w-full bg-primary rounded-xl"></div>
+<p class="font-mono text-xs text-center">#F5620F</p>
+<p class="text-[10px] text-center uppercase font-bold text-on-surface/40 tracking-widest">Primary</p>
+</div>
+<div class="space-y-2">
+<div class="h-20 w-full bg-secondary rounded-xl"></div>
+<p class="font-mono text-xs text-center">#006C4B</p>
+<p class="text-[10px] text-center uppercase font-bold text-on-surface/40 tracking-widest">Bid Green</p>
+</div>
+<div class="space-y-2">
+<div class="h-20 w-full bg-tertiary rounded-xl"></div>
+<p class="font-mono text-xs text-center">#0058CA</p>
+<p class="text-[10px] text-center uppercase font-bold text-on-surface/40 tracking-widest">Request Blue</p>
+</div>
+<div class="space-y-2">
+<div class="h-20 w-full bg-surface-container-high rounded-xl"></div>
+<p class="font-mono text-xs text-center">#FEE3D9</p>
+<p class="text-[10px] text-center uppercase font-bold text-on-surface/40 tracking-widest">Tonal</p>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-surface-container-low flex justify-between items-center">
+<span class="text-sm font-medium text-on-surface-variant">Last updated: Oct 2023</span>
+<a class="text-primary font-bold text-sm flex items-center gap-1 hover:underline" href="#">
+                            View Palette Specs <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Documentation Card -->
+<div class="bg-on-secondary-fixed p-8 rounded-3xl shadow-card text-white flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-secondary-fixed text-4xl mb-4">terminal</span>
+<h3 class="font-syne text-2xl font-bold mb-4">Dev Docs</h3>
+<p class="text-white/60 text-sm leading-relaxed mb-6">
+                            Standardized API responses, Tailwind configuration, and React component library guidelines.
+                        </p>
+</div>
+<button class="bg-secondary-fixed text-on-secondary-fixed w-full py-3 rounded-xl font-bold text-sm hover:brightness-110 transition-all">
+                        Open Wiki
+                    </button>
+</div>
+<!-- Typography Card -->
+<div class="bg-surface-container-low p-8 rounded-3xl shadow-card flex flex-col">
+<h3 class="font-syne text-2xl font-bold mb-6">Editorial Voice</h3>
+<div class="space-y-6 flex-grow">
+<div class="space-y-1">
+<p class="font-syne font-black text-3xl tracking-tighter">Syne Display</p>
+<p class="text-xs text-on-surface/40 font-mono">Headlines &amp; Hero moments</p>
+</div>
+<div class="space-y-1">
+<p class="font-body text-xl font-medium">Plus Jakarta Sans</p>
+<p class="text-xs text-on-surface/40 font-mono">Body &amp; Functional UI</p>
+</div>
+<div class="space-y-1">
+<p class="font-mono text-lg">JetBrains Mono</p>
+<p class="text-xs text-on-surface/40 font-mono">Data &amp; Financial Trust</p>
+</div>
+</div>
+<a class="mt-8 text-primary font-bold text-sm flex items-center gap-1" href="#">
+                        Type Hierarchy <span class="material-symbols-outlined text-sm">open_in_new</span>
+</a>
+</div>
+<!-- Grid Component Card -->
+<div class="md:col-span-2 bg-white p-8 rounded-3xl shadow-card overflow-hidden group">
+<div class="flex justify-between items-center mb-8">
+<h3 class="font-syne text-2xl font-bold">Component Library</h3>
+<div class="flex gap-2">
+<span class="bg-surface-container text-on-surface-variant px-3 py-1 rounded-full text-[10px] font-bold">42+ Atoms</span>
+<span class="bg-surface-container text-on-surface-variant px-3 py-1 rounded-full text-[10px] font-bold">18+ Patterns</span>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 opacity-40 group-hover:opacity-100 transition-opacity duration-500">
+<!-- Mock Component Thumbnails -->
+<div class="aspect-square bg-surface-container-low rounded-xl flex items-center justify-center p-4">
+<div class="w-full h-8 signature-glow rounded-md"></div>
+</div>
+<div class="aspect-square bg-surface-container-low rounded-xl flex items-center justify-center p-4">
+<div class="w-full h-full border-2 border-dashed border-outline-variant rounded-xl"></div>
+</div>
+<div class="aspect-square bg-surface-container-low rounded-xl flex items-center justify-center p-4">
+<div class="w-full h-8 bg-white shadow-sm rounded-full"></div>
+</div>
+<div class="aspect-square bg-surface-container-low rounded-xl flex flex-col gap-2 p-4">
+<div class="w-full h-2 bg-outline-variant rounded-full"></div>
+<div class="w-2/3 h-2 bg-outline-variant rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Pattern Documentation Section -->
+<section class="mt-16">
+<div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+<div class="max-w-xl">
+<h2 class="font-syne text-4xl font-bold mb-4 tracking-tighter">The "No-Line" Philosophy</h2>
+<p class="text-on-surface-variant">
+                            We reject the standard 1px border. We use tonal nesting and architectural spacing to create hierarchy. Here is how we layer the TradeHut experience.
+                        </p>
+</div>
+<button class="bg-on-surface text-surface px-8 py-4 rounded-xl font-syne font-bold hover:bg-primary transition-all">
+                        Read System Specs
+                    </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+<!-- Layering Example -->
+<div class="space-y-6">
+<div class="bg-surface-container-low p-12 rounded-3xl relative h-[300px] overflow-hidden">
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-xs space-y-4">
+<div class="bg-surface p-6 rounded-2xl shadow-card">
+<div class="h-4 w-24 bg-primary/20 rounded mb-4"></div>
+<div class="h-20 w-full bg-surface-container-highest rounded-xl"></div>
+</div>
+</div>
+<span class="absolute bottom-4 left-6 font-mono text-[10px] text-on-surface/40 tracking-widest uppercase">Layer Level 0 &amp; 1</span>
+</div>
+<div>
+<h4 class="font-syne font-bold text-lg mb-2">Tonal Nesting</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                                Content sits on cards (Surface Lowest), which sit on sections (Surface Container Low), which sit on the global background (Surface).
+                            </p>
+</div>
+</div>
+<!-- Shadows Example -->
+<div class="space-y-6">
+<div class="bg-surface-container-low p-12 rounded-3xl relative h-[300px] overflow-hidden">
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-xs">
+<div class="bg-white p-6 rounded-2xl shadow-card transition-all duration-500 hover:-translate-y-4 hover:shadow-[0_24px_48px_rgba(38,24,19,0.12)]">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container"></div>
+<div class="space-y-2">
+<div class="h-3 w-20 bg-on-surface/10 rounded"></div>
+<div class="h-2 w-32 bg-on-surface/5 rounded"></div>
+</div>
+</div>
+</div>
+</div>
+<span class="absolute bottom-4 left-6 font-mono text-[10px] text-on-surface/40 tracking-widest uppercase">Ambient Occlusion</span>
+</div>
+<div>
+<h4 class="font-syne font-bold text-lg mb-2">Atmospheric Shadows</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                                We avoid harsh black shadows. Our cards use multi-layered occlusions using the 'on-surface' color at ultra-low opacities.
+                            </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Resource Center -->
+<section class="mt-20 p-12 bg-on-surface rounded-3xl text-surface relative overflow-hidden">
+<div class="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+<div>
+<h2 class="font-syne text-4xl font-black mb-6 tracking-tighter">Ready to Build?</h2>
+<p class="text-surface/60 mb-8 max-w-sm">
+                            Access our FigJam workspaces, GitHub repos, and asset buckets directly from the center.
+                        </p>
+<div class="grid grid-cols-2 gap-4">
+<a class="flex items-center gap-3 p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-all border border-white/10" href="#">
+<span class="material-symbols-outlined text-primary-container">file_download</span>
+<span class="font-bold text-sm">Figma Assets</span>
+</a>
+<a class="flex items-center gap-3 p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-all border border-white/10" href="#">
+<span class="material-symbols-outlined text-secondary-fixed">code</span>
+<span class="font-bold text-sm">React Library</span>
+</a>
+</div>
+</div>
+<div class="relative">
+<div class="bg-primary p-8 rounded-2xl transform rotate-3 shadow-2xl relative z-10">
+<div class="font-mono text-sm mb-4">tradehut-ds-config.json</div>
+<div class="space-y-2 font-mono text-xs opacity-80">
+<p>"primary": "#A43D00",</p>
+<p>"radius": "0.75rem",</p>
+<p>"font": "Syne, DM Sans",</p>
+<p>"elevation": "ambient-occlusion"</p>
+</div>
+</div>
+<div class="absolute -top-4 -right-4 w-full h-full bg-surface/10 rounded-2xl -rotate-2"></div>
+</div>
+</div>
+<!-- Abstract Grain Overlay -->
+<div class="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay">
+<div class="w-full h-full bg-[radial-gradient(circle,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:20px_20px]"></div>
+</div>
+</section>
+</div>
+<footer class="mt-20 max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center py-8 border-t border-surface-container-low text-on-surface-variant text-sm gap-4">
+<div class="flex items-center gap-6">
+<span class="font-syne font-bold text-on-surface">TradeHut Kinetic</span>
+<p>© 2023 Internal Design Standards</p>
+</div>
+<div class="flex gap-8">
+<a class="hover:text-primary transition-colors" href="#">Accessibility</a>
+<a class="hover:text-primary transition-colors" href="#">Changelog</a>
+<a class="hover:text-primary transition-colors" href="#">Privacy</a>
+</div>
+</footer>
+</main>
+</body></html>

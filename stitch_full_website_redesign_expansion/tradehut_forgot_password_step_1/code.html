@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Reset Password - The Kinetic Gallery</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&amp;family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&amp;family=JetBrains+Mono:wght@500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface": "#fff8f6",
+                    "on-surface-variant": "#5a4137",
+                    "inverse-surface": "#3d2d26",
+                    "secondary-fixed-dim": "#3fdfa5",
+                    "secondary": "#006c4b",
+                    "surface-variant": "#f8ddd3",
+                    "primary": "#a43d00",
+                    "surface-dim": "#efd5cb",
+                    "tertiary-fixed-dim": "#b0c6ff",
+                    "surface-container-low": "#fff1ec",
+                    "on-primary-container": "#4e1900",
+                    "on-tertiary-container": "#002761",
+                    "on-tertiary-fixed": "#001945",
+                    "on-secondary": "#ffffff",
+                    "surface-container-highest": "#f8ddd3",
+                    "on-secondary-fixed": "#002114",
+                    "primary-fixed": "#ffdbcd",
+                    "on-primary-fixed-variant": "#7d2d00",
+                    "on-tertiary-fixed-variant": "#00429b",
+                    "error": "#ba1a1a",
+                    "tertiary": "#0058ca",
+                    "on-background": "#261813",
+                    "outline": "#8e7165",
+                    "secondary-container": "#60f9bd",
+                    "on-surface": "#261813",
+                    "surface-tint": "#a43d00",
+                    "outline-variant": "#e2bfb2",
+                    "on-secondary-fixed-variant": "#005138",
+                    "tertiary-fixed": "#d9e2ff",
+                    "secondary-fixed": "#63fcc0",
+                    "on-error": "#ffffff",
+                    "on-primary-fixed": "#360f00",
+                    "surface-container": "#ffe9e2",
+                    "tertiary-container": "#558dff",
+                    "primary-container": "#f5620f",
+                    "error-container": "#ffdad6",
+                    "inverse-on-surface": "#ffede7",
+                    "surface-container-high": "#fee3d9",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-bright": "#fff8f6",
+                    "primary-fixed-dim": "#ffb597",
+                    "inverse-primary": "#ffb597",
+                    "on-error-container": "#93000a",
+                    "background": "#fff8f6",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-container": "#00714f"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Syne", "sans-serif"],
+                    "body": ["DM Sans", "sans-serif"],
+                    "mono": ["JetBrains Mono", "monospace"]
+            },
+            "boxShadow": {
+              "card": "0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02)",
+              "card-hover": "0 12px 32px 0 rgba(38, 24, 19, 0.08)"
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'DM Sans', sans-serif; }
+        .font-headline { font-family: 'Syne', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', sans-serif; }
+        .noise-texture {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-stone-950 min-h-screen flex flex-col items-center justify-center selection:bg-primary-container selection:text-white">
+<div class="fixed inset-0 noise-texture pointer-events-none"></div>
+<main class="relative z-10 w-full max-w-[400px] px-4">
+<div class="mb-12 text-center">
+<h1 class="font-headline text-3xl font-extrabold tracking-tighter text-stone-100 uppercase">
+                The Kinetic Gallery
+            </h1>
+</div>
+<div class="bg-surface-container-lowest rounded-xl shadow-card overflow-hidden">
+<div class="p-8 space-y-6">
+<div class="space-y-2">
+<h2 class="font-headline text-2xl font-bold tracking-tight text-on-surface">
+                        Reset your password
+                    </h2>
+<p class="text-on-surface-variant text-sm leading-relaxed">
+                        Enter your email address and we'll send you a link to reset your password.
+                    </p>
+</div>
+<form class="space-y-6">
+<div class="space-y-2 group">
+<label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant/70" for="email">
+                            Email Address
+                        </label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border-none rounded-md px-4 py-3.5 text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all duration-200 outline-none" id="email" name="email" placeholder="name@company.com" required="" type="email"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant/30 group-focus-within:text-primary transition-colors">
+                                alternate_email
+                            </span>
+</div>
+</div>
+<button class="w-full bg-gradient-to-r from-primary to-primary-container text-white font-headline font-bold py-4 rounded-md shadow-lg active:scale-95 transition-all duration-200 hover:brightness-110" type="submit">
+                        Send Reset Link
+                    </button>
+</form>
+<div class="pt-4 flex flex-col items-center gap-4">
+<a class="inline-flex items-center gap-2 text-sm font-medium text-on-surface-variant hover:text-primary transition-colors group" href="#">
+<span class="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                        Back to Login
+                    </a>
+</div>
+</div>
+<div class="h-1 bg-gradient-to-r from-primary via-primary-container to-secondary"></div>
+</div>
+<div class="mt-12 text-center">
+<p class="text-stone-500 font-mono text-[10px] tracking-widest uppercase opacity-60">
+                System Status: Operational // v2.1.0-KH
+            </p>
+</div>
+</main>
+<footer class="fixed bottom-0 w-full py-8 pointer-events-none">
+<div class="max-w-7xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-4 opacity-40">
+<span class="font-headline font-bold text-stone-100 text-sm">© 2024 Kinetic Gallery.</span>
+<div class="flex gap-6 pointer-events-auto">
+<a class="text-stone-400 text-xs font-body hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-stone-400 text-xs font-body hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="text-stone-400 text-xs font-body hover:text-primary transition-colors" href="#">Help Center</a>
+</div>
+</div>
+</footer>
+<div class="fixed top-0 left-0 w-full h-full -z-10 overflow-hidden opacity-20 pointer-events-none">
+<div class="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-primary blur-[120px]"></div>
+<div class="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-secondary blur-[100px]"></div>
+</div>
+</body></html>

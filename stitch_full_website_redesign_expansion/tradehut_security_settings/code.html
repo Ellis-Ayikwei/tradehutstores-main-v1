@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TradeHut | Security Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&amp;family=Syne:wght@400;700;800&amp;family=DM+Sans:wght@400;500;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "background": "#fff8f6",
+                      "on-error": "#ffffff",
+                      "surface-container-highest": "#f8ddd3",
+                      "surface-container-low": "#fff1ec",
+                      "surface-container-high": "#fee3d9",
+                      "outline-variant": "#e2bfb2",
+                      "on-surface-variant": "#5a4137",
+                      "on-secondary-fixed-variant": "#005138",
+                      "surface-tint": "#a43d00",
+                      "primary-fixed-dim": "#ffb597",
+                      "outline": "#8e7165",
+                      "on-tertiary-fixed": "#001945",
+                      "tertiary-fixed-dim": "#b0c6ff",
+                      "on-error-container": "#93000a",
+                      "surface-container": "#ffe9e2",
+                      "on-secondary": "#ffffff",
+                      "inverse-primary": "#ffb597",
+                      "secondary-fixed-dim": "#3fdfa5",
+                      "on-primary": "#ffffff",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary-container": "#4e1900",
+                      "tertiary": "#0058ca",
+                      "on-tertiary-fixed-variant": "#00429b",
+                      "on-secondary-container": "#00714f",
+                      "primary-container": "#f5620f",
+                      "error": "#ba1a1a",
+                      "inverse-on-surface": "#ffede7",
+                      "error-container": "#ffdad6",
+                      "secondary-fixed": "#63fcc0",
+                      "tertiary-container": "#558dff",
+                      "secondary": "#006c4b",
+                      "primary": "#a43d00",
+                      "surface-bright": "#fff8f6",
+                      "surface-dim": "#efd5cb",
+                      "secondary-container": "#60f9bd",
+                      "on-background": "#261813",
+                      "on-secondary-fixed": "#002114",
+                      "surface": "#fff8f6",
+                      "on-surface": "#261813",
+                      "on-primary-fixed-variant": "#7d2d00",
+                      "tertiary-fixed": "#d9e2ff",
+                      "primary-fixed": "#ffdbcd",
+                      "on-tertiary-container": "#002761",
+                      "on-primary-fixed": "#360f00",
+                      "surface-variant": "#f8ddd3",
+                      "on-tertiary": "#ffffff",
+                      "inverse-surface": "#3d2d26"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "fontFamily": {
+                      "headline": ["Epilogue", "Syne"],
+                      "body": ["Plus Jakarta Sans", "DM Sans"],
+                      "label": ["Plus Jakarta Sans"],
+                      "mono": ["JetBrains Mono"]
+              },
+              "boxShadow": {
+                "card": "0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02)",
+                "card-hover": "0 12px 32px 0 rgba(38, 24, 19, 0.08)"
+              }
+            },
+          }
+        }
+      </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .headlines-font-syne { font-family: 'Syne', sans-serif; }
+        .mono-font-jetbrains { font-family: 'JetBrains Mono', monospace; }
+        .glass-header { backdrop-filter: blur(24px); }
+        .ghost-border { border: 1px solid rgba(142, 113, 101, 0.15); }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#FFF8F6]/70 backdrop-blur-xl flex justify-between items-center px-8 h-20 shadow-[0_4px_20px_0_rgba(38,24,19,0.04)]">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black tracking-tighter text-stone-900 headlines-font-syne">TradeHut</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-stone-600 font-medium hover:text-stone-900 transition-all duration-300" href="#">Marketplace</a>
+<a class="text-stone-600 font-medium hover:text-stone-900 transition-all duration-300" href="#">Auctions</a>
+<a class="text-stone-600 font-medium hover:text-stone-900 transition-all duration-300" href="#">RFQs</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-stone-100/50 transition-all duration-300 text-stone-600">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 rounded-full hover:bg-stone-100/50 transition-all duration-300 text-stone-600">
+<span class="material-symbols-outlined">shopping_cart</span>
+</button>
+<div class="h-10 w-10 rounded-full overflow-hidden border-2 border-primary-container">
+<img alt="User avatar" class="h-full w-full object-cover" data-alt="professional portrait of a confident man with a slight smile in high-end studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTVUviysWQikFobU9NIjKUWS4ervcEwh1l3jWdl99xsCG7zQ7gTSJgBjeHaZyu1UHEXuKvkx1drpI9nnxnk1oWEWW3-OZnkaq2P0IEBHbANguyvL21sSdM4d3RsOd6mIBQ4c28JaIdiIJeBHvyaMtykKsu-wyjLAO2S--HxaKn4x9-HguyHpjUCBuWwISXhDVcruUmms5YdicL7QTb6-8rfpXc5oFTKUJQ02_W2Dn8ob23BsBopb9aw5hj9vOZru0yzfWZRfi1B08"/>
+</div>
+</div>
+</header>
+<main class="pt-24 min-h-screen px-8 max-w-7xl mx-auto flex gap-12">
+<!-- SideNavBar (Account Settings) -->
+<aside class="sticky top-24 h-[calc(100vh-6rem)] w-72 flex flex-col gap-2 p-6 bg-[#FFF8F6] overflow-y-auto">
+<div class="mb-8">
+<h3 class="font-headline text-lg font-bold text-on-surface">Account Settings</h3>
+<p class="text-xs text-on-surface-variant opacity-70 uppercase tracking-widest font-bold mt-1">Manage your Kinetic profile</p>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="text-stone-500 px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span class="font-['DM_Sans'] uppercase tracking-widest text-[10px] font-bold">Orders</span>
+</a>
+<a class="text-stone-500 px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-['DM_Sans'] uppercase tracking-widest text-[10px] font-bold">Bids &amp; Auctions</span>
+</a>
+<a class="text-stone-500 px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">request_quote</span>
+<span class="font-['DM_Sans'] uppercase tracking-widest text-[10px] font-bold">My Requests</span>
+</a>
+<a class="text-stone-500 px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">favorite</span>
+<span class="font-['DM_Sans'] uppercase tracking-widest text-[10px] font-bold">Wishlist</span>
+</a>
+<div class="my-4 h-px bg-surface-container-highest"></div>
+<a class="text-stone-500 px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">location_on</span>
+<span class="font-['DM_Sans'] uppercase tracking-widest text-[10px] font-bold">Addresses</span>
+</a>
+<a class="text-stone-500 px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">credit_card</span>
+<span class="font-['DM_Sans'] uppercase tracking-widest text-[10px] font-bold">Payment Methods</span>
+</a>
+<a class="text-stone-500 px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">notifications_active</span>
+<span class="font-['DM_Sans'] uppercase tracking-widest text-[10px] font-bold">Notifications</span>
+</a>
+<a class="bg-white text-[#F5620F] shadow-card rounded-xl px-4 py-3 flex items-center gap-3 transition-all" href="#">
+<span class="material-symbols-outlined">shield</span>
+<span class="font-['DM_Sans'] uppercase tracking-widest text-[10px] font-bold">Security</span>
+</a>
+</nav>
+<button class="mt-auto flex items-center gap-2 px-4 py-3 text-stone-500 hover:text-error transition-colors font-['DM_Sans'] uppercase tracking-widest text-[10px] font-bold">
+<span class="material-symbols-outlined">logout</span>
+                Logout
+            </button>
+</aside>
+<!-- Main Content Area -->
+<section class="flex-1 pb-20">
+<div class="mb-12">
+<h1 class="headlines-font-syne text-5xl font-black text-on-surface tracking-tight mb-2">Security</h1>
+<p class="text-on-surface-variant max-w-xl">Safeguard your assets and manage your account authentication settings with high-precision security tools.</p>
+</div>
+<!-- Bento Grid Security Sections -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Password Change Card -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-lowest rounded-xl p-8 shadow-card flex flex-col gap-8">
+<div class="flex items-center gap-4">
+<div class="h-12 w-12 rounded-lg bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-size: 28px;">lock_reset</span>
+</div>
+<div>
+<h2 class="headlines-font-syne text-xl font-bold">Update Password</h2>
+<p class="text-sm text-on-surface-variant">Ensure your account uses a complex, unique password.</p>
+</div>
+</div>
+<form class="space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="flex flex-col gap-2">
+<label class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant px-1">Current Password</label>
+<input class="bg-surface-container-low border-none rounded-md px-4 py-3 focus:ring-1 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all" placeholder="••••••••••••" type="password"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant px-1">New Password</label>
+<input class="bg-surface-container-low border-none rounded-md px-4 py-3 focus:ring-1 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all" placeholder="••••••••••••" type="password"/>
+<!-- Strength Indicator -->
+<div class="flex gap-1 mt-1">
+<div class="h-1 flex-1 rounded-full bg-secondary-container"></div>
+<div class="h-1 flex-1 rounded-full bg-secondary-container"></div>
+<div class="h-1 flex-1 rounded-full bg-secondary-container"></div>
+<div class="h-1 flex-1 rounded-full bg-surface-container-high"></div>
+</div>
+<span class="text-[10px] text-secondary font-bold mono-font-jetbrains uppercase">Strength: Strong</span>
+</div>
+</div>
+<div class="flex justify-end pt-4">
+<button class="bg-gradient-to-r from-primary to-primary-container text-white px-8 py-3 rounded-md font-bold text-sm tracking-wide shadow-card hover:shadow-card-hover transition-all active:scale-95">
+                                Update Credentials
+                            </button>
+</div>
+</form>
+</div>
+<!-- 2FA Toggle Card -->
+<div class="col-span-12 lg:col-span-4 bg-primary text-white rounded-xl p-8 shadow-card flex flex-col justify-between relative overflow-hidden">
+<div class="relative z-10">
+<div class="h-12 w-12 rounded-lg bg-white/20 flex items-center justify-center text-white mb-6">
+<span class="material-symbols-outlined" style="font-size: 28px; font-variation-settings: 'FILL' 1;">verified_user</span>
+</div>
+<h2 class="headlines-font-syne text-xl font-bold mb-2">Two-Factor Auth</h2>
+<p class="text-sm text-white/80 leading-relaxed mb-8">Add an extra layer of security by requiring a code from your phone to log in.</p>
+</div>
+<div class="flex items-center justify-between relative z-10">
+<span class="mono-font-jetbrains text-xs font-bold uppercase tracking-wider">Status: Enabled</span>
+<button class="w-14 h-8 bg-white/20 rounded-full p-1 flex justify-end transition-all">
+<div class="h-6 w-6 bg-white rounded-full shadow-lg"></div>
+</button>
+</div>
+<!-- Decorative background glow -->
+<div class="absolute -bottom-10 -right-10 w-40 h-40 bg-primary-container rounded-full blur-3xl opacity-50"></div>
+</div>
+<!-- Active Sessions List -->
+<div class="col-span-12 bg-surface-container-low rounded-xl p-8">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+<div>
+<h2 class="headlines-font-syne text-2xl font-bold tracking-tight">Active Sessions</h2>
+<p class="text-on-surface-variant text-sm mt-1">Managed logged-in devices and terminate suspicious activity.</p>
+</div>
+<button class="text-[10px] uppercase tracking-widest font-bold text-error bg-error-container/30 px-4 py-2 rounded-md hover:bg-error-container/50 transition-all">
+                            Terminate All Other Sessions
+                        </button>
+</div>
+<div class="space-y-4">
+<!-- Session 1 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl flex flex-col md:flex-row items-center justify-between gap-6 hover:shadow-card transition-shadow">
+<div class="flex items-center gap-6 flex-1">
+<div class="h-12 w-12 flex items-center justify-center text-on-surface-variant opacity-60">
+<span class="material-symbols-outlined" style="font-size: 32px;">desktop_windows</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="font-bold text-on-surface">MacBook Pro 16" • Chrome</h3>
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container text-[10px] font-bold rounded-full uppercase">Current Session</span>
+</div>
+<p class="text-xs text-on-surface-variant mono-font-jetbrains mt-1">192.168.1.45 • San Francisco, CA, USA</p>
+</div>
+</div>
+<div class="flex items-center gap-8">
+<div class="text-right">
+<p class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Last Active</p>
+<p class="text-sm font-medium">Just now</p>
+</div>
+<button class="h-10 w-10 flex items-center justify-center rounded-lg hover:bg-surface-container-low transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Session 2 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl flex flex-col md:flex-row items-center justify-between gap-6 hover:shadow-card transition-shadow">
+<div class="flex items-center gap-6 flex-1">
+<div class="h-12 w-12 flex items-center justify-center text-on-surface-variant opacity-60">
+<span class="material-symbols-outlined" style="font-size: 32px;">smartphone</span>
+</div>
+<div>
+<h3 class="font-bold text-on-surface">iPhone 15 Pro • TradeHut App</h3>
+<p class="text-xs text-on-surface-variant mono-font-jetbrains mt-1">Cellular Network • Austin, TX, USA</p>
+</div>
+</div>
+<div class="flex items-center gap-8">
+<div class="text-right">
+<p class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Last Active</p>
+<p class="text-sm font-medium">2 hours ago</p>
+</div>
+<button class="h-10 w-10 flex items-center justify-center rounded-lg hover:bg-error-container/20 text-error transition-colors">
+<span class="material-symbols-outlined">logout</span>
+</button>
+</div>
+</div>
+<!-- Session 3 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl flex flex-col md:flex-row items-center justify-between gap-6 hover:shadow-card transition-shadow">
+<div class="flex items-center gap-6 flex-1">
+<div class="h-12 w-12 flex items-center justify-center text-on-surface-variant opacity-60">
+<span class="material-symbols-outlined" style="font-size: 32px;">tablet_mac</span>
+</div>
+<div>
+<h3 class="font-bold text-on-surface">iPad Air • Safari</h3>
+<p class="text-xs text-on-surface-variant mono-font-jetbrains mt-1">104.16.24.5 • London, UK</p>
+</div>
+</div>
+<div class="flex items-center gap-8">
+<div class="text-right">
+<p class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Last Active</p>
+<p class="text-sm font-medium">Mar 12, 2024</p>
+</div>
+<button class="h-10 w-10 flex items-center justify-center rounded-lg hover:bg-error-container/20 text-error transition-colors">
+<span class="material-symbols-outlined">logout</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Technical Specification Card (RFQ Style) -->
+<div class="col-span-12 lg:col-span-6 bg-surface-container-high rounded-xl p-8 border-l-4 border-tertiary">
+<div class="flex items-center gap-4 mb-4">
+<span class="material-symbols-outlined text-tertiary">info</span>
+<h3 class="font-headline font-bold">API Access Tokens</h3>
+</div>
+<p class="text-sm text-on-surface-variant mb-6 leading-relaxed">
+                        Generating a Personal Access Token allows you to interact with the TradeHut RFQ engine programmatically. Keep these keys secure and never share them.
+                    </p>
+<button class="bg-tertiary text-white px-6 py-2 rounded-md text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all">
+                        Generate New Token
+                    </button>
+</div>
+<!-- Recovery Codes Card -->
+<div class="col-span-12 lg:col-span-6 bg-surface-container-high rounded-xl p-8 border-l-4 border-secondary">
+<div class="flex items-center gap-4 mb-4">
+<span class="material-symbols-outlined text-secondary">history_edu</span>
+<h3 class="font-headline font-bold">Recovery Codes</h3>
+</div>
+<p class="text-sm text-on-surface-variant mb-6 leading-relaxed">
+                        If you lose access to your 2FA device, recovery codes are the only way to regain access to your trade history and active bids.
+                    </p>
+<button class="bg-secondary text-white px-6 py-2 rounded-md text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all">
+                        View Secure Codes
+                    </button>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation for Mobile -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-[#FFF8F6]/90 backdrop-blur-xl flex items-center justify-around px-4 z-50 border-t border-surface-container-highest">
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-bold">Home</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">search</span>
+<span class="text-[10px] font-bold">Explore</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">shield</span>
+<span class="text-[10px] font-bold">Security</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-bold">Account</span>
+</button>
+</nav>
+</body></html>

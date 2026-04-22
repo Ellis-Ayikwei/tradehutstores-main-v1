@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Returns &amp; Refunds | Gallery Support</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&amp;family=DM+Sans:wght@400;500;700&amp;family=JetBrains+Mono:wght@500&amp;family=Epilogue:wght@400;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#002114",
+                    "primary-fixed": "#ffdbcd",
+                    "surface-container-highest": "#f8ddd3",
+                    "on-secondary": "#ffffff",
+                    "surface-dim": "#efd5cb",
+                    "tertiary-fixed-dim": "#b0c6ff",
+                    "surface-container-low": "#fff1ec",
+                    "on-primary-container": "#4e1900",
+                    "surface-variant": "#f8ddd3",
+                    "primary": "#a43d00",
+                    "on-tertiary-fixed": "#001945",
+                    "on-tertiary-container": "#002761",
+                    "on-surface-variant": "#5a4137",
+                    "inverse-surface": "#3d2d26",
+                    "surface": "#fff8f6",
+                    "secondary-fixed-dim": "#3fdfa5",
+                    "secondary": "#006c4b",
+                    "surface-container-high": "#fee3d9",
+                    "inverse-on-surface": "#ffede7",
+                    "on-error-container": "#93000a",
+                    "background": "#fff8f6",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-container": "#00714f",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-bright": "#fff8f6",
+                    "primary-fixed-dim": "#ffb597",
+                    "inverse-primary": "#ffb597",
+                    "secondary-fixed": "#63fcc0",
+                    "on-error": "#ffffff",
+                    "on-primary-fixed": "#360f00",
+                    "tertiary-container": "#558dff",
+                    "primary-container": "#f5620f",
+                    "error-container": "#ffdad6",
+                    "surface-container": "#ffe9e2",
+                    "outline": "#8e7165",
+                    "secondary-container": "#60f9bd",
+                    "on-background": "#261813",
+                    "tertiary-fixed": "#d9e2ff",
+                    "on-surface": "#261813",
+                    "surface-tint": "#a43d00",
+                    "outline-variant": "#e2bfb2",
+                    "on-secondary-fixed-variant": "#005138",
+                    "on-tertiary-fixed-variant": "#00429b",
+                    "on-primary-fixed-variant": "#7d2d00",
+                    "tertiary": "#0058ca",
+                    "error": "#ba1a1a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Syne", "Epilogue", "sans-serif"],
+                    "body": ["Plus Jakarta Sans", "DM Sans", "sans-serif"],
+                    "label": ["Plus Jakarta Sans", "sans-serif"],
+                    "mono": ["JetBrains Mono", "monospace"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .shadow-card {
+            box-shadow: 0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02);
+        }
+        .shadow-card-hover:hover {
+            box-shadow: 0 12px 32px 0 rgba(38, 24, 19, 0.08);
+        }
+        .glass-header {
+            background: rgba(255, 248, 246, 0.7);
+            backdrop-filter: blur(24px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-white">
+<!-- TopAppBar Shell -->
+<header class="fixed top-0 w-full z-50 h-20 glass-header flex justify-between items-center px-8 w-full max-w-[1920px] mx-auto shadow-[0_4px_20px_0_rgba(38,24,19,0.04)]">
+<div class="flex items-center gap-12">
+<span class="text-2xl font-black font-['Syne'] text-[#261813] dark:text-white tracking-tighter">Gallery Support</span>
+<nav class="hidden md:flex gap-8">
+<a class="text-[#F5620F] font-bold border-b-2 border-[#F5620F] transition-all duration-300" href="#">Returns/Refunds</a>
+<a class="text-[#261813]/60 dark:text-stone-400 font-medium hover:text-[#F5620F] transition-colors duration-300" href="#">Feedback</a>
+<a class="text-[#261813]/60 dark:text-stone-400 font-medium hover:text-[#F5620F] transition-colors duration-300" href="#">Suggestions</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-lg focus:ring-2 focus:ring-primary/20 w-64 text-sm" placeholder="Search transactions..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full transition-colors">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full transition-colors">help_outline</button>
+<img alt="User profile avatar" class="w-10 h-10 rounded-full object-cover border-2 border-surface-container-highest" data-alt="Professional headshot of a person with a friendly expression in a brightly lit studio environment with soft shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWF6VmtujUlxGunUam4FrWvFy9Guhx_tPh8vjtRvj85Qc-0VjMn-OnH2Oe29J5bi-bPentN5lmWZE1E1W3GpcGxwyOEV9LnYOc20E5ORMBqBsQfVU2Jfn3-Z2atBy8g2m1Q-Tt894m7FsZuVUXYTUyWQmEQg_2kLfHOpy5WoKf6enwU73KltdHh_nj4QqGnW8toerngVfYyvXGJERc79xdeOSgtisN2A5smDzO0GYi06O6xfrPgFaqOUkam7FqS5RoTFxB2U4B5tc"/>
+</div>
+</header>
+<!-- Sidebar Shell -->
+<aside class="h-screen w-72 fixed left-0 top-0 pt-24 bg-[#FFF1EC] dark:bg-stone-900 hidden md:flex flex-col gap-1 pr-4">
+<div class="px-8 mb-8">
+<h2 class="font-['Syne'] text-lg font-bold text-[#F5620F]">Control Center</h2>
+<p class="text-xs text-on-surface-variant">Manage your account</p>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="bg-white dark:bg-stone-800 text-[#F5620F] font-bold rounded-r-xl shadow-[4px_0_12px_rgba(245,98,15,0.1)] px-6 py-3 flex items-center gap-4 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="assignment_return">assignment_return</span>
+<span class="font-['DM_Sans'] text-sm">Returns/Refunds</span>
+</a>
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="rate_review">rate_review</span>
+<span class="font-['DM_Sans'] text-sm">Feedback</span>
+</a>
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="group_add">group_add</span>
+<span class="font-['DM_Sans'] text-sm">Invite Friends</span>
+</a>
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="flag">flag</span>
+<span class="font-['DM_Sans'] text-sm">Manage Reports</span>
+</a>
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="lightbulb">lightbulb</span>
+<span class="font-['DM_Sans'] text-sm">Suggestions</span>
+</a>
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="help_center">help_center</span>
+<span class="font-['DM_Sans'] text-sm">DS Center</span>
+</a>
+</nav>
+<div class="mt-auto p-6">
+<button class="w-full bg-gradient-to-r from-primary to-primary-container text-white py-3 rounded-xl font-bold font-['Syne'] text-sm shadow-card hover:scale-[1.02] transition-transform duration-200">
+                Upgrade Plan
+            </button>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="md:ml-72 pt-28 pb-12 px-8 max-w-[1400px]">
+<!-- Hero / Action Section -->
+<div class="mb-12 flex flex-col md:flex-row justify-between items-end gap-6">
+<div class="space-y-2">
+<h1 class="font-headline text-5xl font-bold tracking-tight text-on-surface">Returns &amp; <span class="text-primary italic">Refunds</span></h1>
+<p class="text-on-surface-variant max-w-lg">Track your active claims or initiate a return for items purchased in the last 30 days.</p>
+</div>
+<button class="flex items-center gap-3 px-8 py-4 bg-primary text-white rounded-xl font-headline font-bold shadow-card hover:shadow-card-hover transition-all duration-300 active:scale-95 group">
+<span class="material-symbols-outlined group-hover:rotate-90 transition-transform duration-500">add</span>
+                Start a Return
+            </button>
+</div>
+<!-- Bento Grid: Return Status & History -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Active Requests (Asymmetric Large Card) -->
+<section class="lg:col-span-8 space-y-6">
+<div class="flex items-center justify-between px-2">
+<h2 class="font-headline text-xl font-bold">Active Requests</h2>
+<span class="text-xs font-mono bg-surface-container-high px-2 py-1 rounded text-on-surface-variant">2 ACTIVE</span>
+</div>
+<div class="space-y-4">
+<!-- Request Item 1: In Transit -->
+<div class="bg-surface-container-lowest rounded-2xl p-6 shadow-card border border-outline-variant/15 flex flex-col md:flex-row gap-6 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150 duration-700"></div>
+<div class="w-full md:w-32 h-32 rounded-xl bg-surface-container-low overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Modern minimalist wrist watch with white face and leather strap against a soft beige studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIfbKJDRyXWaaodbmrFiPVoHomqWxE1BtfoOq39fnh45Zyg4LGQLKNIV5DAdEY9VmkyHwQDtinGFl5c5y4XmrE0TTylzsWua0wUna7I60NWa3TteiyMPKKqeRrcmMtaq0A1YwUI0LeBjBeDaHeDmhrTMcuVbxWiBLBEwa1udFgOu_ZBvJk2l1uRSFOJCSfbOznK9yZWSZbLTBKSJC-YmAx5W7UOE8O0QqDhnvlWT1Pkjsuc5wPbBG_ljHRdkecmv_krc7BfZ4mYUU"/>
+</div>
+<div class="flex-grow flex flex-col justify-between z-10">
+<div>
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline font-bold text-lg">Chronos Series 7 Watch</h3>
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">In Transit</span>
+</div>
+<p class="text-sm text-on-surface-variant mb-4">Case #TH-88291 • Initiated Oct 12, 2023</p>
+</div>
+<div class="flex items-center gap-8">
+<div class="flex flex-col">
+<span class="text-[10px] text-outline font-bold uppercase">Refund Amount</span>
+<span class="font-mono text-lg text-primary">$249.00</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[10px] text-outline font-bold uppercase">Est. Completion</span>
+<span class="font-mono text-lg text-on-surface">Oct 24</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 md:flex-col md:justify-center">
+<button class="p-3 rounded-lg hover:bg-surface-container-low text-on-surface-variant transition-colors" title="Track Package">
+<span class="material-symbols-outlined">local_shipping</span>
+</button>
+<button class="p-3 rounded-lg hover:bg-surface-container-low text-on-surface-variant transition-colors" title="View Details">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Request Item 2: Processing -->
+<div class="bg-surface-container-lowest rounded-2xl p-6 shadow-card border border-outline-variant/15 flex flex-col md:flex-row gap-6 relative overflow-hidden group">
+<div class="w-full md:w-32 h-32 rounded-xl bg-surface-container-low overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Vibrant red athletic running shoe displayed in a dynamic pose on a gray textured surface with studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtZuKxDbgNMho22FS8T72fJzrJ10YBuX_N5CzFCZ0VKwp612NkdMwhvfduitXQ663RR82jvSU2qduTwnb4Pz4-1jdSdrCUrgbM5pRpVVWll6DsnNGBTCO61NIbQBrljQjs1OJxvRNM9f2tWXf3LJuXX3cOM7_MU17wDem2mCz6q_bf9KQFIxSSGGwmK2SEVfATdf10jhQFyd372unpPsq0dfP8N2ltafL9n0ZgKObTpLet4YLjblmMarLHo3Ii9XeQTE24Qmeu9hk"/>
+</div>
+<div class="flex-grow flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline font-bold text-lg">HyperFlow Mesh Trainers</h3>
+<span class="bg-tertiary-container text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Refund Processing</span>
+</div>
+<p class="text-sm text-on-surface-variant mb-4">Case #TH-90122 • Initiated Oct 18, 2023</p>
+</div>
+<div class="flex items-center gap-8">
+<div class="flex flex-col">
+<span class="text-[10px] text-outline font-bold uppercase">Refund Amount</span>
+<span class="font-mono text-lg text-primary">$120.00</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[10px] text-outline font-bold uppercase">Status</span>
+<span class="text-sm font-medium text-on-surface">Inspecting Item</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 md:flex-col md:justify-center">
+<button class="p-3 rounded-lg hover:bg-surface-container-low text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">support_agent</span>
+</button>
+<button class="p-3 rounded-lg hover:bg-surface-container-low text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Sidebar Info: Policies & Stats -->
+<section class="lg:col-span-4 space-y-8">
+<!-- Quick Stats -->
+<div class="bg-surface-container-low rounded-3xl p-8 space-y-6">
+<h2 class="font-headline text-lg font-bold">Your Returns At A Glance</h2>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-lowest p-4 rounded-2xl">
+<span class="text-2xl font-mono block mb-1">08</span>
+<span class="text-[10px] font-bold uppercase tracking-widest text-outline">Total Returns</span>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-2xl">
+<span class="text-2xl font-mono block mb-1 text-secondary">$1.2k</span>
+<span class="text-[10px] font-bold uppercase tracking-widest text-outline">Refunded</span>
+</div>
+</div>
+<div class="pt-4 border-t border-outline-variant/20">
+<p class="text-xs text-on-surface-variant leading-relaxed">Most refunds are processed within <span class="font-bold text-on-surface">3-5 business days</span> after the item reaches our gallery warehouse.</p>
+</div>
+</div>
+<!-- Return Policy Highlight -->
+<div class="bg-inverse-surface text-inverse-on-surface rounded-3xl p-8 relative overflow-hidden">
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined text-[120px]">verified_user</span>
+</div>
+<h3 class="font-headline font-bold mb-4">Easy Return Policy</h3>
+<ul class="space-y-4 relative z-10">
+<li class="flex gap-3 text-sm">
+<span class="material-symbols-outlined text-primary-fixed-dim text-sm">check_circle</span>
+                            30-day no-questions-asked window
+                        </li>
+<li class="flex gap-3 text-sm">
+<span class="material-symbols-outlined text-primary-fixed-dim text-sm">check_circle</span>
+                            Free prepaid shipping labels
+                        </li>
+<li class="flex gap-3 text-sm">
+<span class="material-symbols-outlined text-primary-fixed-dim text-sm">check_circle</span>
+                            Instant credit for VIP members
+                        </li>
+</ul>
+</div>
+</section>
+<!-- Returnable Items Gallery -->
+<section class="lg:col-span-12 space-y-6 mt-8">
+<div class="flex items-center justify-between px-2">
+<h2 class="font-headline text-2xl font-bold">Returnable Items</h2>
+<div class="flex items-center gap-4">
+<button class="text-sm font-bold text-primary hover:underline">View All Purchases</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-6">
+<!-- Item 1 -->
+<div class="group cursor-pointer">
+<div class="bg-surface-container-low aspect-[4/5] rounded-3xl overflow-hidden relative mb-4">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="Professional studio headphones with leather ear cups and gold accents resting on a dark wood surface with dramatic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDT8qTyWsG3OQtjMFZReuSCFaBltXNLDzMJ5EraLIQxT-dYqM8sKOzo1BlZbMuXAWIrqHorfRvhH0rM67MftzUfnYq41ZHzJVuLreaLgwd4OpHL12Qc5CTTbI5xjY5NbZF8NUcnhTweZm5UgeyQk8qwgPaJorCuaQJJcgFRH9m5VKN3WylVQ76pIBtbRpStsMWOUqL5AqHSYpzfFp01H74C9VBeLM2LLyVxcEDbumBGiAzvZnRhAyRAAT5RZcVncU4F1dY_Pp6W1Q0"/>
+<div class="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+<button class="w-full bg-white/90 backdrop-blur-md text-on-surface py-3 rounded-xl font-bold shadow-lg">Return This Item</button>
+</div>
+<div class="absolute top-4 right-4 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-bold">14 DAYS LEFT</div>
+</div>
+<h4 class="font-bold text-on-surface truncate">Audio-Technica Pro Series</h4>
+<div class="flex justify-between items-center mt-1">
+<span class="font-mono text-sm text-outline">$299.00</span>
+<span class="text-xs text-on-surface-variant italic">Purchased Oct 5</span>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="group cursor-pointer">
+<div class="bg-surface-container-low aspect-[4/5] rounded-3xl overflow-hidden relative mb-4">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="Vintage style polaroid camera in a light mint green color, shot from a high angle against a soft pastel background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBygPC5ua8CumTUNVo7c19I7A-PaVdjlzfCzr0qsTHeGlXEF243oOXP9jRJ4VNFSo9Rg0tEUvDJQEAiNWxRgCC2fhvASS0iK-Hcnt4cG4HrQG62H5pvH1f41Jm0rECJeCeb_5tyGCvh6Bsg-l3rX5Vs8gqBgh5kenT5mJDULPa8ddBm55lHLUW1txkbnL_4Ak427u1mWZX4KGQN_fJQTwvcQGMyLCvi-UcA1uqkmiVNLJMEJOuSGwlwkbZOF3sRucsdosWxxr4YPD8"/>
+<div class="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+<button class="w-full bg-white/90 backdrop-blur-md text-on-surface py-3 rounded-xl font-bold shadow-lg">Return This Item</button>
+</div>
+<div class="absolute top-4 right-4 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-bold">22 DAYS LEFT</div>
+</div>
+<h4 class="font-bold text-on-surface truncate">RetroSnap Instant Camera</h4>
+<div class="flex justify-between items-center mt-1">
+<span class="font-mono text-sm text-outline">$89.00</span>
+<span class="text-xs text-on-surface-variant italic">Purchased Oct 14</span>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="group cursor-pointer">
+<div class="bg-surface-container-low aspect-[4/5] rounded-3xl overflow-hidden relative mb-4">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="Minimalist desk lamp with a slim black metal frame and warm bulb, positioned on a clean white tabletop with architectural shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrgvdeJrg2PIqDR965uXGBThuE4jzam1yJmzxbwINP-bmhH3-xwv4s5JnWxYUDR7_G2Idno-D5Pe_o-6rRifleKCeQAH8LCdA8Q8YVrB-_UwHW9UBj7tuy_VrVJamyNfpUHwJBShPCYcJYR_rSubK26ldxlA173WKHEgJ-RmMgOXYWUeKxx3ItYXCJUOP_AwF4KYeHKOGXBi-kujO9VD0HNSNlHQb98vejmooQt6D971eOJYr45e2IDZE9fFH6Nnv6HGM9M0230Po"/>
+<div class="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+<button class="w-full bg-white/90 backdrop-blur-md text-on-surface py-3 rounded-xl font-bold shadow-lg">Return This Item</button>
+</div>
+<div class="absolute top-4 right-4 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-bold">28 DAYS LEFT</div>
+</div>
+<h4 class="font-bold text-on-surface truncate">Linear LED Desk Lamp</h4>
+<div class="flex justify-between items-center mt-1">
+<span class="font-mono text-sm text-outline">$150.00</span>
+<span class="text-xs text-on-surface-variant italic">Purchased Oct 20</span>
+</div>
+</div>
+<!-- Item 4 (Last) -->
+<div class="group cursor-pointer">
+<div class="bg-surface-container-low aspect-[4/5] rounded-3xl overflow-hidden relative mb-4">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="High-end smartphone with a sleek ceramic back and multi-lens camera module, reflecting soft natural light on its surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCl0mlDhi4CsW3rXRMqvG8BIDvOAXJ-1bjLPtuEubs8he8uwVNrOJS6JuQ5LSj1epYJvIf8TOpg697_xTdvDuBbIyY8dgAMK80HLCgrhVd_dfPE43yA6gZ5qeJ2_YDwqJpHbUlPrhvSdxgOVbDM5Jk77dXKclNIl619AXN5XO7ovXQ3anN6k17r41kHfmjiT8XVd4ipS8RgRzK9chKhaJfrIExGAkM7lRdRRkUfTeZiafxkzIvPYablBSBoUP4CXjxGLKpOaxN7V7c"/>
+<div class="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+<button class="w-full bg-white/90 backdrop-blur-md text-on-surface py-3 rounded-xl font-bold shadow-lg">Return This Item</button>
+</div>
+<div class="absolute top-4 right-4 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-bold text-error font-bold">3 DAYS LEFT</div>
+</div>
+<h4 class="font-bold text-on-surface truncate">Zenith Z-Phone 12</h4>
+<div class="flex justify-between items-center mt-1">
+<span class="font-mono text-sm text-outline">$999.00</span>
+<span class="text-xs text-on-surface-variant italic">Purchased Sept 28</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Refund History (Completed) -->
+<section class="lg:col-span-12 space-y-6 mt-8">
+<div class="flex items-center gap-3">
+<h2 class="font-headline text-xl font-bold">Recent Completed Refunds</h2>
+<div class="h-[1px] flex-grow bg-outline-variant/30"></div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-separate border-spacing-y-4">
+<thead>
+<tr class="text-[10px] font-bold uppercase tracking-widest text-outline">
+<th class="px-6 pb-2">Reference</th>
+<th class="px-6 pb-2">Item</th>
+<th class="px-6 pb-2 text-right">Amount</th>
+<th class="px-6 pb-2">Completed Date</th>
+<th class="px-6 pb-2">Method</th>
+<th class="px-6 pb-2"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="bg-white/40 hover:bg-white/80 transition-colors group">
+<td class="px-6 py-4 rounded-l-2xl font-mono text-sm">#RF-11200</td>
+<td class="px-6 py-4 font-bold">Nomad Travel Backpack</td>
+<td class="px-6 py-4 text-right font-mono">$185.00</td>
+<td class="px-6 py-4 text-sm">Sept 12, 2023</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 text-xs">
+<span class="material-symbols-outlined text-sm">account_balance_wallet</span>
+                                        Original Payment
+                                    </div>
+</td>
+<td class="px-6 py-4 rounded-r-2xl text-right">
+<button class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">download</button>
+</td>
+</tr>
+<tr class="bg-white/40 hover:bg-white/80 transition-colors group">
+<td class="px-6 py-4 rounded-l-2xl font-mono text-sm">#RF-10992</td>
+<td class="px-6 py-4 font-bold">Ergo-Fit Keyboard v2</td>
+<td class="px-6 py-4 text-right font-mono">$210.00</td>
+<td class="px-6 py-4 text-sm">Aug 28, 2023</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 text-xs">
+<span class="material-symbols-outlined text-sm">confirmation_number</span>
+                                        Store Credit
+                                    </div>
+</td>
+<td class="px-6 py-4 rounded-r-2xl text-right">
+<button class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">download</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</main>
+<!-- Floating Action for Mobile -->
+<button class="md:hidden fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center z-50 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">add_shopping_cart</span>
+</button>
+</body></html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kinetic Seller - Variants &amp; Specs</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&amp;family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Epilogue:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#3fdfa5",
+                        "tertiary": "#0058ca",
+                        "background": "#fff8f6",
+                        "on-tertiary-container": "#002761",
+                        "on-tertiary-fixed": "#001945",
+                        "primary-fixed-dim": "#ffb597",
+                        "on-surface": "#261813",
+                        "on-primary-fixed": "#360f00",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#7d2d00",
+                        "surface": "#fff8f6",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#efd5cb",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#261813",
+                        "surface-tint": "#a43d00",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#ffb597",
+                        "primary": "#a43d00",
+                        "tertiary-fixed": "#d9e2ff",
+                        "inverse-on-surface": "#ffede7",
+                        "tertiary-fixed-dim": "#b0c6ff",
+                        "surface-container-high": "#fee3d9",
+                        "secondary": "#006c4b",
+                        "secondary-fixed": "#63fcc0",
+                        "outline-variant": "#e2bfb2",
+                        "surface-variant": "#f8ddd3",
+                        "secondary-container": "#60f9bd",
+                        "on-secondary-fixed-variant": "#005138",
+                        "on-surface-variant": "#5a4137",
+                        "primary-container": "#f5620f",
+                        "surface-bright": "#fff8f6",
+                        "inverse-surface": "#3d2d26",
+                        "tertiary-container": "#558dff",
+                        "surface-container": "#ffe9e2",
+                        "outline": "#8e7165",
+                        "on-secondary-container": "#00714f",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#fff1ec",
+                        "on-tertiary-fixed-variant": "#00429b",
+                        "on-secondary-fixed": "#002114",
+                        "primary-fixed": "#ffdbcd",
+                        "on-primary-container": "#4e1900",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#f8ddd3"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Syne", "sans-serif"],
+                        "body": ["DM Sans", "sans-serif"],
+                        "label": ["DM Sans", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .shadow-card {
+            box-shadow: 0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02);
+        }
+        .shadow-card:hover {
+            box-shadow: 0 12px 32px 0 rgba(38, 24, 19, 0.08);
+        }
+        .ghost-border {
+            border: 1px solid rgba(142, 113, 101, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body min-h-screen">
+<!-- TopAppBar -->
+<nav class="bg-white/70 dark:bg-stone-950/70 backdrop-blur-xl shadow-sm fixed top-0 w-full z-50 flex justify-between items-center px-10 h-20 w-full font-['DM_Sans'] tracking-tight">
+<div class="flex items-center gap-8">
+<span class="font-['Syne'] text-2xl font-bold text-stone-900 dark:text-stone-50">Kinetic Seller</span>
+<div class="hidden md:flex gap-6 items-center">
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors duration-200" href="#">Dashboard</a>
+<a class="text-orange-600 dark:text-orange-500 border-b-2 border-orange-600 dark:border-orange-500 pb-1 font-bold" href="#">Inventory</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors duration-200" href="#">Orders</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors duration-200" href="#">Analytics</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors duration-200 rounded-full">
+<span class="material-symbols-outlined text-stone-500">notifications</span>
+</button>
+<button class="p-2 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors duration-200 rounded-full">
+<span class="material-symbols-outlined text-stone-500">settings</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-surface-container overflow-hidden">
+<img alt="Seller Profile Avatar" class="w-full h-full object-cover" data-alt="professional headshot of a stylish merchant in a creative office setting with soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDbGokWf9KomZktaj4KxLXok0kRsJZlMRr-tDANIgpESoWhzqc0K09iWx_L7NURDybuVZnwOfWV2xk8vjRCzc9si8sqV4tEvRgVXazAeEgZhy-lAF591VDxqh7bTQErvOg0fjjNso6-LMD3iYAKFRAx0KK0nLPDgti-zH0Fh3cuhGyb97SRqY0BeTbe3FXno0wAEF5dLIXQTic9thipgipzxc8yvGhJ18w5Y2a3y50tMujfCur481NoKf5UdtWS_QRrEcY9SpltNo"/>
+</div>
+</div>
+</nav>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 bottom-0 z-40 flex flex-col border-r border-stone-100 dark:border-stone-800 bg-stone-50 dark:bg-stone-900 h-screen w-72 pt-24 font-['DM_Sans'] text-sm font-medium">
+<div class="px-8 mb-8">
+<p class="font-['Syne'] font-bold text-stone-900 dark:text-stone-50 text-lg">New Product</p>
+<p class="text-stone-400 dark:text-stone-500">Step 4 of 7</p>
+</div>
+<nav class="flex-1">
+<div class="flex flex-col">
+<a class="flex items-center gap-3 px-8 py-4 text-stone-600 dark:text-stone-300 opacity-60" href="#">
+<span class="material-symbols-outlined text-secondary">check_circle</span>
+<span>Basics</span>
+</a>
+<a class="flex items-center gap-3 px-8 py-4 text-stone-600 dark:text-stone-300 opacity-60" href="#">
+<span class="material-symbols-outlined text-secondary">check_circle</span>
+<span>Media</span>
+</a>
+<a class="flex items-center gap-3 px-8 py-4 text-stone-600 dark:text-stone-300 opacity-60" href="#">
+<span class="material-symbols-outlined text-secondary">check_circle</span>
+<span>Pricing &amp; Type</span>
+</a>
+<a class="flex items-center gap-3 px-8 py-4 text-orange-600 dark:text-orange-400 font-bold border-r-4 border-orange-600 dark:border-orange-500 bg-orange-50 dark:bg-orange-950/20 translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-weight="fill">layers</span>
+<span>Variants &amp; Specs</span>
+</a>
+<a class="flex items-center gap-3 px-8 py-4 text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800/80 transition-all" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span>Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-8 py-4 text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800/80 transition-all" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span>Shipping</span>
+</a>
+<a class="flex items-center gap-3 px-8 py-4 text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800/80 transition-all" href="#">
+<span class="material-symbols-outlined">preview</span>
+<span>Preview &amp; Publish</span>
+</a>
+</div>
+</nav>
+<div class="p-8">
+<button class="w-full py-3 bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 rounded-xl font-bold hover:bg-stone-300 dark:hover:bg-stone-700 transition-colors">
+                Save Draft
+            </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-72 pt-24 min-h-screen px-12 pb-32">
+<header class="mb-12">
+<h1 class="font-headline text-4xl font-extrabold tracking-tight text-on-surface mb-2">Variants &amp; Specs</h1>
+<p class="text-on-surface-variant max-w-2xl">Define the specific attributes of your product and provide technical data for professional buyers.</p>
+</header>
+<div class="space-y-10">
+<!-- Section 1: Product Variants -->
+<section class="bg-surface-container-low rounded-xl p-8 shadow-card">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="font-headline text-xl font-bold mb-1">Product Variants</h2>
+<p class="text-sm text-on-surface-variant">Add variations like color, size, or material.</p>
+</div>
+<button class="flex items-center gap-2 px-6 py-3 bg-primary-container text-white rounded-xl font-bold hover:scale-105 active:scale-95 transition-all shadow-sm">
+<span class="material-symbols-outlined text-sm">add</span>
+<span>Add Variant Attribute</span>
+</button>
+</div>
+<div class="overflow-hidden rounded-xl ghost-border bg-surface-container-lowest">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high border-b border-outline-variant/10">
+<th class="px-6 py-4 font-bold text-on-surface-variant text-xs uppercase tracking-widest">Variant Group</th>
+<th class="px-6 py-4 font-bold text-on-surface-variant text-xs uppercase tracking-widest">SKU Identifier</th>
+<th class="px-6 py-4 font-bold text-on-surface-variant text-xs uppercase tracking-widest">Additional Price</th>
+<th class="px-6 py-4 font-bold text-on-surface-variant text-xs uppercase tracking-widest text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr>
+<td class="px-6 py-5">
+<div class="flex gap-2">
+<span class="px-3 py-1 bg-surface-container text-on-surface-variant rounded-full text-xs font-bold">Midnight Blue</span>
+<span class="px-3 py-1 bg-surface-container text-on-surface-variant rounded-full text-xs font-bold">Large</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<input class="bg-surface-container-low border-none rounded-lg font-mono text-sm w-full focus:ring-1 focus:ring-primary/20 focus:bg-white transition-all" type="text" value="KH-2209-BL-LG"/>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<span class="text-on-surface-variant font-mono">$</span>
+<input class="bg-surface-container-low border-none rounded-lg font-mono text-sm w-24 focus:ring-1 focus:ring-primary/20 focus:bg-white transition-all" type="text" value="15.00"/>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="p-2 text-error hover:bg-error-container rounded-lg transition-colors">
+<span class="material-symbols-outlined">delete_outline</span>
+</button>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-5">
+<div class="flex gap-2">
+<span class="px-3 py-1 bg-surface-container text-on-surface-variant rounded-full text-xs font-bold">Midnight Blue</span>
+<span class="px-3 py-1 bg-surface-container text-on-surface-variant rounded-full text-xs font-bold">Medium</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<input class="bg-surface-container-low border-none rounded-lg font-mono text-sm w-full focus:ring-1 focus:ring-primary/20 focus:bg-white transition-all" type="text" value="KH-2209-BL-MD"/>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<span class="text-on-surface-variant font-mono">$</span>
+<input class="bg-surface-container-low border-none rounded-lg font-mono text-sm w-24 focus:ring-1 focus:ring-primary/20 focus:bg-white transition-all" type="text" value="0.00"/>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="p-2 text-error hover:bg-error-container rounded-lg transition-colors">
+<span class="material-symbols-outlined">delete_outline</span>
+</button>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-5">
+<div class="flex gap-2">
+<span class="px-3 py-1 bg-surface-container text-on-surface-variant rounded-full text-xs font-bold">Solar Orange</span>
+<span class="px-3 py-1 bg-surface-container text-on-surface-variant rounded-full text-xs font-bold">Large</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<input class="bg-surface-container-low border-none rounded-lg font-mono text-sm w-full focus:ring-1 focus:ring-primary/20 focus:bg-white transition-all" type="text" value="KH-2209-OR-LG"/>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<span class="text-on-surface-variant font-mono">$</span>
+<input class="bg-surface-container-low border-none rounded-lg font-mono text-sm w-24 focus:ring-1 focus:ring-primary/20 focus:bg-white transition-all" type="text" value="15.00"/>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="p-2 text-error hover:bg-error-container rounded-lg transition-colors">
+<span class="material-symbols-outlined">delete_outline</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Section 2: Technical Specifications -->
+<section class="bg-surface-container-low rounded-xl p-8 shadow-card">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="font-headline text-xl font-bold mb-1">Technical Specifications</h2>
+<p class="text-sm text-on-surface-variant">Provide precise data points for technical comparison.</p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-4">
+<div class="group relative">
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5 ml-1">Material Composition</label>
+<input class="w-full bg-surface-container-lowest border-none rounded-xl p-4 shadow-sm ghost-border focus:ring-2 focus:ring-primary/20 transition-all outline-none" type="text" value="85% Recycled Polyester, 15% Elastane"/>
+</div>
+<div class="group relative">
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5 ml-1">Operating Weight</label>
+<input class="w-full bg-surface-container-lowest border-none rounded-xl p-4 shadow-sm ghost-border focus:ring-2 focus:ring-primary/20 transition-all outline-none" type="text" value="1.24 kg"/>
+</div>
+<div class="group relative">
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5 ml-1">Dimensions (LxWxH)</label>
+<input class="w-full bg-surface-container-lowest border-none rounded-xl p-4 shadow-sm ghost-border focus:ring-2 focus:ring-primary/20 transition-all outline-none" type="text" value="45cm x 30cm x 15cm"/>
+</div>
+</div>
+<div class="bg-surface-container rounded-xl p-6 flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/30 text-center">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-primary">data_object</span>
+</div>
+<h3 class="font-headline font-bold mb-1">Custom Attribute</h3>
+<p class="text-xs text-on-surface-variant mb-4">Add industry-specific specs (e.g., Voltage, Tensile Strength)</p>
+<button class="flex items-center gap-2 px-6 py-2 bg-on-surface text-surface rounded-lg font-bold hover:opacity-90 transition-all text-sm">
+<span class="material-symbols-outlined text-sm">add</span>
+<span>Add Specification</span>
+</button>
+</div>
+</div>
+</section>
+</div>
+<!-- Footer Navigation -->
+<footer class="fixed bottom-0 right-0 left-72 bg-surface/80 backdrop-blur-lg border-t border-outline-variant/10 p-6 px-12 z-40 flex justify-between items-center">
+<button class="flex items-center gap-2 px-8 py-3 rounded-xl font-bold border border-outline hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined">arrow_back</span>
+<span>Back: Pricing &amp; Type</span>
+</button>
+<div class="flex items-center gap-4">
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Autosaved 2m ago</span>
+<button class="flex items-center gap-2 px-10 py-3 bg-primary-container text-white rounded-xl font-bold hover:scale-105 active:scale-95 transition-all shadow-md">
+<span>Next: Inventory</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</footer>
+</main>
+<!-- Contextual FAB (Hidden on this transactional screen as per mandate) -->
+<!-- Suppression rule applied -->
+</body></html>

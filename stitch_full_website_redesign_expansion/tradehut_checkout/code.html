@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Checkout | TradeHut</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;700;900&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#3fdfa5",
+                        "secondary": "#006c4b",
+                        "on-surface-variant": "#5a4137",
+                        "inverse-surface": "#3d2d26",
+                        "surface": "#fff8f6",
+                        "on-tertiary-fixed": "#001945",
+                        "on-tertiary-container": "#002761",
+                        "on-primary-container": "#4e1900",
+                        "surface-container-low": "#fff1ec",
+                        "tertiary-fixed-dim": "#b0c6ff",
+                        "surface-dim": "#efd5cb",
+                        "surface-variant": "#f8ddd3",
+                        "primary": "#a43d00",
+                        "surface-container-highest": "#f8ddd3",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed": "#ffdbcd",
+                        "on-secondary-fixed": "#002114",
+                        "tertiary": "#0058ca",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#00429b",
+                        "on-primary-fixed-variant": "#7d2d00",
+                        "tertiary-fixed": "#d9e2ff",
+                        "surface-tint": "#a43d00",
+                        "on-secondary-fixed-variant": "#005138",
+                        "outline-variant": "#e2bfb2",
+                        "on-surface": "#261813",
+                        "secondary-container": "#60f9bd",
+                        "outline": "#8e7165",
+                        "on-background": "#261813",
+                        "primary-container": "#f5620f",
+                        "tertiary-container": "#558dff",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#ffe9e2",
+                        "on-primary-fixed": "#360f00",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#63fcc0",
+                        "on-secondary-container": "#00714f",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "background": "#fff8f6",
+                        "inverse-primary": "#ffb597",
+                        "surface-bright": "#fff8f6",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#ffb597",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#fee3d9",
+                        "inverse-on-surface": "#ffede7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Epilogue"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .shadow-card {
+            box-shadow: 0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02);
+        }
+        .shadow-card-hover:hover {
+            box-shadow: 0 12px 32px 0 rgba(38, 24, 19, 0.08);
+        }
+        .glass-header {
+            background: rgba(255, 248, 246, 0.7);
+            backdrop-filter: blur(24px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body min-h-screen">
+<!-- Simplified Checkout Header -->
+<header class="sticky top-0 w-full z-50 glass-header">
+<div class="max-w-screen-2xl mx-auto flex items-center justify-between px-8 py-6">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black tracking-tighter text-on-surface font-headline">TradeHut</span>
+<div class="hidden md:flex items-center gap-2 text-secondary px-3 py-1 bg-secondary-container/20 rounded-full">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span class="text-xs font-bold uppercase tracking-widest">Secure Checkout</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<a class="text-sm font-medium text-on-surface-variant hover:text-primary transition-colors" href="#">Cancel and return</a>
+</div>
+</div>
+</header>
+<main class="max-w-screen-2xl mx-auto px-8 py-12">
+<div class="flex flex-col lg:flex-row gap-16">
+<!-- Left Column: Checkout Process (65%) -->
+<div class="lg:w-[65%] space-y-12">
+<!-- Progress Indicator -->
+<nav aria-label="Progress" class="mb-16">
+<ol class="flex items-center" role="list">
+<li class="relative pr-8 sm:pr-20">
+<div aria-current="step" class="flex items-center">
+<div class="relative flex h-10 w-10 items-center justify-center rounded-full bg-primary-container text-on-primary">
+<span class="text-sm font-bold">01</span>
+</div>
+<div class="ml-4 text-sm font-bold font-headline text-on-surface">Delivery</div>
+</div>
+<div class="absolute top-5 left-10 h-0.5 w-full bg-surface-container-highest -z-10"></div>
+</li>
+<li class="relative pr-8 sm:pr-20">
+<div class="flex items-center">
+<div class="relative flex h-10 w-10 items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant">
+<span class="text-sm font-bold">02</span>
+</div>
+<div class="ml-4 text-sm font-medium font-headline text-on-surface-variant">Payment</div>
+</div>
+<div class="absolute top-5 left-10 h-0.5 w-full bg-surface-container-highest -z-10"></div>
+</li>
+<li class="relative">
+<div class="flex items-center">
+<div class="relative flex h-10 w-10 items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant">
+<span class="text-sm font-bold">03</span>
+</div>
+<div class="ml-4 text-sm font-medium font-headline text-on-surface-variant">Review</div>
+</div>
+</li>
+</ol>
+</nav>
+<!-- Section 1: Delivery Address -->
+<section class="space-y-8">
+<div class="flex items-center justify-between">
+<h2 class="text-3xl font-bold font-headline tracking-tight">Delivery Address</h2>
+<button class="text-sm font-bold text-primary hover:underline underline-offset-4">+ Add New Address</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Address Card Active -->
+<div class="relative p-6 rounded-xl bg-surface-container-lowest shadow-card border-2 border-primary-container group transition-all">
+<div class="flex justify-between items-start mb-4">
+<span class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest rounded">Default</span>
+<input checked="" class="h-4 w-4 text-primary border-outline-variant focus:ring-primary" name="address" type="radio"/>
+</div>
+<p class="font-bold text-on-surface mb-1">Marcus Aurelius</p>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                                4482 Palatine Hill Rd<br/>
+                                Suite 102, Imperial District<br/>
+                                Rome, RM 00186
+                            </p>
+<div class="mt-4 pt-4 border-t border-surface-container flex gap-4">
+<button class="text-xs font-bold text-on-surface-variant hover:text-on-surface transition-colors">Edit</button>
+</div>
+</div>
+<!-- Address Card Inactive -->
+<div class="relative p-6 rounded-xl bg-surface-container-low hover:bg-surface-container transition-all group cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<span class="px-2 py-1 opacity-0 text-[10px] font-black uppercase tracking-widest rounded">Hidden</span>
+<input class="h-4 w-4 text-primary border-outline-variant focus:ring-primary" name="address" type="radio"/>
+</div>
+<p class="font-bold text-on-surface mb-1">Commodus Lucius</p>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                                120 Gladiator Street<br/>
+                                Floor 5, Arena Heights<br/>
+                                Naples, NA 80121
+                            </p>
+<div class="mt-4 pt-4 border-t border-outline-variant/10 flex gap-4">
+<button class="text-xs font-bold text-on-surface-variant hover:text-on-surface transition-colors">Edit</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2: Delivery Options -->
+<section class="space-y-8">
+<h2 class="text-3xl font-bold font-headline tracking-tight">Delivery Method</h2>
+<div class="space-y-4">
+<label class="flex items-center p-6 rounded-xl bg-surface-container-lowest shadow-card cursor-pointer border border-transparent hover:border-outline-variant/30 transition-all">
+<input checked="" class="h-5 w-5 text-primary border-outline-variant focus:ring-primary" name="delivery" type="radio"/>
+<div class="ml-6 flex-1">
+<div class="flex justify-between">
+<p class="font-bold text-on-surface">Express Courier</p>
+<p class="font-mono font-bold text-on-surface">+$24.00</p>
+</div>
+<p class="text-sm text-on-surface-variant">Estimated delivery: 2-3 business days</p>
+</div>
+</label>
+<label class="flex items-center p-6 rounded-xl bg-surface-container-low cursor-pointer border border-transparent hover:bg-surface-container transition-all">
+<input class="h-5 w-5 text-primary border-outline-variant focus:ring-primary" name="delivery" type="radio"/>
+<div class="ml-6 flex-1">
+<div class="flex justify-between">
+<p class="font-bold text-on-surface">Standard Logistics</p>
+<p class="font-mono font-bold text-secondary">Free</p>
+</div>
+<p class="text-sm text-on-surface-variant">Estimated delivery: 5-7 business days</p>
+</div>
+</label>
+</div>
+</section>
+<!-- CTA -->
+<div class="pt-8">
+<button class="w-full md:w-auto px-12 py-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold font-headline rounded-xl shadow-lg active:scale-95 transition-all">
+                        Continue to Payment
+                    </button>
+<p class="mt-4 text-xs text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">verified_user</span>
+                        Your data is encrypted and secure
+                    </p>
+</div>
+</div>
+<!-- Right Column: Order Summary (35%) -->
+<div class="lg:w-[35%]">
+<div class="sticky top-32 space-y-6">
+<div class="bg-surface-container-low rounded-3xl p-8 space-y-8">
+<h3 class="text-xl font-bold font-headline">Order Summary</h3>
+<!-- Item List -->
+<div class="space-y-6">
+<div class="flex gap-4">
+<div class="w-20 h-20 bg-surface-container-highest rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="luxury leather backpack in minimal studio setting with warm directional lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqxYVhwwOCDSNkgu6vMNaVo6DNETGmc4dMgguyf6iUooKjwQ7khBcKZQ53sl4vMoErlPJkUM9Y37V_cWapZc3pWUd-xHP3LKBc9Gu-qs1WNLZM2N3POvLDh1N5r1b2JPacppYPfrqGJgp9cpha-UkSoaqmO82ra-xoHGCKxwAdyxcTkv21E82OgVWKCqX4gpnI29olpIm1gI-SlTzhZrzNgqbZ1qhcSdn0eAspjMTEWWkiCatlYPjvAyGdKvlZuoH0yLrmw1HqrYo"/>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold text-on-surface leading-tight">Vintage Navigator Backpack</p>
+<p class="text-xs text-on-surface-variant mt-1">Color: Obsidian</p>
+<p class="text-sm font-mono mt-2 font-bold">$1,250.00</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-20 h-20 bg-surface-container-highest rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="minimalist analog white watch on stone surface with subtle shadows and elegant lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8EygVvKPT96nV32v6R36D98vQq1N9DT4ofQQhw_BWNlL68wwMvEQroiWA0eAEIhrcoKV7O3VpUy9HNQBWIAB_3nFnxq6S1AtzavwU1GT09K8wrbQmHo20xc5LGHpBsf17OZA-85RQN6mt-wK9hT3bfuvRhfKBppQI4G_iC3kO79C5dCXL0IJw4l53H-nJhaT_pIe3CYp0GEadNdn3vKLm2FnT_rW5g5MW4iQf7mngHdWE7-sLP8NWcxy04HZ-K7VaryyPeYlDo2I"/>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold text-on-surface leading-tight">Precision Chronograph v2</p>
+<p class="text-xs text-on-surface-variant mt-1">Movement: Automatic</p>
+<p class="text-sm font-mono mt-2 font-bold">$840.00</p>
+</div>
+</div>
+</div>
+<!-- Divider -->
+<div class="h-px bg-outline-variant/30"></div>
+<!-- Pricing Breakdown -->
+<div class="space-y-4">
+<div class="flex justify-between text-sm">
+<span class="text-on-surface-variant">Subtotal</span>
+<span class="font-mono text-on-surface">$2,090.00</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-on-surface-variant">Delivery (Express)</span>
+<span class="font-mono text-on-surface">$24.00</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-on-surface-variant">Estimated Tax</span>
+<span class="font-mono text-on-surface">$167.20</span>
+</div>
+</div>
+<!-- Final Total -->
+<div class="pt-6 border-t border-outline-variant flex justify-between items-end">
+<div>
+<p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Total Due</p>
+<p class="text-3xl font-black font-headline text-on-surface tracking-tighter mt-1">
+<span class="text-sm font-bold align-top mr-1">USD</span>$2,281.20
+                                </p>
+</div>
+</div>
+<!-- Promo Code -->
+<div class="mt-4">
+<div class="flex gap-2">
+<input class="flex-1 bg-surface-container-lowest border-none rounded-lg text-sm px-4 focus:ring-1 focus:ring-primary/20" placeholder="Promo code" type="text"/>
+<button class="px-4 py-2 bg-on-surface text-surface text-xs font-bold rounded-lg hover:bg-stone-800 transition-colors">Apply</button>
+</div>
+</div>
+</div>
+<!-- Help Block -->
+<div class="p-6 rounded-2xl bg-surface-container-highest/30 border border-outline-variant/20">
+<div class="flex gap-4 items-center">
+<div class="h-10 w-10 rounded-full bg-surface flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">support_agent</span>
+</div>
+<div>
+<p class="text-xs font-bold">Need help with your order?</p>
+<p class="text-xs text-on-surface-variant">Speak with a specialist: 1-800-TRADEHUT</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full rounded-t-3xl bg-stone-50 mt-24">
+<div class="max-w-screen-2xl mx-auto px-12 py-16 grid grid-cols-1 md:grid-cols-4 gap-12">
+<div class="col-span-1 md:col-span-1">
+<span class="text-xl font-bold text-stone-900 font-headline">TradeHut</span>
+<p class="mt-4 text-sm text-stone-500 font-['DM_Sans'] leading-relaxed">
+                    © 2024 TradeHut Stores. Architectural Precision in Commerce.
+                </p>
+</div>
+<div class="space-y-4">
+<h4 class="font-bold text-stone-900 text-sm">Marketplace</h4>
+<ul class="space-y-2">
+<li><a class="text-stone-500 text-sm hover:text-stone-900 underline-offset-4 hover:underline transition-all" href="#">All Collections</a></li>
+<li><a class="text-stone-500 text-sm hover:text-stone-900 underline-offset-4 hover:underline transition-all" href="#">Auctions</a></li>
+<li><a class="text-stone-500 text-sm hover:text-stone-900 underline-offset-4 hover:underline transition-all" href="#">RFQ Portal</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h4 class="font-bold text-stone-900 text-sm">Resources</h4>
+<ul class="space-y-2">
+<li><a class="text-stone-500 text-sm hover:text-stone-900 underline-offset-4 hover:underline transition-all" href="#">Help Center</a></li>
+<li><a class="text-stone-500 text-sm hover:text-stone-900 underline-offset-4 hover:underline transition-all" href="#">Shipping Policy</a></li>
+<li><a class="text-stone-500 text-sm hover:text-stone-900 underline-offset-4 hover:underline transition-all" href="#">Track Order</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h4 class="font-bold text-stone-900 text-sm">Legal</h4>
+<ul class="space-y-2">
+<li><a class="text-stone-500 text-sm hover:text-stone-900 underline-offset-4 hover:underline transition-all" href="#">Terms of Service</a></li>
+<li><a class="text-stone-500 text-sm hover:text-stone-900 underline-offset-4 hover:underline transition-all" href="#">Privacy Policy</a></li>
+<li><a class="text-stone-500 text-sm hover:text-stone-900 underline-offset-4 hover:underline transition-all" href="#">Security</a></li>
+</ul>
+</div>
+</div>
+</footer>
+</body></html>

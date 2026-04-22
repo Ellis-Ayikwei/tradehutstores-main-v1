@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Invite Friends | Gallery Support</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&amp;family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&amp;family=JetBrains+Mono:wght@400;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#002114",
+                    "primary-fixed": "#ffdbcd",
+                    "surface-container-highest": "#f8ddd3",
+                    "on-secondary": "#ffffff",
+                    "surface-dim": "#efd5cb",
+                    "tertiary-fixed-dim": "#b0c6ff",
+                    "surface-container-low": "#fff1ec",
+                    "on-primary-container": "#4e1900",
+                    "surface-variant": "#f8ddd3",
+                    "primary": "#a43d00",
+                    "on-tertiary-fixed": "#001945",
+                    "on-tertiary-container": "#002761",
+                    "on-surface-variant": "#5a4137",
+                    "inverse-surface": "#3d2d26",
+                    "surface": "#fff8f6",
+                    "secondary-fixed-dim": "#3fdfa5",
+                    "secondary": "#006c4b",
+                    "surface-container-high": "#fee3d9",
+                    "inverse-on-surface": "#ffede7",
+                    "on-error-container": "#93000a",
+                    "background": "#fff8f6",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-container": "#00714f",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-bright": "#fff8f6",
+                    "primary-fixed-dim": "#ffb597",
+                    "inverse-primary": "#ffb597",
+                    "secondary-fixed": "#63fcc0",
+                    "on-error": "#ffffff",
+                    "on-primary-fixed": "#360f00",
+                    "tertiary-container": "#558dff",
+                    "primary-container": "#f5620f",
+                    "error-container": "#ffdad6",
+                    "surface-container": "#ffe9e2",
+                    "outline": "#8e7165",
+                    "secondary-container": "#60f9bd",
+                    "on-background": "#261813",
+                    "tertiary-fixed": "#d9e2ff",
+                    "on-surface": "#261813",
+                    "surface-tint": "#a43d00",
+                    "outline-variant": "#e2bfb2",
+                    "on-secondary-fixed-variant": "#005138",
+                    "on-tertiary-fixed-variant": "#00429b",
+                    "on-primary-fixed-variant": "#7d2d00",
+                    "tertiary": "#0058ca",
+                    "error": "#ba1a1a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {},
+            "fontFamily": {
+                    "headline": ["Syne", "sans-serif"],
+                    "body": ["DM Sans", "sans-serif"],
+                    "label": ["Plus Jakarta Sans", "sans-serif"],
+                    "mono": ["JetBrains Mono", "monospace"]
+            },
+            "boxShadow": {
+                "card": "0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02)",
+                "card-hover": "0 12px 32px 0 rgba(38, 24, 19, 0.08)"
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #fff8f6;
+            color: #261813;
+        }
+    </style>
+</head>
+<body class="font-body selection:bg-primary-container/30">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 h-20 bg-[#FFF8F6]/70 dark:bg-stone-950/70 backdrop-blur-xl shadow-[0_4px_20px_0_rgba(38,24,19,0.04)]">
+<div class="flex justify-between items-center px-8 w-full max-w-[1920px] mx-auto h-full">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black font-['Syne'] text-[#261813] dark:text-white tracking-tighter">Gallery Support</span>
+<nav class="hidden md:flex gap-6">
+<a class="text-[#261813]/60 dark:text-stone-400 font-medium hover:bg-[#FFF1EC] dark:hover:bg-stone-800 transition-colors duration-300 px-3 py-1 rounded-lg" href="#">Market</a>
+<a class="text-[#261813]/60 dark:text-stone-400 font-medium hover:bg-[#FFF1EC] dark:hover:bg-stone-800 transition-colors duration-300 px-3 py-1 rounded-lg" href="#">Auctions</a>
+<a class="text-[#F5620F] font-bold border-b-2 border-[#F5620F] px-3 py-1" href="#">Community</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="bg-surface-container-low border-none rounded-xl pl-10 pr-4 py-2 w-64 focus:ring-2 focus:ring-primary/20 text-sm" placeholder="Search creators..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-[#FFF1EC] p-2 rounded-full transition-all">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-[#FFF1EC] p-2 rounded-full transition-all">help_outline</button>
+<img alt="User profile avatar" class="w-10 h-10 rounded-full object-cover ring-2 ring-primary-container/20" data-alt="Close-up portrait of a stylish woman with artistic lighting and soft warm tones, professional photography style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfR2UyeWLEX_cjZi0b2DIcdorRxZ_8zTGyi_vl6p8iAL8yr8r0iXvPt5WpvYgH14cbVg6JPg1qofhyHLu70afgoIgqO8wZWyGB5DtVHUuYJ1ckst58gzJha5w7v7VswNY5z1VRLy_nZNoJT2Olu5QqtRXbi0yxEa1TTWCLFjC0bGhX3YaIXKzxgDBDEAoZsR448uE6F_t4TqSFiHjNxbNHlSMISs3ypBqYf3dpQoJ0D38mwYWs56nu0l7DM_MZ9ymShvQjcHRGq74"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="h-screen w-72 fixed left-0 top-0 pt-24 bg-[#FFF1EC] dark:bg-stone-900 z-40 hidden lg:block">
+<div class="px-8 mb-8">
+<h2 class="font-['Syne'] text-lg font-bold text-[#F5620F]">Control Center</h2>
+<p class="text-xs text-on-surface-variant opacity-70">Manage your account</p>
+</div>
+<nav class="flex flex-col gap-1 pr-4">
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">assignment_return</span>
+<span class="font-['DM_Sans'] text-sm tracking-normal">Returns/Refunds</span>
+</a>
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">rate_review</span>
+<span class="font-['DM_Sans'] text-sm tracking-normal">Feedback</span>
+</a>
+<a class="bg-white dark:bg-stone-800 text-[#F5620F] font-bold rounded-r-xl shadow-[4px_0_12px_rgba(245,98,15,0.1)] px-6 py-3 flex items-center gap-4" href="#">
+<span class="material-symbols-outlined">group_add</span>
+<span class="font-['DM_Sans'] text-sm tracking-normal">Invite Friends</span>
+</a>
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">flag</span>
+<span class="font-['DM_Sans'] text-sm tracking-normal">Manage Reports</span>
+</a>
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">lightbulb</span>
+<span class="font-['DM_Sans'] text-sm tracking-normal">Suggestions</span>
+</a>
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">help_center</span>
+<span class="font-['DM_Sans'] text-sm tracking-normal">DS Center</span>
+</a>
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-['DM_Sans'] text-sm tracking-normal">Penalties Info</span>
+</a>
+<a class="text-[#261813]/70 dark:text-stone-400 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">warning</span>
+<span class="font-['DM_Sans'] text-sm tracking-normal">Safety Alerts</span>
+</a>
+</nav>
+<div class="mt-auto p-8">
+<button class="w-full bg-primary-container text-white font-bold py-3 rounded-xl shadow-lg active:scale-95 transition-all">Upgrade Plan</button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="lg:ml-72 pt-28 pb-20 px-8 min-h-screen">
+<div class="max-w-6xl mx-auto">
+<!-- Hero Section: The Kinetic Gallery approach -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-16">
+<div class="lg:col-span-7">
+<h1 class="text-6xl md:text-7xl font-headline font-extrabold tracking-tighter leading-none mb-6">
+                        Grow the <span class="text-primary italic">Gallery</span>.<br/>Earn Credit.
+                    </h1>
+<p class="text-lg text-on-surface-variant max-w-xl mb-8 leading-relaxed">
+                        Invite your fellow collectors to TradeHut. For every friend who completes their first trade, you both receive <span class="font-bold text-on-surface">$50 in TradeHut Credit</span>.
+                    </p>
+<!-- Referral Code Card -->
+<div class="bg-surface-container-low p-1 rounded-2xl max-w-md">
+<div class="bg-white p-6 rounded-xl shadow-card flex items-center justify-between gap-4">
+<div>
+<p class="text-[10px] uppercase tracking-widest font-bold text-outline mb-1">Your Personal Code</p>
+<p class="font-mono text-2xl font-bold tracking-wider text-primary">COLLECT-X92F</p>
+</div>
+<button class="bg-primary-container text-white p-4 rounded-lg hover:shadow-lg transition-all active:scale-90 flex items-center gap-2">
+<span class="material-symbols-outlined">content_copy</span>
+</button>
+</div>
+</div>
+</div>
+<div class="lg:col-span-5 relative">
+<div class="aspect-[4/5] rounded-3xl overflow-hidden shadow-card-hover transform rotate-2">
+<img alt="Abstract Art" class="w-full h-full object-cover" data-alt="Vibrant abstract contemporary oil painting with bold brushstrokes in orange, cream, and deep teal on canvas" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSkqvd2L6ixxidPTQwOJhLhEjL_mI5RgDDub2lp8-oKRSvpy-J6kDjTsRUqDd3XwbEE68BaZGQU9Ju46EDgB7s67VJJODDvy-jJDS4Go68M3wXUKmNn1nF1G1fO-VFpmlhleI9OG9U8SzkCjMDXthTD44ZjcXxVjeQOMm9wco5LaGKuQr_vwXWfc5MHG7PdfFjIKYCd140ykleEnKhfOZibiwvK8b7IoPh1ASk1oobVAw46EgvMoypyDYqI2wGopdHSb5hE1-vblo"/>
+</div>
+<div class="absolute -bottom-6 -left-6 bg-secondary-container p-6 rounded-2xl shadow-xl max-w-[200px] -rotate-3">
+<p class="text-secondary font-headline font-bold text-lg leading-tight">12 Friends Joined</p>
+<p class="text-on-secondary-container text-sm opacity-80 mt-1">Total earned: $600</p>
+</div>
+</div>
+</section>
+<!-- Rewards Tracker: Bento Grid Layout -->
+<section class="mb-16">
+<div class="flex items-end justify-between mb-8">
+<div>
+<h2 class="text-3xl font-headline font-bold tracking-tight">Referral Tracker</h2>
+<p class="text-outline">Watch your TradeHut credits grow</p>
+</div>
+<div class="flex gap-2">
+<span class="bg-surface-container-highest px-4 py-1 rounded-full text-xs font-bold text-on-surface-variant">Q3 REWARDS</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<!-- Status Card: Pending -->
+<div class="md:col-span-1 bg-surface-container-low p-8 rounded-2xl flex flex-col justify-between group hover:bg-surface-container transition-colors">
+<div>
+<span class="material-symbols-outlined text-outline mb-4 group-hover:scale-110 transition-transform">hourglass_empty</span>
+<h3 class="text-4xl font-mono font-bold">04</h3>
+<p class="text-sm font-medium text-outline mt-1">Pending Invites</p>
+</div>
+<p class="text-xs text-outline-variant mt-4 italic">Waiting for first trade</p>
+</div>
+<!-- Main Progress Card -->
+<div class="md:col-span-2 bg-white p-8 rounded-2xl shadow-card relative overflow-hidden">
+<div class="relative z-10">
+<h3 class="text-sm font-bold text-outline uppercase tracking-wider mb-8">Reward Milestones</h3>
+<div class="space-y-8">
+<div class="relative">
+<div class="flex justify-between text-xs font-bold mb-2">
+<span>Current Balance</span>
+<span class="text-secondary">$450.00</span>
+</div>
+<div class="h-3 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-3/4 rounded-full shadow-[0_0_12px_rgba(0,108,75,0.3)]"></div>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-4 text-center">
+<div class="opacity-100">
+<p class="font-mono text-xl font-bold">$200</p>
+<div class="w-2 h-2 bg-secondary rounded-full mx-auto mt-2"></div>
+<p class="text-[10px] text-outline mt-1 font-bold">REACHED</p>
+</div>
+<div class="opacity-100">
+<p class="font-mono text-xl font-bold">$500</p>
+<div class="w-2 h-2 bg-secondary/30 rounded-full mx-auto mt-2"></div>
+<p class="text-[10px] text-outline mt-1 font-bold">NEARLY</p>
+</div>
+<div class="opacity-40">
+<p class="font-mono text-xl font-bold">$1000</p>
+<div class="w-2 h-2 bg-surface-container-highest rounded-full mx-auto mt-2"></div>
+<p class="text-[10px] text-outline mt-1 font-bold">LOCKED</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Kinetic Background Element -->
+<div class="absolute -right-10 -top-10 w-40 h-40 bg-secondary/5 rounded-full blur-3xl"></div>
+</div>
+<!-- Quick Action Card -->
+<div class="md:col-span-1 bg-primary text-white p-8 rounded-2xl flex flex-col justify-between shadow-lg">
+<p class="font-headline font-bold text-xl leading-tight">Next Goal: Premium Member Status</p>
+<button class="bg-white text-primary font-bold py-3 rounded-xl mt-6 text-sm hover:bg-primary-fixed transition-colors">
+                            How it works
+                        </button>
+</div>
+</div>
+</section>
+<!-- Sharing Grid -->
+<section class="mb-16">
+<h3 class="text-sm font-bold text-outline uppercase tracking-widest mb-6 text-center">Instant Share</h3>
+<div class="flex flex-wrap justify-center gap-4">
+<button class="flex items-center gap-3 bg-white px-8 py-4 rounded-2xl shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all">
+<div class="w-8 h-8 rounded-full bg-[#1877F2] flex items-center justify-center text-white">
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path></svg>
+</div>
+<span class="font-bold text-sm">Messenger</span>
+</button>
+<button class="flex items-center gap-3 bg-white px-8 py-4 rounded-2xl shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all">
+<div class="w-8 h-8 rounded-full bg-[#1DA1F2] flex items-center justify-center text-white">
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.84 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"></path></svg>
+</div>
+<span class="font-bold text-sm">Twitter / X</span>
+</button>
+<button class="flex items-center gap-3 bg-white px-8 py-4 rounded-2xl shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all">
+<div class="w-8 h-8 rounded-full bg-[#25D366] flex items-center justify-center text-white">
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"></path></svg>
+</div>
+<span class="font-bold text-sm">WhatsApp</span>
+</button>
+<button class="flex items-center gap-3 bg-white px-8 py-4 rounded-2xl shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all">
+<div class="w-8 h-8 rounded-full bg-[#EA4335] flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-sm">mail</span>
+</div>
+<span class="font-bold text-sm">Email Invite</span>
+</button>
+</div>
+</section>
+<!-- Detailed History: Editorial Style -->
+<section class="bg-white rounded-3xl p-10 shadow-card">
+<div class="flex items-center justify-between mb-10">
+<h3 class="text-2xl font-headline font-bold">Referral History</h3>
+<button class="text-primary font-bold text-sm flex items-center gap-2 hover:gap-3 transition-all">
+                        Download Report <span class="material-symbols-outlined">download</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="text-outline text-xs uppercase tracking-widest border-b border-surface-container-low">
+<th class="pb-6 font-bold">Collector</th>
+<th class="pb-6 font-bold">Status</th>
+<th class="pb-6 font-bold">Joined</th>
+<th class="pb-6 font-bold text-right">Reward Earned</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-low">
+<tr class="group">
+<td class="py-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest overflow-hidden">
+<img alt="User" class="w-full h-full object-cover" data-alt="Portrait of a creative professional man with glasses, soft studio lighting, high-end commercial aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2HZ8wVZXG4sCdr1n7HDfv_P7YI8gWtyx2hHwOfKidh2TNeQiudkAwIy_j1XD12HtIAg_FXm9nfg6dNUnVlZeuPahxsq2KpxxKUXdAoz6IKQXwTsSEIwNKynJ7_pOQNuV8uLxh72MU2gvYinDnKoWel_ZIYftONsERF6vetwfGlsgwZFebY--NUPDNY5JG_UnedqxT8BnhomPyURhj9-44LzjbQeD2qpPqSAV81jo-tTWpIYWAE4V6injpTp31ZTbmFUP6MKDaO64"/>
+</div>
+<div>
+<p class="font-bold">Julian V. @jvx_art</p>
+<p class="text-xs text-outline">Contemporary Curator</p>
+</div>
+</div>
+</td>
+<td class="py-6">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container text-secondary text-[10px] font-bold">
+<span class="w-1.5 h-1.5 bg-secondary rounded-full"></span>
+                                        COMPLETED
+                                    </span>
+</td>
+<td class="py-6">
+<p class="font-mono text-sm">Oct 12, 2023</p>
+</td>
+<td class="py-6 text-right">
+<p class="font-mono font-bold text-secondary">+$50.00</p>
+</td>
+</tr>
+<tr class="group">
+<td class="py-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest overflow-hidden">
+<img alt="User" class="w-full h-full object-cover" data-alt="Happy young woman with colorful outfit and energetic expression, vibrant lighting, modern lifestyle photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCW8atht-3cR3moHBGb3NzHgvdJ6ESkGD3m5jMfDiofkVmBmJdx23oCOlOz9JUUn7v1n4EQeg67ThcWbV66YPGYqep4eycuTR57890f35fNCbCgg2pHuU_stokAODeHNPhd6nf17rp0uOK71MjJVGacvMY0uXS4lzoGNEKANkLOXorudLhel-r9yafPB6Sz3wTWmfsBY5WL3pCBatNCXgp0wFQs7yK9kK59tTtSaIgGnPLIqfCW6yu4Q2cBW5wSQpvn-Wxe78P92-Y"/>
+</div>
+<div>
+<p class="font-bold">Elena Rose @elena_collects</p>
+<p class="text-xs text-outline">Digital Nomad Artist</p>
+</div>
+</div>
+</td>
+<td class="py-6">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container text-secondary text-[10px] font-bold">
+<span class="w-1.5 h-1.5 bg-secondary rounded-full"></span>
+                                        COMPLETED
+                                    </span>
+</td>
+<td class="py-6">
+<p class="font-mono text-sm">Oct 08, 2023</p>
+</td>
+<td class="py-6 text-right">
+<p class="font-mono font-bold text-secondary">+$50.00</p>
+</td>
+</tr>
+<tr class="group">
+<td class="py-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-outline">person</span>
+</div>
+<div>
+<p class="font-bold">Marcus Chen</p>
+<p class="text-xs text-outline">Invite Pending Action</p>
+</div>
+</div>
+</td>
+<td class="py-6">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-highest text-on-surface-variant text-[10px] font-bold">
+<span class="w-1.5 h-1.5 bg-outline rounded-full"></span>
+                                        PENDING
+                                    </span>
+</td>
+<td class="py-6">
+<p class="font-mono text-sm">Oct 02, 2023</p>
+</td>
+<td class="py-6 text-right">
+<p class="font-mono font-bold text-outline opacity-40">$0.00</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</main>
+<!-- Floating Action Button: Suppressed per shell logic for this page, but kept generic for context if required by a specific 'Add' action elsewhere -->
+<!-- SUPPRESSED FOR THIS TRANSACTIONAL/SOCIAL PAGE -->
+</body></html>

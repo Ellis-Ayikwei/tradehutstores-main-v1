@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Create New Listing - Step 3: Pricing &amp; Type | Kinetic Seller</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&amp;family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&amp;family=JetBrains+Mono:wght@500;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#fff1ec",
+                        "surface-container-high": "#fee3d9",
+                        "outline-variant": "#e2bfb2",
+                        "surface-container-highest": "#f8ddd3",
+                        "on-error": "#ffffff",
+                        "background": "#fff8f6",
+                        "surface-container": "#ffe9e2",
+                        "secondary-fixed-dim": "#3fdfa5",
+                        "inverse-primary": "#ffb597",
+                        "on-secondary": "#ffffff",
+                        "surface-tint": "#a43d00",
+                        "on-surface-variant": "#5a4137",
+                        "on-secondary-fixed-variant": "#005138",
+                        "tertiary-fixed-dim": "#b0c6ff",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#001945",
+                        "primary-fixed-dim": "#ffb597",
+                        "outline": "#8e7165",
+                        "error": "#ba1a1a",
+                        "primary-container": "#f5620f",
+                        "on-secondary-container": "#00714f",
+                        "secondary": "#006c4b",
+                        "primary": "#a43d00",
+                        "tertiary-container": "#558dff",
+                        "secondary-fixed": "#63fcc0",
+                        "inverse-on-surface": "#ffede7",
+                        "error-container": "#ffdad6",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#00429b",
+                        "tertiary": "#0058ca",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#4e1900",
+                        "on-primary-fixed": "#360f00",
+                        "primary-fixed": "#ffdbcd",
+                        "on-tertiary-container": "#002761",
+                        "tertiary-fixed": "#d9e2ff",
+                        "inverse-surface": "#3d2d26",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#f8ddd3",
+                        "surface-dim": "#efd5cb",
+                        "secondary-container": "#60f9bd",
+                        "surface-bright": "#fff8f6",
+                        "surface": "#fff8f6",
+                        "on-surface": "#261813",
+                        "on-primary-fixed-variant": "#7d2d00",
+                        "on-secondary-fixed": "#002114",
+                        "on-background": "#261813"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Syne", "sans-serif"],
+                        "body": ["DM Sans", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                        "label": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    "boxShadow": {
+                        "card": "0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02)",
+                        "card-hover": "0 12px 32px 0 rgba(38, 24, 19, 0.08)"
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'DM Sans', sans-serif; }
+        h1, h2, h3 { font-family: 'Syne', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        
+        /* Custom scrollbar for subtle appearance */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e2bfb2; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- Sidebar Navigation -->
+<aside class="h-screen w-64 fixed left-0 top-0 overflow-y-auto bg-[#FFF1EC] dark:bg-stone-950 flex flex-col py-8 border-none z-50">
+<div class="px-6 mb-10">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-white shadow-lg">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<div>
+<h2 class="text-lg font-extrabold tracking-tighter text-[#261813] dark:text-stone-100">Kinetic Seller</h2>
+<p class="text-[10px] uppercase tracking-widest font-bold text-[#F5620F]">Verified Merchant</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-[#261813]/70 dark:text-stone-400 hover:bg-white/50 dark:hover:bg-stone-800 transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-semibold">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#F5620F] border-r-4 border-[#F5620F] bg-white dark:bg-stone-900 font-bold transition-all rounded-l-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">storefront</span>
+<span class="text-sm font-semibold">Active Listings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#261813]/70 dark:text-stone-400 hover:bg-white/50 dark:hover:bg-stone-800 transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="text-sm font-semibold">Order Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#261813]/70 dark:text-stone-400 hover:bg-white/50 dark:hover:bg-stone-800 transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="text-sm font-semibold">Market Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#261813]/70 dark:text-stone-400 hover:bg-white/50 dark:hover:bg-stone-800 transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined">settings_suggest</span>
+<span class="text-sm font-semibold">Portal Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-4 space-y-1 pt-4 border-t border-outline-variant/10">
+<a class="flex items-center gap-3 px-4 py-3 text-[#261813]/70 dark:text-stone-400 hover:bg-white/50 dark:hover:bg-stone-800 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+<span class="text-sm font-semibold">Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#261813]/70 dark:text-stone-400 hover:bg-white/50 dark:hover:bg-stone-800 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="text-sm font-semibold">Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Wrapper -->
+<main class="pl-64 min-h-screen flex flex-col">
+<!-- Top Bar -->
+<header class="bg-[#FFF8F6]/70 dark:bg-stone-900/70 backdrop-blur-md flex justify-between items-center w-full px-8 py-4 docked full-width top-0 z-40 sticky shadow-card dark:shadow-none">
+<div class="flex items-center gap-4">
+<h1 class="text-xl font-bold tracking-tight text-[#261813] dark:text-stone-100">Create New Listing</h1>
+<span class="px-3 py-1 bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase rounded-full tracking-wider">Draft Mode</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-[#FFF1EC] rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-[#FFF1EC] rounded-full transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+<div class="h-8 w-[1px] bg-outline-variant/30"></div>
+<div class="flex items-center gap-3">
+<button class="text-sm font-bold text-on-surface-variant hover:text-primary transition-colors">Save Draft</button>
+<button class="bg-primary-container text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg hover:scale-105 active:scale-95 transition-all">Publish</button>
+<img alt="Seller Profile Avatar" class="w-10 h-10 rounded-full border-2 border-primary/20" data-alt="Professional portrait of a male business merchant in a modern studio setting with warm lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzK4jP400NOLWGONmpF-Y55KBfP4qAUxfm0x3z6RM-7_0GCjKD0SP0T3NdBYUpYGb-41AnIc9zbisKuw8JCcwJWZ3F-5YKIurkYzOyFg5z_57TzCyuzqLBhS2XQ3NpG3CCsg_xcOYsTVs35ODkFgCPVD-VKu4Yf_SHL8Uh8JwR0Rd73eZHaPjujjorlIPz5VhKaA3c5KvZBGxeBB8sfI31ko8mF2UN0qpvpkxIkKGT06whOTKn0tLPiaAGGGLmp2KPOTOKVPWU3bc"/>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="p-10 flex-1 max-w-6xl mx-auto w-full">
+<div class="grid grid-cols-12 gap-12">
+<!-- Left Column: Progress & Identity -->
+<div class="col-span-12 lg:col-span-4">
+<div class="sticky top-28 space-y-8">
+<div>
+<h3 class="text-3xl font-extrabold tracking-tight mb-2">Pricing &amp; Type</h3>
+<p class="text-on-surface-variant leading-relaxed">Define how you want to sell your item. Choose between fixed pricing, competitive bidding, or direct negotiation.</p>
+</div>
+<!-- Vertical Stepper -->
+<div class="space-y-6 relative">
+<div class="absolute left-5 top-5 bottom-5 w-[2px] bg-surface-container-high -z-10"></div>
+<!-- Step 1: Completed -->
+<div class="flex items-center gap-4 group">
+<div class="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-white ring-4 ring-surface">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'wght' 700;">check</span>
+</div>
+<span class="text-sm font-bold text-on-surface/50">1. Basic Details</span>
+</div>
+<!-- Step 2: Completed -->
+<div class="flex items-center gap-4 group">
+<div class="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-white ring-4 ring-surface">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'wght' 700;">check</span>
+</div>
+<span class="text-sm font-bold text-on-surface/50">2. Media &amp; Uploads</span>
+</div>
+<!-- Step 3: Active -->
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-white ring-4 ring-primary-container/20 ring-offset-2">
+<span class="font-bold text-sm">03</span>
+</div>
+<span class="text-sm font-bold text-primary">3. Pricing &amp; Type</span>
+</div>
+<!-- Step 4: Pending -->
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant/40 ring-4 ring-surface">
+<span class="font-bold text-sm">04</span>
+</div>
+<span class="text-sm font-bold text-on-surface-variant/40">4. Variants &amp; Specs</span>
+</div>
+<!-- Step 5: Pending -->
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant/40 ring-4 ring-surface">
+<span class="font-bold text-sm">05</span>
+</div>
+<span class="text-sm font-bold text-on-surface-variant/40">5. Shipping &amp; Logistics</span>
+</div>
+</div>
+<!-- Currency Helper Card -->
+<div class="bg-surface-container-low p-6 rounded-2xl border border-outline-variant/15">
+<div class="flex items-center justify-between mb-4">
+<span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Global Currency</span>
+<div class="flex bg-surface rounded-full p-1 border border-outline-variant/20">
+<button class="px-3 py-1 bg-primary text-white text-[10px] font-bold rounded-full">GBP</button>
+<button class="px-3 py-1 text-on-surface-variant text-[10px] font-bold">USD</button>
+</div>
+</div>
+<p class="text-sm text-on-surface-variant">Your listing will be displayed in <span class="font-bold text-on-surface">Pounds Sterling (£)</span> by default. Buyers can see conversions in their local currency.</p>
+</div>
+</div>
+</div>
+<!-- Right Column: Interactive Form -->
+<div class="col-span-12 lg:col-span-8 space-y-10">
+<!-- Section: Listing Type Selection -->
+<section class="bg-white p-8 rounded-3xl shadow-card">
+<h4 class="text-xl font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">sell</span>
+                            Choose Sale Format
+                        </h4>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Fixed Price Option -->
+<label class="relative cursor-pointer group">
+<input checked="" class="sr-only peer" name="listing_type" type="radio" value="fixed"/>
+<div class="p-6 h-full rounded-2xl border-2 border-transparent bg-surface-container-low peer-checked:border-primary peer-checked:bg-white transition-all">
+<span class="material-symbols-outlined mb-4 text-3xl text-on-surface-variant peer-checked:text-primary">label_important</span>
+<p class="font-bold text-lg leading-tight mb-1">Fixed Price</p>
+<p class="text-xs text-on-surface-variant leading-snug">Sell at a set amount. Best for standard retail items.</p>
+</div>
+<div class="absolute top-4 right-4 opacity-0 peer-checked:opacity-100">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</label>
+<!-- Auction Option -->
+<label class="relative cursor-pointer group">
+<input class="sr-only peer" name="listing_type" type="radio" value="auction"/>
+<div class="p-6 h-full rounded-2xl border-2 border-transparent bg-surface-container-low peer-checked:border-bid-green peer-checked:bg-white transition-all">
+<span class="material-symbols-outlined mb-4 text-3xl text-on-surface-variant">gavel</span>
+<p class="font-bold text-lg leading-tight mb-1">Auction</p>
+<p class="text-xs text-on-surface-variant leading-snug">Highest bidder wins. Perfect for rare or high-demand items.</p>
+</div>
+<div class="absolute top-4 right-4 opacity-0 peer-checked:opacity-100">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</label>
+<!-- RFQ Option -->
+<label class="relative cursor-pointer group">
+<input class="sr-only peer" name="listing_type" type="radio" value="rfq"/>
+<div class="p-6 h-full rounded-2xl border-2 border-transparent bg-surface-container-low peer-checked:border-tertiary peer-checked:bg-white transition-all">
+<span class="material-symbols-outlined mb-4 text-3xl text-on-surface-variant">request_quote</span>
+<p class="font-bold text-lg leading-tight mb-1">RFQ Only</p>
+<p class="text-xs text-on-surface-variant leading-snug">Accept custom quotes for bulk or bespoke orders.</p>
+</div>
+<div class="absolute top-4 right-4 opacity-0 peer-checked:opacity-100">
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</label>
+</div>
+</section>
+<!-- Dynamic Form: Fixed Price (Default Visible) -->
+<section class="bg-white p-8 rounded-3xl shadow-card transition-all" id="form-fixed-price">
+<h4 class="text-xl font-bold mb-8">Fixed Price Details</h4>
+<div class="grid grid-cols-2 gap-8">
+<div class="col-span-2 md:col-span-1">
+<label class="block text-sm font-bold mb-2">Base Price</label>
+<div class="relative flex items-center">
+<span class="absolute left-4 font-mono text-on-surface-variant font-bold">£</span>
+<input class="w-full bg-surface-container-low border-none rounded-xl py-4 pl-8 pr-4 font-mono text-lg focus:ring-2 focus:ring-primary/20 transition-all" placeholder="0.00" type="text"/>
+</div>
+</div>
+<div class="col-span-2 md:col-span-1">
+<label class="block text-sm font-bold mb-2">Tax Category</label>
+<select class="w-full bg-surface-container-low border-none rounded-xl py-4 px-4 font-bold appearance-none focus:ring-2 focus:ring-primary/20">
+<option>Standard Rate (20%)</option>
+<option>Reduced Rate (5%)</option>
+<option>Zero Rated (0%)</option>
+<option>Exempt</option>
+</select>
+</div>
+<div class="col-span-2 flex items-center justify-between p-6 bg-surface-container-low rounded-2xl">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-primary">handshake</span>
+</div>
+<div>
+<p class="font-bold">Allow Offers</p>
+<p class="text-xs text-on-surface-variant">Allow buyers to suggest a different price for your review.</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-outline-variant/30 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</section>
+<!-- Section: Auction (Visual Mock for state change) -->
+<section class="bg-white/40 p-8 rounded-3xl border border-dashed border-outline-variant/30 grayscale opacity-60">
+<h4 class="text-xl font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined">gavel</span>
+                            Auction Configuration
+                        </h4>
+<div class="grid grid-cols-2 gap-6">
+<div class="bg-surface-container-low/50 h-16 rounded-xl"></div>
+<div class="bg-surface-container-low/50 h-16 rounded-xl"></div>
+<div class="bg-surface-container-low/50 h-16 rounded-xl col-span-2"></div>
+</div>
+</section>
+<!-- Footer Actions -->
+<div class="flex items-center justify-between pt-8">
+<button class="flex items-center gap-2 px-8 py-4 rounded-xl border border-outline font-bold text-on-surface hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined">arrow_back</span>
+                            Back: Media
+                        </button>
+<div class="flex items-center gap-4">
+<p class="text-xs text-on-surface-variant text-right hidden sm:block">Step 3 of 5<br/><span class="font-bold text-on-surface">Up next: Variants</span></p>
+<button class="bg-primary-container text-white px-10 py-4 rounded-xl font-bold text-lg shadow-[0_8px_30px_rgb(245,98,15,0.3)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+                                Next: Variants
+                                <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Floating Info (Editorial Touch) -->
+<div class="fixed bottom-8 left-72 right-8 bg-surface-container-highest/90 backdrop-blur-sm px-6 py-3 rounded-full flex items-center justify-between border border-white shadow-card z-30 max-w-4xl mx-auto">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-sm">info</span>
+<p class="text-xs font-bold text-on-surface-variant">Kinetic Tip: Items with 'Allow Offers' enabled sell 40% faster in current market conditions.</p>
+</div>
+<button class="text-[10px] font-extrabold uppercase tracking-widest text-primary-container">Dismiss</button>
+</div>
+</main>
+</body></html>

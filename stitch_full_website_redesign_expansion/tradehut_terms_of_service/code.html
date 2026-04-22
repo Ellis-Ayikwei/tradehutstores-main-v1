@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&amp;family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&amp;family=JetBrains+Mono:wght@400;500&amp;family=Epilogue:wght@400;700;900&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-surface": "#3d2d26",
+                    "on-tertiary": "#ffffff",
+                    "primary": "#a43d00",
+                    "surface-container-highest": "#f8ddd3",
+                    "on-surface-variant": "#5a4137",
+                    "on-primary-fixed-variant": "#7d2d00",
+                    "secondary": "#006c4b",
+                    "surface": "#fff8f6",
+                    "on-tertiary-fixed": "#001945",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#f8ddd3",
+                    "secondary-fixed-dim": "#3fdfa5",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed-dim": "#b0c6ff",
+                    "on-surface": "#261813",
+                    "outline": "#8e7165",
+                    "tertiary": "#0058ca",
+                    "on-secondary-container": "#00714f",
+                    "on-primary": "#ffffff",
+                    "surface-container": "#ffe9e2",
+                    "on-primary-fixed": "#360f00",
+                    "surface-dim": "#efd5cb",
+                    "primary-fixed": "#ffdbcd",
+                    "on-background": "#261813",
+                    "secondary-fixed": "#63fcc0",
+                    "surface-container-low": "#fff1ec",
+                    "background": "#fff8f6",
+                    "surface-tint": "#a43d00",
+                    "inverse-on-surface": "#ffede7",
+                    "surface-bright": "#fff8f6",
+                    "inverse-primary": "#ffb597",
+                    "surface-container-high": "#fee3d9",
+                    "error": "#ba1a1a",
+                    "secondary-container": "#60f9bd",
+                    "on-tertiary-fixed-variant": "#00429b",
+                    "on-primary-container": "#4e1900",
+                    "on-tertiary-container": "#002761",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed-dim": "#ffb597",
+                    "primary-container": "#f5620f",
+                    "on-secondary-fixed-variant": "#005138",
+                    "outline-variant": "#e2bfb2",
+                    "tertiary-fixed": "#d9e2ff",
+                    "on-error": "#ffffff",
+                    "tertiary-container": "#558dff",
+                    "on-secondary-fixed": "#002114",
+                    "on-secondary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Syne", "Epilogue", "sans-serif"],
+                    "body": ["DM Sans", "Plus Jakarta Sans", "sans-serif"],
+                    "mono": ["JetBrains Mono", "monospace"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'DM Sans', sans-serif; }
+        h1, h2, h3 { font-family: 'Syne', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-2xl shadow-sm h-16">
+<div class="flex justify-between items-center px-8 h-full w-full max-w-[1440px] mx-auto">
+<div class="flex items-center gap-2">
+<span class="text-xl font-black text-[#261813] font-['Epilogue'] tracking-tight">LegalCenter</span>
+</div>
+<div class="hidden md:flex items-center gap-8 font-['Epilogue'] tracking-tight">
+<a class="text-[#261813]/70 hover:text-[#F5620F] transition-colors duration-300" href="#">Policies</a>
+<a class="text-[#261813]/70 hover:text-[#F5620F] transition-colors duration-300" href="#">Resources</a>
+<a class="text-[#261813]/70 hover:text-[#F5620F] transition-colors duration-300" href="#">Contact</a>
+</div>
+<button class="bg-primary-container text-on-primary-container px-6 py-2 rounded-md font-bold scale-95 active:opacity-80 transition-all">
+                Accept Terms
+            </button>
+</div>
+<div class="bg-[#FFF1EC] h-[1px] w-full absolute bottom-0 opacity-20"></div>
+</nav>
+<main class="pt-32 pb-24 px-8 max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-[256px_1fr] gap-16">
+<!-- SideNavBar / Table of Contents -->
+<aside class="sticky top-24 left-0 h-fit w-64 hidden lg:block font-['DM_Sans'] text-sm font-medium">
+<div class="mb-8">
+<h3 class="font-['Epilogue'] font-bold text-[#261813] text-lg">Table of Contents</h3>
+<p class="text-on-surface-variant/60 text-xs mt-1">Last updated Oct 2023</p>
+</div>
+<nav class="flex flex-col gap-y-2 py-4">
+<a class="text-[#F5620F] font-bold border-l-4 border-[#F5620F] pl-4 flex items-center gap-3 py-2 group" href="#introduction">
+<span class="material-symbols-outlined text-lg" data-icon="info">info</span>
+<span>Introduction</span>
+</a>
+<a class="text-[#261813]/50 border-l-4 border-transparent pl-4 flex items-center gap-3 py-2 hover:bg-[#FFF1EC] rounded-r-lg transition-all group" href="#user-conduct">
+<span class="material-symbols-outlined text-lg group-hover:text-[#F5620F]" data-icon="gavel">gavel</span>
+<span>User Conduct</span>
+</a>
+<a class="text-[#261813]/50 border-l-4 border-transparent pl-4 flex items-center gap-3 py-2 hover:bg-[#FFF1EC] rounded-r-lg transition-all group" href="#account-security">
+<span class="material-symbols-outlined text-lg group-hover:text-[#F5620F]" data-icon="lock">lock</span>
+<span>Account Security</span>
+</a>
+<a class="text-[#261813]/50 border-l-4 border-transparent pl-4 flex items-center gap-3 py-2 hover:bg-[#FFF1EC] rounded-r-lg transition-all group" href="#intellectual-property">
+<span class="material-symbols-outlined text-lg group-hover:text-[#F5620F]" data-icon="copyright">copyright</span>
+<span>Intellectual Property</span>
+</a>
+<a class="text-[#261813]/50 border-l-4 border-transparent pl-4 flex items-center gap-3 py-2 hover:bg-[#FFF1EC] rounded-r-lg transition-all group" href="#liability">
+<span class="material-symbols-outlined text-lg group-hover:text-[#F5620F]" data-icon="error_outline">error_outline</span>
+<span>Liability</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content -->
+<article class="max-w-3xl mx-auto w-full">
+<header class="mb-16">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container text-primary text-xs font-mono mb-6">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+                    VERSION P3-26
+                </div>
+<h1 class="text-5xl md:text-6xl font-extrabold tracking-tighter text-on-surface mb-6 leading-[0.9]">
+                    Terms of Service
+                </h1>
+<p class="text-lg text-on-surface-variant leading-relaxed font-body">
+                    Please read these terms carefully before using TradeHut. By accessing or using our platform, you agree to be bound by these terms and all terms incorporated by reference.
+                </p>
+</header>
+<!-- Prose Section -->
+<div class="space-y-20 font-body text-on-surface-variant leading-extra-loose">
+<section class="scroll-mt-32" id="introduction">
+<h2 class="text-3xl font-bold text-on-surface mb-6 tracking-tight">1. Introduction</h2>
+<div class="p-8 bg-surface-container-low rounded-xl mb-6">
+<p class="mb-4">
+                            Welcome to <span class="font-bold text-on-surface">TradeHut</span>. These Terms of Service ("Terms") govern your access to and use of the TradeHut website, mobile applications, and any other software or services provided by TradeHut (collectively, the "Services").
+                        </p>
+<p>
+                            By clicking "Accept" or by using the Services, you confirm that you have read, understood, and agreed to these Terms. If you do not agree to these Terms, you may not access or use the Services.
+                        </p>
+</div>
+</section>
+<section class="scroll-mt-32" id="user-conduct">
+<h2 class="text-3xl font-bold text-on-surface mb-6 tracking-tight">2. User Conduct</h2>
+<p class="mb-6">
+                        TradeHut is a community built on trust. We expect all users to act with integrity and respect. You agree that you will not:
+                    </p>
+<ul class="space-y-6">
+<li class="flex gap-4">
+<span class="font-mono text-primary font-bold">01/</span>
+<span>Use the Services for any illegal purpose or in violation of any local, state, national, or international law.</span>
+</li>
+<li class="flex gap-4">
+<span class="font-mono text-primary font-bold">02/</span>
+<span>Violate or encourage others to violate any right of or obligation to a third party, including by infringing, misappropriating, or violating intellectual property.</span>
+</li>
+<li class="flex gap-4">
+<span class="font-mono text-primary font-bold">03/</span>
+<span>Post, upload, or distribute any User Content that is unlawful, defamatory, libelous, or that a reasonable person could deem to be objectionable.</span>
+</li>
+</ul>
+</section>
+<section class="scroll-mt-32" id="account-security">
+<h2 class="text-3xl font-bold text-on-surface mb-6 tracking-tight">3. Account Security</h2>
+<div class="relative overflow-hidden bg-on-surface text-surface p-8 rounded-xl">
+<div class="relative z-10">
+<p class="mb-4 opacity-90">
+                                You are responsible for safeguarding the password that you use to access the Services and for any activities or actions under your password.
+                            </p>
+<p class="opacity-90">
+                                We encourage you to use "strong" passwords (passwords that use a combination of upper and lower case letters, numbers and symbols) with your account. TradeHut cannot and will not be liable for any loss or damage arising from your failure to comply with the above.
+                            </p>
+</div>
+<div class="absolute -right-12 -bottom-12 opacity-10">
+<span class="material-symbols-outlined text-[12rem]" data-icon="lock">lock</span>
+</div>
+</div>
+</section>
+<section class="scroll-mt-32" id="intellectual-property">
+<h2 class="text-3xl font-bold text-on-surface mb-6 tracking-tight">4. Intellectual Property</h2>
+<p class="mb-6">
+                        The Services and their entire contents, features, and functionality (including but not limited to all information, software, text, displays, images, video, and audio, and the design, selection, and arrangement thereof) are owned by TradeHut, its licensors, or other providers of such material and are protected by United States and international copyright, trademark, patent, trade secret, and other intellectual property or proprietary rights laws.
+                    </p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="border border-outline-variant/30 p-6 rounded-lg">
+<h4 class="font-bold text-on-surface mb-2">Our License to You</h4>
+<p class="text-sm">We grant you a limited, non-exclusive, non-transferable, and revocable license to use our Services strictly for personal, non-commercial purposes.</p>
+</div>
+<div class="border border-outline-variant/30 p-6 rounded-lg">
+<h4 class="font-bold text-on-surface mb-2">Your Feedback</h4>
+<p class="text-sm">Any feedback, comments, or suggestions you may provide regarding TradeHut is entirely voluntary and we will be free to use such feedback as we see fit.</p>
+</div>
+</div>
+</section>
+<section class="scroll-mt-32" id="liability">
+<h2 class="text-3xl font-bold text-on-surface mb-6 tracking-tight">5. Limitation of Liability</h2>
+<p class="mb-6 uppercase text-xs tracking-widest font-bold opacity-60">Legal Disclaimer</p>
+<div class="font-mono text-sm bg-surface-container p-8 rounded-lg border-l-4 border-primary">
+                        TO THE MAXIMUM EXTENT PERMITTED BY LAW, TRADEHUT SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS OR REVENUES, WHETHER INCURRED DIRECTLY OR INDIRECTLY, OR ANY LOSS OF DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES, RESULTING FROM (I) YOUR ACCESS TO OR USE OF OR INABILITY TO ACCESS OR USE THE SERVICES; (II) ANY CONDUCT OR CONTENT OF ANY THIRD PARTY ON THE SERVICES; (III) ANY CONTENT OBTAINED FROM THE SERVICES; OR (IV) UNAUTHORIZED ACCESS, USE OR ALTERATION OF YOUR TRANSMISSIONS OR CONTENT.
+                    </div>
+</section>
+</div>
+<!-- CTA Section -->
+<footer class="mt-24 pt-12 border-t border-outline-variant/20 flex flex-col items-center text-center">
+<h3 class="text-2xl font-bold mb-4">Have questions about our terms?</h3>
+<p class="text-on-surface-variant mb-8 max-w-md">Our legal team is here to help you understand your rights and responsibilities on the TradeHut platform.</p>
+<div class="flex gap-4">
+<button class="bg-primary text-on-primary px-8 py-3 rounded-md font-bold hover:shadow-lg transition-all">Contact Legal</button>
+<button class="bg-transparent border border-outline px-8 py-3 rounded-md font-bold hover:bg-surface-container-low transition-all">Download PDF</button>
+</div>
+</footer>
+</article>
+</main>
+<!-- Footer -->
+<footer class="w-full py-12 bg-[#FFF1EC] dark:bg-[#1A110E]">
+<div class="flex flex-col md:flex-row justify-between items-center px-8 max-w-[1440px] mx-auto gap-8">
+<div class="flex flex-col items-center md:items-start gap-2">
+<span class="text-[#261813] font-black font-['Epilogue'] text-lg">LegalCenter</span>
+<p class="font-['DM_Sans'] text-xs uppercase tracking-widest text-[#261813]/60">© 2024 LegalCenter Inc. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-8 font-['DM_Sans'] text-xs uppercase tracking-widest">
+<a class="text-[#261813]/60 hover:text-[#F5620F] underline underline-offset-4 transition-all" href="#">Privacy Policy</a>
+<a class="text-[#261813]/60 hover:text-[#F5620F] underline underline-offset-4 transition-all" href="#">Cookie Policy</a>
+<a class="text-[#261813]/60 hover:text-[#F5620F] underline underline-offset-4 transition-all" href="#">Compliance</a>
+<a class="text-[#261813]/60 hover:text-[#F5620F] underline underline-offset-4 transition-all" href="#">Security</a>
+</div>
+</div>
+</footer>
+</body></html>

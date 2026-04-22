@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Market Reports | TradeHut Industrial</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&amp;family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Epilogue:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-background": "#261813",
+                    "on-tertiary-fixed": "#001945",
+                    "surface-container-highest": "#f8ddd3",
+                    "surface-variant": "#f8ddd3",
+                    "surface-container-low": "#fff1ec",
+                    "secondary-container": "#60f9bd",
+                    "error-container": "#ffdad6",
+                    "on-surface-variant": "#5a4137",
+                    "tertiary-fixed": "#d9e2ff",
+                    "inverse-surface": "#3d2d26",
+                    "on-secondary-fixed": "#002114",
+                    "surface-dim": "#efd5cb",
+                    "surface-container-high": "#fee3d9",
+                    "surface": "#fff8f6",
+                    "on-secondary-fixed-variant": "#005138",
+                    "inverse-on-surface": "#ffede7",
+                    "tertiary": "#0058ca",
+                    "on-primary-container": "#4e1900",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container": "#ffe9e2",
+                    "on-tertiary-container": "#002761",
+                    "tertiary-fixed-dim": "#b0c6ff",
+                    "outline": "#8e7165",
+                    "on-error-container": "#93000a",
+                    "surface-tint": "#a43d00",
+                    "primary-fixed-dim": "#ffb597",
+                    "surface-bright": "#fff8f6",
+                    "primary-container": "#f5620f",
+                    "primary": "#a43d00",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed-variant": "#7d2d00",
+                    "on-error": "#ffffff",
+                    "on-surface": "#261813",
+                    "error": "#ba1a1a",
+                    "background": "#fff8f6",
+                    "on-tertiary-fixed-variant": "#00429b",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed-dim": "#3fdfa5",
+                    "on-primary-fixed": "#360f00",
+                    "outline-variant": "#e2bfb2",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed": "#63fcc0",
+                    "tertiary-container": "#558dff",
+                    "secondary": "#006c4b",
+                    "primary-fixed": "#ffdbcd",
+                    "on-secondary-container": "#00714f",
+                    "inverse-primary": "#ffb597"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Syne", "sans-serif"],
+                    "body": ["DM Sans", "sans-serif"],
+                    "mono": ["JetBrains Mono", "monospace"],
+                    "brand": ["Syne", "sans-serif"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .kinetic-glass {
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+        .shadow-card {
+            box-shadow: 0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02);
+        }
+        .shadow-card:hover {
+            box-shadow: 0 12px 32px 0 rgba(38, 24, 19, 0.08);
+        }
+        .text-glow {
+            text-shadow: 0 0 20px rgba(245, 98, 15, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#FFF8F6]/70 dark:bg-[#1A1412]/70 backdrop-blur-3xl shadow-[0_4px_20px_0_rgba(38,24,19,0.04)]">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-screen-2xl mx-auto">
+<div class="flex items-center gap-8">
+<a class="text-2xl font-bold font-brand text-[#261813] dark:text-[#FFF8F6] tracking-tighter" href="#">TradeHut</a>
+<div class="hidden md:flex items-center gap-6">
+<a class="text-[#F5620F] font-bold border-b-2 border-[#F5620F] pb-1 font-brand tracking-tight" href="#">Market Reports</a>
+<a class="text-[#261813] dark:text-[#FFF8F6] font-medium hover:text-[#F5620F] transition-colors font-brand tracking-tight" href="#">Editorial</a>
+<a class="text-[#261813] dark:text-[#FFF8F6] font-medium hover:text-[#F5620F] transition-colors font-brand tracking-tight" href="#">Trust Center</a>
+<a class="text-[#261813] dark:text-[#FFF8F6] font-medium hover:text-[#F5620F] transition-colors font-brand tracking-tight" href="#">Pricing</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="hidden lg:block px-4 py-2 text-[#261813] font-medium hover:bg-[#FFF1EC] transition-all duration-300 rounded-md">Log In</button>
+<button class="px-6 py-2 bg-gradient-to-r from-primary to-primary-container text-on-primary font-bold rounded-md scale-95 active:opacity-80 transition-transform">Get Started</button>
+</div>
+</div>
+</nav>
+<main class="pt-24 min-h-screen">
+<!-- Hero Section: Kinetic Gallery Style -->
+<section class="max-w-screen-2xl mx-auto px-6 py-12 md:py-24 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+<div class="lg:col-span-7 space-y-6">
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-surface-container-low rounded-full text-xs font-bold tracking-widest text-primary uppercase">
+<span class="material-symbols-outlined text-[14px]">analytics</span>
+                    P3-23 Specialized Variant
+                </div>
+<h1 class="font-headline text-5xl md:text-7xl font-extrabold tracking-tighter text-on-background leading-[0.9]">
+                    Industrial Intelligence <span class="text-primary italic">Refined.</span>
+</h1>
+<p class="text-lg md:text-xl text-on-surface-variant max-w-xl font-body leading-relaxed">
+                    Access high-frequency data, technical cross-sections, and institutional-grade forecasting for global heavy industry markets.
+                </p>
+<div class="flex flex-wrap gap-4 pt-4">
+<div class="flex flex-col">
+<span class="font-mono text-2xl font-bold text-on-surface">1.2B+</span>
+<span class="text-xs uppercase tracking-widest text-on-surface-variant font-medium">Data Points</span>
+</div>
+<div class="w-px h-12 bg-outline-variant/30 hidden sm:block"></div>
+<div class="flex flex-col">
+<span class="font-mono text-2xl font-bold text-on-surface">42</span>
+<span class="text-xs uppercase tracking-widest text-on-surface-variant font-medium">Global Hubs</span>
+</div>
+<div class="w-px h-12 bg-outline-variant/30 hidden sm:block"></div>
+<div class="flex flex-col">
+<span class="font-mono text-2xl font-bold text-secondary">98.2%</span>
+<span class="text-xs uppercase tracking-widest text-on-surface-variant font-medium">Forecast Accuracy</span>
+</div>
+</div>
+</div>
+<div class="lg:col-span-5 relative">
+<div class="aspect-square rounded-2xl bg-surface-container shadow-card overflow-hidden group">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="Technical close-up of high-precision industrial robotic arm in a sterile factory environment with soft orange glow lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyizvaO91kiHIBO_u_FUnIk6mZpeytzPXvrtTbgykBc1Yh56l1ektjqssZfiGAizUroR1m5EFsiyX_hnjuu8qT0oJdBPU9KbY6jx4h2yA41inldov8mKWWxZFhfgBQXwsEAzBVLOVRI328_P2QyThq7pp3LqmN1xf-Z5-KXFKh2xkMLKe60M1nIyu-ev66V_Wru2hMnD0EsvkeEsxEU0cI1StmZgGelolVUk_CQdLGhph956Ick6uv6CTTP2gC1xgTW7FdDqUIsK4"/>
+<div class="absolute inset-0 bg-gradient-to-t from-on-background/60 to-transparent"></div>
+<div class="absolute bottom-6 left-6 right-6 p-6 kinetic-glass bg-white/10 rounded-xl border border-white/20">
+<p class="text-white font-mono text-sm mb-2">LIVE_SENSITIVITY_INDEX</p>
+<div class="flex items-center justify-between">
+<span class="text-white font-headline font-bold text-xl">Market Sentiment: Bullish</span>
+<span class="material-symbols-outlined text-secondary-container" style="font-variation-settings: 'FILL' 1;">trending_up</span>
+</div>
+</div>
+</div>
+<!-- Floating Decorative Element -->
+<div class="absolute -top-6 -right-6 w-32 h-32 bg-primary-container/20 rounded-full blur-3xl"></div>
+</div>
+</section>
+<!-- Market Sentiment Indicators -->
+<section class="bg-surface-container-low py-12">
+<div class="max-w-screen-2xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
+<div class="space-y-1">
+<p class="text-xs font-mono text-on-surface-variant uppercase tracking-widest">Heavy Metals [HME]</p>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-mono font-bold">14,202.50</span>
+<span class="text-sm font-mono text-secondary">+1.24%</span>
+</div>
+</div>
+<div class="space-y-1">
+<p class="text-xs font-mono text-on-surface-variant uppercase tracking-widest">Energy Grid [ENY]</p>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-mono font-bold">8,944.12</span>
+<span class="text-sm font-mono text-error">-0.45%</span>
+</div>
+</div>
+<div class="space-y-1">
+<p class="text-xs font-mono text-on-surface-variant uppercase tracking-widest">Global Logistics [LOG]</p>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-mono font-bold">31,040.80</span>
+<span class="text-sm font-mono text-secondary">+2.15%</span>
+</div>
+</div>
+<div class="space-y-1">
+<p class="text-xs font-mono text-on-surface-variant uppercase tracking-widest">Raw Materials [RAW]</p>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-mono font-bold">5,212.00</span>
+<span class="text-sm font-mono text-on-surface-variant">0.00%</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Featured Research: Bento Grid Layout -->
+<section class="max-w-screen-2xl mx-auto px-6 py-24">
+<div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+<div class="max-w-2xl">
+<h2 class="font-headline text-4xl font-bold tracking-tight mb-4">Featured Research</h2>
+<p class="text-on-surface-variant font-body">Deep-dive analysis into the trends defining the next decade of industrial evolution.</p>
+</div>
+<button class="flex items-center gap-2 font-headline font-bold text-primary group">
+                    View All Reports 
+                    <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Large Card -->
+<div class="md:col-span-8 bg-surface-container-lowest p-8 rounded-xl shadow-card flex flex-col md:flex-row gap-8 hover:translate-y-[-4px] transition-transform duration-300">
+<div class="md:w-1/2 overflow-hidden rounded-lg">
+<img class="w-full h-full object-cover aspect-video md:aspect-auto" data-alt="Interior view of a massive modern shipping port at night with blue and orange crane lights reflecting in the water" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDV1ey5WUOgXVfWU7ClXKjIHjWgJ_BJQ-8a2AsUW59saqZdY3_jAX762yQ7g_zOostkBggolCbwG2Ka8yGdQdOjSF3Fa256JYKJTwQkd01Id7l-T6rYJwsvETD6hw9hFJrGXWX_qulQdE9eXPIVpyWyDC2FeG6N0PxIpMhNnTS8F9rg3xpCR77MqHndZjliFr1MUi4Q8h7Lgy89Gnq0PY6Gp8ARFuvBCMIFJN5v0l2jKoSjCIlnxqmN_Qiu-ZB7pQHrlo0xHZqXhNg"/>
+</div>
+<div class="md:w-1/2 flex flex-col justify-between">
+<div>
+<span class="text-xs font-mono font-bold text-primary mb-2 block">QUARTERLY_OUTLOOK</span>
+<h3 class="font-headline text-2xl font-bold mb-4">The Trans-Pacific Logistical Squeeze: 2024-2025 Prediction Model</h3>
+<p class="text-on-surface-variant text-sm line-clamp-3">A comprehensive audit of bottleneck risk across major Pacific shipping lanes, featuring proprietary IoT sensor data from TradeHut's maritime partners.</p>
+</div>
+<div class="pt-6 flex items-center justify-between">
+<span class="text-xs font-mono text-on-surface-variant">PDF • 4.2MB • 86 Pages</span>
+<button class="px-4 py-2 bg-primary-fixed text-on-primary-fixed font-bold text-sm rounded-md hover:bg-primary-container transition-colors">Download</button>
+</div>
+</div>
+</div>
+<!-- Small Card 1 -->
+<div class="md:col-span-4 bg-surface-container p-6 rounded-xl shadow-card hover:translate-y-[-4px] transition-transform duration-300">
+<span class="text-xs font-mono font-bold text-tertiary mb-2 block">WHITE_PAPER</span>
+<h3 class="font-headline text-xl font-bold mb-4">Sustainability vs. Scalability in Steel Manufacturing</h3>
+<p class="text-on-surface-variant text-sm mb-8">Analyzing the CAPEX requirements for green hydrogen transitions in smelting plants.</p>
+<div class="mt-auto">
+<button class="w-full py-2 border border-outline-variant/30 font-bold text-sm rounded-md hover:bg-surface-container-lowest transition-colors flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                            Get White Paper
+                        </button>
+</div>
+</div>
+<!-- Small Card 2 -->
+<div class="md:col-span-4 bg-surface-container-low p-6 rounded-xl shadow-card hover:translate-y-[-4px] transition-transform duration-300">
+<span class="text-xs font-mono font-bold text-secondary mb-2 block">EMERGING_MARKET</span>
+<h3 class="font-headline text-xl font-bold mb-4">Vietnam's Industrial Land Surge: Hub Analysis</h3>
+<p class="text-on-surface-variant text-sm mb-8">Satellite mapping reveals rapid expansion in Haiphong industrial zones.</p>
+<div class="mt-auto">
+<button class="w-full py-2 border border-outline-variant/30 font-bold text-sm rounded-md hover:bg-surface-container-lowest transition-colors flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+                            Read Online
+                        </button>
+</div>
+</div>
+<!-- Featured Quote/Insight -->
+<div class="md:col-span-8 bg-inverse-surface p-8 rounded-xl flex flex-col justify-center relative overflow-hidden">
+<div class="absolute top-0 right-0 p-8 opacity-10">
+<span class="material-symbols-outlined text-[120px] text-surface">format_quote</span>
+</div>
+<p class="text-2xl md:text-3xl font-headline font-medium text-surface mb-6 italic leading-tight relative z-10">
+                        "The decoupling of heavy manufacturing from centralized power grids is no longer a luxury—it's the 2025 survival baseline."
+                    </p>
+<div class="flex items-center gap-4 relative z-10">
+<div class="w-10 h-10 rounded-full bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of a middle-aged male executive with glasses looking confident" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZQz-9a9pMIFu9Lexv7u1PtXdB8Fwd8-11SD0oiBqOU45U_ih_MU75v0-NXv_oHxiKmJ6KDmNQ9pHdnfkmAhGiRIQ4V0_pBh-hF-dLf1lzcltChrTetdyDQnhWO8xM1OCz0vliv87y4dLo_ESY84ARDKpkdGtzVKkgkp150h8lRpQZiBJ4tjD1tAIHRPlL8grTY1DoQY7FfIZfunrz9hq0D9BA2RxIchV3rR7Ujn2B2_NAtq0dq_882FftF_IwKwnuIFR3r8yqeX4"/>
+</div>
+<div>
+<p class="text-surface font-bold">Dr. Aris Vond</p>
+<p class="text-surface/60 text-xs uppercase tracking-widest font-mono">Chief Strategist, TradeHut</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Asset Class Deep-Dives -->
+<section class="bg-surface py-24">
+<div class="max-w-screen-2xl mx-auto px-6">
+<div class="flex items-center justify-between mb-16">
+<h2 class="font-headline text-4xl font-bold tracking-tight">Asset Class Deep-Dives</h2>
+<div class="flex gap-2">
+<button class="w-10 h-10 rounded-md bg-surface-container-low flex items-center justify-center hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 rounded-md bg-surface-container-low flex items-center justify-center hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+<!-- Deep Dive Item -->
+<div class="space-y-4 group">
+<div class="aspect-[4/5] bg-surface-container-low rounded-lg overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Technical architectural blueprints of a refinery plant on a digital drafting table with glowing cyan lines" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrQZOcSOWs9yW3hAq5vGXtGpwOYFYTmFcH8WP-1e9rgkpZx0c0O7k5mydBzR5OmBjnfGYLXzB12370W1MHv0tP3ugk3tdRyZRaLl2Uh7XprWlvf5SH_ARCLN1sVkNiMBbz3f27vTcmPC4ZZqmOMGr_aFFX6YF80mpyCCqIgzrgG79i8DlnzYutKJXRYY0dOjfJqOSgvdZCUAlGHNTuuX7-ODY_agBQt1groQc5Ca9kQ7D8Am6u28H644Em8pO4xHAzFuoFaVklvcU"/>
+</div>
+<div class="space-y-2">
+<h4 class="font-headline font-bold text-lg">Heavy Machinery</h4>
+<p class="text-sm text-on-surface-variant">Auction volatility analysis for Tier-1 excavators and boring equipment.</p>
+<a class="inline-flex items-center gap-1 text-primary text-sm font-bold mt-2" href="#">
+                                Explorer Sector <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+</a>
+</div>
+</div>
+<div class="space-y-4 group">
+<div class="aspect-[4/5] bg-surface-container-low rounded-lg overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Abstract macro shot of molten steel pouring in a dark industrial foundry with bright orange sparks" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD97kSqdqwmvcK_oFhVujFwR4jXbqrapYuMu-hPy_zv1CC3a7Yv58_lRIMC9BmXWDKBfAgELakVepB-eLcnNbPQiOKSnxeFmrBHidM7PGT6ISs8hB5S7P4Z5Lit1Uk8_888faAG7XXo7RxYwYXpXQ-EE8pAxEyJJJPqxB_PHeVk4RD4Aav6VcfHLeDHswpkD39p_QedRMVFOPE4mH7ddGIjl7DWEPtxl-6dTGs59aH3XC310E_WxlZMod__JoYX4S1hba5PJJ9XYcU"/>
+</div>
+<div class="space-y-2">
+<h4 class="font-headline font-bold text-lg">Rare Earth Elements</h4>
+<p class="text-sm text-on-surface-variant">Tracking the supply-chain shifts in Neodymium and Dysprosium mining.</p>
+<a class="inline-flex items-center gap-1 text-primary text-sm font-bold mt-2" href="#">
+                                Explorer Sector <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+</a>
+</div>
+</div>
+<div class="space-y-4 group">
+<div class="aspect-[4/5] bg-surface-container-low rounded-lg overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Wide angle view of a solar farm in a desert landscape at midday with high contrast shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAK9vcV6O5fY1V2o-T7En3MwPIC1RK4AeWPE-kzRL64MrFzT4kGeweAThhX_VREawFFy4RlpLPlGAmTPNTEtokuRik-1UGW4LGSyZCVjBaADAZiW6jUPYjr9wgHha9E9F5iDSnF-sWMObKl3ZbOdQKdDzRCIkLFEB0G5ihvJtywPNXq6NLQr5os3QELuYdH_t1T7PuOdFlH0eOWCesXvA6aWFgllpcdgjIarG7DugDdhiGz0taBGAiHmRu1pc0oC3tjNi3wyd_7row"/>
+</div>
+<div class="space-y-2">
+<h4 class="font-headline font-bold text-lg">Renewable Assets</h4>
+<p class="text-sm text-on-surface-variant">Secondary market pricing for large-scale photovoltaic arrays.</p>
+<a class="inline-flex items-center gap-1 text-primary text-sm font-bold mt-2" href="#">
+                                Explorer Sector <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+</a>
+</div>
+</div>
+<div class="space-y-4 group">
+<div class="aspect-[4/5] bg-surface-container-low rounded-lg overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Top down view of colorful shipping containers stacked in a geometric pattern at a freight terminal" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9GKyfcmCFFhh9_2jcrCdaOKuDvuJoxUR5_pgh6u5qK6APb6BNkPel140_gKcOpveMe7dZ00ToV28yp6f30E2YMtEb5K8x6ak93DAlaq8ajS6m9BLQlna1X6rkaRHUsyxt-XSw8BBN7KT1qcXjkVjBPpKR90VvmKvBAtOWtj93lhaYhJN0b-AbMLt02ycqD9RY7_EH722qy8yTwWrMrdlwJbghzhrHZyqtqA8pra4phvZFOY_BwIvnt-LY1M6oZ8nrCt4vrEnAU_w"/>
+</div>
+<div class="space-y-2">
+<h4 class="font-headline font-bold text-lg">Industrial Real Estate</h4>
+<p class="text-sm text-on-surface-variant">Yield analysis for automated fulfillment centers in EU hubs.</p>
+<a class="inline-flex items-center gap-1 text-primary text-sm font-bold mt-2" href="#">
+                                Explorer Sector <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Subscription CTA -->
+<section class="max-w-screen-2xl mx-auto px-6 mb-24">
+<div class="bg-primary rounded-2xl p-12 md:p-20 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-12">
+<!-- Abstract Background Pattern -->
+<div class="absolute inset-0 opacity-10 pointer-events-none">
+<svg fill="none" height="100%" preserveaspectratio="none" viewbox="0 0 100 100" width="100%">
+<pattern height="10" id="grid" patternunits="userSpaceOnUse" width="10">
+<path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.5"></path>
+</pattern>
+<rect fill="url(#grid)" height="100" width="100"></rect>
+</svg>
+</div>
+<div class="relative z-10 max-w-xl text-center md:text-left">
+<h2 class="font-headline text-3xl md:text-5xl font-extrabold text-white tracking-tighter leading-none mb-6">
+                        Stay ahead of the <span class="text-primary-fixed">market curve.</span>
+</h2>
+<p class="text-white/80 text-lg">Join 12,000+ industry leaders who receive our weekly technical digest and market movement alerts.</p>
+</div>
+<div class="relative z-10 w-full max-w-md">
+<form class="flex flex-col sm:flex-row gap-3">
+<input class="flex-grow bg-white/10 border border-white/20 rounded-md px-6 py-4 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/40 transition-all font-body" placeholder="Institutional Email" type="email"/>
+<button class="bg-white text-primary font-bold px-8 py-4 rounded-md hover:bg-primary-fixed transition-colors whitespace-nowrap">Subscribe Now</button>
+</form>
+<p class="text-white/40 text-[10px] mt-4 text-center sm:text-left uppercase tracking-widest font-mono">No spam. Only high-frequency data. Unsubscribe anytime.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-[#FFF1EC] dark:bg-[#120B09] w-full py-16 px-8 mt-24">
+<div class="max-w-screen-2xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
+<div class="col-span-1 md:col-span-1">
+<a class="font-['Syne'] font-black text-[#261813] dark:text-[#FFF8F6] text-2xl mb-6 block" href="#">TradeHut</a>
+<p class="text-[#261813]/60 dark:text-[#FFF8F6]/60 text-sm leading-relaxed mb-6 font-body">
+                    The premier marketplace for industrial assets and technical intelligence. Engineered for professionals, built for precision.
+                </p>
+<div class="flex gap-4">
+<a class="w-8 h-8 rounded-full bg-on-background/5 flex items-center justify-center hover:bg-primary-container hover:text-white transition-all" href="#"><span class="material-symbols-outlined text-sm">public</span></a>
+<a class="w-8 h-8 rounded-full bg-on-background/5 flex items-center justify-center hover:bg-primary-container hover:text-white transition-all" href="#"><span class="material-symbols-outlined text-sm">hub</span></a>
+<a class="w-8 h-8 rounded-full bg-on-background/5 flex items-center justify-center hover:bg-primary-container hover:text-white transition-all" href="#"><span class="material-symbols-outlined text-sm">share</span></a>
+</div>
+</div>
+<div class="space-y-4">
+<h4 class="font-headline font-bold uppercase tracking-widest text-xs text-on-surface/40">Marketplace</h4>
+<ul class="space-y-3 font-['DM_Sans'] text-sm tracking-wide">
+<li><a class="text-[#261813]/60 dark:text-[#FFF8F6]/60 hover:text-[#F5620F] hover:translate-x-1 transition-transform inline-block" href="#">Market Insights</a></li>
+<li><a class="text-[#261813]/60 dark:text-[#FFF8F6]/60 hover:text-[#F5620F] hover:translate-x-1 transition-transform inline-block" href="#">Live Auctions</a></li>
+<li><a class="text-[#261813]/60 dark:text-[#FFF8F6]/60 hover:text-[#F5620F] hover:translate-x-1 transition-transform inline-block" href="#">Direct RFQ</a></li>
+<li><a class="text-[#261813]/60 dark:text-[#FFF8F6]/60 hover:text-[#F5620F] hover:translate-x-1 transition-transform inline-block" href="#">Inventory Search</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h4 class="font-headline font-bold uppercase tracking-widest text-xs text-on-surface/40">Technical</h4>
+<ul class="space-y-3 font-['DM_Sans'] text-sm tracking-wide">
+<li><a class="text-[#261813]/60 dark:text-[#FFF8F6]/60 hover:text-[#F5620F] hover:translate-x-1 transition-transform inline-block" href="#">API Documentation</a></li>
+<li><a class="text-[#261813]/60 dark:text-[#FFF8F6]/60 hover:text-[#F5620F] hover:translate-x-1 transition-transform inline-block" href="#">Security Protocol</a></li>
+<li><a class="text-[#261813]/60 dark:text-[#FFF8F6]/60 hover:text-[#F5620F] hover:translate-x-1 transition-transform inline-block" href="#">System Status</a></li>
+<li><a class="text-[#261813]/60 dark:text-[#FFF8F6]/60 hover:text-[#F5620F] hover:translate-x-1 transition-transform inline-block" href="#">Open Data Initiative</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h4 class="font-headline font-bold uppercase tracking-widest text-xs text-on-surface/40">Company</h4>
+<ul class="space-y-3 font-['DM_Sans'] text-sm tracking-wide">
+<li><a class="text-[#261813]/60 dark:text-[#FFF8F6]/60 hover:text-[#F5620F] hover:translate-x-1 transition-transform inline-block" href="#">Sustainability</a></li>
+<li><a class="text-[#261813]/60 dark:text-[#FFF8F6]/60 hover:text-[#F5620F] hover:translate-x-1 transition-transform inline-block" href="#">Terms of Service</a></li>
+<li><a class="text-[#261813]/60 dark:text-[#FFF8F6]/60 hover:text-[#F5620F] hover:translate-x-1 transition-transform inline-block" href="#">Trust Center</a></li>
+<li><a class="text-[#261813]/60 dark:text-[#FFF8F6]/60 hover:text-[#F5620F] hover:translate-x-1 transition-transform inline-block" href="#">Contact Support</a></li>
+</ul>
+</div>
+</div>
+<div class="max-w-screen-2xl mx-auto mt-20 pt-8 border-t border-on-background/5 flex flex-col md:flex-row justify-between items-center gap-6">
+<p class="font-['DM_Sans'] text-sm tracking-wide text-[#261813]/40">© 2024 TradeHut Industrial. Engineered for Precision.</p>
+<div class="flex gap-8">
+<span class="font-mono text-[10px] text-on-surface/30">V.4.2.0-STABLE</span>
+<span class="font-mono text-[10px] text-on-surface/30 uppercase tracking-[0.2em]">All Rights Reserved</span>
+</div>
+</div>
+</footer>
+</body></html>

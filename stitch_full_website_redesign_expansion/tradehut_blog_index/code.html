@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700;800;900&amp;family=Syne:wght@700;800&amp;family=DM+Sans:wght@400;500;700&amp;family=JetBrains+Mono:wght@500&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#ffdbcd",
+                        "on-tertiary-container": "#002761",
+                        "on-primary-fixed": "#360f00",
+                        "tertiary-fixed": "#d9e2ff",
+                        "inverse-surface": "#3d2d26",
+                        "surface-variant": "#f8ddd3",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#fff8f6",
+                        "surface-dim": "#efd5cb",
+                        "secondary-container": "#60f9bd",
+                        "surface": "#fff8f6",
+                        "on-surface": "#261813",
+                        "on-primary-fixed-variant": "#7d2d00",
+                        "on-background": "#261813",
+                        "on-secondary-fixed": "#002114",
+                        "error": "#ba1a1a",
+                        "on-secondary-container": "#00714f",
+                        "primary-container": "#f5620f",
+                        "tertiary-container": "#558dff",
+                        "secondary": "#006c4b",
+                        "primary": "#a43d00",
+                        "inverse-on-surface": "#ffede7",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed": "#63fcc0",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#00429b",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#4e1900",
+                        "tertiary": "#0058ca",
+                        "surface-container": "#ffe9e2",
+                        "inverse-primary": "#ffb597",
+                        "secondary-fixed-dim": "#3fdfa5",
+                        "on-secondary": "#ffffff",
+                        "surface-tint": "#a43d00",
+                        "on-surface-variant": "#5a4137",
+                        "on-secondary-fixed-variant": "#005138",
+                        "on-tertiary-fixed": "#001945",
+                        "tertiary-fixed-dim": "#b0c6ff",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#ffb597",
+                        "outline": "#8e7165",
+                        "surface-container-highest": "#f8ddd3",
+                        "surface-container-low": "#fff1ec",
+                        "surface-container-high": "#fee3d9",
+                        "outline-variant": "#e2bfb2",
+                        "on-error": "#ffffff",
+                        "background": "#fff8f6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Syne", "sans-serif"],
+                        "body": ["DM Sans", "sans-serif"],
+                        "label": ["Plus Jakarta Sans", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                        "brand": ["Epilogue", "sans-serif"]
+                    },
+                    "boxShadow": {
+                        "card": "0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02)",
+                        "card-hover": "0 12px 32px 0 rgba(38, 24, 19, 0.08)"
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .kinetic-glass {
+            background: rgba(255, 248, 246, 0.7);
+            backdrop-filter: blur(24px);
+        }
+        .signature-glow {
+            background: linear-gradient(135deg, #a43d00 0%, #f5620f 100%);
+        }
+        .ghost-border {
+            border: 1px solid rgba(142, 113, 101, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased selection:bg-primary-fixed">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-orange-50/70 dark:bg-stone-950/70 backdrop-blur-xl no-border shadow-sm shadow-orange-900/5">
+<nav class="flex justify-between items-center max-w-7xl mx-auto px-6 py-4 w-full">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black text-stone-900 dark:text-stone-50 tracking-tighter font-brand">TradeHut</span>
+<div class="hidden md:flex items-center gap-6">
+<a class="font-brand font-bold tracking-tight text-sm uppercase text-orange-600 dark:text-orange-400 border-b-2 border-orange-600 dark:border-orange-400 pb-1 hover:text-orange-500 dark:hover:text-orange-300 transition-all duration-300" href="#">Market Reports</a>
+<a class="font-brand font-bold tracking-tight text-sm uppercase text-stone-600 dark:text-stone-400 hover:text-orange-500 dark:hover:text-orange-300 transition-all duration-300" href="#">Seller Guides</a>
+<a class="font-brand font-bold tracking-tight text-sm uppercase text-stone-600 dark:text-stone-400 hover:text-orange-500 dark:hover:text-orange-300 transition-all duration-300" href="#">Product Updates</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="bg-surface-container-low border-none rounded-md pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary/20 w-64 transition-all" placeholder="Search insights..." type="text"/>
+</div>
+<button class="bg-primary-container text-on-primary font-bold px-6 py-2 rounded-md hover:opacity-90 active:scale-95 transition-all text-sm font-brand uppercase tracking-tight">Subscribe</button>
+</div>
+</nav>
+</header>
+<main class="pt-24 pb-20">
+<!-- Hero Section: Featured Post -->
+<section class="max-w-7xl mx-auto px-6 mb-16">
+<div class="relative group overflow-hidden rounded-xl bg-surface-container-low h-[600px] flex items-end">
+<div class="absolute inset-0 z-0">
+<img alt="Abstract marketplace" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Cinematic high-angle shot of a minimalist futuristic trading floor with warm amber lighting and sharp architectural lines" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcn16ECnouWOXb3YuWH78XlLJjshsGvDwck6QjjNRwkDDeN40aBYEbetTBDI2hHeP_P0YgaJHw4jL3Cys74OIGC6IYgKb4YMsnqJy9qHY1kEgHyFGaLibA1OxEkRA0RCGTDIP00OZORKR_hB-8mHrDeWP0WVyF8nJaRa40bTC7z3sJsWOY6GCazAhAQZN_qgNCRDOnNVByHjzSDEAOnD5Yr2kdEYKCuEm6a59B06juFUkXiwCMNUv343YlPnvarYaH7i4dzlD21EE"/>
+<div class="absolute inset-0 bg-gradient-to-t from-on-surface/90 via-on-surface/40 to-transparent"></div>
+</div>
+<div class="relative z-10 p-8 md:p-16 max-w-3xl">
+<span class="inline-block px-3 py-1 rounded-full bg-primary-container text-on-primary text-[10px] font-bold uppercase tracking-widest mb-6">Featured Analysis</span>
+<h1 class="text-4xl md:text-7xl font-headline font-extrabold text-surface tracking-tighter leading-[0.9] mb-8">The Kinetic Shift: How Real-Time Bidding Reshaped Logistics.</h1>
+<div class="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+<button class="signature-glow text-on-primary px-10 py-4 rounded-md font-headline font-bold text-lg hover:shadow-xl transition-all active:scale-95">Read Full Report</button>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant font-mono text-xs">TH</div>
+<div class="text-surface-container-lowest">
+<p class="text-sm font-bold">Marcus Thorne</p>
+<p class="text-xs opacity-70">Chief Market Strategist</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Filters/Category Bar -->
+<nav class="max-w-7xl mx-auto px-6 mb-12 flex items-center gap-4 overflow-x-auto no-scrollbar pb-2">
+<button class="px-6 py-2 rounded-full bg-primary-fixed text-on-primary-fixed font-bold text-sm whitespace-nowrap">All Insights</button>
+<button class="px-6 py-2 rounded-full bg-surface-container-low text-on-surface-variant font-medium text-sm whitespace-nowrap hover:bg-surface-container-high transition-colors">Seller Guides</button>
+<button class="px-6 py-2 rounded-full bg-surface-container-low text-on-surface-variant font-medium text-sm whitespace-nowrap hover:bg-surface-container-high transition-colors">Market Reports</button>
+<button class="px-6 py-2 rounded-full bg-surface-container-low text-on-surface-variant font-medium text-sm whitespace-nowrap hover:bg-surface-container-high transition-colors">Product Updates</button>
+<button class="px-6 py-2 rounded-full bg-surface-container-low text-on-surface-variant font-medium text-sm whitespace-nowrap hover:bg-surface-container-high transition-colors">Interviews</button>
+</nav>
+<!-- Article Grid -->
+<section class="max-w-7xl mx-auto px-6">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+<!-- Article Card 1 -->
+<article class="flex flex-col group cursor-pointer">
+<div class="aspect-[4/5] overflow-hidden rounded-xl bg-surface-container-low mb-6 relative">
+<img alt="Data visualization" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Minimalist dashboard UI showing growth charts with bid-green accents on a clean white desk setup" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBszLSsr8lM-xz24r4cYJ4eZ5NIg_dwOc9XBdxskBZmFHrvzxoGGJULAxoW4lcYhwGl_LbwYdtYxgF1w77GQR5-E2omb6G4FROAYc_wscP_ergfyo-fGJY5AgIGPB9oviJ4QuEWL5K3NrthHwtpxDmzV-i1Pk85ASsgrl-oV9wjC-A3XpH9LIwWBFY1107t0-XoSs5cIkPXDV9mumE2unM79uqT5GCISgGLnYV3P0gkqR4nD2HACjFT-wDG9LUoLEuXtmfMl1ZHQS4"/>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1 rounded-full bg-surface/90 backdrop-blur text-primary text-[10px] font-bold uppercase tracking-wider">Seller Guide</span>
+</div>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-2 mb-3">
+<span class="font-mono text-[10px] text-on-surface-variant">04.12.2024</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-mono text-[10px] text-on-surface-variant">8 MIN READ</span>
+</div>
+<h3 class="text-2xl font-headline font-bold text-on-surface leading-tight mb-4 group-hover:text-primary transition-colors">Maximizing Margins in High-Frequency Hardware Auctions.</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6 line-clamp-2">Learn the strategic pacing required to dominate hardware auctions without over-leveraging your operational capital.</p>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
+<div class="flex items-center gap-2">
+<span class="text-xs font-bold text-on-surface">Elena Rodriguez</span>
+</div>
+<span class="material-symbols-outlined text-primary group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</div>
+</article>
+<!-- Article Card 2 -->
+<article class="flex flex-col group cursor-pointer lg:mt-12">
+<div class="aspect-[4/5] overflow-hidden rounded-xl bg-surface-container-low mb-6 relative">
+<img alt="Logistics warehouse" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Blurred industrial warehouse with bright blue led lighting systems and symmetrical racking rows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKXy5wGQTY-mE4-xbLV8jnxSa0Wr8peLqipqjwH1Ygh3_rKvCzx9GsmnY02mSXjXbDPwCOWGUDIloDxmc_M6HGVwfsdS95TVgn-J70n-7M3JLpgiFpvM-0Md8uKCNPbLlJsVUPwBOGeZywcSSZnUIhhAhs79yi0bcq4ohUrJIm--uxenxqtHipGjj5SfptmBmwP94wUN1lGMUgAytSFWz1m7FrpzpqklUt1a4PemcZEVRTRRCI5dnbddFLucft4iZOqZMDm2rlivs"/>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1 rounded-full bg-surface/90 backdrop-blur text-tertiary text-[10px] font-bold uppercase tracking-wider">Product Update</span>
+</div>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-2 mb-3">
+<span class="font-mono text-[10px] text-on-surface-variant">04.10.2024</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-mono text-[10px] text-on-surface-variant">4 MIN READ</span>
+</div>
+<h3 class="text-2xl font-headline font-bold text-on-surface leading-tight mb-4 group-hover:text-primary transition-colors">Introducing RFQ 2.0: Structural Logic for Complex Tenders.</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6 line-clamp-2">The latest update brings modular specifications and auto-matching vendor protocols to our core bidding engine.</p>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
+<div class="flex items-center gap-2">
+<span class="text-xs font-bold text-on-surface">Dave Chen</span>
+</div>
+<span class="material-symbols-outlined text-primary group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</div>
+</article>
+<!-- Article Card 3 -->
+<article class="flex flex-col group cursor-pointer lg:mt-6">
+<div class="aspect-[4/5] overflow-hidden rounded-xl bg-surface-container-low mb-6 relative">
+<img alt="Stacks of paper" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Extreme close up of fine paper edges stacked with dramatic shadows highlighting the texture and layers" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBas0urq9GIcV_PsgkmW0p_41FzD2eOA9DJdB_I0kEGykRouw5-58Xo5yeEUjwtV6o2Ql4TXJZ1Z4oe1iqe3xamERt60SxD-v-RpKtmpVW--ToX9ifmkjDQffz9j1a0Bo9QXOM1MHDonPoQh6MlcQP7jUhWsfJYemcxEpB-lbNJzrZpHfrTQOzOqWG6GfOROXRp1h1hFTKxns0Y-JShQPhtyfxY66bV5ejL8YJ1QktPGmXZbWQT01cwjutx-Wib7oI-0uZeADVH3wg"/>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1 rounded-full bg-surface/90 backdrop-blur text-primary text-[10px] font-bold uppercase tracking-wider">Market Report</span>
+</div>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-2 mb-3">
+<span class="font-mono text-[10px] text-on-surface-variant">04.08.2024</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-mono text-[10px] text-on-surface-variant">12 MIN READ</span>
+</div>
+<h3 class="text-2xl font-headline font-bold text-on-surface leading-tight mb-4 group-hover:text-primary transition-colors">Q1 Transparency Report: Global Trade Flows and Friction Points.</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6 line-clamp-2">An architectural deep-dive into the current state of industrial supply chains and emerging trade corridors.</p>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
+<div class="flex items-center gap-2">
+<span class="text-xs font-bold text-on-surface">Sarah Jenkins</span>
+</div>
+<span class="material-symbols-outlined text-primary group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</div>
+</article>
+<!-- Article Card 4 -->
+<article class="flex flex-col group cursor-pointer">
+<div class="aspect-[4/5] overflow-hidden rounded-xl bg-surface-container-low mb-6 relative">
+<img alt="Digital charts" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Macro photography of a computer screen showing complex mathematical graphs with glowing orange data points" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlSrbdpI2GzuGPfYHwog0CDjMF8fY5-y3HLYQmYBgb3yN6ZM2pHrlB-DZPhhl0tG44YcdlIofIv_vBCfdmwhyjCQDc7_XV4WZWscDqJJXb3mEuWdiaPRB9vEbc71_IAVVg7RhzNkByyFdiwkeYacFOcT_vsOtuHaq2RF88vXdmt79IOJBaw0ck2kuXeNlOovkh7OHs8XHZ4frla-dhGkjmUjtlHHQLajO0v38buvG43VZqEzuJk972T-KnA6-dyf7A2UZURvg_z_o"/>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1 rounded-full bg-surface/90 backdrop-blur text-primary text-[10px] font-bold uppercase tracking-wider">Analysis</span>
+</div>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-2 mb-3">
+<span class="font-mono text-[10px] text-on-surface-variant">04.05.2024</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-mono text-[10px] text-on-surface-variant">6 MIN READ</span>
+</div>
+<h3 class="text-2xl font-headline font-bold text-on-surface leading-tight mb-4 group-hover:text-primary transition-colors">Algorithmic Trust: The New Currency of Industrial B2B.</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6 line-clamp-2">How verified transaction history is becoming more valuable than raw liquidity in high-end trade circles.</p>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
+<div class="flex items-center gap-2">
+<span class="text-xs font-bold text-on-surface">James Wilson</span>
+</div>
+<span class="material-symbols-outlined text-primary group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</div>
+</article>
+<!-- Newsletter Bento Card (Asymmetric) -->
+<article class="md:col-span-2 flex flex-col md:flex-row rounded-xl bg-on-tertiary-container overflow-hidden p-8 md:p-12 relative">
+<div class="absolute right-0 top-0 w-1/3 h-full opacity-10 pointer-events-none">
+<span class="material-symbols-outlined text-[200px]" style="font-variation-settings: 'FILL' 1;">mail</span>
+</div>
+<div class="relative z-10 md:w-3/5">
+<h3 class="text-3xl font-headline font-extrabold text-tertiary-fixed leading-none mb-6">Never miss a pulse.<br/>Market intelligence delivered weekly.</h3>
+<p class="text-tertiary-fixed-dim text-sm mb-8 max-w-md">Join over 15,000 procurement leads and trade specialists who receive our curated analysis every Tuesday morning.</p>
+<form class="flex flex-col sm:flex-row gap-3">
+<input class="bg-white/10 border-none rounded-md px-6 py-4 text-white placeholder:text-white/40 focus:ring-2 focus:ring-tertiary-fixed w-full" placeholder="work@company.com" type="email"/>
+<button class="bg-tertiary-fixed text-on-tertiary-container px-8 py-4 rounded-md font-bold text-sm whitespace-nowrap hover:bg-white transition-colors">Join Elite</button>
+</form>
+</div>
+</article>
+</div>
+</section>
+<!-- Pagination -->
+<div class="max-w-7xl mx-auto px-6 mt-20 flex justify-center items-center gap-2">
+<button class="w-10 h-10 rounded-md ghost-border flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<button class="w-10 h-10 rounded-md bg-primary-container text-on-primary font-bold text-sm">1</button>
+<button class="w-10 h-10 rounded-md ghost-border flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors text-sm font-bold">2</button>
+<button class="w-10 h-10 rounded-md ghost-border flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors text-sm font-bold">3</button>
+<span class="text-on-surface-variant px-2">...</span>
+<button class="w-10 h-10 rounded-md ghost-border flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors text-sm font-bold">12</button>
+<button class="w-10 h-10 rounded-md ghost-border flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full border-t-0 mt-auto bg-stone-100 dark:bg-stone-900 p-12">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex flex-col items-center md:items-start gap-2">
+<span class="text-xl font-black text-stone-800 dark:text-stone-200 font-brand">TradeHut</span>
+<p class="text-stone-500 dark:text-stone-400 font-sans text-sm tracking-normal">© 2024 TradeHut Kinetic Gallery. All rights reserved.</p>
+</div>
+<div class="flex items-center gap-8">
+<a class="text-stone-500 dark:text-stone-400 font-sans text-sm hover:text-orange-600 dark:hover:text-orange-400 underline underline-offset-4 transition-all" href="#">About Us</a>
+<a class="text-stone-500 dark:text-stone-400 font-sans text-sm hover:text-orange-600 dark:hover:text-orange-400 underline underline-offset-4 transition-all" href="#">Privacy Policy</a>
+<a class="text-stone-500 dark:text-stone-400 font-sans text-sm hover:text-orange-600 dark:hover:text-orange-400 underline underline-offset-4 transition-all" href="#">Terms of Service</a>
+<a class="text-stone-500 dark:text-stone-400 font-sans text-sm hover:text-orange-600 dark:hover:text-orange-400 underline underline-offset-4 transition-all" href="#">Contact</a>
+</div>
+<div class="flex items-center gap-4">
+<a class="text-stone-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">share</span></a>
+<a class="text-stone-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">language</span></a>
+</div>
+</div>
+</footer>
+</body></html>

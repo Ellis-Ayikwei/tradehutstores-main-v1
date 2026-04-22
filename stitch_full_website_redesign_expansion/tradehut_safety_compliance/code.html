@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&amp;family=DM+Sans:wght@400;500;700&amp;family=JetBrains+Mono:wght@400;700&amp;family=Epilogue:wght@400;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#002114",
+                    "primary-fixed": "#ffdbcd",
+                    "surface-container-highest": "#f8ddd3",
+                    "on-secondary": "#ffffff",
+                    "surface-dim": "#efd5cb",
+                    "tertiary-fixed-dim": "#b0c6ff",
+                    "surface-container-low": "#fff1ec",
+                    "on-primary-container": "#4e1900",
+                    "surface-variant": "#f8ddd3",
+                    "primary": "#a43d00",
+                    "on-tertiary-fixed": "#001945",
+                    "on-tertiary-container": "#002761",
+                    "on-surface-variant": "#5a4137",
+                    "inverse-surface": "#3d2d26",
+                    "surface": "#fff8f6",
+                    "secondary-fixed-dim": "#3fdfa5",
+                    "secondary": "#006c4b",
+                    "surface-container-high": "#fee3d9",
+                    "inverse-on-surface": "#ffede7",
+                    "on-error-container": "#93000a",
+                    "background": "#fff8f6",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-container": "#00714f",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-bright": "#fff8f6",
+                    "primary-fixed-dim": "#ffb597",
+                    "inverse-primary": "#ffb597",
+                    "secondary-fixed": "#63fcc0",
+                    "on-error": "#ffffff",
+                    "on-primary-fixed": "#360f00",
+                    "tertiary-container": "#558dff",
+                    "primary-container": "#f5620f",
+                    "error-container": "#ffdad6",
+                    "surface-container": "#ffe9e2",
+                    "outline": "#8e7165",
+                    "secondary-container": "#60f9bd",
+                    "on-background": "#261813",
+                    "tertiary-fixed": "#d9e2ff",
+                    "on-surface": "#261813",
+                    "surface-tint": "#a43d00",
+                    "outline-variant": "#e2bfb2",
+                    "on-secondary-fixed-variant": "#005138",
+                    "on-tertiary-fixed-variant": "#00429b",
+                    "on-primary-fixed-variant": "#7d2d00",
+                    "tertiary": "#0058ca",
+                    "error": "#ba1a1a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Syne", "sans-serif"],
+                    "body": ["Plus Jakarta Sans", "sans-serif"],
+                    "label": ["Plus Jakarta Sans", "sans-serif"],
+                    "mono": ["JetBrains Mono", "monospace"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-syne { font-family: 'Syne', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .glass-header {
+            background: rgba(255, 248, 246, 0.7);
+            backdrop-filter: blur(24px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- TopAppBar Shell -->
+<header class="fixed top-0 w-full z-50 h-20 bg-[#FFF8F6]/70 backdrop-blur-xl shadow-[0_4px_20px_0_rgba(38,24,19,0.04)]">
+<div class="flex justify-between items-center px-8 w-full max-w-[1920px] mx-auto h-full">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black font-['Syne'] text-[#261813] tracking-tighter">Gallery Support</span>
+<nav class="hidden md:flex gap-6">
+<a class="text-[#261813]/60 font-medium hover:bg-[#FFF1EC] transition-colors duration-300 px-3 py-1 rounded-lg" href="#">Help Center</a>
+<a class="text-[#F5620F] font-bold border-b-2 border-[#F5620F] px-3 py-1" href="#">Security &amp; Policy</a>
+<a class="text-[#261813]/60 font-medium hover:bg-[#FFF1EC] transition-colors duration-300 px-3 py-1 rounded-lg" href="#">Community</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-[#FFF1EC] transition-colors">
+<span class="material-symbols-outlined text-[#261813]">notifications</span>
+</button>
+<button class="p-2 rounded-full hover:bg-[#FFF1EC] transition-colors">
+<span class="material-symbols-outlined text-[#261813]">help_outline</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-surface-container overflow-hidden">
+<img class="h-full w-full object-cover" data-alt="Close up portrait of a professional male user with friendly expression in bright studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5bp8A5cAxAJamqHnrZK2YXRUtsyTtQWIcM5hCPA-SQLt89p8LkBh2NTCV37Bc_8qnVm2shE7lIsr6A5Fh0MrYOSZv0Pitof4c_qUc9Yj_YUOUA3W8Z5MqLpNMSnHJL6KuV7zQ34Id0WXED44orhyHP7f5V_em5cMJtkqVFrEfASkmv9QxqQ72rvANhDZSB2S4YhQnhFtVF1im47HpASJJx_rKMNyt09gTkfCMmsX7C19xdpfQr2_W-fpphtyA1dsOEu9TxJ4E_ps"/>
+</div>
+</div>
+</div>
+</header>
+<!-- SideNavBar Shell -->
+<aside class="h-screen w-72 fixed left-0 top-0 pt-24 bg-[#FFF1EC] hidden lg:flex flex-col">
+<div class="px-8 mb-8">
+<h2 class="font-['Syne'] text-lg font-bold text-[#F5620F]">Control Center</h2>
+<p class="text-xs text-on-surface-variant/70 uppercase tracking-widest mt-1">Manage your account</p>
+</div>
+<nav class="flex flex-col gap-1 pr-4">
+<a class="text-[#261813]/70 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300">
+<span class="material-symbols-outlined">assignment_return</span>
+<span class="font-['DM_Sans'] text-sm tracking-normal">Returns/Refunds</span>
+</a>
+<a class="text-[#261813]/70 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300">
+<span class="material-symbols-outlined">rate_review</span>
+<span class="font-['DM_Sans'] text-sm tracking-normal">Feedback</span>
+</a>
+<a class="text-[#261813]/70 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300">
+<span class="material-symbols-outlined">group_add</span>
+<span class="font-['DM_Sans'] text-sm tracking-normal">Invite Friends</span>
+</a>
+<a class="text-[#261813]/70 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300">
+<span class="material-symbols-outlined">flag</span>
+<span class="font-['DM_Sans'] text-sm tracking-normal">Manage Reports</span>
+</a>
+<a class="text-[#261813]/70 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300">
+<span class="material-symbols-outlined">lightbulb</span>
+<span class="font-['DM_Sans'] text-sm tracking-normal">Suggestions</span>
+</a>
+<a class="text-[#261813]/70 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300">
+<span class="material-symbols-outlined">help_center</span>
+<span class="font-['DM_Sans'] text-sm tracking-normal">DS Center</span>
+</a>
+<a class="bg-white text-[#F5620F] font-bold rounded-r-xl shadow-[4px_0_12px_rgba(245,98,15,0.1)] px-6 py-3 flex items-center gap-4">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-['DM_Sans'] text-sm tracking-normal">Penalties Info</span>
+</a>
+<a class="text-[#261813]/70 px-6 py-3 flex items-center gap-4 hover:translate-x-1 hover:text-[#F5620F] transition-all duration-300">
+<span class="material-symbols-outlined">warning</span>
+<span class="font-['DM_Sans'] text-sm tracking-normal">Safety Alerts</span>
+</a>
+</nav>
+<div class="mt-auto p-8">
+<button class="w-full bg-[#F5620F] text-white py-3 rounded-xl font-bold font-syne shadow-lg shadow-[#F5620F]/20 active:scale-[0.98] transition-transform">
+                Upgrade Plan
+            </button>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="lg:ml-72 pt-28 px-4 md:px-12 pb-20">
+<div class="max-w-6xl mx-auto">
+<!-- Hero Header: High trust / Serious -->
+<header class="mb-12 relative">
+<div class="absolute -top-12 -left-12 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
+<h1 class="text-5xl font-['Syne'] font-extrabold tracking-tighter text-on-surface mb-4">Account Health &amp; Safety</h1>
+<p class="text-lg text-on-surface-variant max-w-2xl leading-relaxed">
+                    Transparency is our core value. Monitor your standing within the Kinetic Gallery ecosystem and review critical safety notices for your collection.
+                </p>
+</header>
+<!-- Status Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+<!-- Penalty Points -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-card relative overflow-hidden">
+<div class="flex justify-between items-start mb-6">
+<span class="material-symbols-outlined text-4xl text-primary opacity-20">gavel</span>
+<span class="bg-surface-container-low px-3 py-1 rounded-full text-xs font-bold text-on-surface-variant">CURRENT STANDING</span>
+</div>
+<div class="font-mono text-5xl font-bold text-on-surface mb-2">02</div>
+<div class="text-sm font-bold font-syne text-on-surface-variant uppercase tracking-widest">Active Penalty Points</div>
+<p class="mt-4 text-xs text-on-surface-variant/70 leading-normal">Your account is in good standing. Points reset automatically in 45 days.</p>
+</div>
+<!-- Violation Status -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-card">
+<div class="flex justify-between items-start mb-6">
+<span class="material-symbols-outlined text-4xl text-error opacity-20">report_problem</span>
+<span class="bg-error-container px-3 py-1 rounded-full text-xs font-bold text-on-error-container">1 WARNING</span>
+</div>
+<div class="font-mono text-5xl font-bold text-error mb-2">01</div>
+<div class="text-sm font-bold font-syne text-error uppercase tracking-widest">Policy Infractions</div>
+<p class="mt-4 text-xs text-on-surface-variant/70 leading-normal">One late delivery reported on Transaction #29481-S.</p>
+</div>
+<!-- Safety Notifications -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-card">
+<div class="flex justify-between items-start mb-6">
+<span class="material-symbols-outlined text-4xl text-tertiary opacity-20">notifications_active</span>
+<span class="bg-tertiary-container/20 px-3 py-1 rounded-full text-xs font-bold text-tertiary">URGENT</span>
+</div>
+<div class="font-mono text-5xl font-bold text-on-surface mb-2">03</div>
+<div class="text-sm font-bold font-syne text-on-surface-variant uppercase tracking-widest">Safety Recalls</div>
+<p class="mt-4 text-xs text-on-surface-variant/70 leading-normal">Affecting items currently in your inventory or previous purchases.</p>
+</div>
+</div>
+<!-- Bento Content Sections -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Active Penalties Section (Left/Wide) -->
+<section class="md:col-span-8 space-y-6">
+<div class="flex items-center gap-4 mb-4">
+<h3 class="text-2xl font-['Syne'] font-bold">Penalty Details</h3>
+<div class="h-px flex-grow bg-surface-container-high"></div>
+</div>
+<!-- Penalty Item Card -->
+<div class="group bg-surface-container-low p-6 rounded-xl transition-all duration-300 hover:bg-surface-container relative">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+<div class="flex items-start gap-5">
+<div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-primary">schedule_send</span>
+</div>
+<div>
+<h4 class="font-bold text-lg mb-1">Fulfillment Delay Violation</h4>
+<p class="text-sm text-on-surface-variant mb-3">Order #882193-TX • Industrial Grade Lathe</p>
+<div class="flex gap-4">
+<span class="text-[10px] font-mono bg-white px-2 py-1 rounded-md border border-outline-variant/10">ISSUED: 2023-11-12</span>
+<span class="text-[10px] font-mono bg-white px-2 py-1 rounded-md border border-outline-variant/10 text-error">EXPIRY: 2024-02-12</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-mono text-2xl font-bold text-primary mb-1">02 pts</div>
+<button class="text-xs font-bold uppercase tracking-widest text-[#2979FF] hover:underline">Appeal Penalty</button>
+</div>
+</div>
+</div>
+<!-- Warning Notice Card -->
+<div class="bg-surface-container-lowest p-8 rounded-xl border-l-4 border-error shadow-card">
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-error text-3xl">priority_high</span>
+<div>
+<h4 class="font-bold text-xl mb-2 text-error">Policy Warning: Duplicate Listing</h4>
+<p class="text-on-surface-variant leading-relaxed text-sm">
+                                    Our automated system detected duplicate product listings for <span class="font-mono text-xs bg-surface-container px-1">SKU-9902-B</span>. Please consolidate your listings within 48 hours to avoid additional account penalties.
+                                </p>
+<button class="mt-6 bg-on-surface text-surface px-6 py-3 rounded-lg text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-opacity">
+                                    Resolve Listing Now
+                                </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Product Safety Alerts (Right/Narrow) -->
+<section class="md:col-span-4 space-y-6">
+<div class="flex items-center gap-4 mb-4">
+<h3 class="text-2xl font-['Syne'] font-bold">Safety Alerts</h3>
+</div>
+<div class="space-y-4">
+<!-- Alert Item 1 -->
+<div class="bg-surface-container-low p-5 rounded-xl border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-3">
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="text-[10px] font-bold text-tertiary uppercase tracking-tighter">Electrical Hazard</span>
+</div>
+<h5 class="font-bold text-sm mb-1 leading-snug">Industrial Control Board Recall</h5>
+<p class="text-[11px] text-on-surface-variant leading-relaxed mb-4">Manufacturer: TechGrid Systems. Affects models purchased between Jan-Oct 2023.</p>
+<a class="inline-flex items-center gap-2 text-[#2979FF] text-xs font-bold" href="#">
+                                VIEW RECALL STEPS <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+<!-- Alert Item 2 -->
+<div class="bg-surface-container-low p-5 rounded-xl border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-3">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">emergency</span>
+<span class="text-[10px] font-bold text-error uppercase tracking-tighter">Structural Integrity</span>
+</div>
+<h5 class="font-bold text-sm mb-1 leading-snug">Heavy-Duty Racking System Alert</h5>
+<p class="text-[11px] text-on-surface-variant leading-relaxed mb-4">Critical update for assembly instructions on Beam-Model X44.</p>
+<a class="inline-flex items-center gap-2 text-[#2979FF] text-xs font-bold" href="#">
+                                DOWNLOAD MANUAL <span class="material-symbols-outlined text-sm">download</span>
+</a>
+</div>
+<!-- Visual Anchor -->
+<div class="relative rounded-xl overflow-hidden aspect-[4/3] group">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="High-tech industrial inspection scene with focused blue laser lighting reflecting on metallic circuit components" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBN5vUSjtyPr37u9zEWCrHTY7Zx50-Yx3rRyvKL4gDVM8z2GHLda9SEue8gWfGAsCeOGz6A9Ao6qnyvcq9eXAjmts0Dci4qAVWW1lA7hsvqQTJktMJUImFKcu06ss8hLpSXiWHq7Jle1mdzkeru_bZUHpaMXjfUCzwDYoCBJg8Arev6QNUIyZXIebxkgfIW4D3duqTS-0cZ88II1BHbLj56jJpXUWCsFrNuIeZgWtxbq64U3xUbrzxx6rjxitBiix22M4bIaTG7g-s"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-5">
+<span class="text-[10px] font-bold text-white/60 uppercase tracking-widest mb-1">Safety First</span>
+<h6 class="text-white font-bold text-sm">Verified Product Testing Protocols</h6>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Kinetic Section: Tonal Depth & Negative Space -->
+<section class="mt-24 p-12 bg-surface-container-highest/30 rounded-[2rem] relative overflow-hidden">
+<div class="grid md:grid-cols-2 gap-12 items-center relative z-10">
+<div>
+<h2 class="text-4xl font-['Syne'] font-extrabold tracking-tight mb-6">Our Safety Pledge</h2>
+<div class="space-y-6">
+<div class="flex gap-4">
+<div class="w-1 h-12 bg-primary rounded-full"></div>
+<div>
+<h5 class="font-bold text-lg">Real-time Monitoring</h5>
+<p class="text-on-surface-variant text-sm">We aggregate global safety data from over 40 regulatory bodies to protect your assets.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-1 h-12 bg-primary/40 rounded-full"></div>
+<div>
+<h5 class="font-bold text-lg">Fair Adjudication</h5>
+<p class="text-on-surface-variant text-sm">Human reviews are mandatory for every account penalty appeal, ensuring equitable outcomes.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white/40 backdrop-blur-md p-8 rounded-2xl shadow-card-hover border border-white/20">
+<div class="font-mono text-sm text-on-surface-variant/60 mb-8 uppercase tracking-widest">Security Log</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center pb-4 border-b border-on-surface/5">
+<span class="text-xs font-mono">2023-11-28 14:02</span>
+<span class="text-xs font-bold text-secondary">LOGIN VERIFIED</span>
+</div>
+<div class="flex justify-between items-center pb-4 border-b border-on-surface/5">
+<span class="text-xs font-mono">2023-11-26 09:15</span>
+<span class="text-xs font-bold text-primary">PENALTY ISSUED</span>
+</div>
+<div class="flex justify-between items-center pb-4 border-b border-on-surface/5">
+<span class="text-xs font-mono">2023-11-24 18:44</span>
+<span class="text-xs font-bold text-secondary">PWD CHANGED</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Artistic Background Element -->
+<div class="absolute -right-20 -bottom-20 w-96 h-96 bg-[#F5620F]/5 rounded-full blur-[100px]"></div>
+</section>
+</div>
+</main>
+<!-- Support FAB -->
+<div class="fixed bottom-8 right-8 z-50">
+<button class="bg-[#261813] text-white p-4 rounded-xl shadow-2xl flex items-center gap-3 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">support_agent</span>
+<span class="font-bold text-xs uppercase tracking-widest">Connect to Specialist</span>
+</button>
+</div>
+</body></html>

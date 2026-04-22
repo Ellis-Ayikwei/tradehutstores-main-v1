@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TradeHut | Seller Profile</title>
+<!-- Fonts: Syne, DM Sans, JetBrains Mono (Mapping to Design System: Epilogue for headers, Plus Jakarta Sans used as body proxy in config) -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&amp;family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-primary": "#ffffff",
+                        "on-secondary-container": "#00714f",
+                        "tertiary": "#0058ca",
+                        "on-primary-fixed": "#360f00",
+                        "surface-container": "#ffe9e2",
+                        "tertiary-fixed-dim": "#b0c6ff",
+                        "secondary-fixed-dim": "#3fdfa5",
+                        "error-container": "#ffdad6",
+                        "outline": "#8e7165",
+                        "on-surface": "#261813",
+                        "on-surface-variant": "#5a4137",
+                        "on-primary-fixed-variant": "#7d2d00",
+                        "surface-container-highest": "#f8ddd3",
+                        "surface-variant": "#f8ddd3",
+                        "on-tertiary-fixed": "#001945",
+                        "on-error-container": "#93000a",
+                        "surface": "#fff8f6",
+                        "secondary": "#006c4b",
+                        "on-tertiary": "#ffffff",
+                        "inverse-surface": "#3d2d26",
+                        "primary": "#a43d00",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#ffb597",
+                        "tertiary-container": "#558dff",
+                        "on-secondary-fixed": "#002114",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed": "#d9e2ff",
+                        "on-error": "#ffffff",
+                        "outline-variant": "#e2bfb2",
+                        "primary-container": "#f5620f",
+                        "on-secondary-fixed-variant": "#005138",
+                        "inverse-primary": "#ffb597",
+                        "on-tertiary-container": "#002761",
+                        "secondary-container": "#60f9bd",
+                        "on-tertiary-fixed-variant": "#00429b",
+                        "on-primary-container": "#4e1900",
+                        "surface-container-high": "#fee3d9",
+                        "error": "#ba1a1a",
+                        "background": "#fff8f6",
+                        "surface-bright": "#fff8f6",
+                        "surface-tint": "#a43d00",
+                        "inverse-on-surface": "#ffede7",
+                        "on-background": "#261813",
+                        "surface-dim": "#efd5cb",
+                        "primary-fixed": "#ffdbcd",
+                        "surface-container-low": "#fff1ec",
+                        "secondary-fixed": "#63fcc0"
+                    },
+                    fontFamily: {
+                        "syne": ["Syne", "sans-serif"],
+                        "dm-sans": ["DM Sans", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    },
+                    boxShadow: {
+                        'card': '0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02)',
+                        'card-hover': '0 12px 32px 0 rgba(38, 24, 19, 0.08)'
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .backdrop-blur-2xl { backdrop-filter: blur(40px); }
+        .font-syne { font-family: 'Syne', sans-serif; }
+        .font-dm-sans { font-family: 'DM Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface font-dm-sans text-on-surface antialiased pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-2xl shadow-[0_4px_20px_0_rgba(38,24,19,0.04)]">
+<div class="flex justify-between items-center px-6 py-4 w-full max-w-7xl mx-auto">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black font-syne text-[#F5620F] italic">TradeHut</span>
+<nav class="hidden md:flex gap-6">
+<a class="text-sm font-dm-sans text-[#261813] opacity-60 hover:opacity-100 transition-opacity" href="#">Marketplace</a>
+<a class="text-sm font-dm-sans text-[#261813] opacity-60 hover:opacity-100 transition-opacity" href="#">Auctions</a>
+<a class="text-[#F5620F] border-b-2 border-[#F5620F] pb-1 text-sm font-dm-sans font-bold" href="#">Sellers</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-[#F5620F]/10 transition-colors duration-300 active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-on-surface-variant">shopping_cart</span>
+</button>
+<button class="p-2 rounded-full hover:bg-[#F5620F]/10 transition-colors duration-300 active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+<img alt="User avatar" class="w-8 h-8 rounded-full border border-outline-variant/15" data-alt="close up profile photo of a modern professional user smiling softly with warm cinematic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDM9e4hnd8drl_yM6TWvE8CPABPlijgXtPJs4ceGl3K8jA_xuFJB8ZMmeQvMpKWtqb61xBDkAf-NAs0vdQIR5D0I1qDzcYW75Wn4APmUWxo42ZOuzuPkPuAuJGEpr-Ux005yQ0Kv6dEGYFEOh3otNAI7CrVNgMfL6b-bCjwZCnmpayHP1mIzK4aDoXrLt9dh0ZPZlS0ZqfwqaoyyACole_YOa2UlxBT9Gq4L7g-pyTJQ41A2BlWnOjk37QsMVBDljmYIQ0nabm4OEY"/>
+</div>
+</div>
+</header>
+<main class="pt-16 max-w-7xl mx-auto px-4 sm:px-6">
+<!-- Hero Section: Cover Photo -->
+<section class="mt-4 relative group">
+<div class="aspect-[4/1] w-full rounded-2xl overflow-hidden bg-surface-container-low">
+<img alt="Cover Photo" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="abstract architectural textures with soft curved lines and warm orange and cream tones representing high-end kinetic design" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxMC9uRKk_oSp8RX8iBgsz-VFfqzk0Q8R-sEJUf3EkTqG-6IxPho5CEg5035xyfteAvfW6ktdXaovgiwQxXPNJBWLSIEdGa3R6MksaGfauTSmeUel74jvmT1BtpnyMf20tMT-y9JnPCqs-47S2_TK0dpMHQrsWBsld07UUZ0vjXUU0RIU5Y2O7Bm_xpjlU0Mahaov8afjykX_rlD0u3vQ-j5cekTSzASk40XmzEeZUKF8mrsgt9BotJ9sA9jFoAc4JvBRRHRkLyWA"/>
+</div>
+<!-- Profile Info Overlay -->
+<div class="absolute -bottom-16 left-8 flex items-end gap-6">
+<div class="relative">
+<div class="w-32 h-32 rounded-full border-4 border-surface bg-surface-container-lowest overflow-hidden shadow-card">
+<img alt="Seller Avatar" class="w-full h-full object-cover" data-alt="charismatic male artisan with a short beard and professional attire looking confident against a clean warm studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAOZ1gor-z7NkUgANXX5rJrqAhnRPUdPvpaX4CCXRh7oNCetskqyVUBy2i6mT28yZfEoQAgeALGIybMkRVqJQ9kFdkVCL4-KZVI_xzEKEEPejFdjfaesDElrgfR0_MKmCCGqb2QuIEdvZa4jptvIcOhnbJSJn6TKb6LNE0BjgwxEd_ZQW6rZXYHPB4VlRx2IvD8QZgg8rABUXkGX8bGOi081obkzId3V8HyefDYezPDXX-bTxV8yGabK_FMneQkyWcOPyCL-6wwpI"/>
+</div>
+<div class="absolute bottom-1 right-1 bg-secondary text-on-secondary p-1 rounded-full border-2 border-surface shadow-sm">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+<div class="mb-4">
+<div class="flex items-center gap-3">
+<h1 class="text-3xl md:text-4xl font-syne font-extrabold tracking-tight text-on-surface">Modernist Curator</h1>
+<span class="px-2 py-0.5 rounded bg-secondary-container text-on-secondary-fixed-variant text-[10px] font-bold font-dm-sans uppercase tracking-widest">Power Seller</span>
+</div>
+<p class="text-on-surface-variant font-dm-sans mt-1">Curating timeless pieces for the digital age.</p>
+</div>
+</div>
+</section>
+<!-- Stats Bar & Content Area -->
+<div class="mt-24 grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Main Content: Tabs & Grid -->
+<div class="lg:col-span-8 space-y-8">
+<!-- Stats Bar (Kinetic Island) -->
+<div class="bg-surface-container-low rounded-xl p-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="text-center md:text-left">
+<p class="text-[10px] font-bold font-dm-sans uppercase tracking-widest text-on-surface-variant/60">Rating</p>
+<div class="flex items-center justify-center md:justify-start gap-1">
+<span class="font-mono font-bold text-xl text-on-surface">4.9</span>
+<span class="material-symbols-outlined text-[#F5620F] text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<div class="text-center md:text-left">
+<p class="text-[10px] font-bold font-dm-sans uppercase tracking-widest text-on-surface-variant/60">Reviews</p>
+<p class="font-mono font-bold text-xl text-on-surface">1,204</p>
+</div>
+<div class="text-center md:text-left">
+<p class="text-[10px] font-bold font-dm-sans uppercase tracking-widest text-on-surface-variant/60">Total Sales</p>
+<p class="font-mono font-bold text-xl text-on-surface">4.2k</p>
+</div>
+<div class="text-center md:text-left">
+<p class="text-[10px] font-bold font-dm-sans uppercase tracking-widest text-on-surface-variant/60">Response Rate</p>
+<p class="font-mono font-bold text-xl text-on-surface">98%</p>
+</div>
+</div>
+<!-- Tabs -->
+<div class="flex gap-8 border-b border-outline-variant/15">
+<button class="pb-4 text-sm font-bold font-dm-sans text-[#F5620F] border-b-2 border-[#F5620F]">Active Listings</button>
+<button class="pb-4 text-sm font-bold font-dm-sans text-on-surface-variant/50 hover:text-on-surface-variant transition-colors">Recently Sold</button>
+<button class="pb-4 text-sm font-bold font-dm-sans text-on-surface-variant/50 hover:text-on-surface-variant transition-colors">Reviews</button>
+</div>
+<!-- Grid of Active Listings -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Product Card 1 -->
+<div class="group cursor-pointer">
+<div class="aspect-square rounded-xl overflow-hidden bg-surface-container-low mb-4">
+<img alt="Listing 1" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="retro silver mechanical watch with exposed gears resting on a minimalist concrete surface with directional light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYwSky50sMYX3rPTkx3eGqdWJonlmua47X9xu-RXXfK6aaGEmE-4ZE0yYCEHckYFopfTRyYQo3ohdH1NGFacK680KxzFfaAXXegwwGbUsx-YcrN6nRqLxUtO-j8GEnmPLK1kWg6-sQWZlZOL7ssNduyp_YGBcvk9ka6jeVUnYGDznOsWGyVgqw5OEqdJv7HOMijNHOQxeHp3jXfJC1IkPKup67Wj3-gKmNCwcufcY97BC-ZIngfSsk1G7JSQIDTA5c2eLONy-zlkE"/>
+</div>
+<div class="space-y-1">
+<h3 class="font-syne font-bold text-on-surface group-hover:text-[#F5620F] transition-colors">Vanguard Titanium Chrono</h3>
+<div class="flex justify-between items-center">
+<p class="font-mono font-bold text-secondary text-lg">$1,450.00</p>
+<span class="text-[10px] font-bold font-dm-sans uppercase tracking-widest text-on-surface-variant/60">3 Bids</span>
+</div>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="group cursor-pointer">
+<div class="aspect-square rounded-xl overflow-hidden bg-surface-container-low mb-4">
+<img alt="Listing 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="industrial designer mechanical part with intricate copper wiring and dark matte metal finish in a high-tech laboratory setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5juzraIpFGwJsXXmu02uWIJAq7772Zkf6lX5y83uoS5ZrQl6BujXAvK1y4Bdqx8RjdFEG185Fn7ZMgl5kFlt6nHQ0q-P3u42ctSuG8qO8nOM2XqGsMbj_v8D5KHH0JjWJiM6SZp-ySZQsbvqeJDMLa1r7J5HeEOG9vo8qwA3M9soGutyoVrw9IkvN6nThwi05a5gBH0ZhFiB28MSna5vBl8gHW5-GWNVNJHQYJqU-kU0l91BfPMm7Kbz3C_SzD_1QUMxYGsXsPps"/>
+</div>
+<div class="space-y-1">
+<h3 class="font-syne font-bold text-on-surface group-hover:text-[#F5620F] transition-colors">Core RFQ Module X1</h3>
+<div class="flex justify-between items-center">
+<p class="font-mono font-bold text-tertiary text-lg">RFQ ONLY</p>
+<span class="px-2 py-0.5 bg-tertiary-fixed rounded text-[8px] font-bold uppercase tracking-tighter">B2B</span>
+</div>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="group cursor-pointer">
+<div class="aspect-square rounded-xl overflow-hidden bg-surface-container-low mb-4">
+<img alt="Listing 3" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="premium leather-bound wireless headphones resting on an oak desk with soft natural window light and subtle shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDciGdQJsZIzWr0eACBjv1y3Iz8XocbgYb36GkUl2kaMixNAchIQAosOBsx3g1pg0UOORuNUs2-xFC4N0IY-2SjnGq6ieMagmK2WDAlKEX-o9lJ_x_HOJ5XD7EH8-ieYmYYczj3BZNiJGVX390z-kdpuzWrCR25dfBwLOUAtWeg7VBjfKB4aAbKJzs5tCzmSMWWbHRfBXrnMsPGKbbjI6YZSsNfQc50rNVD-xoXYppB7ai6hslyGO_J2n48LsKsWDi_FdSrh9bNwUE"/>
+</div>
+<div class="space-y-1">
+<h3 class="font-syne font-bold text-on-surface group-hover:text-[#F5620F] transition-colors">Heritage Studio Monitor</h3>
+<div class="flex justify-between items-center">
+<p class="font-mono font-bold text-secondary text-lg">$320.00</p>
+<span class="text-[10px] font-bold font-dm-sans uppercase tracking-widest text-on-surface-variant/60">Buy Now</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Right Rail CTAs -->
+<aside class="lg:col-span-4">
+<div class="sticky top-24 space-y-4">
+<div class="bg-surface-container-lowest rounded-2xl p-6 shadow-card border border-outline-variant/10">
+<h2 class="font-syne font-bold text-xl mb-6">Seller Actions</h2>
+<div class="space-y-3">
+<button class="w-full py-4 px-6 bg-gradient-to-r from-primary to-primary-container text-white font-syne font-bold rounded-xl flex items-center justify-center gap-2 hover:shadow-card-hover active:scale-95 transition-all">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">person_add</span>
+                                Follow Seller
+                            </button>
+<button class="w-full py-4 px-6 bg-surface-container-low text-on-surface font-syne font-bold rounded-xl flex items-center justify-center gap-2 border border-outline-variant/20 hover:bg-surface-container-high transition-colors active:scale-95">
+<span class="material-symbols-outlined text-lg">mail</span>
+                                Send Message
+                            </button>
+</div>
+<div class="mt-8 pt-8 border-t border-outline-variant/15">
+<p class="text-xs font-bold font-dm-sans uppercase tracking-widest text-on-surface-variant/40 mb-4">Account Information</p>
+<ul class="space-y-4">
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-on-surface-variant/60">calendar_today</span>
+<span class="text-on-surface-variant">Joined March 2021</span>
+</li>
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-on-surface-variant/60">location_on</span>
+<span class="text-on-surface-variant">Stockholm, SE</span>
+</li>
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-secondary">verified_user</span>
+<span class="text-on-surface-variant">Identity Verified</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Trust Badge -->
+<div class="bg-[#00C48C]/5 rounded-2xl p-4 border border-[#00C48C]/10 flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-[#00C48C] flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">shield</span>
+</div>
+<div>
+<p class="text-xs font-bold text-secondary uppercase tracking-tighter">Buyer Protection</p>
+<p class="text-[10px] text-on-surface-variant/80">Every transaction is secured via TradeHut Escrow.</p>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center p-3 pb-safe bg-white/80 backdrop-blur-lg shadow-[0_-4px_20px_0_rgba(38,24,19,0.06)] z-50 rounded-t-xl">
+<div class="flex flex-col items-center justify-center text-[#261813] dark:text-[#FFF8F6] opacity-40 hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-bold font-dm-sans uppercase tracking-widest">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#261813] dark:text-[#FFF8F6] opacity-40 hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined">search</span>
+<span class="text-[10px] font-bold font-dm-sans uppercase tracking-widest">Explore</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#261813] dark:text-[#FFF8F6] opacity-40 hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="text-[10px] font-bold font-dm-sans uppercase tracking-widest">Sell</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#261813] dark:text-[#FFF8F6] opacity-40 hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined">notifications</span>
+<span class="text-[10px] font-bold font-dm-sans uppercase tracking-widest">Activity</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#F5620F] bg-[#F5620F]/5 rounded-2xl px-3 py-1 active:scale-110 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="text-[10px] font-bold font-dm-sans uppercase tracking-widest">Profile</span>
+</div>
+</nav>
+</body></html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Kinetic Gallery - Create New Password</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&amp;family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&amp;family=JetBrains+Mono:wght@500&amp;family=Epilogue:wght@700&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#fff8f6",
+                        "on-surface-variant": "#5a4137",
+                        "inverse-surface": "#3d2d26",
+                        "secondary-fixed-dim": "#3fdfa5",
+                        "secondary": "#006c4b",
+                        "surface-variant": "#f8ddd3",
+                        "primary": "#a43d00",
+                        "surface-dim": "#efd5cb",
+                        "tertiary-fixed-dim": "#b0c6ff",
+                        "surface-container-low": "#fff1ec",
+                        "on-primary-container": "#4e1900",
+                        "on-tertiary-container": "#002761",
+                        "on-tertiary-fixed": "#001945",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#f8ddd3",
+                        "on-secondary-fixed": "#002114",
+                        "primary-fixed": "#ffdbcd",
+                        "on-primary-fixed-variant": "#7d2d00",
+                        "on-tertiary-fixed-variant": "#00429b",
+                        "error": "#ba1a1a",
+                        "tertiary": "#0058ca",
+                        "on-background": "#261813",
+                        "outline": "#8e7165",
+                        "secondary-container": "#60f9bd",
+                        "on-surface": "#261813",
+                        "surface-tint": "#a43d00",
+                        "outline-variant": "#e2bfb2",
+                        "on-secondary-fixed-variant": "#005138",
+                        "tertiary-fixed": "#d9e2ff",
+                        "secondary-fixed": "#63fcc0",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed": "#360f00",
+                        "surface-container": "#ffe9e2",
+                        "tertiary-container": "#558dff",
+                        "primary-container": "#f5620f",
+                        "error-container": "#ffdad6",
+                        "inverse-on-surface": "#ffede7",
+                        "surface-container-high": "#fee3d9",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#fff8f6",
+                        "primary-fixed-dim": "#ffb597",
+                        "inverse-primary": "#ffb597",
+                        "on-error-container": "#93000a",
+                        "background": "#fff8f6",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#00714f",
+                        "bid-green": "#00C48C",
+                        "request-blue": "#2979FF"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Syne", "Epilogue", "sans-serif"],
+                        "body": ["DM Sans", "Plus Jakarta Sans", "sans-serif"],
+                        "label": ["Plus Jakarta Sans", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    },
+                    "boxShadow": {
+                        "card": "0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02)",
+                        "card-hover": "0 12px 32px 0 rgba(38, 24, 19, 0.08)"
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: #0c0a09; /* gray-950 context */
+        }
+        .syne-header {
+            font-family: 'Syne', sans-serif;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(24px);
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-on-surface selection:bg-primary/30">
+<!-- Top Navigation (Shell Implementation) -->
+<nav class="fixed top-0 w-full z-50 bg-stone-950/70 backdrop-blur-xl">
+<div class="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
+<div class="text-2xl font-bold tracking-tighter text-stone-100 syne-header">
+                The Kinetic Gallery
+            </div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-stone-400 hover:text-primary transition-colors text-sm font-medium" href="#">Market</a>
+<a class="text-stone-400 hover:text-primary transition-colors text-sm font-medium" href="#">Auctions</a>
+<a class="text-stone-400 hover:text-primary transition-colors text-sm font-medium" href="#">Support</a>
+</div>
+</div>
+</nav>
+<main class="flex-grow flex items-center justify-center px-4 pt-20 pb-12 bg-stone-950 relative overflow-hidden">
+<!-- Abstract Background Detail -->
+<div class="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]"></div>
+<div class="absolute bottom-[-10%] left-[-5%] w-[300px] h-[300px] bg-bid-green/5 rounded-full blur-[100px]"></div>
+<!-- Auth Card -->
+<div class="w-full max-w-[400px] z-10">
+<div class="bg-stone-900/40 border border-white/5 rounded-xl shadow-2xl p-8 backdrop-blur-md">
+<!-- Branding Context -->
+<div class="flex justify-center mb-8">
+<div class="w-12 h-12 bg-gradient-to-br from-primary to-primary-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings: 'FILL' 1;">lock_reset</span>
+</div>
+</div>
+<header class="mb-8 text-center">
+<h1 class="syne-header text-2xl font-extrabold text-stone-100 tracking-tight leading-none mb-3">
+                        Create new password
+                    </h1>
+<p class="text-stone-400 text-sm leading-relaxed">
+                        Please enter your new password below.
+                    </p>
+</header>
+<form class="space-y-6">
+<!-- New Password Field -->
+<div class="space-y-2">
+<label class="block text-xs font-bold uppercase tracking-widest text-stone-500 ml-1">New Password</label>
+<div class="relative group">
+<input class="w-full bg-stone-900 border-none text-stone-100 rounded-lg py-4 px-4 focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-stone-700" placeholder="••••••••" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-stone-600 hover:text-stone-400" type="button">
+<span class="material-symbols-outlined text-xl">visibility</span>
+</button>
+</div>
+<!-- Password Strength Indicator -->
+<div class="pt-2 space-y-2">
+<div class="flex gap-1 h-1">
+<div class="flex-1 rounded-full bg-bid-green"></div>
+<div class="flex-1 rounded-full bg-bid-green"></div>
+<div class="flex-1 rounded-full bg-bid-green"></div>
+<div class="flex-1 rounded-full bg-stone-800"></div>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-[10px] font-mono text-bid-green font-bold uppercase tracking-tighter">Strong Security</span>
+<span class="text-[10px] font-mono text-stone-500">85% Complete</span>
+</div>
+</div>
+</div>
+<!-- Confirm Password Field -->
+<div class="space-y-2">
+<label class="block text-xs font-bold uppercase tracking-widest text-stone-500 ml-1">Confirm New Password</label>
+<div class="relative">
+<input class="w-full bg-stone-900 border-none text-stone-100 rounded-lg py-4 px-4 focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-stone-700" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<!-- CTA -->
+<div class="pt-2">
+<button class="w-full bg-gradient-to-r from-primary to-primary-container text-white font-bold py-4 rounded-lg shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all duration-200 uppercase tracking-widest text-xs">
+                            Reset Password
+                        </button>
+</div>
+</form>
+<div class="mt-8 flex justify-center">
+<a class="flex items-center gap-2 text-stone-500 hover:text-stone-300 transition-colors text-sm font-medium" href="#">
+<span class="material-symbols-outlined text-sm">arrow_back</span>
+                        Back to login
+                    </a>
+</div>
+</div>
+<!-- Footer Meta -->
+<div class="mt-8 text-center">
+<p class="text-stone-600 font-mono text-[10px] uppercase tracking-widest">
+                    AES-256 Encrypted Connection
+                </p>
+</div>
+</div>
+</main>
+<!-- Simple Footer (Shell Implementation) -->
+<footer class="w-full py-8 mt-auto bg-stone-950 relative z-10">
+<div class="flex flex-col md:flex-row justify-between items-center px-8 max-w-7xl mx-auto gap-4">
+<div class="syne-header font-bold text-stone-500 text-sm">
+                Kinetic Gallery
+            </div>
+<div class="flex gap-6">
+<a class="text-stone-600 hover:text-primary transition-colors text-xs font-medium uppercase tracking-widest" href="#">Privacy Policy</a>
+<a class="text-stone-600 hover:text-primary transition-colors text-xs font-medium uppercase tracking-widest" href="#">Terms of Service</a>
+<a class="text-stone-600 hover:text-primary transition-colors text-xs font-medium uppercase tracking-widest" href="#">Help Center</a>
+</div>
+<div class="text-stone-700 text-[10px] font-mono tracking-widest uppercase">
+                © 2024 Kinetic Gallery. All rights reserved.
+            </div>
+</div>
+</footer>
+</body></html>

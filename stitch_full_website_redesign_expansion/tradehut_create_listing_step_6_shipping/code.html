@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kinetic Seller - Shipping Configuration</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800&amp;family=DM+Sans:wght@400;500;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary": "#ffffff",
+                    "on-primary-container": "#4e1900",
+                    "on-error": "#ffffff",
+                    "primary-container": "#f5620f",
+                    "background": "#fff8f6",
+                    "surface-container-low": "#fff1ec",
+                    "secondary-fixed": "#63fcc0",
+                    "tertiary-fixed": "#d9e2ff",
+                    "primary-fixed-dim": "#ffb597",
+                    "inverse-primary": "#ffb597",
+                    "secondary-container": "#60f9bd",
+                    "error": "#ba1a1a",
+                    "surface-container-highest": "#f8ddd3",
+                    "on-surface-variant": "#5a4137",
+                    "primary-fixed": "#ffdbcd",
+                    "on-tertiary-container": "#002761",
+                    "on-primary-fixed-variant": "#7d2d00",
+                    "on-background": "#261813",
+                    "tertiary-fixed-dim": "#b0c6ff",
+                    "on-error-container": "#93000a",
+                    "inverse-on-surface": "#ffede7",
+                    "tertiary": "#0058ca",
+                    "error-container": "#ffdad6",
+                    "on-secondary": "#ffffff",
+                    "surface-tint": "#a43d00",
+                    "on-tertiary-fixed-variant": "#00429b",
+                    "on-primary": "#ffffff",
+                    "inverse-surface": "#3d2d26",
+                    "on-primary-fixed": "#360f00",
+                    "on-secondary-fixed": "#002114",
+                    "primary": "#a43d00",
+                    "on-secondary-fixed-variant": "#005138",
+                    "on-secondary-container": "#00714f",
+                    "surface-dim": "#efd5cb",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-high": "#fee3d9",
+                    "surface-container": "#ffe9e2",
+                    "secondary": "#006c4b",
+                    "on-surface": "#261813",
+                    "surface-variant": "#f8ddd3",
+                    "outline": "#8e7165",
+                    "surface": "#fff8f6",
+                    "outline-variant": "#e2bfb2",
+                    "on-tertiary-fixed": "#001945",
+                    "tertiary-container": "#558dff",
+                    "surface-bright": "#fff8f6",
+                    "secondary-fixed-dim": "#3fdfa5"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Epilogue"],
+                    "body": ["DM Sans"],
+                    "label": ["DM Sans"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { font-family: 'DM Sans', sans-serif; background-color: #fff8f6; color: #261813; }
+        .font-headline { font-family: 'Epilogue', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .shadow-card { box-shadow: 0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02); }
+        .glass-header { background: rgba(255, 248, 246, 0.7); backdrop-filter: blur(24px); }
+        .tonal-nesting { background-color: #fff1ec; }
+        .ghost-border { border: 1px solid rgba(142, 113, 101, 0.15); }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 glass-header shadow-card h-16 px-6 flex justify-between items-center">
+<div class="flex items-center gap-4">
+<span class="text-2xl font-bold italic text-on-surface font-headline tracking-tight">Kinetic Seller</span>
+</div>
+<div class="flex items-center gap-6">
+<nav class="hidden md:flex items-center gap-8 text-sm font-medium">
+<a class="text-on-surface-variant hover:text-orange-600 transition-colors" href="#">Dashboard</a>
+<a class="text-orange-600 border-b-2 border-orange-600 pb-1" href="#">Inventory</a>
+<a class="text-on-surface-variant hover:text-orange-600 transition-colors" href="#">Orders</a>
+<a class="text-on-surface-variant hover:text-orange-600 transition-colors" href="#">Analytics</a>
+</nav>
+<div class="flex items-center gap-3">
+<button class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-orange-50 rounded-full transition-colors">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-orange-50 rounded-full transition-colors">account_circle</button>
+</div>
+</div>
+</header>
+<div class="flex pt-16 h-screen">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-64px)] w-72 bg-surface-container-low flex flex-col p-4 space-y-4 overflow-y-auto">
+<div class="px-2 py-4">
+<h2 class="text-lg font-black text-on-surface font-headline">Listing Progress</h2>
+<p class="text-xs font-medium text-orange-600 opacity-80 uppercase tracking-widest mt-1">Step 6 of 6</p>
+</div>
+<nav class="space-y-2">
+<!-- Completed Steps -->
+<div class="flex items-center gap-3 p-3 text-on-surface-variant opacity-60 text-sm font-medium rounded-lg">
+<span class="material-symbols-outlined text-green-600" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Product Details</span>
+</div>
+<div class="flex items-center gap-3 p-3 text-on-surface-variant opacity-60 text-sm font-medium rounded-lg">
+<span class="material-symbols-outlined text-green-600" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Media Assets</span>
+</div>
+<div class="flex items-center gap-3 p-3 text-on-surface-variant opacity-60 text-sm font-medium rounded-lg">
+<span class="material-symbols-outlined text-green-600" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Pricing</span>
+</div>
+<div class="flex items-center gap-3 p-3 text-on-surface-variant opacity-60 text-sm font-medium rounded-lg">
+<span class="material-symbols-outlined text-green-600" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Inventory</span>
+</div>
+<div class="flex items-center gap-3 p-3 text-on-surface-variant opacity-60 text-sm font-medium rounded-lg">
+<span class="material-symbols-outlined text-green-600" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Authentication</span>
+</div>
+<!-- Active Step -->
+<div class="flex items-center gap-3 p-3 bg-surface-container-lowest text-orange-600 rounded-lg shadow-card font-bold text-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+<span>Shipping</span>
+</div>
+</nav>
+<div class="mt-auto p-4 bg-white/40 rounded-xl ghost-border">
+<p class="text-[10px] uppercase font-bold tracking-tighter text-on-surface-variant mb-2">Pro Tip</p>
+<p class="text-xs text-on-surface-variant leading-relaxed">Accurate dimensions help avoid carrier adjustments later.</p>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-72 flex-1 overflow-y-auto bg-surface p-8 pb-32">
+<div class="max-w-4xl mx-auto space-y-12">
+<!-- Page Header -->
+<div class="space-y-2">
+<h1 class="text-4xl font-extrabold font-headline tracking-tighter text-on-surface">Shipping Configuration</h1>
+<p class="text-on-surface-variant max-w-xl">Define how your masterpiece reaches its new home. Kinetic handles high-value logistics with integrated tracking.</p>
+</div>
+<!-- Section: Package Details -->
+<section class="space-y-6">
+<div class="flex items-baseline justify-between border-b border-outline-variant/20 pb-2">
+<h3 class="text-xl font-bold font-headline">Package Details</h3>
+<span class="text-xs font-mono text-on-surface-variant/60 uppercase">Hardware ID: PKG-7721</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Weight Card -->
+<div class="col-span-1 bg-surface-container-low p-6 rounded-xl space-y-4">
+<div class="flex justify-between items-center">
+<label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Weight</label>
+<div class="flex bg-surface-container-highest rounded-full p-0.5">
+<button class="px-3 py-1 text-[10px] font-bold rounded-full bg-white shadow-sm">KG</button>
+<button class="px-3 py-1 text-[10px] font-bold text-on-surface-variant/50">LB</button>
+</div>
+</div>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest ghost-border rounded-lg px-4 py-3 font-mono text-lg focus:ring-1 focus:ring-primary focus:outline-none transition-all" type="text" value="12.45"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 font-mono text-sm text-on-surface-variant/40">kg</span>
+</div>
+</div>
+<!-- Dimensions Card -->
+<div class="col-span-2 bg-surface-container-low p-6 rounded-xl space-y-4">
+<div class="flex justify-between items-center">
+<label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Dimensions (L × W × H)</label>
+<span class="text-[10px] font-bold text-on-surface-variant/60 uppercase">Centimeters</span>
+</div>
+<div class="grid grid-cols-3 gap-4">
+<div class="relative">
+<input class="w-full bg-surface-container-lowest ghost-border rounded-lg px-4 py-3 font-mono text-lg focus:ring-1 focus:ring-primary focus:outline-none transition-all" placeholder="60" type="text"/>
+<span class="absolute left-2 -top-2 px-1 bg-surface-container-low text-[10px] font-bold text-on-surface-variant/40">L</span>
+</div>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest ghost-border rounded-lg px-4 py-3 font-mono text-lg focus:ring-1 focus:ring-primary focus:outline-none transition-all" placeholder="45" type="text"/>
+<span class="absolute left-2 -top-2 px-1 bg-surface-container-low text-[10px] font-bold text-on-surface-variant/40">W</span>
+</div>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest ghost-border rounded-lg px-4 py-3 font-mono text-lg focus:ring-1 focus:ring-primary focus:outline-none transition-all" placeholder="30" type="text"/>
+<span class="absolute left-2 -top-2 px-1 bg-surface-container-low text-[10px] font-bold text-on-surface-variant/40">H</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: Shipping Profiles -->
+<section class="space-y-6">
+<div class="flex items-center justify-between border-b border-outline-variant/20 pb-2">
+<h3 class="text-xl font-bold font-headline">Shipping Profile</h3>
+<button class="text-orange-600 text-xs font-bold flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-sm">add</span> CREATE NEW
+                        </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Active Profile -->
+<div class="p-5 rounded-xl bg-orange-50 border-2 border-orange-600 relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-16 h-16 bg-orange-600/5 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
+<div class="flex justify-between items-start mb-4">
+<div>
+<h4 class="font-bold text-on-surface">Standard Global</h4>
+<p class="text-xs text-on-surface-variant/70">Covers 48 regions with duties unpaid (DDU)</p>
+</div>
+<span class="material-symbols-outlined text-orange-600" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex gap-2">
+<span class="px-2 py-1 bg-white rounded text-[10px] font-mono font-bold text-orange-600">INTL_ECONOMY</span>
+<span class="px-2 py-1 bg-white rounded text-[10px] font-mono font-bold text-orange-600">TRACKED</span>
+</div>
+</div>
+<!-- Inactive Profile -->
+<div class="p-5 rounded-xl bg-surface-container-lowest border border-outline-variant/20 hover:shadow-card transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h4 class="font-bold text-on-surface">Express Domestic</h4>
+<p class="text-xs text-on-surface-variant/70">Next day arrival for localized sellers</p>
+</div>
+</div>
+<div class="flex gap-2">
+<span class="px-2 py-1 bg-surface-container-low rounded text-[10px] font-mono font-bold text-on-surface-variant/60">DOM_EXPRESS</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: Shipping Services & Handling -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+<section class="md:col-span-2 space-y-6">
+<div class="border-b border-outline-variant/20 pb-2">
+<h3 class="text-xl font-bold font-headline">Shipping Services</h3>
+</div>
+<div class="space-y-3">
+<!-- Service 1 -->
+<label class="flex items-center justify-between p-4 bg-surface-container-low rounded-lg cursor-pointer hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-white rounded-md flex items-center justify-center p-1">
+<img alt="DHL" class="max-w-full grayscale opacity-70" data-alt="high contrast logo of DHL logistics company with signature red and yellow colors on white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6uxi37SGIGPipTVReY4ZJVNOqyEDUSC9_bMWT-sP7d1UyfvoLDBTO8yijtZ9NEvIRVEjA3kiwMivoCjD-wiSDhrbTuBktaHfxVwq1zFl1aWrLPrSYtL9WBWYpKZG0HYZPEq8pITHMzpJFdcYlBd7BVQF96Ej55TadOmw0PSsbc4SZvRsnAin5TTrUMiGCBMGQEB34OJOsQR8j4jSjghGOZJR0VjcrUAsBicKw27BLL4Ibaarog5ktZIl9bdStwlo7SzZ3IPCjEb8"/>
+</div>
+<div>
+<p class="font-bold text-sm">DHL Express</p>
+<p class="text-[10px] text-on-surface-variant/60 uppercase">Recommended for luxury goods</p>
+</div>
+</div>
+<input checked="" class="w-5 h-5 rounded text-primary focus:ring-primary border-outline-variant" type="checkbox"/>
+</label>
+<!-- Service 2 -->
+<label class="flex items-center justify-between p-4 bg-surface-container-low rounded-lg cursor-pointer hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-white rounded-md flex items-center justify-center p-1">
+<img alt="FedEx" class="max-w-full grayscale opacity-70" data-alt="minimalist typography of the FedEx corporate logo with clean purple and orange sans serif lettering" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCpHYnhRX5J5Did1bWjfp5e0w4dTurIV-ADsf0N8HlVk7TyOgCQlt1j1MVTS01nETKv4b9of40ZIKZu-oIa_OX-8Pdfs5TjmUpDhYBOXz-Wd3OhUlHbhFFQPirXZIKsDtf_TWhGRgkIdnhulcGMhE6043bo26ozcnvU4-ki_2xwBqeYn-s5YpUk0pGCPT8we2KIxPctql8B5Ixz06ie5_itMqei0lk7W98GueMEAG521kgEM1Av_smWUZ6yrLgqLiQVp_5UzQn970"/>
+</div>
+<div>
+<p class="font-bold text-sm">FedEx International</p>
+<p class="text-[10px] text-on-surface-variant/60 uppercase">Reliable global fulfillment</p>
+</div>
+</div>
+<input class="w-5 h-5 rounded text-primary focus:ring-primary border-outline-variant" type="checkbox"/>
+</label>
+<!-- Service 3 -->
+<label class="flex items-center justify-between p-4 bg-surface-container-low rounded-lg cursor-pointer hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-white rounded-md flex items-center justify-center p-1">
+<span class="material-symbols-outlined text-on-surface-variant/40">local_shipping</span>
+</div>
+<div>
+<p class="font-bold text-sm">Local Courier</p>
+<p class="text-[10px] text-on-surface-variant/60 uppercase">Eco-friendly inner-city delivery</p>
+</div>
+</div>
+<input class="w-5 h-5 rounded text-primary focus:ring-primary border-outline-variant" type="checkbox"/>
+</label>
+</div>
+</section>
+<section class="space-y-6">
+<div class="border-b border-outline-variant/20 pb-2">
+<h3 class="text-xl font-bold font-headline">Handling</h3>
+</div>
+<div class="space-y-4">
+<div class="p-6 bg-surface-container-low rounded-xl">
+<label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-4 block">Handling Time</label>
+<select class="w-full bg-surface-container-lowest ghost-border rounded-lg px-4 py-3 text-sm focus:ring-1 focus:ring-primary focus:outline-none appearance-none">
+<option>1-2 business days</option>
+<option>3-5 business days</option>
+<option>Same day dispatch</option>
+<option>Pre-order (up to 30 days)</option>
+</select>
+<p class="mt-4 text-[10px] text-on-surface-variant leading-relaxed italic">Most sellers choose 1-2 days to maximize buyer trust.</p>
+</div>
+</div>
+</section>
+</div>
+<!-- Bento Style Visual Breakdown (Decorative/UX Enhancement) -->
+<div class="grid grid-cols-12 gap-4 mt-8">
+<div class="col-span-8 h-48 rounded-2xl bg-cover bg-center overflow-hidden relative group" data-alt="top-down perspective of organized industrial logistics warehouse with warm amber lighting and high-tech shelving systems" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD2Xe6BelCPzthZnjRfmVm0IkME6JqH9JNRZZ50qrShHx-PU3NXuNzGxjCQP-or5f-KxJZO3JQuL3uV7vfVCp6TjY1Uj8QezfDHQX9pT9ZE2Xn85JKVKbDD9Yw0l4EFzH6qzjmI4IjypEAm4mS6s7pdaxyJ2MyOOWQWjFpaaaXiO1Sc9XYTAoKZXb5R8QKARfte3Yv9_ZoXtR9AUmmcJyqJxpmr4QLH7M8TnPRPBZGVl6UHWEMIlYMRxLXqMO4LLaynmE4XupkUxSA')">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
+<p class="text-white text-sm font-medium">Kinetic Protect™ covers up to $10,000 in transit loss for this listing.</p>
+</div>
+</div>
+<div class="col-span-4 h-48 rounded-2xl bg-orange-600 flex flex-col items-center justify-center text-white p-6 text-center space-y-2">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">eco</span>
+<p class="text-xs font-bold uppercase tracking-widest">Neutral Fulfillment</p>
+<p class="text-[10px] opacity-80">This shipment qualifies for carbon-neutral certification via our tree-planting initiative.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Actions Bar -->
+<footer class="fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-md border-t border-outline-variant/10 px-8 py-4 flex justify-between items-center z-50">
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 px-6 py-3 text-on-surface-variant font-bold text-sm hover:bg-orange-50 rounded-lg transition-colors group">
+<span class="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                    Inventory
+                </button>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-6 py-3 font-bold text-sm text-on-surface hover:bg-orange-50 rounded-lg transition-all border border-outline-variant/30">
+                    Save as Draft
+                </button>
+<button class="px-8 py-3 bg-gradient-to-r from-primary to-primary-container text-white font-headline font-bold rounded-lg shadow-card hover:shadow-card-hover active:scale-95 transition-all flex items-center gap-2">
+                    Next: Preview &amp; Publish
+                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</footer>
+</div>
+</body></html>

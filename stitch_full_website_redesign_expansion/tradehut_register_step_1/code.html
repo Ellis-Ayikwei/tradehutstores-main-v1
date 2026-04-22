@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Registration Step 1 - Kinetic</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&amp;family=DM+Sans:wght@400;500;700&amp;family=JetBrains+Mono:wght@400;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-container": "#f5620f",
+                        "on-secondary-container": "#00714f",
+                        "tertiary-fixed-dim": "#b0c6ff",
+                        "secondary": "#006c4b",
+                        "on-surface": "#261813",
+                        "surface-dim": "#efd5cb",
+                        "surface-container": "#ffe9e2",
+                        "secondary-container": "#60f9bd",
+                        "surface-container-low": "#fff1ec",
+                        "surface-bright": "#fff8f6",
+                        "on-tertiary-container": "#002761",
+                        "on-tertiary-fixed": "#001945",
+                        "on-secondary-fixed-variant": "#005138",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#4e1900",
+                        "surface-tint": "#a43d00",
+                        "outline": "#8e7165",
+                        "inverse-primary": "#ffb597",
+                        "surface-container-high": "#fee3d9",
+                        "on-primary-fixed-variant": "#7d2d00",
+                        "on-background": "#261813",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed": "#360f00",
+                        "tertiary-fixed": "#d9e2ff",
+                        "on-secondary-fixed": "#002114",
+                        "inverse-on-surface": "#ffede7",
+                        "secondary-fixed": "#63fcc0",
+                        "primary-fixed-dim": "#ffb597",
+                        "background": "#fff8f6",
+                        "tertiary-container": "#558dff",
+                        "surface-variant": "#f8ddd3",
+                        "on-surface-variant": "#5a4137",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#f8ddd3",
+                        "secondary-fixed-dim": "#3fdfa5",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#00429b",
+                        "primary": "#a43d00",
+                        "on-error": "#ffffff",
+                        "surface": "#fff8f6",
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#ffdbcd",
+                        "tertiary": "#0058ca",
+                        "on-error-container": "#93000a",
+                        "outline-variant": "#e2bfb2",
+                        "inverse-surface": "#3d2d26",
+                        "error": "#ba1a1a"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        "headline": ["Syne", "sans-serif"],
+                        "body": ["DM Sans", "sans-serif"],
+                        "label": ["Plus Jakarta Sans", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    },
+                    boxShadow: {
+                        "card": "0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02)",
+                        "card-hover": "0 12px 32px 0 rgba(38, 24, 19, 0.08)"
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .noise-texture {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3B%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.02;
+        }
+    </style>
+</head>
+<body class="bg-[#0a0a0a] min-h-screen flex flex-col font-body antialiased relative overflow-x-hidden">
+<!-- Subtle Background Texture -->
+<div class="fixed inset-0 noise-texture pointer-events-none"></div>
+<!-- Simple Distraction-Free Header -->
+<header class="fixed top-0 w-full z-50 bg-transparent py-8 px-6">
+<div class="max-w-7xl mx-auto flex justify-center">
+<h1 class="text-2xl font-extrabold tracking-tight text-primary-container uppercase font-headline">Kinetic</h1>
+</div>
+</header>
+<!-- Main Registration Canvas -->
+<main class="flex-grow flex items-center justify-center px-4 pt-24 pb-12 relative z-10">
+<div class="w-full max-w-[450px] bg-surface-container-lowest rounded-xl shadow-card p-8 space-y-8">
+<!-- Step Indicator -->
+<div class="flex items-center justify-center gap-3">
+<div class="h-1 w-12 bg-primary-container rounded-full"></div>
+<div class="h-1 w-12 bg-surface-container-high rounded-full"></div>
+<div class="h-1 w-12 bg-surface-container-high rounded-full"></div>
+</div>
+<!-- Header Content -->
+<div class="text-center space-y-2">
+<h2 class="text-3xl font-bold font-headline text-on-surface tracking-tight">Join the Kinetic Gallery</h2>
+<p class="text-on-surface-variant font-body">Select your account type to get started</p>
+</div>
+<!-- Option Cards -->
+<div class="space-y-4">
+<!-- Option: Buyer (Active Example) -->
+<button class="w-full group text-left p-5 bg-surface-container-low rounded-xl border-2 border-primary-container relative transition-all duration-300">
+<div class="flex items-start gap-4">
+<div class="p-3 bg-primary-container/10 rounded-lg text-primary-container">
+<span class="material-symbols-outlined text-2xl" data-icon="shopping_basket">shopping_basket</span>
+</div>
+<div class="flex-grow">
+<h3 class="font-bold text-lg text-on-surface">Buyer</h3>
+<p class="text-sm text-on-surface-variant">Personal trading and collection management</p>
+</div>
+<div class="flex-shrink-0">
+<div class="w-6 h-6 bg-primary-container rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+</div>
+</button>
+<!-- Option: Seller -->
+<button class="w-full group text-left p-5 bg-surface-container-low rounded-xl border-2 border-transparent hover:border-outline-variant transition-all duration-300">
+<div class="flex items-start gap-4">
+<div class="p-3 bg-surface-container-highest rounded-lg text-on-surface-variant">
+<span class="material-symbols-outlined text-2xl" data-icon="storefront">storefront</span>
+</div>
+<div class="flex-grow">
+<h3 class="font-bold text-lg text-on-surface">Seller</h3>
+<p class="text-sm text-on-surface-variant">Enterprise and Merchant-grade infrastructure</p>
+</div>
+<div class="flex-shrink-0 opacity-0 group-hover:opacity-30">
+<div class="w-6 h-6 border-2 border-on-surface-variant rounded-full"></div>
+</div>
+</div>
+</button>
+<!-- Option: Both -->
+<button class="w-full group text-left p-5 bg-surface-container-low rounded-xl border-2 border-transparent hover:border-outline-variant transition-all duration-300">
+<div class="flex items-start gap-4">
+<div class="p-3 bg-surface-container-highest rounded-lg text-on-surface-variant">
+<span class="material-symbols-outlined text-2xl" data-icon="hub">hub</span>
+</div>
+<div class="flex-grow">
+<h3 class="font-bold text-lg text-on-surface">Both</h3>
+<p class="text-sm text-on-surface-variant">Full marketplace access with cross-role utility</p>
+</div>
+<div class="flex-shrink-0 opacity-0 group-hover:opacity-30">
+<div class="w-6 h-6 border-2 border-on-surface-variant rounded-full"></div>
+</div>
+</div>
+</button>
+</div>
+<!-- Footer Action -->
+<div class="pt-4">
+<button class="w-full py-4 bg-gradient-to-r from-primary to-primary-container text-white font-bold rounded-md shadow-card hover:shadow-card-hover active:scale-[0.98] transition-all flex items-center justify-center gap-2 group">
+<span>Continue</span>
+<span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<div class="mt-6 flex justify-center items-center gap-2 text-sm text-on-surface-variant">
+<span>Already have an account?</span>
+<a class="text-primary-container font-bold hover:underline" href="#">Sign In</a>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Decorative Glow -->
+<div class="fixed bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-primary-container/10 blur-[120px] rounded-full -z-10"></div>
+<footer class="py-8 relative z-10">
+<div class="max-w-7xl mx-auto px-6 flex justify-center">
+<p class="text-stone-600 text-xs font-mono tracking-widest uppercase">System Protocol v2.10 // Kinetic Gallery</p>
+</div>
+</footer>
+</body></html>

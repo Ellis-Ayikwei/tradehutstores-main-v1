@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TradeHut | Account - Addresses</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700;800;900&amp;family=Syne:wght@700;800&amp;family=DM+Sans:wght@400;500;700&amp;family=JetBrains+Mono:wght@500&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "background": "#fff8f6",
+                    "on-error": "#ffffff",
+                    "surface-container-highest": "#f8ddd3",
+                    "surface-container-low": "#fff1ec",
+                    "surface-container-high": "#fee3d9",
+                    "outline-variant": "#e2bfb2",
+                    "on-surface-variant": "#5a4137",
+                    "on-secondary-fixed-variant": "#005138",
+                    "surface-tint": "#a43d00",
+                    "primary-fixed-dim": "#ffb597",
+                    "outline": "#8e7165",
+                    "on-tertiary-fixed": "#001945",
+                    "tertiary-fixed-dim": "#b0c6ff",
+                    "on-error-container": "#93000a",
+                    "surface-container": "#ffe9e2",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#ffb597",
+                    "secondary-fixed-dim": "#3fdfa5",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary-container": "#4e1900",
+                    "tertiary": "#0058ca",
+                    "on-tertiary-fixed-variant": "#00429b",
+                    "on-secondary-container": "#00714f",
+                    "primary-container": "#f5620f",
+                    "error": "#ba1a1a",
+                    "inverse-on-surface": "#ffede7",
+                    "error-container": "#ffdad6",
+                    "secondary-fixed": "#63fcc0",
+                    "tertiary-container": "#558dff",
+                    "secondary": "#006c4b",
+                    "primary": "#a43d00",
+                    "surface-bright": "#fff8f6",
+                    "surface-dim": "#efd5cb",
+                    "secondary-container": "#60f9bd",
+                    "on-background": "#261813",
+                    "on-secondary-fixed": "#002114",
+                    "surface": "#fff8f6",
+                    "on-surface": "#261813",
+                    "on-primary-fixed-variant": "#7d2d00",
+                    "tertiary-fixed": "#d9e2ff",
+                    "primary-fixed": "#ffdbcd",
+                    "on-tertiary-container": "#002761",
+                    "on-primary-fixed": "#360f00",
+                    "surface-variant": "#f8ddd3",
+                    "on-tertiary": "#ffffff",
+                    "inverse-surface": "#3d2d26"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Syne", "sans-serif"],
+                    "body": ["DM Sans", "sans-serif"],
+                    "label": ["Plus Jakarta Sans", "sans-serif"],
+                    "mono": ["JetBrains_Mono", "monospace"],
+                    "brand": ["Syne", "sans-serif"]
+            },
+            "boxShadow": {
+                "card": "0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02)",
+                "card-hover": "0 12px 32px 0 rgba(38, 24, 19, 0.08)"
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .headlines-font-syne { font-family: 'Syne', sans-serif; }
+        .mono-font-jetbrains { font-family: 'JetBrains Mono', monospace; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#FFF8F6]/70 backdrop-blur-xl shadow-[0_4px_20px_0_rgba(38,24,19,0.04)] font-['Epilogue']">
+<div class="flex justify-between items-center px-8 h-20 w-full">
+<div class="flex items-center gap-12">
+<span class="text-2xl font-black tracking-tighter text-stone-900 font-['Syne']">TradeHut</span>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-stone-600 font-medium hover:text-stone-900 transition-all duration-300" href="#">Marketplace</a>
+<a class="text-stone-600 font-medium hover:text-stone-900 transition-all duration-300" href="#">Auctions</a>
+<a class="text-stone-600 font-medium hover:text-stone-900 transition-all duration-300" href="#">RFQs</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden lg:block">
+<input class="bg-surface-container-low border-none rounded-md px-4 py-2 w-64 focus:ring-2 focus:ring-primary/20 placeholder:text-on-surface-variant/50" placeholder="Search assets..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-stone-100/50 rounded-full transition-all duration-300">
+<span class="material-symbols-outlined text-on-surface">notifications</span>
+</button>
+<button class="p-2 hover:bg-stone-100/50 rounded-full transition-all duration-300">
+<span class="material-symbols-outlined text-on-surface">shopping_cart</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden cursor-pointer scale-95 active:opacity-80 transition-transform">
+<img alt="User avatar" data-alt="professional portrait of a creative professional with a neutral background and soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARhZ8S0X_4N52Ysc6UFl9Eld-Lt9qSxCyNV5BYvP5rVvZQUfMYLMLTqEb1AP9DNUO3lkP6_UQDtelrS4hQuzAPGa4O0GVDfnbUNEb9tVUNT9JOajTN-rFzMHyKy807kUDor5nZPRTN33btWT2dPA-3RLTmmPr2uQ2daAqQ9UFyMRI030_PJp2GReOwiSLOqOv0od7PKnRm6I_UMGCoGRU7BVS1Kqesv5R0aiYqtSsxUyr_LWjbSkwxdVhVkcEu0ZwYX6baiQMRbDo"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-12 px-8 max-w-7xl mx-auto flex gap-12">
+<!-- SideNavBar (Sticky) -->
+<aside class="sticky top-24 h-[calc(100vh-6rem)] w-72 rounded-r-2xl bg-gradient-to-r from-[#FFF1EC] to-transparent p-6 flex flex-col gap-2 overflow-y-auto">
+<div class="mb-8">
+<h2 class="font-headline text-lg text-on-surface tracking-tight">Account Settings</h2>
+<p class="text-xs text-stone-500 uppercase tracking-widest font-bold mt-1">Manage your Kinetic profile</p>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="text-stone-500 px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+<span class="font-label font-semibold text-sm">Orders</span>
+</a>
+<a class="text-stone-500 px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="gavel">gavel</span>
+<span class="font-label font-semibold text-sm">Bids &amp; Auctions</span>
+</a>
+<a class="text-stone-500 px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="request_quote">request_quote</span>
+<span class="font-label font-semibold text-sm">My Requests</span>
+</a>
+<a class="text-stone-500 px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+<span class="font-label font-semibold text-sm">Wishlist</span>
+</a>
+<a class="bg-white text-[#F5620F] shadow-card rounded-xl px-4 py-3 flex items-center gap-3 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="location_on">location_on</span>
+<span class="font-label font-semibold text-sm">Addresses</span>
+</a>
+<a class="text-stone-500 px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="credit_card">credit_card</span>
+<span class="font-label font-semibold text-sm">Payment Methods</span>
+</a>
+<a class="text-stone-500 px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="notifications_active">notifications_active</span>
+<span class="font-label font-semibold text-sm">Notifications</span>
+</a>
+<a class="text-stone-500 px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="shield">shield</span>
+<span class="font-label font-semibold text-sm">Security</span>
+</a>
+</nav>
+<button class="mt-auto px-4 py-3 flex items-center gap-3 text-error font-bold text-sm hover:translate-x-1 transition-transform">
+<span class="material-symbols-outlined">logout</span>
+                Logout
+            </button>
+</aside>
+<!-- Main Content Canvas -->
+<section class="flex-1">
+<div class="flex justify-between items-end mb-12">
+<div>
+<h1 class="text-4xl font-headline tracking-tighter text-on-surface">Saved Addresses</h1>
+<p class="text-on-surface-variant mt-2 max-w-md">Manage your shipping destinations for a faster checkout experience across the TradeHut ecosystem.</p>
+</div>
+<button class="flex items-center gap-2 bg-gradient-to-r from-primary to-primary-container text-white px-6 py-3 rounded-md font-bold shadow-card hover:shadow-card-hover transition-all scale-100 active:scale-95">
+<span class="material-symbols-outlined">add_location_alt</span>
+                    Add New Address
+                </button>
+</div>
+<!-- Bento Grid of Addresses -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<!-- Default Address Card -->
+<div class="group relative bg-surface-container-lowest p-8 rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300">
+<div class="absolute top-8 right-8 flex gap-2">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Default</span>
+</div>
+<div class="flex items-start gap-6">
+<div class="w-12 h-12 rounded-lg bg-surface-container-low flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary" data-icon="home">home</span>
+</div>
+<div class="flex-1">
+<h3 class="font-headline text-xl text-on-surface">Alex Rivera</h3>
+<div class="mt-4 space-y-1 text-on-surface-variant font-medium">
+<p>1288 Silicon Valley Blvd</p>
+<p>Suite 400, Floor 12</p>
+<p>San Francisco, CA 94105</p>
+<p>United States</p>
+</div>
+<div class="mt-6 flex items-center gap-2 text-on-surface/60">
+<span class="material-symbols-outlined text-sm">call</span>
+<span class="font-mono text-sm tracking-tight">+1 (555) 012-3456</span>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-6 flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-sm font-bold text-primary flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-lg">edit</span> Edit
+                        </button>
+<div class="h-4 w-px bg-outline-variant/30"></div>
+<button class="text-sm font-bold text-on-surface-variant flex items-center gap-1 hover:text-error transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span> Delete
+                        </button>
+</div>
+</div>
+<!-- Work Address Card -->
+<div class="group relative bg-surface-container-low p-8 rounded-xl shadow-card hover:bg-surface-container-lowest hover:shadow-card-hover transition-all duration-300">
+<div class="flex items-start gap-6">
+<div class="w-12 h-12 rounded-lg bg-white flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-tertiary" data-icon="business">business</span>
+</div>
+<div class="flex-1">
+<h3 class="font-headline text-xl text-on-surface">Alex Rivera <span class="text-on-surface-variant/40 font-normal ml-2">— Work</span></h3>
+<div class="mt-4 space-y-1 text-on-surface-variant font-medium">
+<p>Kinetic Design HQ</p>
+<p>420 Innovation Dr</p>
+<p>Austin, TX 78701</p>
+<p>United States</p>
+</div>
+<div class="mt-6 flex items-center gap-2 text-on-surface/60">
+<span class="material-symbols-outlined text-sm">call</span>
+<span class="font-mono text-sm tracking-tight">+1 (555) 987-6543</span>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-6 flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-sm font-bold text-primary flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-lg">edit</span> Edit
+                        </button>
+<div class="h-4 w-px bg-outline-variant/30"></div>
+<button class="text-sm font-bold text-on-surface-variant flex items-center gap-1 hover:text-error transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span> Delete
+                        </button>
+<div class="ml-auto">
+<button class="text-xs font-bold text-on-surface-variant/60 hover:text-primary transition-colors">Make Default</button>
+</div>
+</div>
+</div>
+<!-- Studio Address Card (Asymmetric Layout element) -->
+<div class="group relative bg-surface-container-low p-8 rounded-xl shadow-card hover:bg-surface-container-lowest hover:shadow-card-hover transition-all duration-300 lg:col-span-1">
+<div class="flex items-start gap-6">
+<div class="w-12 h-12 rounded-lg bg-white flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary" data-icon="palette">palette</span>
+</div>
+<div class="flex-1">
+<h3 class="font-headline text-xl text-on-surface">The Loft Studio</h3>
+<div class="mt-4 space-y-1 text-on-surface-variant font-medium">
+<p>77 Art District Alley</p>
+<p>Studio 3B</p>
+<p>Brooklyn, NY 11201</p>
+</div>
+<div class="mt-6 flex items-center gap-2 text-on-surface/60">
+<span class="material-symbols-outlined text-sm">call</span>
+<span class="font-mono text-sm tracking-tight">+1 (555) 234-5678</span>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-6 flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-sm font-bold text-primary flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-lg">edit</span> Edit
+                        </button>
+<div class="h-4 w-px bg-outline-variant/30"></div>
+<button class="text-sm font-bold text-on-surface-variant flex items-center gap-1 hover:text-error transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span> Delete
+                        </button>
+</div>
+</div>
+<!-- Add New Placeholder -->
+<button class="group border-2 border-dashed border-outline-variant/30 rounded-xl p-8 flex flex-col items-center justify-center gap-4 hover:border-primary/40 hover:bg-surface-container-low transition-all duration-300 min-h-[280px]">
+<div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl">add</span>
+</div>
+<div class="text-center">
+<span class="font-headline text-lg text-on-surface block">Add New Location</span>
+<span class="text-sm text-on-surface-variant">Store unlimited shipping addresses</span>
+</div>
+</button>
+</div>
+<!-- Informational Layer -->
+<div class="mt-16 p-10 bg-surface-container-low rounded-2xl relative overflow-hidden">
+<div class="absolute right-0 top-0 w-1/3 h-full opacity-10 pointer-events-none">
+<img alt="Map graphic" class="object-cover h-full" data-alt="abstract world map with architectural line art and subtle geometric patterns in soft warm tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3EX_Tktk9UxKCaFjxY3mSaU8i28Dz9sb9SA1Z3fQ_eS_y86QK6V4KxfqIqY-Da0SMMhMmBTF2G30CVmNAsCWQxMWHx7HMz1bDWnug43deBjH0jP6mwPa9rgXvA9mk63OmiNJ5MWg9UsZHnbZ-PXHN1XCJFXC4NQnP79JkjRbF3_mX-wlwKIMWUrjDbQEmzjDAJ6RsIUge3WBQTIl4fFWWEuwDd4DLSyg7NBliuDauTLOuIZB_62ihPDdnCPiqaChG8VIOTRmi8aY"/>
+</div>
+<div class="relative z-10 max-w-xl">
+<h4 class="font-headline text-2xl text-on-surface tracking-tight">Global Logistics Support</h4>
+<p class="mt-4 text-on-surface-variant leading-relaxed">
+                        TradeHut partners with premium freight services to ensure your high-value assets arrive safely. Default addresses are automatically synchronized with our Auction and RFQ engines for instant shipping estimates.
+                    </p>
+<div class="mt-8 flex gap-8">
+<div class="flex flex-col gap-1">
+<span class="font-mono text-primary font-bold">100%</span>
+<span class="text-[10px] uppercase tracking-widest font-bold text-stone-500">Insured Shipping</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="font-mono text-primary font-bold">24/7</span>
+<span class="text-[10px] uppercase tracking-widest font-bold text-stone-500">Asset Tracking</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="font-mono text-primary font-bold">Priority</span>
+<span class="text-[10px] uppercase tracking-widest font-bold text-stone-500">Handling</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Nav for Mobile -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-[#FFF8F6]/70 backdrop-blur-xl h-20 flex items-center justify-around px-4 z-50">
+<button class="flex flex-col items-center gap-1 text-stone-500">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Market</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-stone-500">
+<span class="material-symbols-outlined">gavel</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Bids</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-[#F5620F]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Account</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-stone-500">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Cart</span>
+</button>
+</nav>
+</body></html>

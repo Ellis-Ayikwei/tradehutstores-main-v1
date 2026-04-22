@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Messaging Center | TradeMarket Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&amp;family=DM+Sans:wght@400;500;700&amp;family=Syne:wght@400;500;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed-dim": "#3fdfa5",
+                    "secondary": "#006c4b",
+                    "surface": "#fff8f6",
+                    "on-surface-variant": "#5a4137",
+                    "inverse-surface": "#3d2d26",
+                    "on-tertiary-container": "#002761",
+                    "on-tertiary-fixed": "#001945",
+                    "surface-variant": "#f8ddd3",
+                    "primary": "#a43d00",
+                    "tertiary-fixed-dim": "#b0c6ff",
+                    "surface-container-low": "#fff1ec",
+                    "on-primary-container": "#4e1900",
+                    "surface-dim": "#efd5cb",
+                    "on-secondary": "#ffffff",
+                    "surface-container-highest": "#f8ddd3",
+                    "primary-fixed": "#ffdbcd",
+                    "on-secondary-fixed": "#002114",
+                    "error": "#ba1a1a",
+                    "tertiary": "#0058ca",
+                    "on-primary-fixed-variant": "#7d2d00",
+                    "on-tertiary-fixed-variant": "#00429b",
+                    "surface-tint": "#a43d00",
+                    "outline-variant": "#e2bfb2",
+                    "on-secondary-fixed-variant": "#005138",
+                    "on-surface": "#261813",
+                    "tertiary-fixed": "#d9e2ff",
+                    "on-background": "#261813",
+                    "secondary-container": "#60f9bd",
+                    "outline": "#8e7165",
+                    "surface-container": "#ffe9e2",
+                    "tertiary-container": "#558dff",
+                    "primary-container": "#f5620f",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed": "#360f00",
+                    "secondary-fixed": "#63fcc0",
+                    "on-error": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-bright": "#fff8f6",
+                    "primary-fixed-dim": "#ffb597",
+                    "inverse-primary": "#ffb597",
+                    "on-primary": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-container": "#00714f",
+                    "on-error-container": "#93000a",
+                    "background": "#fff8f6",
+                    "inverse-on-surface": "#ffede7",
+                    "surface-container-high": "#fee3d9"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Syne", "Epilogue", "sans-serif"],
+                    "body": ["DM Sans", "Plus Jakarta Sans", "sans-serif"],
+                    "mono": ["JetBrains Mono", "monospace"]
+            }
+          },
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .shadow-card {
+            box-shadow: 0 4px 20px 0 rgba(38, 24, 19, 0.04), 0 1px 2px 0 rgba(38, 24, 19, 0.02);
+        }
+        .shadow-card-hover:hover {
+            box-shadow: 0 12px 32px 0 rgba(38, 24, 19, 0.08);
+        }
+        .glass-header {
+            background: rgba(255, 248, 246, 0.7);
+            backdrop-filter: blur(24px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body overflow-hidden h-screen">
+<!-- SideNavBar (JSON Derived) -->
+<aside class="h-screen w-64 fixed left-0 top-0 flex flex-col bg-[#FFF1EC] dark:bg-stone-950 border-r border-stone-100 dark:border-stone-800 z-[60]">
+<div class="p-8">
+<h1 class="font-['Epilogue'] text-lg font-black text-stone-900 dark:text-white tracking-tighter uppercase">Kinetic Seller</h1>
+<p class="text-stone-500 text-xs mt-1 font-medium">Verified Merchant</p>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-6 py-4 text-stone-500 dark:text-stone-400 hover:bg-white/30 dark:hover:bg-stone-900/30 transition-all font-['DM_Sans'] text-sm" href="#">
+<span class="material-symbols-outlined">dashboard</span> Overview
+            </a>
+<a class="flex items-center gap-3 px-6 py-4 text-stone-500 dark:text-stone-400 hover:bg-white/30 dark:hover:bg-stone-900/30 transition-all font-['DM_Sans'] text-sm" href="#">
+<span class="material-symbols-outlined">inventory_2</span> Catalog
+            </a>
+<a class="flex items-center gap-3 px-6 py-4 text-stone-500 dark:text-stone-400 hover:bg-white/30 dark:hover:bg-stone-900/30 transition-all font-['DM_Sans'] text-sm" href="#">
+<span class="material-symbols-outlined">receipt_long</span> Transactions
+            </a>
+<a class="flex items-center gap-3 px-6 py-4 text-orange-600 dark:text-orange-500 bg-white/50 dark:bg-stone-900/50 font-bold border-r-4 border-orange-600 font-['DM_Sans'] text-sm" href="#">
+<span class="material-symbols-outlined">chat_bubble</span> Messaging
+            </a>
+<a class="flex items-center gap-3 px-6 py-4 text-stone-500 dark:text-stone-400 hover:bg-white/30 dark:hover:bg-stone-900/30 transition-all font-['DM_Sans'] text-sm" href="#">
+<span class="material-symbols-outlined">analytics</span> Insights
+            </a>
+<a class="flex items-center gap-3 px-6 py-4 text-stone-500 dark:text-stone-400 hover:bg-white/30 dark:hover:bg-stone-900/30 transition-all font-['DM_Sans'] text-sm" href="#">
+<span class="material-symbols-outlined">settings</span> Support
+            </a>
+</nav>
+<div class="p-6">
+<button class="w-full bg-primary-container text-white font-bold py-3 rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center gap-2 transition-transform active:scale-95">
+<span class="material-symbols-outlined">add</span> New Listing
+            </button>
+</div>
+<div class="bg-[#FFF8F6] dark:bg-stone-900 mx-4 h-[1px] my-4"></div>
+<div class="px-4 pb-8">
+<a class="flex items-center gap-3 px-6 py-4 text-stone-500 dark:text-stone-400 hover:bg-white/30 transition-all font-['DM_Sans'] text-sm" href="#">
+<span class="material-symbols-outlined">contact_support</span> Help Center
+            </a>
+</div>
+</aside>
+<main class="ml-64 flex flex-col h-screen">
+<!-- TopAppBar (JSON Derived) -->
+<header class="flex justify-between items-center w-full px-8 h-20 z-50 sticky top-0 bg-white/70 backdrop-blur-2xl shadow-sm">
+<div class="flex items-center gap-8">
+<span class="font-['Epilogue'] tracking-tighter text-2xl font-bold text-stone-900">TradeMarket Portal</span>
+<nav class="hidden md:flex gap-6 items-center">
+<a class="text-stone-500 font-medium hover:text-orange-500 transition-colors duration-200" href="#">Dashboard</a>
+<a class="text-stone-500 font-medium hover:text-orange-500 transition-colors duration-200" href="#">Inventory</a>
+<a class="text-stone-500 font-medium hover:text-orange-500 transition-colors duration-200" href="#">Orders</a>
+<a class="text-orange-600 font-bold border-b-2 border-orange-600" href="#">Messages</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative flex items-center bg-surface-container-low px-4 py-2 rounded-xl focus-within:bg-surface-container-lowest focus-within:ring-1 focus-within:ring-primary/20 transition-all">
+<span class="material-symbols-outlined text-outline">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-64 text-on-surface" placeholder="Global search..." type="text"/>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-stone-500 hover:text-orange-500 transition-colors"><span class="material-symbols-outlined">notifications</span></button>
+<button class="p-2 text-stone-500 hover:text-orange-500 transition-colors"><span class="material-symbols-outlined">help</span></button>
+<button class="p-2 text-stone-500 hover:text-orange-500 transition-colors"><span class="material-symbols-outlined">account_circle</span></button>
+</div>
+<button class="ml-4 bg-outline-variant/15 text-orange-600 px-5 py-2 rounded-lg font-bold text-sm border border-orange-600/20 hover:bg-orange-50 transition-colors">Open Dispute</button>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="flex-1 flex overflow-hidden">
+<!-- Conversation List (Left Panel) -->
+<section class="w-[320px] bg-surface flex flex-col h-full border-r border-outline-variant/10">
+<div class="p-6">
+<h2 class="font-headline text-xl font-bold tracking-tight mb-4">Messages</h2>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline text-sm">filter_list</span>
+<input class="w-full bg-surface-container-low border-none rounded-xl pl-10 py-2 text-sm focus:ring-1 focus:ring-primary/20" placeholder="Filter conversations" type="text"/>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto space-y-1 px-3">
+<!-- Active Item -->
+<div class="bg-surface-container-low rounded-2xl p-4 flex gap-4 cursor-pointer relative group transition-all">
+<div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-full"></div>
+<div class="relative shrink-0">
+<img class="w-12 h-12 rounded-full object-cover" data-alt="portrait of a focused professional creative designer with clean background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhUCYuIAAWSVNEzVU0UYHi_x2Ekdm72dHkGdH3BDpPKKN6T6XBqyEtp3U2L4e7CZCpxBlKLG6Lww35crzTaex7jPd3_aH0TVndUggKviCihERHOfFb9W89JCbxlQGaSu5EsQYHKu3JYYTk0biv3bLSZzDaHpFyeDu88WEVa3pS676ZE7F8b2eXp_IoD0c33lmKPlrOm6s6zSRLvEKNoba_p8LaZeeXIsl3Y_PqeeANqLjzIXmof87yI0_A0VZgUmjHHulq9kDMlLY"/>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-secondary rounded-full border-2 border-surface-container-low"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-0.5">
+<h3 class="font-headline font-bold text-on-surface truncate">Alex Rivera</h3>
+<span class="font-mono text-[10px] text-outline">10:45 AM</span>
+</div>
+<p class="text-sm text-on-surface truncate font-medium">Wait, is the Sony headset still...</p>
+<div class="flex justify-between items-center mt-2">
+<span class="bg-surface-container-highest text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider text-on-surface-variant">Electronics</span>
+<span class="bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">2</span>
+</div>
+</div>
+</div>
+<!-- Other Items -->
+<div class="hover:bg-surface-container-low/50 rounded-2xl p-4 flex gap-4 cursor-pointer transition-all">
+<img class="w-12 h-12 rounded-full object-cover shrink-0" data-alt="high fashion portrait of a woman with minimalist aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKV6inwxCbyI0jvVviQUXZvJUmf3NaG5Ul7hDbV69FcoQpKz8b6QnH6WPUwlrWqyLjYY52KQ93SRaQJKW6L1pBx1mIi9fjbNKKzGgtn4xSPIwSb-kr6hJHRT24Nv0xZgOiVYLBGdxC6sAurpTMxg3LGkmGprQo5OVWrM6b7y7ITSj-8-Da_Lf099RFSJZX9b1ivqns21KwG8mpCwxiO4bBpuONLwc38dIEhW7VXUUiHh4R8FhLgAljMKmmcvZQ6aY4S15QtMqtwy0"/>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-0.5">
+<h3 class="font-headline font-bold text-on-surface/70 truncate">Jordan Smith</h3>
+<span class="font-mono text-[10px] text-outline">Yesterday</span>
+</div>
+<p class="text-sm text-outline truncate">Great doing business with you!</p>
+</div>
+</div>
+<div class="hover:bg-surface-container-low/50 rounded-2xl p-4 flex gap-4 cursor-pointer transition-all">
+<img class="w-12 h-12 rounded-full object-cover shrink-0" data-alt="bearded man in a modern office environment looking thoughtfully into camera" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEXLfVjCtPm5Wskvz5j0ChshZ86OMxkLzXgWBzHkTeWC7_wQSbT4orEAZtkx6GMfSmK7nGK-hqR7omi5NEoCbXoEjEIP8Zqnm6RJYAqemkaqOgl_8UaRGV-7Pb2AZ089VE4MccLbrMDHeV3btrDu8IUBotbVGIT6Em6fyss2KMpifFlFWrc4NWRvCRiP10vCOAfIqmDLYiuBZt-kD7H1ymD3boTQCnQH8AmOHblfQEzkREkHFb0cjWhygJsoHj1jGGQpVJ7R-ffsY"/>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-0.5">
+<h3 class="font-headline font-bold text-on-surface/70 truncate">Marcus Thorne</h3>
+<span class="font-mono text-[10px] text-outline">Tue</span>
+</div>
+<p class="text-sm text-outline truncate">Sent the tracking number via...</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Chat Window (Right Panel) -->
+<section class="flex-1 bg-surface-container-lowest flex flex-col h-full overflow-hidden">
+<!-- Chat Header -->
+<header class="h-20 glass-header border-b border-outline-variant/10 flex items-center justify-between px-8 shrink-0">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="close up profile of professional designer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgBBig_ljWhZPOCi8szF5TWKcaTb4-XGPFJEtO3SPw1cFVNL15DTqb9jc3WJ-zHJ6DVHBQY4dJdiwkUXCUxT-eTuAMlgRnWZUbY_ZZhhdgblKyPP_TbI7umT0fXhYWHbwxjh3wZr7Q5zGYTQCV5SBc00GD1vJSrj8aug3U4iVvNZ9Fw5xXprzhRqYAhktNSukG_gLPsu74H6FUlP5uNb_HT1cauZHJvU6kfqiNGEIcGISYDKvZU-C38uP9uabRxUKznLrFwFbSgmw"/>
+<div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-secondary rounded-full border-2 border-white"></div>
+</div>
+<div>
+<h2 class="font-headline font-bold text-lg leading-none">Alex Rivera</h2>
+<p class="text-xs text-secondary font-bold uppercase tracking-widest mt-1">Online</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined">call</span></button>
+<button class="p-2 text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined">videocam</span></button>
+<div class="w-[1px] h-6 bg-outline-variant/30 mx-2"></div>
+<button class="text-primary font-bold text-sm border border-primary/20 px-4 py-2 rounded-lg hover:bg-primary/5 transition-all">Open Dispute</button>
+</div>
+</header>
+<!-- Message Area -->
+<div class="flex-1 overflow-y-auto p-8 space-y-8 flex flex-col">
+<!-- System Pill -->
+<div class="flex justify-center">
+<div class="bg-surface-container-low px-4 py-1.5 rounded-full flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-secondary">verified_user</span>
+<span class="text-[11px] font-bold text-on-surface-variant tracking-wider uppercase">Escrow payment secured</span>
+</div>
+</div>
+<!-- Receiver Message -->
+<div class="flex gap-4 max-w-[70%]">
+<img class="w-8 h-8 rounded-full object-cover self-end" data-alt="user avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2SmJvsjJ-aXixYX_E-BNHhPyA451crs0sfyS5WJGe8n1p0Fqh11WVItzPfxPSvTEJqvv91IRHpuv_10kvccafAmYKNS_28j94W5Qi6c1csMp3ca-HE_VuvBtTVV4u5OEDCXbZnrXS4eGdDH2s1kwV1M9ykKJXQxuHspDmfwqzTICVveb88fgjmTwZNgyznR7A5xhPpVBzccCevwHOKa1G1MFuxOE69NP4MdFD-YYpkxUNdbVAa1-tTacmHIolj6O-1IWaXMxVX_g"/>
+<div class="space-y-1">
+<div class="bg-surface-container-low p-4 rounded-2xl rounded-bl-none text-on-surface text-sm shadow-card">
+                                Hi there! I'm interested in the Sony headphones. Are they still available for the asking price?
+                            </div>
+<span class="text-[10px] font-mono text-outline ml-1">10:42 AM</span>
+</div>
+</div>
+<!-- Sender Message -->
+<div class="flex flex-col items-end gap-1 ml-auto max-w-[70%]">
+<div class="bg-primary-container text-white p-4 rounded-2xl rounded-br-none text-sm shadow-lg shadow-primary/10">
+                            Hello Alex! Yes, they are still available. I've only used them for about a week. 
+                        </div>
+<span class="text-[10px] font-mono text-outline mr-1">10:44 AM</span>
+</div>
+<!-- Product Card -->
+<div class="flex flex-col items-end gap-4 ml-auto">
+<div class="bg-surface-container-lowest border border-outline-variant/20 rounded-2xl p-3 flex gap-4 w-[320px] shadow-card hover:shadow-card-hover transition-all">
+<img class="w-20 h-20 rounded-xl object-cover" data-alt="sleek black sony wh-1000xm5 headphones on a minimalist wooden stand" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8hG2VL-BuHYtmbv-X1o0o8bQLNQh39VU_-NE6b7mXnMahlzsDQMe6R-fTvwBLzkil0BXFX7RlYNl_IRJaQ-e3aLAQr6uu93PoNFTn26-qADYTjVJ-zMPJyJK8diyIp_K0M_7SfmLCoZXvUSCEzj-Tag6Ng3y-a-g9p-oeg5xaP9StxeZWVfAvjvx3gKX2egxxukRTIQYlUgtpgaKgARkZJ1N8m_znSVO9NzCjAkMM8aGHZV0RyDsLUrFLQBx-7Wwatpv0ztKV57A"/>
+<div class="flex flex-col justify-between py-1">
+<div>
+<h4 class="font-headline font-bold text-sm text-on-surface leading-tight">Sony WH-1000XM5</h4>
+<span class="font-mono text-secondary font-bold text-sm">$320.00</span>
+</div>
+<a class="text-[11px] font-bold text-primary uppercase tracking-wider hover:underline" href="#">View Product</a>
+</div>
+</div>
+</div>
+<!-- Receiver Message -->
+<div class="flex gap-4 max-w-[70%]">
+<img class="w-8 h-8 rounded-full object-cover self-end" data-alt="user avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBX7fIKJrBbC4tyna2MyR8J44cifbQwbqcLtJmMbI3lTfgNwEenrDQicehGFAkPxeEak1gnyhm2PIKgYDZVvOve7FcuB4qrRmOCclG52cg81z5b25rpVv1GafmM0u2VVxLe2o13TurNmv89lu55rCug7FkvW7E3XAAUasyiLKYni4bbFaC2wSltXAYVn4XwfqpyIweIeN8rtYECFrDYhIl46wsaATi4nJq1hNYT4fehV8LrvxqNsxpiIjqiAbUPrw6_960xJsXSqpE"/>
+<div class="space-y-1">
+<div class="bg-surface-container-low p-4 rounded-2xl rounded-bl-none text-on-surface text-sm shadow-card">
+                                Wait, is the Sony headset still under manufacturer warranty? I'd like to verify that before placing a bid.
+                            </div>
+<span class="text-[10px] font-mono text-outline ml-1">10:45 AM</span>
+</div>
+</div>
+</div>
+<!-- Message Input -->
+<footer class="p-6 bg-surface-container-lowest border-t border-outline-variant/10">
+<div class="max-w-4xl mx-auto bg-surface-container-low rounded-2xl p-2 flex items-center gap-3">
+<button class="p-2 text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+<button class="p-2 text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined">image</span>
+</button>
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-sm py-2" placeholder="Type your message here..." type="text"/>
+<button class="p-2 text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined">sentiment_satisfied</span>
+</button>
+<button class="bg-primary-container text-white p-2.5 rounded-xl flex items-center justify-center transition-transform active:scale-90 shadow-md shadow-primary/20">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+</div>
+</footer>
+</section>
+</div>
+</main>
+</body></html>
