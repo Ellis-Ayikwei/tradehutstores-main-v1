@@ -2,7 +2,6 @@ from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Q
-from django.utils import timezone
 
 from .models import (
     Product,
@@ -14,6 +13,7 @@ from .models import (
 )
 from .serializers import (
     ProductSerializer,
+    ProductCatalogSerializer,
     ProductVariantSerializer,
     ProductImageSerializer,
     InventorySerializer,
@@ -33,7 +33,12 @@ class StaffWritePermission(permissions.BasePermission):
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [StaffWritePermission]
+    # permission_classes = [StaffWritePermission]
+
+    def get_queryset(self):
+        return Product.objects.select_related(
+            "category", "sub_category", "brand", "default_variant"
+        ).prefetch_related("variants")
 
     @action(detail=False, methods=["get"])
     def search(self, request):
@@ -67,6 +72,14 @@ class ProductViewSet(viewsets.ModelViewSet):
     def popular(self, request):
         qs = self.queryset.order_by("-average_rating", "-total_reviews")[:10]
         return Response(self.get_serializer(qs, many=True).data)
+
+    @action(detail=False, methods=["get"])
+    def catalog(self, request):
+        qs = self.get_queryset()
+        serializer = ProductCatalogSerializer(
+            qs, many=True, context={"request": request}
+        )
+        return Response(serializer.data)
 
     @action(detail=True, methods=["get"])
     def variants(self, request, pk=None):

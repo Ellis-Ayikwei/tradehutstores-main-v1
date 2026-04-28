@@ -47,6 +47,10 @@ urlpatterns = [
                 path("catalog/", include("apps.catalog.urls")),
                 # Products endpoints
                 path("products/", include("apps.products.urls")),
+                # Hybrid search (full-text + visual). Always mounted — the app
+                # gracefully degrades when ES/pgvector are unavailable, so
+                # clients can keep calling it across all environments.
+                path("search/", include("apps.search.urls")),
                 # Orders endpoints (when created)
                 # path("orders/", include("apps.orders.urls")),
                 # Cart endpoints (when created)

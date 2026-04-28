@@ -4,6 +4,13 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { Search, Camera, Clock, TrendingUp, X, ArrowRight, Tag } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import ImageSearchModal from './ImageSearchModal'
+import {
+    autocomplete as autocompleteApi,
+    getRecentSearches,
+    removeRecentSearch,
+    saveRecentSearch,
+    type AutocompleteHit,
+} from '@/lib/searchClient'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -28,29 +35,8 @@ const TRENDING: Suggestion[] = [
     { type: 'trending', label: 'Yoga Mat Premium', category: 'Sports' },
 ]
 
-const RECENT_KEY = 'ths_recent_searches'
-
-function getRecent(): string[] {
-    if (typeof window === 'undefined') return []
-    try { return JSON.parse(localStorage.getItem(RECENT_KEY) || '[]').slice(0, 5) }
-    catch { return [] }
-}
-
-function saveRecent(q: string) {
-    if (typeof window === 'undefined') return
-    try {
-        const existing = getRecent().filter(r => r.toLowerCase() !== q.toLowerCase())
-        localStorage.setItem(RECENT_KEY, JSON.stringify([q, ...existing].slice(0, 8)))
-    } catch { /* ignore */ }
-}
-
-function removeRecent(q: string) {
-    if (typeof window === 'undefined') return
-    try {
-        localStorage.setItem(RECENT_KEY, JSON.stringify(getRecent().filter(r => r.toLowerCase() !== q.toLowerCase())))
-    } catch { /* ignore */ }
-}
-
+// Local fallback pool — used when the API is unreachable so the dropdown
+// never goes blank during dev.
 const POOL = [
     { label: 'iPhone 15 Pro', category: 'Electronics' },
     { label: 'iPhone 15 Pro Max case', category: 'Electronics' },
@@ -69,7 +55,7 @@ const POOL = [
     { label: 'Smart Watch Fitness', category: 'Electronics' },
 ]
 
-function getSuggestions(q: string): Suggestion[] {
+function getMockSuggestions(q: string): Suggestion[] {
     if (!q.trim()) return []
     return POOL
         .filter(p => p.label.toLowerCase().includes(q.toLowerCase()))
@@ -91,28 +77,32 @@ function highlightMatch(text: string, query: string) {
 
 // ─── Dropdown ─────────────────────────────────────────────────────────────────
 
-function SearchDropdown({ query, recent, onSelect, onRemoveRecent, variant }: {
+function SearchDropdown({ query, recent, suggestions, hits, loading, onSelect, onRemoveRecent, variant }: {
     query: string
     recent: string[]
+    suggestions: Suggestion[]
+    hits: AutocompleteHit[]
+    loading: boolean
     onSelect: (label: string) => void
     onRemoveRecent: (label: string) => void
     variant: 'hero' | 'navbar'
 }) {
-    const suggestions = getSuggestions(query)
     const hasQuery = query.trim().length > 0
 
     const row = `flex items-center gap-3 w-full px-4 py-2.5 text-left hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors group cursor-pointer`
 
     return (
         <div
-            className={`absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-[300] ${variant === 'navbar' ? 'max-h-[360px]' : 'max-h-[420px]'} overflow-y-auto`}
+            className={`absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-[300] ${variant === 'navbar' ? 'max-h-[420px]' : 'max-h-[480px]'} overflow-y-auto`}
             style={{ animation: 'dropIn 0.15s cubic-bezier(0.16,1,0.3,1) forwards' }}
         >
             {/* Live suggestions */}
             {hasQuery && (
                 suggestions.length > 0 ? (
                     <div className="py-1.5">
-                        <p className="px-4 pt-1 pb-1.5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-600">Suggestions</p>
+                        <p className="px-4 pt-1 pb-1.5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-600">
+                            {loading ? 'Searching…' : 'Suggestions'}
+                        </p>
                         {suggestions.map((s, i) => (
                             <button key={i} className={row} onClick={() => onSelect(s.label)}>
                                 <Search className="h-3.5 w-3.5 text-gray-400 shrink-0" />
@@ -126,10 +116,33 @@ function SearchDropdown({ query, recent, onSelect, onRemoveRecent, variant }: {
                     </div>
                 ) : (
                     <div className="px-4 py-6 text-center text-sm text-gray-400 dark:text-gray-600">
-                        No suggestions for &ldquo;{query}&rdquo;
+                        {loading ? 'Searching…' : `No suggestions for “${query}”`}
                         <p className="text-xs mt-1">Press Enter to search anyway</p>
                     </div>
                 )
+            )}
+
+            {/* Real product hits */}
+            {hasQuery && hits.length > 0 && (
+                <div className="border-t border-gray-100 dark:border-gray-800 py-1.5">
+                    <p className="px-4 pt-1 pb-1.5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-600">Top products</p>
+                    {hits.map((p) => (
+                        <button key={p.id} className={row} onClick={() => onSelect(p.name)}>
+                            {p.image ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img src={p.image} alt="" className="h-8 w-8 rounded object-cover shrink-0" />
+                            ) : (
+                                <div className="h-8 w-8 rounded bg-gray-100 dark:bg-gray-800 shrink-0" />
+                            )}
+                            <span className="flex-1 text-sm text-gray-800 dark:text-gray-200 truncate">{p.name}</span>
+                            {typeof p.price === 'number' && (
+                                <span className="shrink-0 text-xs font-semibold text-gray-700 dark:text-gray-300">
+                                    {p.price.toLocaleString(undefined, { style: 'currency', currency: 'USD' })}
+                                </span>
+                            )}
+                        </button>
+                    ))}
+                </div>
             )}
 
             {/* Default: recent + trending */}
@@ -193,11 +206,14 @@ export default function SearchBar({ variant = 'hero', className = '' }: SearchBa
     const [open, setOpen] = useState(false)
     const [recent, setRecent] = useState<string[]>([])
     const [imageModalOpen, setImageModalOpen] = useState(false)
+    const [apiSuggestions, setApiSuggestions] = useState<Suggestion[]>([])
+    const [apiHits, setApiHits] = useState<AutocompleteHit[]>([])
+    const [loading, setLoading] = useState(false)
     const wrapperRef = useRef<HTMLDivElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
     const router = useRouter()
 
-    useEffect(() => { setRecent(getRecent()) }, [])
+    useEffect(() => { setRecent(getRecentSearches()) }, [])
 
     useEffect(() => {
         function handler(e: MouseEvent) {
@@ -207,11 +223,47 @@ export default function SearchBar({ variant = 'hero', className = '' }: SearchBa
         return () => document.removeEventListener('mousedown', handler)
     }, [])
 
+    // Debounced autocomplete — falls back to local POOL on failure / empty API.
+    useEffect(() => {
+        const trimmed = query.trim()
+        if (trimmed.length < 2) {
+            setApiSuggestions([])
+            setApiHits([])
+            setLoading(false)
+            return
+        }
+        setLoading(true)
+        const handle = setTimeout(async () => {
+            const result = await autocompleteApi(trimmed)
+            const remoteSuggestions: Suggestion[] = (result.suggestions ?? []).map((s) => ({
+                type: 'suggestion',
+                label: s,
+            }))
+            const remoteHits = result.products ?? []
+
+            // Keep mock matches in the mix for dev environments where the API is
+            // empty / mocked; dedupe by lowercase label.
+            const seen = new Set<string>()
+            const merged: Suggestion[] = []
+            for (const s of [...remoteSuggestions, ...getMockSuggestions(trimmed)]) {
+                const key = s.label.toLowerCase()
+                if (seen.has(key)) continue
+                seen.add(key)
+                merged.push(s)
+                if (merged.length >= 8) break
+            }
+            setApiSuggestions(merged)
+            setApiHits(remoteHits)
+            setLoading(false)
+        }, 220)
+        return () => clearTimeout(handle)
+    }, [query])
+
     const navigate = useCallback((q: string) => {
         const t = q.trim()
         if (!t) return
-        saveRecent(t)
-        setRecent(getRecent())
+        saveRecentSearch(t)
+        setRecent(getRecentSearches())
         setOpen(false)
         setQuery(t)
         router.push(`/products?search=${encodeURIComponent(t)}`)
@@ -223,8 +275,8 @@ export default function SearchBar({ variant = 'hero', className = '' }: SearchBa
     }
 
     const handleRemoveRecent = (q: string) => {
-        removeRecent(q)
-        setRecent(getRecent())
+        removeRecentSearch(q)
+        setRecent(getRecentSearches())
     }
 
     // ── Navbar ─────────────────────────────────────────────────────────────
@@ -274,7 +326,16 @@ export default function SearchBar({ variant = 'hero', className = '' }: SearchBa
                     </div>
 
                     {open && (
-                        <SearchDropdown query={query} recent={recent} onSelect={navigate} onRemoveRecent={handleRemoveRecent} variant="navbar" />
+                        <SearchDropdown
+                            query={query}
+                            recent={recent}
+                            suggestions={apiSuggestions}
+                            hits={apiHits}
+                            loading={loading}
+                            onSelect={navigate}
+                            onRemoveRecent={handleRemoveRecent}
+                            variant="navbar"
+                        />
                     )}
                 </div>
 
@@ -336,7 +397,16 @@ export default function SearchBar({ variant = 'hero', className = '' }: SearchBa
                 </div>
 
                 {open && (
-                    <SearchDropdown query={query} recent={recent} onSelect={navigate} onRemoveRecent={handleRemoveRecent} variant="hero" />
+                    <SearchDropdown
+                        query={query}
+                        recent={recent}
+                        suggestions={apiSuggestions}
+                        hits={apiHits}
+                        loading={loading}
+                        onSelect={navigate}
+                        onRemoveRecent={handleRemoveRecent}
+                        variant="hero"
+                    />
                 )}
             </div>
 

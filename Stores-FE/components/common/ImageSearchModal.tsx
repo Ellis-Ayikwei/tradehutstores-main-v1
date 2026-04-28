@@ -15,6 +15,7 @@ import {
     AlertCircle,
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { imageSearch } from '@/lib/searchClient'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -180,12 +181,15 @@ export default function ImageSearchModal({ open, onClose }: ImageSearchModalProp
     }
 
     // ── Image search ────────────────────────────────────────────────────────
+    // Uploads to /tradehut/api/v1/search/image/ when a file is available;
+    // visual search is gated behind SEARCH_ENABLE_EMBEDDINGS on the backend,
+    // so we degrade gracefully (the FE simply navigates to /search with the
+    // image-search mode flag and the results page can render whatever it has).
     const runSearch = async () => {
         if (!preview) return
         setState('searching')
         setProgress(0)
 
-        // Simulate progress while waiting for your model API
         const tick = setInterval(() => {
             setProgress(p => {
                 if (p >= 85) { clearInterval(tick); return 85 }
@@ -194,28 +198,42 @@ export default function ImageSearchModal({ open, onClose }: ImageSearchModalProp
         }, 280)
 
         try {
-            // ── CONNECT YOUR IMAGE SEARCH MODEL HERE ──────────────────────
-            // const formData = new FormData()
-            // if (file) formData.append('image', file)
-            // else formData.append('image_url', preview)
-            // const res = await fetch('/api/image-search', { method: 'POST', body: formData })
-            // const { query } = await res.json()
-            // router.push(`/products?image_query=${encodeURIComponent(query)}`)
-            // ─────────────────────────────────────────────────────────────
+            let resultsCount = 0
+            if (file) {
+                const apiResult = await imageSearch(file)
+                if (apiResult) {
+                    resultsCount = apiResult.total
+                    if (typeof window !== 'undefined') {
+                        try {
+                            sessionStorage.setItem(
+                                'imageSearchResults',
+                                JSON.stringify({
+                                    when: Date.now(),
+                                    total: apiResult.total,
+                                    results: apiResult.results,
+                                }),
+                            )
+                        } catch { /* ignore storage failures */ }
+                    }
+                }
+            }
 
-            // Placeholder: navigates with the image as a base64 signal
-            await new Promise(r => setTimeout(r, 1800)) // remove when real API is wired
             clearInterval(tick)
             setProgress(100)
             setState('done')
             setTimeout(() => {
                 onClose()
-                router.push(`/products?mode=image-search&source=${file ? 'upload' : 'url'}`)
+                const params = new URLSearchParams({
+                    mode: 'image-search',
+                    source: file ? 'upload' : 'url',
+                })
+                if (resultsCount) params.set('count', String(resultsCount))
+                router.push(`/products?${params.toString()}`)
             }, 600)
-        } catch {
+        } catch (err) {
             clearInterval(tick)
             setState('error')
-            setErrorMsg('Search failed. Please try again.')
+            setErrorMsg(err instanceof Error ? err.message : 'Search failed. Please try again.')
         }
     }
 

@@ -92,6 +92,7 @@ import DisputeManagement from '../pages/admin/disputes/DisputeManagement';
 import ProductManagement from '../pages/admin/ProductManagement';
 import AddProduct from '../pages/admin/ProductManagement/AddProduct';
 import OrderManagement from '../pages/admin/OrderManagement';
+import SearchOpsPage from '../pages/admin/Search';
 import CategoryManagement from '../pages/admin/CategoryManagement';
 import CustomerManagement from '../pages/admin/CustomerManagement';
 import SellerManagement from '../pages/admin/SellerManagement';
@@ -496,6 +497,15 @@ const routes = [
         element: (
             <ProtectedRoute allowedGroups={['Administrators', 'Inventory Managers']}>
                 <AddProduct />
+            </ProtectedRoute>
+        ),
+        layout: 'admin',
+    },
+    {
+        path: '/admin/search',
+        element: (
+            <ProtectedRoute allowedGroups={['Administrators', 'Inventory Managers']}>
+                <SearchOpsPage />
             </ProtectedRoute>
         ),
         layout: 'admin',

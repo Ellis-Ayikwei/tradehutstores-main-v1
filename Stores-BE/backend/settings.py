@@ -68,11 +68,49 @@ INSTALLED_APPS = [
     "apps.customers",
     "apps.sellers",
     "apps.wishlist",
+    # Search subsystem (full-text + visual). The app boots without ES /
+    # pgvector / Celery / CLIP installed; toggling on real search is done via
+    # the SEARCH_ENABLE_* env flags below.
+    "apps.search",
     "utils",
     # Third-party apps
     "rest_framework",
     "corsheaders",
 ]
+
+# ── Search feature flags ──────────────────────────────────────────────────────
+# All search features are OFF by default so a fresh checkout still boots
+# without Elasticsearch/Redis/pgvector. Flip these on per-environment.
+SEARCH_ENABLE_ES = config("SEARCH_ENABLE_ES", default=False, cast=bool)
+SEARCH_ENABLE_EMBEDDINGS = config(
+    "SEARCH_ENABLE_EMBEDDINGS", default=False, cast=bool
+)
+SEARCH_ENABLE_SIGNALS = config("SEARCH_ENABLE_SIGNALS", default=False, cast=bool)
+SEARCH_ES_INDEX = config("SEARCH_ES_INDEX", default="tradehut_products")
+
+# Connection strings — all optional.
+ELASTICSEARCH_URL = config(
+    "ELASTICSEARCH_URL", default="http://localhost:9200"
+)
+REDIS_URL = config("REDIS_URL", default="redis://localhost:6379/0")
+EMBEDDING_SERVICE_URL = config("EMBEDDING_SERVICE_URL", default="")
+
+# Auto-register django-elasticsearch-dsl ONLY when ES is enabled. Adding the
+# app unconditionally would require a live ES at startup.
+if SEARCH_ENABLE_ES:
+    INSTALLED_APPS = INSTALLED_APPS + ["django_elasticsearch_dsl"]
+    ELASTICSEARCH_DSL = {"default": {"hosts": ELASTICSEARCH_URL}}
+
+# Celery — only configured when SEARCH_ENABLE_SIGNALS is on. Other apps may
+# extend this later without conflict.
+if SEARCH_ENABLE_SIGNALS:
+    CELERY_BROKER_URL = REDIS_URL
+    CELERY_RESULT_BACKEND = REDIS_URL
+    CELERY_TASK_ROUTES = {
+        "apps.search.tasks.generate_product_embedding": {"queue": "embeddings"},
+        "apps.search.tasks.index_product_task": {"queue": "default"},
+        "apps.search.tasks.deindex_product_task": {"queue": "default"},
+    }
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(pwd)",
+      "Bash(npm run dev:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm install)",
+      "Bash(cd Stores-FE && npm run dev)",
+      "Bash(cd Stores-FE && npm run build)",
+      "Bash(cd Stores-FE && npm run lint)",
+      "Bash(cd Stores-Admin && npm run dev)",
+      "Bash(cd Stores-Admin && npm run build)",
+      "Bash(cd Stores-BE && python manage.py check)",
+      "Bash(cd Stores-BE && python manage.py makemigrations:*)",
+      "Bash(cd Stores-BE && python manage.py migrate:*)",
+      "Bash(cd Stores-BE && python manage.py showmigrations:*)",
+      "Bash(cd Stores-BE && python manage.py runserver:*)",
+      "Bash(cd Stores-BE && python manage.py shell:*)",
+      "Bash(cd Stores-BE && python manage.py startapp:*)",
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git branch)",
+      "Bash(git show:*)",
+      "Edit(.claude/**)",
+      "Edit(Stores-FE/**)",
+      "Edit(Stores-Admin/**)",
+      "Edit(Stores-BE/**)",
+      "Write(.claude/**)",
+      "Write(Stores-FE/**)",
+      "Write(Stores-Admin/**)",
+      "Write(Stores-BE/**)"
+    ],
+    "deny": [
+      "Bash(rm -rf:*)",
+      "Bash(git push --force:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(npm publish:*)"
+    ]
+  }
+}

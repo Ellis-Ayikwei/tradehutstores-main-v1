@@ -19,6 +19,10 @@ import { useCurrency } from '@/contexts/CurrencyContext'
 import { useTheme } from '@/contexts/ThemeContext'
 import Image from 'next/image'
 
+// interface Logo{
+//     Size?: 
+// }
+
 const Logo = () =>{
     const { theme, toggleTheme } = useTheme()
 

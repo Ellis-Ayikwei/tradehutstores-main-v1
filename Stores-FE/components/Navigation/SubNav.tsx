@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import Link from 'next/link'
+import axiosInstance from '@/lib/axiosInstance'
 import {
     Shield,
     Star,
@@ -221,17 +222,221 @@ const protectionFeatures: ProtectionFeature[] = [
     { title: 'Dispute Resolution', description: '24/7 support to help resolve any issues', icon: HelpCircle },
 ]
 
+const categoryIcons = ['📱', '👔', '🏠', '⚽', '💄', '🎮', '📚', '🚗', '🛠️', '📦']
+
+function AllCategoriesPopover({
+    categories,
+}: {
+    categories: Category[]
+}) {
+    return (
+        <HoverPopover
+            trigger={(open) => (
+                <span className={`flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-bold transition-all whitespace-nowrap
+                    ${open ? 'bg-orange-500 text-white shadow-md shadow-orange-200 dark:shadow-none' : 'text-gray-800 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+                >
+                    <Grid3x3 className="h-4 w-4 shrink-0" />
+                    <span className="hidden lg:inline">All Categories</span>
+                    <span className="lg:hidden">Categories</span>
+                    <ChevronDown className={`h-3.5 w-3.5 ml-0.5 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+                </span>
+            )}
+            panel={(close) => (
+                <div
+                    className="rounded-xl shadow-2xl ring-1 ring-black/[0.08] dark:ring-white/10 bg-white dark:bg-gray-900 overflow-hidden max-w-[96vw]"
+                    style={{ width: 'min(96vw, 960px)' }}
+                >
+                    <div className="flex items-center justify-between px-5 py-2.5 bg-gray-50 dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800">
+                        <span className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-500">Browse All Categories</span>
+                        <Link href="/categories" onClick={close} className="text-xs font-semibold text-orange-500 hover:text-orange-600 flex items-center gap-1 transition-colors">
+                            View all <ArrowRight className="h-3 w-3" />
+                        </Link>
+                    </div>
+                    <div className="max-h-[72vh] overflow-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 divide-x divide-gray-100 dark:divide-gray-800 min-w-[720px] md:min-w-0">
+                        {categories.map((cat, i) => (
+                            <div key={i} className="p-4 hover:bg-orange-50/60 dark:hover:bg-orange-900/10 transition-colors">
+                                <Link
+                                    href={`/products?category=${encodeURIComponent(cat.name)}`}
+                                    onClick={close}
+                                    className="flex items-center gap-2 mb-3 group"
+                                >
+                                    <span className="text-xl leading-none">{cat.icon}</span>
+                                    <span className="text-sm font-bold text-gray-900 dark:text-white group-hover:text-orange-500 transition-colors">{cat.name}</span>
+                                </Link>
+                                <ul className="space-y-1.5">
+                                    {cat.subcategories.map((sub, j) => (
+                                        <li key={j}>
+                                            <Link
+                                                href={`/products?category=${encodeURIComponent(cat.name)}&subcategory=${encodeURIComponent(sub.name)}`}
+                                                onClick={close}
+                                                className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors group/s"
+                                            >
+                                                <span className="pr-2">{sub.name}</span>
+                                                <span className="text-gray-300 dark:text-gray-700 group-hover/s:text-orange-300 tabular-nums transition-colors">
+                                                    {sub.count.toLocaleString()}
+                                                </span>
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                    </div>
+                </div>
+            )}
+        />
+    )
+}
+
+function FeaturedPopover() {
+    return (
+        <HoverPopover
+            trigger={(open) => (
+                <span className={`flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap
+                    ${open ? 'text-orange-500 bg-orange-50 dark:bg-orange-900/20' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+                >
+                    <Star className="h-3.5 w-3.5 shrink-0" />
+                    <span className="hidden lg:inline">Featured</span>
+                    <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+                </span>
+            )}
+            panel={(close) => (
+                <div className="w-80 rounded-xl shadow-2xl ring-1 ring-black/[0.08] dark:ring-white/10 bg-white dark:bg-gray-900 overflow-hidden">
+                    <div className="px-4 py-2.5 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
+                        <span className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-500">Featured Programs</span>
+                    </div>
+                    <div className="p-2 space-y-0.5">
+                        {featuredItems.map((item, i) => {
+                            const Icon = item.icon
+                            return (
+                                <Link key={i} href={item.href} onClick={close}
+                                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group"
+                                >
+                                    <div className={`p-2 rounded-lg ${item.bgColor} shrink-0`}>
+                                        <Icon className={`h-5 w-5 ${item.color}`} />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-orange-500 transition-colors">{item.title}</p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 leading-snug">{item.description}</p>
+                                    </div>
+                                </Link>
+                            )
+                        })}
+                    </div>
+                    <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-800">
+                        <Link href="/featured" onClick={close} className="text-xs font-semibold text-orange-500 hover:text-orange-600 flex items-center gap-1 transition-colors">
+                            View all featured <ArrowRight className="h-3 w-3" />
+                        </Link>
+                    </div>
+                </div>
+            )}
+        />
+    )
+}
+
+function OrderProtectionPopover() {
+    return (
+        <HoverPopover
+            className="hidden lg:block"
+            trigger={(open) => (
+                <span className={`flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap
+                    ${open ? 'text-orange-500 bg-orange-50 dark:bg-orange-900/20' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+                >
+                    <Shield className="h-3.5 w-3.5 shrink-0" />
+                    <span>Order Protection</span>
+                    <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+                </span>
+            )}
+            panel={(close) => (
+                <div className="w-[420px] rounded-xl shadow-2xl ring-1 ring-black/[0.08] dark:ring-white/10 bg-white dark:bg-gray-900 overflow-hidden">
+                    <div className="bg-gradient-to-br from-orange-500 to-rose-500 px-5 py-4 text-white">
+                        <div className="flex items-center gap-2 mb-1">
+                            <ShieldCheck className="h-5 w-5" />
+                            <h3 className="text-base font-bold">Trade Assurance</h3>
+                        </div>
+                        <p className="text-sm text-white/85 leading-snug">
+                            Comprehensive protection for every order — from payment to your door.
+                        </p>
+                    </div>
+                    <div className="p-4 grid grid-cols-2 gap-2">
+                        {protectionFeatures.map((f, i) => {
+                            const Icon = f.icon
+                            return (
+                                <div key={i} className="p-3 rounded-lg border border-gray-100 dark:border-gray-800 hover:border-orange-200 dark:hover:border-orange-800 hover:bg-orange-50/50 dark:hover:bg-orange-900/10 transition-all group">
+                                    <Icon className="h-5 w-5 text-orange-500 mb-2" />
+                                    <p className="text-xs font-semibold text-gray-900 dark:text-white group-hover:text-orange-500 transition-colors">{f.title}</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 leading-snug">{f.description}</p>
+                                </div>
+                            )
+                        })}
+                    </div>
+                    <div className="px-4 pb-4">
+                        <Link href="/protection" onClick={close}
+                            className="flex items-center justify-center gap-2 w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg transition-colors"
+                        >
+                            Learn More <ArrowRight className="h-4 w-4" />
+                        </Link>
+                    </div>
+                </div>
+            )}
+        />
+    )
+}
+
 // ─── SubNav ───────────────────────────────────────────────────────────────────
 
 export default function SubNav() {
     const [mobileOpen, setMobileOpen] = useState(false)
     const [expandedCat, setExpandedCat] = useState<number | null>(null)
+    const [apiCategories, setApiCategories] = useState<Category[]>(categories)
 
     // Close mobile menu on resize to desktop
     useEffect(() => {
         const handler = () => { if (window.innerWidth >= 768) setMobileOpen(false) }
         window.addEventListener('resize', handler)
         return () => window.removeEventListener('resize', handler)
+    }, [])
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const [categoriesRes, subCategoriesRes] = await Promise.all([
+                    axiosInstance.get('/catalog/categories/'),
+                    axiosInstance.get('/catalog/subcategories/'),
+                ])
+
+                const byCategory: Record<string, Subcategory[]> = {}
+                ;(categoriesRes.data ?? []).forEach((cat: any) => {
+                    byCategory[cat.name] = []
+                })
+
+                ;(subCategoriesRes.data ?? []).forEach((sub: any) => {
+                    const parentCategory = (categoriesRes.data ?? []).find((cat: any) => cat.id === sub.category)
+                    if (!parentCategory?.name) return
+                    if (!byCategory[parentCategory.name]) byCategory[parentCategory.name] = []
+                    byCategory[parentCategory.name].push({
+                        name: sub.sub_category_name,
+                        count: 0,
+                    })
+                })
+
+                const normalizedCategories: Category[] = (categoriesRes.data ?? []).map((cat: any, index: number) => ({
+                    name: cat.name,
+                    icon: categoryIcons[index % categoryIcons.length],
+                    subcategories: (byCategory[cat.name] ?? []).sort((a, b) => a.name.localeCompare(b.name)),
+                }))
+
+                if (normalizedCategories.length > 0) {
+                    setApiCategories(normalizedCategories)
+                }
+            } catch {
+                // Keep static fallback if API is unavailable.
+            }
+        }
+
+        fetchCategories()
     }, [])
 
     return (
@@ -251,149 +456,13 @@ export default function SubNav() {
                         <div className="hidden md:flex items-center gap-0.5 flex-1 min-w-0">
 
                             {/* ── All Categories ── */}
-                            <HoverPopover
-                                trigger={(open) => (
-                                    <span className={`flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-bold transition-all whitespace-nowrap
-                                        ${open ? 'bg-orange-500 text-white shadow-md shadow-orange-200 dark:shadow-none' : 'text-gray-800 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
-                                    >
-                                        <Grid3x3 className="h-4 w-4 shrink-0" />
-                                        <span className="hidden lg:inline">All Categories</span>
-                                        <span className="lg:hidden">Categories</span>
-                                        <ChevronDown className={`h-3.5 w-3.5 ml-0.5 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
-                                    </span>
-                                )}
-                                panel={(close) => (
-                                    <div className="w-[800px] xl:w-[960px] rounded-xl shadow-2xl ring-1 ring-black/[0.08] dark:ring-white/10 bg-white dark:bg-gray-900 overflow-hidden">
-                                        {/* Panel header */}
-                                        <div className="flex items-center justify-between px-5 py-2.5 bg-gray-50 dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800">
-                                            <span className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-500">Browse All Categories</span>
-                                            <Link href="/categories" onClick={close} className="text-xs font-semibold text-orange-500 hover:text-orange-600 flex items-center gap-1 transition-colors">
-                                                View all <ArrowRight className="h-3 w-3" />
-                                            </Link>
-                                        </div>
-                                        {/* Category grid */}
-                                        <div className="grid grid-cols-3 xl:grid-cols-4 divide-x divide-gray-100 dark:divide-gray-800 max-h-[72vh] overflow-y-auto">
-                                            {categories.map((cat, i) => (
-                                                <div key={i} className="p-4 hover:bg-orange-50/60 dark:hover:bg-orange-900/10 transition-colors">
-                                                    <Link
-                                                        href={`/products?category=${encodeURIComponent(cat.name)}`}
-                                                        onClick={close}
-                                                        className="flex items-center gap-2 mb-3 group"
-                                                    >
-                                                        <span className="text-xl leading-none">{cat.icon}</span>
-                                                        <span className="text-sm font-bold text-gray-900 dark:text-white group-hover:text-orange-500 transition-colors">{cat.name}</span>
-                                                    </Link>
-                                                    <ul className="space-y-1.5">
-                                                        {cat.subcategories.map((sub, j) => (
-                                                            <li key={j}>
-                                                                <Link
-                                                                    href={`/products?category=${encodeURIComponent(sub.name)}`}
-                                                                    onClick={close}
-                                                                    className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors group/s"
-                                                                >
-                                                                    <span>{sub.name}</span>
-                                                                    <span className="text-gray-300 dark:text-gray-700 group-hover/s:text-orange-300 tabular-nums transition-colors">
-                                                                        {sub.count.toLocaleString()}
-                                                                    </span>
-                                                                </Link>
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                            />
+                            <AllCategoriesPopover categories={apiCategories} />
 
                             {/* ── Featured ── */}
-                            <HoverPopover
-                                trigger={(open) => (
-                                    <span className={`flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap
-                                        ${open ? 'text-orange-500 bg-orange-50 dark:bg-orange-900/20' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'}`}
-                                    >
-                                        <Star className="h-3.5 w-3.5 shrink-0" />
-                                        <span className="hidden lg:inline">Featured</span>
-                                        <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
-                                    </span>
-                                )}
-                                panel={(close) => (
-                                    <div className="w-80 rounded-xl shadow-2xl ring-1 ring-black/[0.08] dark:ring-white/10 bg-white dark:bg-gray-900 overflow-hidden">
-                                        <div className="px-4 py-2.5 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
-                                            <span className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-500">Featured Programs</span>
-                                        </div>
-                                        <div className="p-2 space-y-0.5">
-                                            {featuredItems.map((item, i) => {
-                                                const Icon = item.icon
-                                                return (
-                                                    <Link key={i} href={item.href} onClick={close}
-                                                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group"
-                                                    >
-                                                        <div className={`p-2 rounded-lg ${item.bgColor} shrink-0`}>
-                                                            <Icon className={`h-5 w-5 ${item.color}`} />
-                                                        </div>
-                                                        <div>
-                                                            <p className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-orange-500 transition-colors">{item.title}</p>
-                                                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 leading-snug">{item.description}</p>
-                                                        </div>
-                                                    </Link>
-                                                )
-                                            })}
-                                        </div>
-                                        <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-800">
-                                            <Link href="/featured" onClick={close} className="text-xs font-semibold text-orange-500 hover:text-orange-600 flex items-center gap-1 transition-colors">
-                                                View all featured <ArrowRight className="h-3 w-3" />
-                                            </Link>
-                                        </div>
-                                    </div>
-                                )}
-                            />
+                            <FeaturedPopover />
 
                             {/* ── Order Protection ── */}
-                            <HoverPopover
-                                className="hidden lg:block"
-                                trigger={(open) => (
-                                    <span className={`flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap
-                                        ${open ? 'text-orange-500 bg-orange-50 dark:bg-orange-900/20' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'}`}
-                                    >
-                                        <Shield className="h-3.5 w-3.5 shrink-0" />
-                                        <span>Order Protection</span>
-                                        <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
-                                    </span>
-                                )}
-                                panel={(close) => (
-                                    <div className="w-[420px] rounded-xl shadow-2xl ring-1 ring-black/[0.08] dark:ring-white/10 bg-white dark:bg-gray-900 overflow-hidden">
-                                        <div className="bg-gradient-to-br from-orange-500 to-rose-500 px-5 py-4 text-white">
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <ShieldCheck className="h-5 w-5" />
-                                                <h3 className="text-base font-bold">Trade Assurance</h3>
-                                            </div>
-                                            <p className="text-sm text-white/85 leading-snug">
-                                                Comprehensive protection for every order — from payment to your door.
-                                            </p>
-                                        </div>
-                                        <div className="p-4 grid grid-cols-2 gap-2">
-                                            {protectionFeatures.map((f, i) => {
-                                                const Icon = f.icon
-                                                return (
-                                                    <div key={i} className="p-3 rounded-lg border border-gray-100 dark:border-gray-800 hover:border-orange-200 dark:hover:border-orange-800 hover:bg-orange-50/50 dark:hover:bg-orange-900/10 transition-all group">
-                                                        <Icon className="h-5 w-5 text-orange-500 mb-2" />
-                                                        <p className="text-xs font-semibold text-gray-900 dark:text-white group-hover:text-orange-500 transition-colors">{f.title}</p>
-                                                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 leading-snug">{f.description}</p>
-                                                    </div>
-                                                )
-                                            })}
-                                        </div>
-                                        <div className="px-4 pb-4">
-                                            <Link href="/protection" onClick={close}
-                                                className="flex items-center justify-center gap-2 w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg transition-colors"
-                                            >
-                                                Learn More <ArrowRight className="h-4 w-4" />
-                                            </Link>
-                                        </div>
-                                    </div>
-                                )}
-                            />
+                            <OrderProtectionPopover />
 
                             {/* ── Quick links ── */}
                             <Link href="/deals" className="hidden xl:flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors whitespace-nowrap">
@@ -415,7 +484,7 @@ export default function SubNav() {
                                 <HelpCircle className="h-3.5 w-3.5" />
                                 Help
                             </Link>
-                            <Link href="/sell" className="flex items-center gap-1.5 px-3 py-2 ml-1 rounded-md bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white text-sm font-bold transition-colors whitespace-nowrap shadow-sm">
+                            <Link href="/sell" className="flex items-center gap-1.5 px-3 py-2 ml-1 rounded-md bg-tertiary hover:bg-orange-600 active:bg-orange-700 text-white text-sm font-bold transition-colors whitespace-nowrap shadow-sm">
                                 <Store className="h-3.5 w-3.5" />
                                 <span className="hidden lg:inline">Start Selling</span>
                                 <span className="lg:hidden">Sell</span>
@@ -468,7 +537,7 @@ export default function SubNav() {
                         {/* Category accordion */}
                         <div className="px-3 pt-3 pb-1">
                             <p className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-600 mb-2 px-1">Browse Categories</p>
-                            {categories.map((cat, i) => (
+                            {apiCategories.map((cat, i) => (
                                 <div key={i}>
                                     <button
                                         onClick={() => setExpandedCat(expandedCat === i ? null : i)}
@@ -486,7 +555,7 @@ export default function SubNav() {
                                             {cat.subcategories.map((sub, j) => (
                                                 <Link
                                                     key={j}
-                                                    href={`/products?category=${encodeURIComponent(sub.name)}`}
+                                                    href={`/products?category=${encodeURIComponent(cat.name)}&subcategory=${encodeURIComponent(sub.name)}`}
                                                     onClick={() => setMobileOpen(false)}
                                                     className="flex items-center justify-between py-1.5 pr-2 text-xs text-gray-500 dark:text-gray-400 hover:text-orange-500 transition-colors"
                                                 >

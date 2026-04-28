@@ -199,19 +199,19 @@ const Header = () => {
     }, [themeConfig.sidebar]);
 
     return (
-        <header className={`z-40 ${themeConfig.semidark && themeConfig.menu === 'horizontal' ? 'dark' : ''}`}>
-            <div className="shadow-lg border-b border-white/20">
-                <div className="relative bg-gradient-to-r from-white via-blue-50 to-white dark:from-black dark:via-blue-900/20 dark:to-black">
-                    <div className="flex w-full items-center px-4 sm:px-6 py-3 backdrop-blur-sm">
-                        {/* Left Section - Logo and Menu Toggle */}
-                        <div className={`${themeConfig.sidebar == true ? 'lg:flex' : 'lg:hidden'} items-center gap-3 flex-col lg:flex-row`}>
-                            <Link to="/" className="flex items-center gap-2 shrink-0">
-                                <img src="/assets/images/tradehut-logo.png" alt="TradeHut Logo" className="w-8 h-8" />
-                                <h1 className="text-lg font-bold text-gray-900 dark:text-white">TradeHut</h1>
-                            </Link>
+        <header className={`sticky top-0 z-40 ${themeConfig.semidark && themeConfig.menu === 'horizontal' ? 'dark' : ''}`}>
+            <div className="glass-header shadow-sm border-b border-outline-variant/10">
+                <div className="relative bg-surface/70">
+                    <div className="flex w-full items-center px-4 sm:px-6 py-3">
+                        {/* Left Section - Page title + sidebar toggle */}
+                        <div className="flex items-center gap-3">
+                            {/* Mobile brand mark */}
+                            <span className="font-syne text-xl font-black text-on-surface md:hidden">TradeHut</span>
+                            {/* Desktop page title */}
+                            <h1 className="font-headline font-bold text-xl text-on-surface hidden md:block">Seller Dashboard</h1>
                             <button
                                 type="button"
-                                className={`collapse-icon flex-none dark:text-[#d0d2d6] hover:text-orange-500 dark:hover:text-orange-400 p-2 rounded-xl bg-white/60 backdrop-blur-sm dark:bg-gray-800/60 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-all duration-300 `}
+                                className="collapse-icon flex-none text-on-surface-variant hover:text-primary-container p-2 rounded-xl hover:bg-surface-container-low transition-all duration-200"
                                 onClick={() => {
                                     dispatch(toggleSidebar());
                                 }}
@@ -224,26 +224,34 @@ const Header = () => {
                         <div className="flex-1"></div>
 
                         {/* Right Section - Actions */}
-                        <div className="flex items-center gap-1 sm:gap-2 lg:gap-3 rtl:gap-reverse dark:text-[#d0d2d6]">
+                        <div className="flex items-center gap-1 sm:gap-2 lg:gap-3 rtl:gap-reverse">
+                            {/* Desktop quick-nav links */}
+                            <div className="hidden lg:flex items-center gap-6 text-xs uppercase tracking-widest text-on-surface/60 mr-2">
+                                <Link to="/admin/inventory/stock" className="hover:text-primary-container transition-colors">Inventory</Link>
+                                <Link to="/admin/revenue/overview" className="hover:text-primary-container transition-colors">Analytics</Link>
+                                <Link to="/admin/customers/list" className="hover:text-primary-container transition-colors">Customers</Link>
+                            </div>
+                            <div className="hidden lg:block w-px h-5 bg-outline-variant/30 mx-1" />
+
                             {/* Theme Toggle */}
                             <div className="hidden sm:flex items-center">
                                 {themeConfig.theme === 'light' ? (
                                     <button
-                                        className="flex items-center p-1.5 sm:p-2 rounded-xl bg-white/60 backdrop-blur-sm dark:bg-gray-800/60 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-all duration-300"
+                                        className="flex items-center p-2 rounded-xl text-on-surface-variant hover:text-primary-container hover:bg-surface-container-low transition-all duration-200"
                                         onClick={() => {
                                             dispatch(toggleTheme('dark'));
                                         }}
                                     >
-                                        <IconSun className="w-4 h-4 sm:w-5 sm:h-5" />
+                                        <IconSun className="w-5 h-5" />
                                     </button>
                                 ) : (
                                     <button
-                                        className="flex items-center p-1.5 sm:p-2 rounded-xl bg-white/60 backdrop-blur-sm dark:bg-gray-800/60 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-all duration-300"
+                                        className="flex items-center p-2 rounded-xl text-on-surface-variant hover:text-primary-container hover:bg-surface-container-low transition-all duration-200"
                                         onClick={() => {
                                             dispatch(toggleTheme('light'));
                                         }}
                                     >
-                                        <IconMoon className="w-4 h-4 sm:w-5 sm:h-5" />
+                                        <IconMoon className="w-5 h-5" />
                                     </button>
                                 )}
                             </div>
@@ -253,17 +261,17 @@ const Header = () => {
                                 <Dropdown
                                     offset={[0, 8]}
                                     placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
-                                    btnClassName="block p-1.5 sm:p-2 rounded-xl bg-white/60 backdrop-blur-sm dark:bg-gray-800/60 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-all duration-300"
-                                    button={<img className="w-4 h-4 sm:w-5 sm:h-5 object-cover rounded-full" src={`/assets/images/flags/${flag.toUpperCase()}.svg`} alt="flag" />}
+                                    btnClassName="block p-2 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-all duration-200"
+                                    button={<img className="w-5 h-5 object-cover rounded-full" src={`/assets/images/flags/${flag.toUpperCase()}.svg`} alt="flag" />}
                                 >
-                                    <ul className="!px-2 text-dark dark:text-white-dark grid grid-cols-2 gap-2 font-semibold dark:text-white-light/90 w-[280px] sm:w-[320px] bg-white/80 backdrop-blur-sm border border-white/20 dark:bg-gray-800/80">
+                                    <ul className="!px-2 grid grid-cols-2 gap-2 font-semibold w-[280px] sm:w-[320px] bg-surface-container-lowest/90 backdrop-blur-xl border border-outline-variant/15 rounded-xl shadow-card">
                                         {themeConfig.languageList.map((item: any) => {
                                             return (
                                                 <li key={item.code}>
                                                     <button
                                                         type="button"
-                                                        className={`flex w-full hover:text-orange-500 hover:bg-orange-50 rounded-lg p-2 transition-all duration-300 ${
-                                                            i18next.language === item.code ? 'bg-orange-100 text-orange-600 dark:bg-orange-900/30' : ''
+                                                        className={`flex w-full hover:text-primary-container hover:bg-surface-container-low rounded-lg p-2 transition-all duration-200 text-on-surface ${
+                                                            i18next.language === item.code ? 'bg-surface-container-low text-primary-container' : ''
                                                         }`}
                                                         onClick={() => {
                                                             i18next.changeLanguage(item.code);
@@ -358,60 +366,51 @@ const Header = () => {
                                     placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
                                     btnClassName="relative group block"
                                     button={
-                                        <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-xl bg-white/60 backdrop-blur-sm dark:bg-gray-800/60 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-all duration-300">
-                                            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-r from-orange-500 to-blue-600 flex items-center justify-center">
-                                                <IconUser className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                                        <div className="flex items-center gap-2 p-2 rounded-xl hover:bg-surface-container-low transition-all duration-200">
+                                            <div className="w-8 h-8 rounded-lg primary-gradient flex items-center justify-center flex-shrink-0">
+                                                <IconUser className="w-5 h-5 text-white" />
                                             </div>
                                             <div className="text-left hidden sm:block">
-                                                <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.first_name || 'User'}</p>
-                                                <p className="text-xs text-gray-500 dark:text-gray-400">
-                                                    {user?.user_type || 'User'}-{user?.rating || 'N/A'}
+                                                <p className="text-sm font-bold text-on-surface">{user?.first_name || 'User'}</p>
+                                                <p className="text-[10px] uppercase tracking-widest text-on-surface-variant opacity-70">
+                                                    {user?.user_type || 'User'}
                                                 </p>
                                             </div>
-                                            <IconCaretDown className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500 dark:text-gray-400" />
+                                            <IconCaretDown className="w-4 h-4 text-on-surface-variant" />
                                         </div>
                                     }
                                 >
-                                    <div className="w-[320px] sm:w-[380px] bg-white/95 backdrop-blur-xl border border-white/20 dark:bg-gray-800/95 dark:border-gray-700/50 rounded-2xl shadow-2xl shadow-black/10 dark:shadow-black/20 overflow-hidden">
+                                    <div className="w-[320px] sm:w-[380px] bg-surface-container-lowest/95 backdrop-blur-xl border border-outline-variant/15 rounded-2xl shadow-card-hover overflow-hidden">
                                         {/* Profile Header */}
-                                        <div className="relative p-6 bg-gradient-to-br from-orange-500/10 via-amber-500/10 to-yellow-500/10 dark:from-orange-500/20 dark:via-amber-500/20 dark:to-yellow-500/20 border-b border-gray-100 dark:border-gray-700">
+                                        <div className="relative p-6 bg-surface-container-low border-b border-outline-variant/10">
                                             <div className="flex items-center gap-4">
                                                 <div className="relative">
-                                                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-lg">
+                                                    <div className="w-14 h-14 rounded-2xl primary-gradient flex items-center justify-center shadow-card">
                                                         <IconUser className="w-7 h-7 text-white" />
                                                     </div>
-                                                    <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-orange-500 border-2 border-white dark:border-gray-800 rounded-full flex items-center justify-center">
-                                                        <div className="w-2 h-2 bg-white rounded-full"></div>
-                                                    </div>
+                                                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-bid-green border-2 border-surface-container-lowest rounded-full" />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <h4 className="text-lg font-bold text-gray-900 dark:text-white truncate">{user?.full_name || user?.first_name || 'User'}</h4>
-                                                    <p className="text-sm text-gray-600 dark:text-gray-300 truncate">{user?.email || 'user@example.com'}</p>
+                                                    <h4 className="font-bold text-on-surface truncate">{user?.full_name || user?.first_name || 'User'}</h4>
+                                                    <p className="text-sm text-on-surface-variant truncate">{user?.email || 'user@example.com'}</p>
                                                     <div className="flex items-center gap-2 mt-1">
-                                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300">
+                                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary-container/10 text-primary-container">
                                                             {user?.role || 'User'}
                                                         </span>
-                                                        <span className="text-xs text-gray-500 dark:text-gray-400">ID: {user?.id || 'N/A'}</span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
                                         {/* Quick Stats */}
-                                        <div className="p-4 bg-orange-50/50 dark:bg-orange-900/20 border-b border-gray-100 dark:border-gray-700">
+                                        <div className="p-4 bg-surface-container/50 border-b border-outline-variant/10">
                                             <div className="grid grid-cols-3 gap-3">
-                                                <div className="text-center">
-                                                    <div className="text-lg font-bold text-gray-900 dark:text-white">24</div>
-                                                    <div className="text-xs text-gray-500 dark:text-gray-400">Jobs</div>
-                                                </div>
-                                                <div className="text-center">
-                                                    <div className="text-lg font-bold text-gray-900 dark:text-white">4.8</div>
-                                                    <div className="text-xs text-gray-500 dark:text-gray-400">Rating</div>
-                                                </div>
-                                                <div className="text-center">
-                                                    <div className="text-lg font-bold text-gray-900 dark:text-white">98%</div>
-                                                    <div className="text-xs text-gray-500 dark:text-gray-400">Success</div>
-                                                </div>
+                                                {[['24', 'Orders'], ['4.8', 'Rating'], ['98%', 'Success']].map(([val, label]) => (
+                                                    <div key={label} className="text-center">
+                                                        <div className="font-mono text-lg font-bold text-on-surface">{val}</div>
+                                                        <div className="text-[10px] uppercase tracking-widest text-on-surface-variant opacity-70">{label}</div>
+                                                    </div>
+                                                ))}
                                             </div>
                                         </div>
 
@@ -419,22 +418,22 @@ const Header = () => {
                                         <div className="p-2">
                                             {/* Mobile Theme Toggle */}
                                             <div className="sm:hidden mb-2">
-                                                <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Theme</span>
+                                                <div className="flex items-center justify-between p-3 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors">
+                                                    <span className="text-sm font-medium text-on-surface">Theme</span>
                                                     <div className="flex items-center gap-1">
                                                         {themeConfig.theme === 'light' ? (
                                                             <button
-                                                                className="p-2 rounded-lg bg-white shadow-sm hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-all duration-300"
+                                                                className="p-2 rounded-lg hover:bg-surface-container transition-all duration-200"
                                                                 onClick={() => dispatch(toggleTheme('dark'))}
                                                             >
-                                                                <IconSun className="w-4 h-4" />
+                                                                <IconSun className="w-4 h-4 text-on-surface-variant" />
                                                             </button>
                                                         ) : (
                                                             <button
-                                                                className="p-2 rounded-lg bg-gray-800 shadow-sm hover:bg-orange-900/20 transition-all duration-300"
+                                                                className="p-2 rounded-lg hover:bg-surface-container transition-all duration-200"
                                                                 onClick={() => dispatch(toggleTheme('light'))}
                                                             >
-                                                                <IconMoon className="w-4 h-4" />
+                                                                <IconMoon className="w-4 h-4 text-on-surface-variant" />
                                                             </button>
                                                         )}
                                                     </div>
@@ -443,17 +442,17 @@ const Header = () => {
 
                                             {/* Mobile Language Selector */}
                                             <div className="sm:hidden mb-2">
-                                                <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Language</span>
+                                                <div className="flex items-center justify-between p-3 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors">
+                                                    <span className="text-sm font-medium text-on-surface">Language</span>
                                                     <div className="flex items-center gap-1">
                                                         {themeConfig.languageList.slice(0, 3).map((item: any) => (
                                                             <button
                                                                 key={item.code}
                                                                 type="button"
-                                                                className={`p-1 rounded-lg transition-all duration-300 ${
+                                                                className={`p-1 rounded-lg transition-all duration-200 ${
                                                                     i18next.language === item.code
-                                                                        ? 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-300'
-                                                                        : 'hover:bg-gray-200 dark:hover:bg-gray-600'
+                                                                        ? 'bg-primary-container/10 text-primary-container'
+                                                                        : 'hover:bg-surface-container'
                                                                 }`}
                                                                 onClick={() => {
                                                                     i18next.changeLanguage(item.code);
@@ -469,53 +468,53 @@ const Header = () => {
 
                                             {/* Profile Links */}
                                             <div className="space-y-1">
-                                                <Link to="/profile" className="flex items-center gap-3 p-3 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-all duration-300 group">
-                                                    <div className="w-8 h-8 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center group-hover:bg-orange-200 dark:group-hover:bg-orange-900/50 transition-colors">
-                                                        <IconUser className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+                                                <Link to="/profile" className="flex items-center gap-3 p-3 rounded-xl hover:bg-surface-container-low transition-all duration-200 group">
+                                                    <div className="w-8 h-8 rounded-lg bg-primary-container/10 flex items-center justify-center group-hover:bg-primary-container/20 transition-colors">
+                                                        <IconUser className="w-4 h-4 text-primary-container" />
                                                     </div>
                                                     <div className="flex-1">
-                                                        <div className="text-sm font-medium text-gray-900 dark:text-white">Profile Settings</div>
-                                                        <div className="text-xs text-gray-500 dark:text-gray-400">Manage your account</div>
+                                                        <div className="text-sm font-medium text-on-surface">Profile Settings</div>
+                                                        <div className="text-xs text-on-surface-variant opacity-70">Manage your account</div>
                                                     </div>
                                                 </Link>
 
                                                 <Link
-                                                    to="/dashboard"
-                                                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-all duration-300 group"
+                                                    to="/admin/dashboard"
+                                                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-surface-container-low transition-all duration-200 group"
                                                 >
-                                                    <div className="w-8 h-8 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center group-hover:bg-orange-200 dark:group-hover:bg-orange-900/50 transition-colors">
-                                                        <IconMenuDashboard className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+                                                    <div className="w-8 h-8 rounded-lg bg-primary-container/10 flex items-center justify-center group-hover:bg-primary-container/20 transition-colors">
+                                                        <IconMenuDashboard className="w-4 h-4 text-primary-container" />
                                                     </div>
                                                     <div className="flex-1">
-                                                        <div className="text-sm font-medium text-gray-900 dark:text-white">Dashboard</div>
-                                                        <div className="text-xs text-gray-500 dark:text-gray-400">View your overview</div>
+                                                        <div className="text-sm font-medium text-on-surface">Dashboard</div>
+                                                        <div className="text-xs text-on-surface-variant opacity-70">View your overview</div>
                                                     </div>
                                                 </Link>
                                             </div>
                                         </div>
 
                                         {/* Logout Section */}
-                                        <div className="p-2 border-t border-gray-100 dark:border-gray-700">
+                                        <div className="p-2 border-t border-outline-variant/10">
                                             <button
                                                 type="button"
-                                                className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${
+                                                className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all duration-200 active:scale-95 ${
                                                     isLoggingOut
-                                                        ? 'opacity-50 cursor-not-allowed bg-gray-50 dark:bg-gray-700/50'
-                                                        : 'hover:bg-orange-50 dark:hover:bg-orange-900/20 text-orange-600 dark:text-orange-400'
+                                                        ? 'opacity-50 cursor-not-allowed'
+                                                        : 'hover:bg-error-container/20 text-error'
                                                 }`}
                                                 onClick={handleLogoutClick}
                                                 disabled={isLoggingOut}
                                             >
-                                                <div className="w-8 h-8 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
+                                                <div className="w-8 h-8 rounded-lg bg-error-container/20 flex items-center justify-center">
                                                     {isLoggingOut ? (
-                                                        <div className="animate-spin w-4 h-4 border-2 border-orange-500 border-t-transparent rounded-full"></div>
+                                                        <div className="animate-spin w-4 h-4 border-2 border-error border-t-transparent rounded-full" />
                                                     ) : (
-                                                        <IconLogout className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+                                                        <IconLogout className="w-4 h-4 text-error" />
                                                     )}
                                                 </div>
                                                 <div className="flex-1 text-left">
                                                     <div className="text-sm font-medium">{isLoggingOut ? 'Signing Out...' : 'Sign Out'}</div>
-                                                    <div className="text-xs text-gray-500 dark:text-gray-400">{isLoggingOut ? 'Please wait...' : 'Logout from your account'}</div>
+                                                    <div className="text-xs text-on-surface-variant opacity-70">{isLoggingOut ? 'Please wait...' : 'Logout from your account'}</div>
                                                 </div>
                                             </button>
                                         </div>

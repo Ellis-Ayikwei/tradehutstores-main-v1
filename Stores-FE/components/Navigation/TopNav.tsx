@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState, useRef, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import {
     ShoppingCart,
     User,
@@ -17,6 +18,7 @@ import { RootState } from '@/store'
 import { useCurrency } from '@/contexts/CurrencyContext'
 import { useTheme } from '@/contexts/ThemeContext'
 import Logo from '../common/logo'
+import SearchBar from '@/components/common/SearchBar'
 
 // ─── Custom badge — no antd dependency ───────────────────────────────────────
 // Renders a small pill over the top-right of any child element.
@@ -61,9 +63,11 @@ export default function TopNav() {
 
     const { currency, setCurrency } = useCurrency()
     const { theme, toggleTheme }    = useTheme()
+    const pathname = usePathname()
 
     const cartCount     = cart?.item_count  ?? 0
     const wishlistCount = wishlist?.length  ?? 0
+    const showTopSearch = pathname !== '/'
 
     // Close country dropdown on outside click
     useEffect(() => {
@@ -78,16 +82,23 @@ export default function TopNav() {
 
     return (
         <div className="bg-white text-gray-800 border-b border-gray-200 dark:bg-gray-950 dark:text-white dark:border-gray-800">
-            <div className="max-w-screen-2xl mx-auto px-3 sm:px-6">
-                <div className="flex items-center justify-between h-12 gap-3">
+            <div className="max-w-screen-2xl mx-auto px-2 sm:px-6 overflow-x-clip">
+                <div className="flex items-center justify-between h-12 gap-2 min-w-0">
 
                     {/* ── Logo ── */}
-                    <div className="shrink-0">
+                    <div className="shrink min-w-0 max-w-[128px] sm:max-w-none">
                         <Logo />
                     </div>
 
+                    {/* ── Search (non-home pages) ── */}
+                    {showTopSearch && (
+                        <div className="hidden md:flex flex-1 max-w-2xl mx-2">
+                            <SearchBar variant="navbar" className="w-full" />
+                        </div>
+                    )}
+
                     {/* ── Right cluster ── */}
-                    <div className="flex items-center gap-0.5 sm:gap-1">
+                    <div className="flex items-center gap-0.5 sm:gap-1 min-w-0">
 
                         {/* Country selector */}
                         <div ref={countryRef} className="relative hidden md:block">
@@ -158,7 +169,7 @@ export default function TopNav() {
                         <button
                             onClick={toggleTheme}
                             aria-label="Toggle theme"
-                            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700/70 transition-colors text-gray-600 dark:text-white"
+                            className="hidden sm:inline-flex p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700/70 transition-colors text-gray-600 dark:text-white"
                         >
                             {theme === 'dark'
                                 ? <Sun  className="h-4 w-4" />
@@ -180,7 +191,7 @@ export default function TopNav() {
                         {/* Cart */}
                         <Link
                             href="/cart"
-                            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700/70 transition-colors text-gray-700 dark:text-white"
+                            className="flex items-center gap-1 px-2 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700/70 transition-colors text-gray-700 dark:text-white"
                             aria-label={`Cart (${cartCount} items)`}
                         >
                             <NavBadge count={cartCount}>
@@ -197,13 +208,20 @@ export default function TopNav() {
                         {/* Sign In */}
                         <Link
                             href="/auth/login"
-                            className="flex items-center gap-1.5 px-3 py-1.5 ml-0.5 rounded-md bg-orange-500 hover:bg-orange-600 active:bg-orange-700 transition-colors font-semibold text-xs text-white shadow-sm whitespace-nowrap"
+                            className="flex items-center gap-1 px-2 sm:px-3 py-1.5 ml-0.5 rounded-md bg-orange-500 hover:bg-orange-600 active:bg-orange-700 transition-colors font-semibold text-xs text-white shadow-sm whitespace-nowrap"
                         >
                             <User className="h-3.5 w-3.5 shrink-0" />
                             <span className="hidden sm:inline">Sign In</span>
                         </Link>
                     </div>
                 </div>
+
+                {/* ── Search (mobile / tablet) ── */}
+                {showTopSearch && (
+                    <div className="md:hidden pb-2">
+                        <SearchBar variant="navbar" className="w-full" />
+                    </div>
+                )}
             </div>
 
             {/* Keyframe for country dropdown */}

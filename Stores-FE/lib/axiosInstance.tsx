@@ -2,8 +2,7 @@ import axios from 'axios';
 import authAxiosInstance from './authAxiosInstance';
 import { getCookie } from './authAxiosInstance';
 
-export const apiUrl = 'http://127.0.0.1:8000/api/v1';
-//const apiUrl = 'http://172.20.10.4:5004/alumni/api/v1';
+export const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://192.168.100.12:8000/tradehut/api/v1/'
 
 const axiosInstance = axios.create({
     baseURL: apiUrl,

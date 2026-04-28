@@ -79,7 +79,7 @@ export default function HomePage() {
            
 
             {/* Flash Sales Section */}
-            <section className="relative py-2 bg-red-50 dark:bg-gray-900 -mt-32 md:-mt-40 lg:-mt-48 z-10 md:w-[80%] mx-auto rounded-md">
+            <section className="relative py-2 bg-red-50 dark:bg-gray-900  z-10 md:w-[80%] mx-auto rounded-md">
                 <div className="container mx-auto px-4">
                     <div className="bg-gray-900 dark:bg-gray-950 px-6 py-4 rounded-lg mb-8 flex items-center justify-between">
                         <div className="flex items-center gap-4 md:gap-6">

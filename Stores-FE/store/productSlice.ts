@@ -2,6 +2,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axiosInstance from '@/lib/axiosInstance'
 import { ProductDetail } from '@/types'
 
+const PRODUCTS_API_PREFIX = '/products'
+
 const initialProductDetailState: ProductDetail = {
     id: '',
     created_at: '',
@@ -76,67 +78,72 @@ const initialState: ProductState = {
 }
 
 export const fetchNewArrivals = createAsyncThunk('products/fetchNewArrivals', async () => {
-    const response = await axiosInstance.get('/products/new_arrivals/')
+    const response = await axiosInstance.get(`${PRODUCTS_API_PREFIX}/new_arrivals/`)
     return response.data
 })
 
 export const fetchPOM = createAsyncThunk('products/fetchProductOfTheMonth', async () => {
-    const response = await axiosInstance.get('/products/product_of_the_month/')
+    const response = await axiosInstance.get(`${PRODUCTS_API_PREFIX}/product_of_the_month/`)
     return response.data
 })
 
 export const fetchDiscountedProducts = createAsyncThunk('products/fetchDiscounted', async () => {
-    const response = await axiosInstance.get('/products/discounted/')
+    const response = await axiosInstance.get(`${PRODUCTS_API_PREFIX}/discounted/`)
     return response.data
 })
 
 export const fetchTrendingProducts = createAsyncThunk('products/fetchTrending', async () => {
-    const response = await axiosInstance.get('/products/trending/')
+    const response = await axiosInstance.get(`${PRODUCTS_API_PREFIX}/trending/`)
     return response.data
 })
 
 export const fetchBestSellers = createAsyncThunk('products/fetchBestSellers', async () => {
-    const response = await axiosInstance.get('/products/best_sellers/')
+    const response = await axiosInstance.get(`${PRODUCTS_API_PREFIX}/best_sellers/`)
     return response.data
 })
 
 export const fetchRecommendedProducts = createAsyncThunk('products/fetchRecommended', async (product_id: string) => {
-    const response = await axiosInstance.get(`/products/${product_id}/recommended/`)
+    const response = await axiosInstance.get(`${PRODUCTS_API_PREFIX}/${product_id}/recommended/`)
     return response.data
 })
 
 export const fetchRelatedProducts = createAsyncThunk('products/fetchRelated', async (product_id: string) => {
-    const response = await axiosInstance.get(`/products/${product_id}/related/`)
+    const response = await axiosInstance.get(`${PRODUCTS_API_PREFIX}/${product_id}/related/`)
     return response.data
 })
 
 export const fetchProducts = createAsyncThunk('products/fetchAll', async () => {
-    const response = await axiosInstance.get('/products/')
-    return response.data
+    const response = await axiosInstance.get(`${PRODUCTS_API_PREFIX}/catalog/`)
+    return response.data.map((product: any) => ({
+        ...product,
+        createdAt: product.created_at,
+        inStock: product.available,
+        onSale: (product.discount_percentage ?? 0) > 0,
+    }))
 })
 
 export const fetchAProduct = createAsyncThunk('products/fetchOne', async (product_id: string) => {
-    const response = await axiosInstance.get(`/products/${product_id}/`)
+    const response = await axiosInstance.get(`${PRODUCTS_API_PREFIX}/${product_id}/`)
     return response.data
 })
 
 export const fetchFeaturedProducts = createAsyncThunk('products/featured', async () => {
-    const response = await axiosInstance.get('/products/featured/')
+    const response = await axiosInstance.get(`${PRODUCTS_API_PREFIX}/featured/`)
     return response.data
 })
 
 export const fetchPopularProducts = createAsyncThunk('products/popular', async () => {
-    const response = await axiosInstance.get('/products/popular/')
+    const response = await axiosInstance.get(`${PRODUCTS_API_PREFIX}/popular/`)
     return response.data
 })
 
 export const fetchTopRatedProducts = createAsyncThunk('products/toprated', async () => {
-    const response = await axiosInstance.get('/products/top_rated/')
+    const response = await axiosInstance.get(`${PRODUCTS_API_PREFIX}/top_rated/`)
     return response.data
 })
 
 export const searchProducts = createAsyncThunk('products/search', async (query: string) => {
-    const response = await axiosInstance.get(`/products/search/?q=${query}`)
+    const response = await axiosInstance.get(`${PRODUCTS_API_PREFIX}/search/?q=${query}`)
     return response.data
 })
 
@@ -162,10 +169,11 @@ const productSlice = createSlice({
             })
             .addCase(fetchAProduct.fulfilled, (state, action) => {
                 state.productDetail = action.payload
-                state.isUpdating = true
+                state.isUpdating = false
             })
             .addCase(fetchAProduct.rejected, (state, action) => {
-                state.isUpdating = true
+                state.isUpdating = false
+                state.error = action.error.message || 'An error occurred'
             })
             .addCase(fetchFeaturedProducts.fulfilled, (state, action) => {
                 state.featuredProducts = action.payload

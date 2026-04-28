@@ -30,7 +30,68 @@ module.exports = {
         },
         extend: {
             colors: {
-                // ── Brand Core ──
+                // ════════════════════════════════════════════════════════════
+                // KINETIC TOKENS (Material 3 derived) — added for the Stitch
+                // redesign. See .claude/design-system/tokens.md.
+                // Use these for new pages; legacy tokens below stay until
+                // each legacy page is migrated.
+                // ════════════════════════════════════════════════════════════
+                background:                  '#fff8f6',
+                surface:                     '#fff8f6',
+                'surface-bright':            '#fff8f6',
+                'surface-dim':               '#efd5cb',
+                'surface-variant':           '#f8ddd3',
+                'surface-container-lowest':  '#ffffff',
+                'surface-container-low':     '#fff1ec',
+                'surface-container':         '#ffe9e2',
+                'surface-container-high':    '#fee3d9',
+                'surface-container-highest': '#f8ddd3',
+                'inverse-surface':           '#3d2d26',
+                'inverse-on-surface':        '#ffede7',
+                'surface-tint':              '#a43d00',
+                'on-background':             '#261813',
+                'on-surface':                '#261813',
+                'on-surface-variant':        '#5a4137',
+                outline:                     '#8e7165',
+                'outline-variant':           '#e2bfb2',
+                // primary kinetic family (orange) — note: extended below as
+                // an object form too, so `primary` works as both flat tokens
+                // and `primary-container`.
+                'on-primary':                '#ffffff',
+                'primary-container':         '#f5620f',
+                'on-primary-container':      '#4e1900',
+                'primary-fixed':             '#ffdbcd',
+                'primary-fixed-dim':         '#ffb597',
+                'on-primary-fixed':          '#360f00',
+                'on-primary-fixed-variant':  '#7d2d00',
+                'inverse-primary':           '#ffb597',
+                // secondary kinetic family (auction / sustainability green)
+                // NOTE: 'secondary' itself stays as the legacy object below for
+                // back-compat. The flat Kinetic green is aliased as 'secondary-green'.
+                'secondary-green':           '#006c4b',  // Kinetic secondary token
+                'on-secondary':              '#ffffff',
+                'secondary-container':       '#60f9bd',
+                'on-secondary-container':    '#00714f',
+                'secondary-fixed':           '#63fcc0',
+                'secondary-fixed-dim':       '#3fdfa5',
+                'on-secondary-fixed':        '#002114',
+                'on-secondary-fixed-variant':'#005138',
+                // tertiary kinetic family (RFQ blue)
+                tertiary:                    '#0058ca',
+                'on-tertiary':               '#ffffff',
+                'tertiary-container':        '#558dff',
+                'on-tertiary-container':     '#002761',
+                'tertiary-fixed':            '#d9e2ff',
+                'tertiary-fixed-dim':        '#b0c6ff',
+                'on-tertiary-fixed':         '#001945',
+                'on-tertiary-fixed-variant': '#00429b',
+                // error kinetic
+                error:                       '#ba1a1a',
+                'on-error':                  '#ffffff',
+                'error-container':           '#ffdad6',
+                'on-error-container':        '#93000a',
+
+                // ── Brand Core (legacy — keep) ──
                 primary: {
                     DEFAULT: '#F5620F',
                     light: '#FF8040',
@@ -129,13 +190,27 @@ module.exports = {
                     dark:  'rgba(0, 0, 0, 0.20)',
                     border: 'rgba(255, 255, 255, 0.12)',
                 },
+
+                // ── Social brand colors (used by invite/share buttons) ──
+                // Added for /account/invite share row. No raw hex in JSX.
+                whatsapp: '#25D366',
+                twitter:  '#000000',
+                facebook: '#1877F2',
             },
 
             fontFamily: {
+                // Project fonts (UNCHANGED). Kinetic redesign reuses these:
+                //   font-display = Syne (Stitch headline aesthetic)
+                //   font-body    = DM Sans (Stitch body aesthetic)
+                //   font-mono    = JetBrains Mono (prices / IDs)
                 display: ['Syne', 'sans-serif'],
                 body:    ['DM Sans', 'sans-serif'],
                 mono:    ['JetBrains Mono', 'monospace'],
-                // legacy
+                // Aliases so JSX written against Stitch class names still resolves
+                syne:     ['Syne', 'sans-serif'],
+                headline: ['Syne', 'sans-serif'],
+                epilogue: ['Syne', 'sans-serif'],
+                // Legacy
                 nunito:  ['Nunito', 'sans-serif'],
             },
 
@@ -179,9 +254,10 @@ module.exports = {
                 // Glass
                 glass: '0 8px 32px 0 rgba(31, 38, 135, 0.20)',
 
-                // Card hover
-                card:       '0 4px 12px rgba(0,0,0,0.08)',
-                'card-hover':'0 12px 32px rgba(0,0,0,0.14)',
+                // Card hover (LEGACY — overridden below with Kinetic tone)
+                // Kinetic card / card-hover uses the warm 38,24,19 base
+                card:       '0 4px 20px 0 rgba(38,24,19,0.04), 0 1px 2px 0 rgba(38,24,19,0.02)',
+                'card-hover':'0 12px 32px 0 rgba(38,24,19,0.08)',
             },
 
             backdropBlur: {

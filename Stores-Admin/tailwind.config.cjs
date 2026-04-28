@@ -8,7 +8,67 @@ module.exports = {
         },
         extend: {
             colors: {
-                // Core brand colors with standard Tailwind scale
+                // ════════════════════════════════════════════════════════════
+                // KINETIC TOKENS (Material 3 derived) — added for the Stitch
+                // redesign. See .claude/design-system/tokens.md.
+                // Use these for new admin pages; legacy tokens below stay
+                // until each legacy page is migrated.
+                // ════════════════════════════════════════════════════════════
+                background:                  '#fff8f6',
+                surface:                     '#fff8f6',
+                'surface-bright':            '#fff8f6',
+                'surface-dim':               '#efd5cb',
+                'surface-variant':           '#f8ddd3',
+                'surface-container-lowest':  '#ffffff',
+                'surface-container-low':     '#fff1ec',
+                'surface-container':         '#ffe9e2',
+                'surface-container-high':    '#fee3d9',
+                'surface-container-highest': '#f8ddd3',
+                'inverse-surface':           '#3d2d26',
+                'inverse-on-surface':        '#ffede7',
+                'surface-tint':              '#a43d00',
+                'on-background':             '#261813',
+                'on-surface':                '#261813',
+                'on-surface-variant':        '#5a4137',
+                outline:                     '#8e7165',
+                'outline-variant':           '#e2bfb2',
+                'on-primary':                '#ffffff',
+                'primary-container':         '#f5620f',
+                'on-primary-container':      '#4e1900',
+                'primary-fixed':             '#ffdbcd',
+                'primary-fixed-dim':         '#ffb597',
+                'on-primary-fixed':          '#360f00',
+                'on-primary-fixed-variant':  '#7d2d00',
+                'inverse-primary':           '#ffb597',
+                // Kinetic secondary (bid-green family). Named 'k-secondary' to avoid
+                // collision with the legacy charcoal 'secondary' object below.
+                'k-secondary':               '#006c4b',
+                'on-secondary':              '#ffffff',
+                'secondary-container':       '#60f9bd',
+                'on-secondary-container':    '#00714f',
+                'secondary-fixed':           '#63fcc0',
+                'secondary-fixed-dim':       '#3fdfa5',
+                'on-secondary-fixed':        '#002114',
+                'on-secondary-fixed-variant':'#005138',
+                tertiary:                    '#0058ca',
+                'on-tertiary':               '#ffffff',
+                'tertiary-container':        '#558dff',
+                'on-tertiary-container':     '#002761',
+                'tertiary-fixed':            '#d9e2ff',
+                'tertiary-fixed-dim':        '#b0c6ff',
+                'on-tertiary-fixed':         '#001945',
+                'on-tertiary-fixed-variant': '#00429b',
+                error:                       '#ba1a1a',
+                'on-error':                  '#ffffff',
+                'error-container':           '#ffdad6',
+                'on-error-container':        '#93000a',
+                bid: {
+                    green: '#00C48C',
+                    red:   '#FF4757',
+                    amber: '#FFB800',
+                },
+
+                // ── Core brand colors (legacy — keep) ──
                 primary: {
                     50: '#fef4ee', // Lightest tint
                     100: '#fde6d4', // Very light
@@ -150,15 +210,34 @@ module.exports = {
                 },
             },
             fontFamily: {
-                sans: ['Charlie', 'sans-serif'], // Charlie as default font
-                Charlie: ['Charlie', 'sans-serif'],
+                // Project font (UNCHANGED). Charlie remains the admin family.
+                sans:     ['Charlie', 'sans-serif'],
+                Charlie:  ['Charlie', 'sans-serif'],
+                // Kinetic aliases — all resolve to Charlie so existing fonts
+                // are preserved while Stitch-derived class names still work.
+                syne:     ['Charlie', 'sans-serif'],
+                headline: ['Charlie', 'sans-serif'],
+                epilogue: ['Charlie', 'sans-serif'],
+                body:     ['Charlie', 'sans-serif'],
+                mono:     ['Charlie', 'monospace'],
+            },
+            borderRadius: {
+                DEFAULT: '0.25rem',
+                lg:  '0.5rem',
+                xl:  '0.75rem',
+                '2xl': '1rem',
+                '3xl': '1.5rem',
+                full: '9999px',
             },
             spacing: {
                 4.5: '18px',
             },
             boxShadow: {
-                '3xl': '0 2px 2px rgba(220, 113, 26, 0.05), 1px 6px 7px rgba(220, 113, 26, 0.1)', // TradeHut Orange-tinted
-                urgent: '0 4px 14px -2px rgba(220, 113, 26, 0.25)', // TradeHut Orange shadow
+                '3xl': '0 2px 2px rgba(220, 113, 26, 0.05), 1px 6px 7px rgba(220, 113, 26, 0.1)', // legacy
+                urgent: '0 4px 14px -2px rgba(220, 113, 26, 0.25)', // legacy
+                // Kinetic
+                card:        '0 4px 20px 0 rgba(38,24,19,0.04), 0 1px 2px 0 rgba(38,24,19,0.02)',
+                'card-hover':'0 12px 32px 0 rgba(38,24,19,0.08)',
             },
             typography: ({ theme }) => ({
                 DEFAULT: {
