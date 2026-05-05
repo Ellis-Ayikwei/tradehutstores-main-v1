@@ -12,32 +12,84 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 import os
 from pathlib import Path
-from decouple import config
+from urllib.parse import unquote, urlparse
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+from decouple import config, Csv
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+def _bool_env(key: str, default: bool = False) -> bool:
+    """
+    Parse env booleans tolerantly (trailing ``\\``, stray slashes, whitespace).
+    ``python-decouple`` rejects values like ``true\\`` from hand-edited ``.env``.
+    """
+    default_str = "true" if default else "false"
+    raw = config(key, default=default_str)
+    if isinstance(raw, bool):
+        return raw
+    v = str(raw).strip().rstrip("\\").strip().lower()
+    if v in ("1", "true", "yes", "on"):
+        return True
+    if v in ("0", "false", "no", "off", ""):
+        return False
+    raise ValueError(f"Invalid boolean for {key}: {raw!r}")
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-p))&oif+3cgh_5-i$-_u8k-30lu#bn$lq!6^(h=&en)zk2iv%&"
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# ── 12-factor core ────────────────────────────────────────────────────────────
+# Every value below resolves from env first; the fallbacks keep `runserver`
+# working out of the box.
 
-# ALLOWED_HOSTS - Add your IP addresses here
-# For development, you can add specific IPs or use '*' to allow all hosts (NOT RECOMMENDED for production)
-ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-    "192.168.100.12",  # Your local network IP
-    "0.0.0.0",  # Allow all IPs in development
-]
+SECRET_KEY = config(
+    "SECRET_KEY",
+    default="django-insecure-p))&oif+3cgh_5-i$-_u8k-30lu#bn$lq!6^(h=&en)zk2iv%&",
+)
 
-# Alternative: Use environment variable for production
-# ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
+DEBUG = _bool_env("DEBUG", default=True)
+
+ALLOWED_HOSTS = config(
+    "ALLOWED_HOSTS",
+    default="localhost,127.0.0.1,0.0.0.0,192.168.100.12,192.168.100.13",
+    cast=Csv(),
+)
+
+# If .env overrides ALLOWED_HOSTS and drops the LAN IP, dev requests from
+# another device (e.g. FE at http://192.168.100.12:3000 → API :8000) 400.
+if DEBUG:
+    _lan_allow = config(
+        "ALLOWED_HOSTS_LAN",
+        default="192.168.100.12,192.168.100.13",
+        cast=Csv(),
+    )
+    for _h in _lan_allow:
+        _h = (_h or "").strip()
+        if _h and _h not in ALLOWED_HOSTS:
+            ALLOWED_HOSTS.append(_h)
+
+# Railway sets RAILWAY_PUBLIC_DOMAIN automatically — append it so we don't
+# need a redeploy for hostname rotation.
+_railway_host = config("RAILWAY_PUBLIC_DOMAIN", default="")
+if _railway_host and _railway_host not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(_railway_host)
+
+# Browser Origin must match for unsafe methods when SessionAuthentication (or
+# Django form views) enforces CSRF. LAN dev (e.g. FE on :3000) needs http origins
+# here even if ALLOWED_HOSTS already lists the IP — the two settings differ.
+# Set CSRF_TRUSTED_ORIGINS in env to override this list (e.g. production-only).
+CSRF_TRUSTED_ORIGINS = config(
+    "CSRF_TRUSTED_ORIGINS",
+    default=(
+        "http://localhost:3000,http://127.0.0.1:3000,"
+        "http://localhost:5173,http://127.0.0.1:5173,"
+        "http://192.168.100.12:3000,http://192.168.100.12:5173,"
+        "https://*.up.railway.app,https://*.tradehut.com"
+    ),
+    cast=Csv(),
+)
+
+# When proxied (Railway), trust the X-Forwarded-Proto header so request.is_secure() works.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_HOST = True
 
 
 # Application definition
@@ -56,6 +108,7 @@ INSTALLED_APPS = [
     "apps.notifications",
     "apps.catalog",
     "apps.products",
+    "apps.merchandising",
     "apps.orders",
     "apps.cart",
     "apps.reviews",
@@ -81,47 +134,86 @@ INSTALLED_APPS = [
 # ── Search feature flags ──────────────────────────────────────────────────────
 # All search features are OFF by default so a fresh checkout still boots
 # without Elasticsearch/Redis/pgvector. Flip these on per-environment.
-SEARCH_ENABLE_ES = config("SEARCH_ENABLE_ES", default=False, cast=bool)
-SEARCH_ENABLE_EMBEDDINGS = config(
-    "SEARCH_ENABLE_EMBEDDINGS", default=False, cast=bool
-)
-SEARCH_ENABLE_SIGNALS = config("SEARCH_ENABLE_SIGNALS", default=False, cast=bool)
+SEARCH_ENABLE_ES = _bool_env("SEARCH_ENABLE_ES", default=False)
+SEARCH_ENABLE_EMBEDDINGS = _bool_env("SEARCH_ENABLE_EMBEDDINGS", default=False)
+SEARCH_ENABLE_SIGNALS = _bool_env("SEARCH_ENABLE_SIGNALS", default=False)
 SEARCH_ES_INDEX = config("SEARCH_ES_INDEX", default="tradehut_products")
 
 # Connection strings — all optional.
-ELASTICSEARCH_URL = config(
-    "ELASTICSEARCH_URL", default="http://localhost:9200"
-)
+ELASTICSEARCH_URL = config("ELASTICSEARCH_URL", default="http://localhost:9200")
+# Optional: set when the password has :, @, etc. and breaks URL userinfo parsing.
+ELASTICSEARCH_USER = config("ELASTICSEARCH_USER", default="")
+ELASTICSEARCH_PASSWORD = config("ELASTICSEARCH_PASSWORD", default="")
 REDIS_URL = config("REDIS_URL", default="redis://localhost:6379/0")
 EMBEDDING_SERVICE_URL = config("EMBEDDING_SERVICE_URL", default="")
+
+
+def _elasticsearch_base_url(url: str) -> str:
+    """``scheme://host:port`` only — strips userinfo if present."""
+    parsed = urlparse(url.strip())
+    if not parsed.scheme or not parsed.hostname:
+        return url.strip()
+    host = parsed.hostname
+    if parsed.port:
+        host = f"{host}:{parsed.port}"
+    return f"{parsed.scheme}://{host}"
+
+
+def _elasticsearch_dsl_default() -> dict:
+    """
+    Build kwargs for elasticsearch-py 8.x / django-elasticsearch-dsl.
+
+    If ``ELASTICSEARCH_USER`` and ``ELASTICSEARCH_PASSWORD`` are set, they
+    **always** win (and any ``user:pass@`` in ``ELASTICSEARCH_URL`` is ignored).
+    Otherwise credentials may come from the URL userinfo.
+    """
+    raw = ELASTICSEARCH_URL.strip()
+    base = _elasticsearch_base_url(raw)
+    user = ELASTICSEARCH_USER.strip()
+    password = ELASTICSEARCH_PASSWORD.strip()
+
+    if user and password:
+        return {"hosts": [base], "basic_auth": (user, password)}
+
+    parsed = urlparse(raw)
+    if parsed.username is not None:
+        u = unquote(parsed.username)
+        p = unquote(parsed.password or "")
+        return {"hosts": [base], "basic_auth": (u, p)}
+
+    return {"hosts": [base]}
+
 
 # Auto-register django-elasticsearch-dsl ONLY when ES is enabled. Adding the
 # app unconditionally would require a live ES at startup.
 if SEARCH_ENABLE_ES:
     INSTALLED_APPS = INSTALLED_APPS + ["django_elasticsearch_dsl"]
-    ELASTICSEARCH_DSL = {"default": {"hosts": ELASTICSEARCH_URL}}
+    ELASTICSEARCH_DSL = {"default": _elasticsearch_dsl_default()}
 
-# Celery — only configured when SEARCH_ENABLE_SIGNALS is on. Other apps may
-# extend this later without conflict.
-if SEARCH_ENABLE_SIGNALS:
-    CELERY_BROKER_URL = REDIS_URL
-    CELERY_RESULT_BACKEND = REDIS_URL
-    CELERY_TASK_ROUTES = {
-        "apps.search.tasks.generate_product_embedding": {"queue": "embeddings"},
-        "apps.search.tasks.index_product_task": {"queue": "default"},
-        "apps.search.tasks.deindex_product_task": {"queue": "default"},
-    }
+# Celery — broker is always pointed at REDIS_URL so a worker can boot, but
+# auto-dispatch (signals → tasks) is still gated by SEARCH_ENABLE_SIGNALS.
+CELERY_BROKER_URL = REDIS_URL
+CELERY_RESULT_BACKEND = REDIS_URL
+CELERY_TASK_ALWAYS_EAGER = _bool_env("CELERY_TASK_ALWAYS_EAGER", default=False)
+CELERY_TASK_ROUTES = {
+    "apps.search.tasks.generate_product_embedding": {"queue": "embeddings"},
+    "apps.search.tasks.index_product_task": {"queue": "default"},
+    "apps.search.tasks.deindex_product_task": {"queue": "default"},
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    # Must run early so browser cross-origin POST/OPTIONS get correct CORS headers
+    # (django-cors-headers; was incorrectly last in the stack).
+    "corsheaders.middleware.CorsMiddleware",
+    # Whitenoise serves /static/ in production so we can run Gunicorn without nginx.
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.security.SecurityMiddleware",
 ]
 
 ROOT_URLCONF = "backend.urls"
@@ -145,39 +237,34 @@ TEMPLATES = [
 WSGI_APPLICATION = "backend.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+# ── Database ──────────────────────────────────────────────────────────────────
+# Railway / Heroku / etc. expose DATABASE_URL. We prefer that when present,
+# otherwise we fall back to the existing per-field env vars so local dev
+# keeps working.
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.mysql",
-#         "NAME": config("DB_NAME"),
-#         "USER": config("DB_USER"),
-#         "PASSWORD": config("DB_PASSWORD"),
-#         "HOST": config("DB_HOST", default="localhost"),
-#         "PORT": config("DB_PORT", default=5432, cast=int),
-#     }
-# }
+_DATABASE_URL = config("DATABASE_URL", default="")
+if _DATABASE_URL:
+    import dj_database_url
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("DB_NAME"),
-        "USER": config("DB_USER"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "HOST": config("DB_HOST", default="localhost"),
-        "PORT": config("DB_PORT", default=5432, cast=int),
+    DATABASES = {
+        "default": dj_database_url.parse(
+            _DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=_bool_env("DB_SSL_REQUIRED", default=False),
+        ),
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": config("DB_NAME", default="tradehut"),
+            "USER": config("DB_USER", default="postgres"),
+            "PASSWORD": config("DB_PASSWORD", default="postgres"),
+            "HOST": config("DB_HOST", default="localhost"),
+            "PORT": config("DB_PORT", default=5432, cast=int),
+        }
+    }
 
-
-# ALGOLIA = {
-#   'APPLICATION_ID': 'JU7HSF5260',
-#   'API_KEY': '0aa1948cb48b22099cafb2e166c67043'
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -210,22 +297,61 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
+# ── Static & Media ────────────────────────────────────────────────────────────
+# Static files served by Whitenoise so we don't need a separate CDN for them.
+# Media files (user uploads / product images) optionally land on Cloudflare R2.
 
 STATIC_URL = "static/"
-# settings.py
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
 AUTH_USER_MODEL = "users.User"
-
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# settings.py
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+# ── Cloudflare R2 (S3-compatible) for media ───────────────────────────────────
+# Toggle USE_R2=True to point default storage at R2. Falls back cleanly to
+# local filesystem otherwise so dev / CI keep working.
+USE_R2 = _bool_env("USE_R2", default=False)
+
+if USE_R2:
+    # django-storages uses the AWS_* vars for any S3-compatible target.
+    AWS_ACCESS_KEY_ID = config("R2_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = config("R2_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = config("R2_BUCKET_NAME")
+    AWS_S3_ENDPOINT_URL = config(
+        "R2_ENDPOINT_URL"
+    )  # https://<account>.r2.cloudflarestorage.com
+    # Object key prefix so public URLs match local FileSystemStorage paths (MEDIA_URL=/media/ → media/…).
+    # Leave empty if the bucket already uses keys at the root (main_product_images/…).
+    AWS_LOCATION = config("R2_OBJECT_PREFIX", default="").strip().strip("/")
+    AWS_S3_REGION_NAME = "auto"
+    AWS_S3_SIGNATURE_VERSION = "s3v4"
+    AWS_S3_ADDRESSING_STYLE = "virtual"
+    # Optional public custom domain (e.g. images.tradehut.com via R2 Public Bucket).
+    AWS_S3_CUSTOM_DOMAIN = config("R2_PUBLIC_DOMAIN", default="")
+    AWS_DEFAULT_ACL = None
+    AWS_QUERYSTRING_AUTH = _bool_env("R2_PRIVATE_BUCKET", default=False)
+    AWS_S3_FILE_OVERWRITE = False
+
+    STORAGES = {
+        "default": {"BACKEND": "storages.backends.s3.S3Storage"},
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
+else:
+    STORAGES = {
+        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+        "staticfiles": {
+            "BACKEND": (
+                "whitenoise.storage.CompressedManifestStaticFilesStorage"
+                if not DEBUG
+                else "django.contrib.staticfiles.storage.StaticFilesStorage"
+            ),
+        },
+    }
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760
@@ -233,9 +359,18 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760
 APPEND_SLASH = True
 
 REST_FRAMEWORK = {
+    # JWT only for the versioned API. SessionAuthentication was removed: it
+    # forces DRF to run Django CSRF checks on unsafe methods whenever a
+    # logged-in *session* is present (common with withCredentials), while the
+    # SPA only sends Bearer tokens — hence "CSRF token missing" on POST.
+    #
+    # Unauthenticated JSON endpoints (e.g. auth/modal/identify/) do not need
+    # session CSRF: there is no Django session auth on those routes; risk is
+    # covered by throttles + flow_token binding. Modal views also use
+    # @csrf_exempt so CsrfViewMiddleware never blocks SPA POSTs. Django admin
+    # still uses full CSRF protection.
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",
@@ -249,32 +384,31 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.AnonRateThrottle",
         "rest_framework.throttling.UserRateThrottle",
     ],
+    # Default API throttles (DRF AnonRateThrottle / UserRateThrottle). The old
+    # 100/hour anon cap breaks normal SPAs: one product page can fire 10–20
+    # parallel GETs (catalog, categories, detail, variants, images, reviews…).
     "DEFAULT_THROTTLE_RATES": {
-        "anon": "100/hour",  # Anonymous users: 100 requests per hour
-        "user": "1000/hour",  # Authenticated users: 1000 requests per hour
+        "anon": config("REST_THROTTLE_ANON", default="200/min"),
+        "user": config("REST_THROTTLE_USER", default="2000/min"),
     },
 }
 
 
-CORS_ALLOWED_ORIGINS = [
-    "https://yourfrontend.com",
-    "https://admin.yourfrontend.com",
-]
+# ── CORS ──────────────────────────────────────────────────────────────────────
+# Only wide-open in DEBUG; production must whitelist explicit origins through
+# CORS_ALLOWED_ORIGINS (comma-separated env).
+CORS_ALLOWED_ORIGINS = config(
+    "CORS_ALLOWED_ORIGINS",
+    default="http://localhost:3000,http://localhost:5173",
+    cast=Csv(),
+)
+CORS_ALLOWED_ORIGIN_REGEXES = config(
+    "CORS_ALLOWED_ORIGIN_REGEXES",
+    default=r"^https://.*\.pages\.dev$,^https://.*\.tradehut\.com$",
+    cast=Csv(),
+)
 
-# OR use regex for dynamic subdomains
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^https://.*\.yourfrontend\.com$",
-]
-
-
-CORS_ALLOW_METHODS = [
-    "GET",
-    "POST",
-    "PUT",
-    "PATCH",
-    "DELETE",
-]
-
+CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 CORS_ALLOW_HEADERS = [
     "Authorization",
     "Content-Type",
@@ -282,18 +416,24 @@ CORS_ALLOW_HEADERS = [
     "X-Refresh-Token",
     "x-refresh-token",
 ]
-
 CORS_EXPOSE_HEADERS = [
     "Content-Disposition",
     "Authorization",
     "X-Refresh-Token",
     "x-refresh-token",
 ]
-
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = True
-
+CORS_ALLOW_ALL_ORIGINS = DEBUG  # only in development
 CORS_PREFLIGHT_MAX_AGE = 86400
+
+# ── Production hardening (auto-enabled when DEBUG=False) ─────────────────────
+if not DEBUG:
+    SECURE_SSL_REDIRECT = _bool_env("SECURE_SSL_REDIRECT", default=True)
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = config("SECURE_HSTS_SECONDS", default=31536000, cast=int)
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
 
 
 # JWT Authentication Settings
@@ -305,7 +445,7 @@ OTP_EXPIRY_MINUTES = 5  # OTP expires in 5 minutes
 OTP_MAX_ATTEMPTS = 3  # Maximum attempts before OTP is locked
 
 # Frontend URL for password reset emails
-FRONTEND_URL = "http://localhost:3000"
+FRONTEND_URL = config("FRONTEND_URL", default="http://localhost:3000")
 
 # Email Configuration (update with your SMTP settings)
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # For development
@@ -317,6 +457,14 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # For developm
 # EMAIL_HOST_USER = 'your-email@gmail.com'
 # EMAIL_HOST_PASSWORD = 'your-app-password'
 DEFAULT_FROM_EMAIL = "noreply@tradehut.com"
+
+# ── Store catalogue currency (aligned with Stores-FE/lib/storeCurrency.ts) ───
+# All placeholder FX rates are expressed per 1 unit of this ISO code.
+# Product/catalog JSON amounts are in this currency unless a field specifies otherwise.
+TRADEHUT_STORE_BASE_CURRENCY = config("TRADEHUT_STORE_BASE_CURRENCY", default="USD")
+# Frankfurter (tradehut_currency-style) — cached server-side; FE also calls fx/snapshot/
+TRADEHUT_FX_FETCH_FRANKFURTER = _bool_env("TRADEHUT_FX_FETCH_FRANKFURTER", default=True)
+TRADEHUT_FX_CACHE_SECONDS = config("TRADEHUT_FX_CACHE_SECONDS", default=14400, cast=int)
 
 # SMS Configuration (for OTP via SMS - Optional)
 # Uncomment and configure for production SMS sending

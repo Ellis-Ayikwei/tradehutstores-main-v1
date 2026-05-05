@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from django.conf import settings
 from .models import Wishlist, WishlistItem, Favorite
 
 
@@ -35,20 +34,15 @@ class WishlistItemSerializer(serializers.ModelSerializer):
         ]
 
     def get_product_image(self, obj):
-        if obj.product and obj.product.main_product_image:
-            try:
-                request = self.context.get("request")
-                url = obj.product.main_product_image.url
-                return request.build_absolute_uri(url) if request else url
-            except Exception:
-                return None
-        return None
-
-    def create(self, validated_data):
-        request = self.context.get("request")
-        user = request.user if request else None
-        wishlist, _ = Wishlist.objects.get_or_create(user=user)
-        return WishlistItem.objects.create(wishlist=wishlist, **validated_data)
+        img = getattr(obj.product, "display_main_image", None) if obj.product else None
+        if not img:
+            return None
+        try:
+            request = self.context.get("request")
+            url = img.url
+            return request.build_absolute_uri(url) if request else url
+        except Exception:
+            return None
 
 
 class WishlistSerializer(serializers.ModelSerializer):

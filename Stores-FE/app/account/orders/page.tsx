@@ -6,36 +6,26 @@
  *
  * Ported from: stitch_full_website_redesign_expansion/tradehut_my_orders/code.html
  *
- * Layout: Account / dashboard shell (see .claude/design-system/layouts.md)
- * Sidebar is intentionally inline in this file.
- * // TODO: extract to shared <AccountSidebar>
+ * Layout: shared AccountShell via app/account/layout.tsx
  */
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import MainLayout from "@/components/Layouts/MainLayout";
+import { AccountMobileHeader } from "@/components/account/AccountShell";
+import { useCurrency } from "@/contexts/CurrencyContext";
+import { useUserAccountId } from "@/hooks/useUserAccountId";
+import { getMyOrders } from "@/lib/accountApi";
+import { mapApiOrdersToListOrders } from "@/lib/mapOrderFromApi";
+import renderErrorMessage from "@/utils/renderErrorMessage";
 import {
-  LayoutDashboard,
   ShoppingBag,
-  Gavel,
-  FileText,
-  Heart,
-  MapPin,
-  CreditCard,
-  Bell,
-  Shield,
-  LogOut,
   ArrowRight,
   ChevronLeft,
   ChevronRight,
   Calendar,
   ChevronDown,
   Headphones,
-  Store,
-  User,
-  Menu,
-  X,
 } from "lucide-react";
 
 // ---------------------------------------------------------------------------
@@ -67,136 +57,6 @@ interface Order {
   status: Exclude<OrderStatus, "all">;
   items: OrderItem[];
 }
-
-// ---------------------------------------------------------------------------
-// Demo data
-// TODO: fetch from /api/orders/?mine=true&status=...
-// ---------------------------------------------------------------------------
-const DEMO_ORDERS: Order[] = [
-  {
-    id: "TH-90210-XB",
-    reference: "#TH-90210-XB",
-    date: "Oct 24, 2023",
-    total: 12450.0,
-    currency: "USD",
-    status: "shipped",
-    items: [
-      {
-        id: "i1",
-        name: "Velocity Max G2 Runner",
-        imageUrl:
-          "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200&q=80",
-        imageAlt: "Running shoe",
-        qty: 2,
-        unitPrice: 189,
-      },
-      {
-        id: "i2",
-        name: "Metric Chrono Minimalist Watch",
-        imageUrl:
-          "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200&q=80",
-        imageAlt: "Minimalist watch",
-        qty: 1,
-        unitPrice: 345,
-      },
-    ],
-  },
-  {
-    id: "TH-88432-ML",
-    reference: "#TH-88432-ML",
-    date: "Oct 21, 2023",
-    total: 3120.45,
-    currency: "USD",
-    status: "processing",
-    items: [
-      {
-        id: "i3",
-        name: "Pro Wireless Earbuds",
-        imageUrl:
-          "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&q=80",
-        imageAlt: "Wireless earbuds",
-        qty: 3,
-        unitPrice: 1040.15,
-      },
-    ],
-  },
-  {
-    id: "TH-77219-ZA",
-    reference: "#TH-77219-ZA",
-    date: "Oct 15, 2023",
-    total: 890.0,
-    currency: "USD",
-    status: "delivered",
-    items: [
-      {
-        id: "i4",
-        name: "Ergonomic Laptop Stand",
-        imageUrl:
-          "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=200&q=80",
-        imageAlt: "Laptop stand",
-        qty: 1,
-        unitPrice: 890,
-      },
-    ],
-  },
-  {
-    id: "TH-66504-KP",
-    reference: "#TH-66504-KP",
-    date: "Oct 09, 2023",
-    total: 45200.0,
-    currency: "USD",
-    status: "delivered",
-    items: [
-      {
-        id: "i5",
-        name: "Industrial Grade Server Rack",
-        imageUrl:
-          "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=200&q=80",
-        imageAlt: "Server rack",
-        qty: 4,
-        unitPrice: 11300,
-      },
-    ],
-  },
-  {
-    id: "TH-55102-RK",
-    reference: "#TH-55102-RK",
-    date: "Sep 30, 2023",
-    total: 620.0,
-    currency: "USD",
-    status: "returned",
-    items: [
-      {
-        id: "i6",
-        name: "Smart Home Hub",
-        imageUrl:
-          "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&q=80",
-        imageAlt: "Smart home hub",
-        qty: 1,
-        unitPrice: 620,
-      },
-    ],
-  },
-  {
-    id: "TH-44891-VD",
-    reference: "#TH-44891-VD",
-    date: "Sep 22, 2023",
-    total: 1780.0,
-    currency: "USD",
-    status: "cancelled",
-    items: [
-      {
-        id: "i7",
-        name: "Premium Coffee Maker",
-        imageUrl:
-          "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=200&q=80",
-        imageAlt: "Coffee maker",
-        qty: 2,
-        unitPrice: 890,
-      },
-    ],
-  },
-];
 
 // ---------------------------------------------------------------------------
 // Status tab definitions
@@ -259,31 +119,24 @@ function StatusPill({ status }: { status: ConcreteStatus }) {
 }
 
 // ---------------------------------------------------------------------------
-// Format currency
-// ---------------------------------------------------------------------------
-function formatAmount(n: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  }).format(n);
-}
-
-// ---------------------------------------------------------------------------
 // Order row (used in table on md+ and card on mobile)
 // ---------------------------------------------------------------------------
 function OrderRow({ order }: { order: Order }) {
+  const { formatDisplayPrice } = useCurrency();
+  const formatAmount = (n: number) =>
+    formatDisplayPrice(n, order.currency);
+
   return (
     <>
       {/* Desktop table row (md+) */}
-      <tr className="hidden md:table-row group hover:bg-surface-container-low/30 transition-colors">
+      <tr className="hidden md:table-row group hover:bg-surface-container-low/30 dark:hover:bg-gray-800/40 transition-colors">
         <td className="px-6 py-6 lg:px-8">
-          <span className="font-mono text-sm font-bold text-primary">
+          <span className="font-mono text-sm font-bold text-primary dark:text-orange-400">
             {order.reference}
           </span>
         </td>
         <td className="px-6 py-6 lg:px-8">
-          <span className="text-sm font-medium text-on-surface">{order.date}</span>
+          <span className="text-sm font-medium text-on-surface dark:text-gray-100">{order.date}</span>
         </td>
         <td className="px-6 py-6 lg:px-8">
           <StatusPill status={order.status} />
@@ -313,7 +166,7 @@ function OrderRow({ order }: { order: Order }) {
           </div>
         </td>
         <td className="px-6 py-6 lg:px-8 text-right">
-          <span className="font-mono text-base font-bold text-on-surface">
+          <span className="font-mono text-base font-bold text-on-surface dark:text-gray-100">
             {formatAmount(order.total)}
           </span>
         </td>
@@ -331,7 +184,7 @@ function OrderRow({ order }: { order: Order }) {
       {/* Mobile card */}
       <tr className="md:hidden">
         <td colSpan={6} className="px-0 py-0">
-          <div className="bg-surface-container-lowest rounded-2xl shadow-card p-5 mb-3 flex items-center gap-4">
+          <div className="bg-surface-container-lowest dark:bg-gray-900 rounded-2xl shadow-card dark:border dark:border-gray-800 p-5 mb-3 flex items-center gap-4">
             {/* Thumbnail stack */}
             <div className="flex -space-x-2 flex-shrink-0">
               {order.items.slice(0, 2).map((item) => (
@@ -352,7 +205,7 @@ function OrderRow({ order }: { order: Order }) {
             {/* Info */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <span className="font-mono text-xs font-bold text-primary truncate">
+                <span className="font-mono text-xs font-bold text-primary dark:text-orange-400 truncate">
                   {order.reference}
                 </span>
                 <StatusPill status={order.status} />
@@ -405,281 +258,58 @@ function EmptyState({ status }: { status: OrderStatus }) {
 // Page component (client — needs useState for active tab / date filter)
 // ---------------------------------------------------------------------------
 export default function MyOrdersPage() {
+  const userId = useUserAccountId();
+  const { baseCurrency } = useCurrency();
   const [activeTab, setActiveTab] = useState<OrderStatus>("all");
-  // TODO: wire date-range filter to API query
   const [dateRange] = useState<string>("Last 3 Months");
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
-  // Close drawer on ESC
   useEffect(() => {
-    if (!drawerOpen) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setDrawerOpen(false);
+    if (!userId) {
+      setOrders([]);
+      setLoading(false);
+      setFetchError(null);
+      return;
+    }
+    let cancelled = false;
+    setLoading(true);
+    setFetchError(null);
+    (async () => {
+      try {
+        const raw = await getMyOrders(userId);
+        if (cancelled) return;
+        setOrders(mapApiOrdersToListOrders(raw, baseCurrency));
+      } catch (e: unknown) {
+        if (!cancelled) {
+          setFetchError(renderErrorMessage(e));
+          setOrders([]);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
     };
-    document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
-  }, [drawerOpen]);
+  }, [userId, baseCurrency]);
 
-  // TODO: fetch from /api/orders/?mine=true&status=...
   const filteredOrders =
     activeTab === "all"
-      ? DEMO_ORDERS
-      : DEMO_ORDERS.filter((o) => o.status === activeTab);
+      ? orders
+      : orders.filter((o) => o.status === activeTab);
 
   const tabCount = (v: OrderStatus) =>
     v === "all"
-      ? DEMO_ORDERS.length
-      : DEMO_ORDERS.filter((o) => o.status === v).length;
+      ? orders.length
+      : orders.filter((o) => o.status === v).length;
 
   return (
-    <MainLayout>
-      <div className="min-h-screen bg-surface text-on-surface font-body">
-        {/*
-         * NOTE: The global <TopNav> is rendered by MainLayout and
-         * must NOT be modified here. The pt-20 below clears it.
-         */}
+    <>
+      <AccountMobileHeader title="Order History" />
 
-        {/* Mobile sidebar drawer overlay */}
-        {drawerOpen && (
-          <div
-            className="fixed inset-0 z-40 bg-inverse-surface/40 backdrop-blur-sm lg:hidden"
-            onClick={() => setDrawerOpen(false)}
-            aria-hidden="true"
-          />
-        )}
-        {/* Mobile sidebar drawer panel */}
-        <div
-          className={`fixed left-0 top-0 h-full w-72 z-50 bg-surface-container-lowest shadow-card flex flex-col gap-2 p-6 overflow-y-auto no-scrollbar transition-transform duration-300 lg:hidden ${
-            drawerOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
-          aria-label="Account navigation drawer"
-        >
-          {/* Drawer header */}
-          <div className="mb-8 flex items-center justify-between">
-            <div>
-              <h2 className="font-syne text-xl font-bold text-on-surface tracking-tight">
-                Account Settings
-              </h2>
-              <p className="text-xs text-on-surface-variant font-medium mt-1 opacity-60">
-                Manage your TradeHut profile
-              </p>
-            </div>
-            <button
-              onClick={() => setDrawerOpen(false)}
-              aria-label="Close menu"
-              className="p-2 rounded-xl hover:bg-surface-container transition-colors text-on-surface-variant"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-          <nav className="flex flex-col gap-1 flex-1">
-            <Link href="/account" onClick={() => setDrawerOpen(false)}
-              className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl">
-              <LayoutDashboard className="w-5 h-5" />
-              <span className="font-body uppercase tracking-widest text-[10px] font-bold">Overview</span>
-            </Link>
-            <Link href="/account/orders" onClick={() => setDrawerOpen(false)}
-              className="bg-surface-container-lowest text-primary-container shadow-card rounded-xl px-4 py-3 flex items-center gap-3 transition-all hover:translate-x-1 duration-200">
-              <ShoppingBag className="w-5 h-5 fill-current" />
-              <span className="font-body uppercase tracking-widest text-[10px] font-bold">Orders</span>
-            </Link>
-            <Link href="/account/bids" onClick={() => setDrawerOpen(false)}
-              className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl">
-              <Gavel className="w-5 h-5" />
-              <span className="font-body uppercase tracking-widest text-[10px] font-bold">Bids &amp; Auctions</span>
-            </Link>
-            <Link href="/account/requests" onClick={() => setDrawerOpen(false)}
-              className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl">
-              <FileText className="w-5 h-5" />
-              <span className="font-body uppercase tracking-widest text-[10px] font-bold">My Requests</span>
-            </Link>
-            <Link href="/account/wishlist" onClick={() => setDrawerOpen(false)}
-              className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl">
-              <Heart className="w-5 h-5" />
-              <span className="font-body uppercase tracking-widest text-[10px] font-bold">Wishlist</span>
-            </Link>
-            <Link href="/account/addresses" onClick={() => setDrawerOpen(false)}
-              className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl">
-              <MapPin className="w-5 h-5" />
-              <span className="font-body uppercase tracking-widest text-[10px] font-bold">Addresses</span>
-            </Link>
-            <Link href="/account/payment-methods" onClick={() => setDrawerOpen(false)}
-              className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl">
-              <CreditCard className="w-5 h-5" />
-              <span className="font-body uppercase tracking-widest text-[10px] font-bold">Payment Methods</span>
-            </Link>
-            <Link href="/account/notifications" onClick={() => setDrawerOpen(false)}
-              className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl">
-              <Bell className="w-5 h-5" />
-              <span className="font-body uppercase tracking-widest text-[10px] font-bold">Notifications</span>
-            </Link>
-            <Link href="/account/security" onClick={() => setDrawerOpen(false)}
-              className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl">
-              <Shield className="w-5 h-5" />
-              <span className="font-body uppercase tracking-widest text-[10px] font-bold">Security</span>
-            </Link>
-          </nav>
-          <div className="mt-auto pt-6 border-t border-surface-container-highest/30">
-            <Link href="/auth/login"
-              className="w-full bg-surface-container-low text-on-surface-variant font-bold py-3 rounded-xl hover:bg-error-container hover:text-error transition-all flex items-center justify-center gap-2 active:scale-95">
-              <LogOut className="w-4 h-4" />
-              Sign Out
-            </Link>
-          </div>
-        </div>
-
-        <div className="pt-20 pb-20 md:pb-12 px-4 md:px-8 max-w-screen-2xl mx-auto">
-          <div className="flex flex-col lg:flex-row gap-4 md:gap-6 lg:gap-8">
-
-            {/* ----------------------------------------------------------------
-             * SIDEBAR — account nav
-             * TODO: extract to shared <AccountSidebar>
-             * ---------------------------------------------------------------- */}
-            <aside className="hidden lg:flex md:sticky md:top-24 md:h-[calc(100vh-6rem)] w-72 flex-shrink-0 flex-col gap-2 p-6 bg-surface rounded-2xl overflow-y-auto no-scrollbar">
-              <div className="mb-8">
-                <h2 className="font-syne text-xl font-bold text-on-surface tracking-tight">
-                  Account Settings
-                </h2>
-                <p className="text-xs text-on-surface-variant font-medium mt-1 opacity-60">
-                  Manage your TradeHut profile
-                </p>
-              </div>
-
-              <nav className="flex flex-col gap-1 flex-1">
-                {/* Overview */}
-                <Link
-                  href="/account"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <LayoutDashboard className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Overview
-                  </span>
-                </Link>
-
-                {/* Orders — ACTIVE */}
-                <Link
-                  href="/account/orders"
-                  className="bg-surface-container-lowest text-primary-container shadow-card rounded-xl px-4 py-3 flex items-center gap-3 transition-all hover:translate-x-1 duration-200"
-                >
-                  <ShoppingBag className="w-5 h-5 fill-current" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Orders
-                  </span>
-                </Link>
-
-                {/* Bids & Auctions */}
-                <Link
-                  href="/account/bids"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <Gavel className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Bids &amp; Auctions
-                  </span>
-                </Link>
-
-                {/* My Requests */}
-                <Link
-                  href="/account/requests"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <FileText className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    My Requests
-                  </span>
-                </Link>
-
-                {/* Wishlist */}
-                <Link
-                  href="/account/wishlist"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <Heart className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Wishlist
-                  </span>
-                </Link>
-
-                {/* Addresses */}
-                <Link
-                  href="/account/addresses"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <MapPin className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Addresses
-                  </span>
-                </Link>
-
-                {/* Payment Methods */}
-                <Link
-                  href="/account/payment-methods"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <CreditCard className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Payment Methods
-                  </span>
-                </Link>
-
-                <div className="my-2 border-t border-outline-variant/10" />
-
-                {/* Notifications */}
-                <Link
-                  href="/account/notifications"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <Bell className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Notifications
-                  </span>
-                </Link>
-
-                {/* Security */}
-                <Link
-                  href="/account/security"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <Shield className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Security
-                  </span>
-                </Link>
-              </nav>
-
-              {/* Sign out */}
-              <div className="mt-auto pt-6 border-t border-surface-container-highest/30">
-                <Link
-                  href="/auth/login"
-                  className="w-full bg-surface-container-low text-on-surface-variant font-bold py-3 rounded-xl hover:bg-error-container hover:text-error transition-all flex items-center justify-center gap-2 active:scale-95"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Sign Out
-                </Link>
-              </div>
-            </aside>
-
-            {/* ----------------------------------------------------------------
-             * MAIN CONTENT
-             * ---------------------------------------------------------------- */}
-            <section className="flex-1 min-w-0">
-
-              {/* Mobile menu trigger — shown at <lg */}
-              <div className="lg:hidden flex items-center gap-3 mb-4">
-                <button
-                  onClick={() => setDrawerOpen(true)}
-                  aria-label="Open account menu"
-                  className="p-2 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors text-on-surface h-10 w-10 flex items-center justify-center"
-                >
-                  <Menu className="w-5 h-5" />
-                </button>
-                <span className="font-syne font-bold text-sm text-on-surface-variant uppercase tracking-widest">
-                  Order History
-                </span>
-              </div>
-
-              {/* Page header */}
+      {/* Page header */}
               <header className="mb-6 md:mb-10">
                 <h1 className="font-syne text-3xl md:text-4xl font-bold tracking-tight text-on-surface mb-2">
                   Order History
@@ -689,8 +319,23 @@ export default function MyOrdersPage() {
                 </p>
               </header>
 
+              {fetchError && (
+                <div
+                  className="mb-4 rounded-xl border border-error/30 bg-error-container/20 dark:bg-red-950/30 px-4 py-3 text-sm text-on-error-container dark:text-red-200"
+                  role="alert"
+                >
+                  {fetchError}
+                </div>
+              )}
+
+              {loading && (
+                <p className="text-sm text-on-surface-variant dark:text-gray-400 mb-4">
+                  Loading orders…
+                </p>
+              )}
+
               {/* Filters bar — sticky so tabs are always reachable while scrolling */}
-              <div className="sticky top-0 z-10 bg-surface/90 backdrop-blur pt-2 pb-4 -mx-4 px-4 md:-mx-0 md:px-0 mb-4">
+              <div className="sticky top-0 z-10 bg-surface/90 dark:bg-gray-950/90 backdrop-blur pt-2 pb-4 -mx-4 px-4 md:-mx-0 md:px-0 mb-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                 {/* Status tabs */}
                 <div className="flex items-center gap-1 bg-surface-container-low p-1.5 rounded-xl overflow-x-auto no-scrollbar flex-shrink-0">
@@ -736,7 +381,7 @@ export default function MyOrdersPage() {
               </div>{/* end sticky bar */}
 
               {/* Orders table */}
-              <div className="bg-surface-container-lowest rounded-3xl shadow-card overflow-hidden">
+              <div className="bg-surface-container-lowest dark:bg-gray-900 dark:border dark:border-gray-800 rounded-3xl shadow-card overflow-hidden">
                 <table className="w-full text-left border-collapse">
                   <thead className="hidden md:table-header-group">
                     <tr className="bg-surface-container-low/50">
@@ -849,54 +494,6 @@ export default function MyOrdersPage() {
                   </button>
                 </div>
               </div>
-            </section>
-          </div>
-        </div>
-
-        {/* ----------------------------------------------------------------
-         * MOBILE BOTTOM NAV
-         * Replaces the sidebar on small screens (< lg).
-         * TODO: extract to a shared <AccountBottomNav> or replace with the
-         * global mobile nav once that component exists.
-         * ---------------------------------------------------------------- */}
-        <nav className="lg:hidden fixed bottom-0 left-0 w-full bg-surface-container-lowest shadow-[0_-4px_20px_0_rgba(38,24,19,0.06)] px-6 py-3 flex justify-around items-center z-50">
-          <Link
-            href="/"
-            className="flex flex-col items-center gap-1 text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity min-w-[44px] py-1"
-          >
-            <Store className="w-6 h-6" />
-            <span className="text-[10px] font-bold">Home</span>
-          </Link>
-          <Link
-            href="/account/bids"
-            className="flex flex-col items-center gap-1 text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity min-w-[44px] py-1"
-          >
-            <Gavel className="w-6 h-6" />
-            <span className="text-[10px] font-bold">Bids</span>
-          </Link>
-          <Link
-            href="/account/orders"
-            className="flex flex-col items-center gap-1 text-primary min-w-[44px] py-1"
-          >
-            <ShoppingBag className="w-6 h-6 fill-current" />
-            <span className="text-[10px] font-bold">Orders</span>
-          </Link>
-          <Link
-            href="/account/requests"
-            className="flex flex-col items-center gap-1 text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity min-w-[44px] py-1"
-          >
-            <FileText className="w-6 h-6" />
-            <span className="text-[10px] font-bold">RFQs</span>
-          </Link>
-          <Link
-            href="/account"
-            className="flex flex-col items-center gap-1 text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity min-w-[44px] py-1"
-          >
-            <User className="w-6 h-6" />
-            <span className="text-[10px] font-bold">Profile</span>
-          </Link>
-        </nav>
-      </div>
-    </MainLayout>
+    </>
   );
 }

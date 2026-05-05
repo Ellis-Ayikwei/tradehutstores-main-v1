@@ -90,6 +90,7 @@ import DisputeManagement from '../pages/admin/disputes/DisputeManagement';
 
 // E-commerce Management Pages
 import ProductManagement from '../pages/admin/ProductManagement';
+import ProductDetail from '../pages/admin/ProductManagement/ProductDetail';
 import AddProduct from '../pages/admin/ProductManagement/AddProduct';
 import OrderManagement from '../pages/admin/OrderManagement';
 import SearchOpsPage from '../pages/admin/Search';
@@ -98,6 +99,7 @@ import CustomerManagement from '../pages/admin/CustomerManagement';
 import SellerManagement from '../pages/admin/SellerManagement';
 import InventoryManagement from '../pages/admin/InventoryManagement';
 import EcommerceDashboard from '../pages/admin/EcommerceDashboard';
+import MerchandisingHomepage from '../pages/admin/MerchandisingHomepage';
 
 // Revenue Management Pages
 import RevenueOverview from '../pages/admin/RevenueManagement/RevenueOverview';
@@ -502,10 +504,37 @@ const routes = [
         layout: 'admin',
     },
     {
+        path: '/admin/products/:id',
+        element: (
+            <ProtectedRoute allowedGroups={['Administrators', 'Inventory Managers']}>
+                <ProductDetail />
+            </ProtectedRoute>
+        ),
+        layout: 'admin',
+    },
+    {
+        path: '/admin/products/:id/edit',
+        element: (
+            <ProtectedRoute allowedGroups={['Administrators', 'Inventory Managers']}>
+                <AddProduct />
+            </ProtectedRoute>
+        ),
+        layout: 'admin',
+    },
+    {
         path: '/admin/search',
         element: (
             <ProtectedRoute allowedGroups={['Administrators', 'Inventory Managers']}>
                 <SearchOpsPage />
+            </ProtectedRoute>
+        ),
+        layout: 'admin',
+    },
+    {
+        path: '/admin/merchandising/homepage',
+        element: (
+            <ProtectedRoute allowedGroups={['Administrators', 'Inventory Managers']}>
+                <MerchandisingHomepage />
             </ProtectedRoute>
         ),
         layout: 'admin',

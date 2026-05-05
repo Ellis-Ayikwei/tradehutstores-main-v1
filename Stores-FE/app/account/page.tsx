@@ -12,16 +12,25 @@
  *
  * TODO: fetch from /api/account/summary to replace all mock data below.
  *
- * Sidebar pattern copied inline from /account/requests/page.tsx
- * TODO: extract to shared <AccountSidebar>
+ * Layout: shared AccountShell via app/account/layout.tsx
  */
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import MainLayout from "@/components/Layouts/MainLayout";
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { AccountMobileHeader } from "@/components/account/AccountShell";
+import { useCurrency } from "@/contexts/CurrencyContext";
+import { useUserAccountId } from "@/hooks/useUserAccountId";
 import {
-  LayoutDashboard,
+  getUserProfile,
+  getMyOrders,
+  getNotificationUnreadCount,
+  type UserProfileResponse,
+} from "@/lib/accountApi";
+import { getWishlist } from "@/store/wishListSlice";
+import type { AppDispatch, RootState } from "@/store";
+import {
   ShoppingBag,
   Gavel,
   FileText,
@@ -31,16 +40,11 @@ import {
   Bell,
   Shield,
   Star,
-  LogOut,
   ArrowRight,
   Pencil,
   Share2,
   Truck,
   PiggyBank,
-  User,
-  Store,
-  Menu,
-  X,
 } from "lucide-react";
 
 // ---------------------------------------------------------------------------
@@ -170,13 +174,6 @@ const MOCK_PRODUCTS: RecommendedProduct[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// Utility: format currency
-// ---------------------------------------------------------------------------
-function fmt(n: number): string {
-  return n >= 1000 ? `$${(n / 1000).toFixed(1)}k` : `$${n}`;
-}
-
-// ---------------------------------------------------------------------------
 // Activity icon + color by type
 // ---------------------------------------------------------------------------
 function activityConfig(type: ActivityType): {
@@ -216,93 +213,33 @@ function activityConfig(type: ActivityType): {
 // Sub-components
 // ---------------------------------------------------------------------------
 
-/** Sidebar nav — mirrors /account/requests pattern.
- *  TODO: extract to shared <AccountSidebar>
- *  className prop allows rendering both in the desktop rail and mobile drawer.
- */
-function AccountSidebarContent({ onClose }: { onClose?: () => void }) {
-  const links = [
-    { href: "/account", IconComponent: LayoutDashboard, label: "Overview", active: true },
-    { href: "/account/orders", IconComponent: ShoppingBag, label: "Orders" },
-    { href: "/account/bids", IconComponent: Gavel, label: "Bids & Auctions" },
-    { href: "/account/requests", IconComponent: FileText, label: "My Requests" },
-    { href: "/account/messages", IconComponent: Bell, label: "Messages" },
-    { href: "/account/wishlist", IconComponent: Heart, label: "Wishlist" },
-    { href: "/account/addresses", IconComponent: MapPin, label: "Addresses" },
-    { href: "/account/payment-methods", IconComponent: CreditCard, label: "Payment Methods" },
-    { href: "/account/notifications", IconComponent: Bell, label: "Notifications" },
-    { href: "/account/security", IconComponent: Shield, label: "Security" },
-    { href: "/account/reviews", IconComponent: Star, label: "Reviews" },
-  ];
-
-  return (
-    <>
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h2 className="font-syne text-xl font-bold text-on-surface tracking-tight">
-            My Account
-          </h2>
-          <p className="text-xs text-on-surface-variant font-medium mt-1 opacity-60">
-            Manage your TradeHut profile
-          </p>
-        </div>
-        {onClose && (
-          <button
-            onClick={onClose}
-            aria-label="Close menu"
-            className="lg:hidden p-2 rounded-xl hover:bg-surface-container transition-colors text-on-surface-variant"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        )}
-      </div>
-
-      <nav className="flex flex-col gap-1 flex-1">
-        {links.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            onClick={onClose}
-            className={
-              link.active
-                ? "bg-surface-container-lowest text-primary-container shadow-card rounded-xl px-4 py-3 flex items-center gap-3 transition-all hover:translate-x-1 duration-200"
-                : "text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-            }
-          >
-            <link.IconComponent className="w-5 h-5" />
-            <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-              {link.label}
-            </span>
-          </Link>
-        ))}
-      </nav>
-
-      {/* Sign out */}
-      <div className="mt-auto pt-6 border-t border-surface-container-highest/30">
-        <Link
-          href="/auth/login"
-          className="w-full bg-surface-container-low text-on-surface-variant font-bold py-3 rounded-xl hover:bg-error-container hover:text-error transition-all flex items-center justify-center gap-2 active:scale-95"
-        >
-          <LogOut className="w-4 h-4" />
-          Sign Out
-        </Link>
-      </div>
-    </>
-  );
-}
-
-function AccountSidebar({ onDrawerClose }: { onDrawerClose?: () => void }) {
-  return (
-    <aside className="hidden lg:flex md:sticky md:top-24 md:h-[calc(100vh-6rem)] w-72 flex-shrink-0 flex-col gap-2 p-6 bg-surface rounded-2xl overflow-y-auto no-scrollbar">
-      <AccountSidebarContent onClose={onDrawerClose} />
-    </aside>
-  );
+function memberSinceLabel(iso: string | undefined): string {
+  if (!iso) return MOCK_USER.memberSince;
+  try {
+    return new Intl.DateTimeFormat(undefined, { month: "long", year: "numeric" }).format(
+      new Date(iso)
+    );
+  } catch {
+    return MOCK_USER.memberSince;
+  }
 }
 
 /** Greeting hero — from account_central */
-function GreetingHero() {
+function GreetingHero({ profile }: { profile: UserProfileResponse | null }) {
+  const displayName = profile?.name?.trim() || MOCK_USER.name;
+  const firstName = displayName.split(/\s+/)[0] || displayName;
+  const tier =
+    profile?.user_type === "super_admin"
+      ? "Admin"
+      : profile?.user_type === "admin"
+        ? "Staff"
+        : profile
+          ? "Member"
+          : MOCK_USER.tier;
+  const since = memberSinceLabel(profile?.date_joined);
+
   return (
-    <div className="bg-surface-container-lowest rounded-2xl shadow-card p-6 md:p-8 relative overflow-hidden">
+    <div className="bg-surface-container-lowest dark:bg-gray-900 dark:border dark:border-gray-800 rounded-2xl shadow-card p-6 md:p-8 relative overflow-hidden">
       {/* Decorative circle */}
       <div className="absolute top-0 right-0 w-40 h-40 bg-primary/5 rounded-full -mr-20 -mt-20 pointer-events-none" />
 
@@ -311,7 +248,7 @@ function GreetingHero() {
         <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-surface-container-low shadow-md flex-shrink-0 overflow-hidden relative">
           <Image
             src={MOCK_USER.avatarUrl}
-            alt={MOCK_USER.avatarAlt}
+            alt={profile?.name ?? MOCK_USER.avatarAlt}
             fill
             sizes="96px"
             className="object-cover"
@@ -320,21 +257,21 @@ function GreetingHero() {
 
         {/* Identity */}
         <div className="flex-1 text-center sm:text-left">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant dark:text-gray-400 mb-1">
             Welcome back
           </p>
-          <h1 className="font-syne text-2xl md:text-3xl font-extrabold tracking-tight text-on-surface">
-            Hi, {MOCK_USER.name.split(" ")[0]}
+          <h1 className="font-syne text-2xl md:text-3xl font-extrabold tracking-tight text-on-surface dark:text-gray-50">
+            Hi, {firstName}
           </h1>
-          <p className="text-sm text-on-surface-variant mt-1">
-            {MOCK_USER.tier} member &middot; since {MOCK_USER.memberSince}
+          <p className="text-sm text-on-surface-variant dark:text-gray-400 mt-1">
+            {tier} &middot; since {since}
           </p>
 
           {/* Quick actions */}
           <div className="flex flex-wrap gap-2 mt-4 justify-center sm:justify-start">
             <Link
               href="/account/profile"
-              className="inline-flex items-center gap-1.5 px-4 py-2 bg-surface-container-high rounded-xl text-sm font-medium hover:bg-surface-variant transition-colors active:scale-95"
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-surface-container-high dark:bg-gray-800 rounded-xl text-sm font-medium hover:bg-surface-variant dark:hover:bg-gray-700 transition-colors active:scale-95"
             >
               <Pencil className="w-4 h-4" />
               Edit Profile
@@ -347,7 +284,7 @@ function GreetingHero() {
         </div>
 
         {/* Live status pill — from account_overview */}
-        <div className="flex-shrink-0 hidden md:flex px-4 py-2 bg-surface-container-low rounded-xl text-xs font-mono flex items-center gap-2 border border-outline-variant/10 self-start">
+        <div className="flex-shrink-0 hidden md:flex px-4 py-2 bg-surface-container-low dark:bg-gray-800 rounded-xl text-xs font-mono flex items-center gap-2 border border-outline-variant/10 dark:border-gray-700 self-start dark:text-gray-300">
           <span className="w-2 h-2 rounded-full bg-secondary-green flex-shrink-0" />
           LIVE NETWORK: ACTIVE
         </div>
@@ -357,14 +294,22 @@ function GreetingHero() {
 }
 
 /** Snapshot cards — 5-card KPI bar from account_overview spec */
-function SnapshotCards() {
+function SnapshotCards({
+  activeOrders,
+  wishlistCount,
+  unreadMessages,
+}: {
+  activeOrders: number;
+  wishlistCount: number;
+  unreadMessages: number;
+}) {
   const cards = [
     {
       IconComponent: ShoppingBag,
-      iconBg: "bg-surface-container-high",
-      iconFg: "text-primary-container",
+      iconBg: "bg-surface-container-high dark:bg-gray-800",
+      iconFg: "text-primary-container dark:text-orange-400",
       label: "Active Orders",
-      value: String(MOCK_SNAPSHOT.activeOrders),
+      value: String(activeOrders),
       badge: "+12%",
       badgeClasses: "bg-secondary-container/60 text-secondary-green",
       href: "/account/orders",
@@ -394,7 +339,7 @@ function SnapshotCards() {
       iconBg: "bg-error-container/30",
       iconFg: "text-error",
       label: "Wishlist",
-      value: String(MOCK_SNAPSHOT.wishlistCount),
+      value: String(wishlistCount),
       badge: null,
       badgeClasses: "",
       href: "/account/wishlist",
@@ -404,7 +349,7 @@ function SnapshotCards() {
       iconBg: "bg-tertiary-fixed/40",
       iconFg: "text-tertiary",
       label: "Messages",
-      value: String(MOCK_SNAPSHOT.unreadMessages),
+      value: String(unreadMessages),
       badge: "UNREAD",
       badgeClasses: "bg-tertiary-container/20 text-tertiary",
       href: "/account/messages",
@@ -417,7 +362,7 @@ function SnapshotCards() {
         <Link
           key={c.label}
           href={c.href}
-          className="bg-surface-container-lowest p-5 rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 group flex flex-col gap-3"
+          className="bg-surface-container-lowest dark:bg-gray-900 dark:border dark:border-gray-800 p-5 rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 group flex flex-col gap-3"
         >
           <div className="flex items-center justify-between">
             <c.IconComponent
@@ -432,10 +377,10 @@ function SnapshotCards() {
             )}
           </div>
           <div>
-            <p className="text-on-surface-variant text-xs font-medium">
+            <p className="text-on-surface-variant dark:text-gray-400 text-xs font-medium">
               {c.label}
             </p>
-            <p className="font-mono text-3xl font-bold text-on-surface group-hover:text-primary-container transition-colors">
+            <p className="font-mono text-3xl font-bold text-on-surface dark:text-gray-100 group-hover:text-primary-container dark:group-hover:text-orange-400 transition-colors">
               {c.value}
             </p>
           </div>
@@ -647,6 +592,9 @@ function SecuritySnapshot() {
 
 /** Wallet / credits promo card — from account_central */
 function WalletPromoCard() {
+  const { formatDisplayPrice } = useCurrency();
+  const creditsLabel = formatDisplayPrice(MOCK_SNAPSHOT.storeCredits);
+
   return (
     <section className="relative overflow-hidden bg-inverse-surface text-inverse-on-surface p-6 rounded-2xl min-h-[180px]">
       {/* Decorative icon watermark */}
@@ -659,7 +607,7 @@ function WalletPromoCard() {
           TradeHut Wallet
         </p>
         <h3 className="font-syne text-xl font-bold mb-1">
-          {fmt(MOCK_SNAPSHOT.storeCredits)} Credits
+          {creditsLabel} Credits
         </h3>
         <p className="text-sm opacity-70 mb-5">
           Use credits at checkout for instant savings across the marketplace.
@@ -679,6 +627,8 @@ function WalletPromoCard() {
 
 /** Recommended products strip — from account_central */
 function RecommendedStrip() {
+  const { formatDisplayPrice } = useCurrency();
+
   return (
     <section>
       <div className="flex items-center gap-4 mb-6">
@@ -728,7 +678,7 @@ function RecommendedStrip() {
             </h4>
             <div className="flex items-center justify-between mt-1">
               <span className="font-mono text-base font-medium text-primary-container">
-                ${p.price.toLocaleString()}.00
+                {formatDisplayPrice(p.price)}
               </span>
               {p.badge ? (
                 <span
@@ -758,141 +708,91 @@ function RecommendedStrip() {
 // Page
 // ---------------------------------------------------------------------------
 export default function AccountOverviewPage() {
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const userId = useUserAccountId();
+  const { wishlist } = useSelector((state: RootState) => state.wishlist);
+  const [profile, setProfile] = useState<UserProfileResponse | null>(null);
+  const [orderCount, setOrderCount] = useState<number | null>(null);
+  const [unreadNotifications, setUnreadNotifications] = useState<number | null>(null);
 
-  // Close drawer on ESC
   useEffect(() => {
-    if (!drawerOpen) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setDrawerOpen(false);
+    dispatch(getWishlist());
+  }, [dispatch]);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!userId) {
+      setProfile(null);
+      setOrderCount(null);
+      setUnreadNotifications(null);
+      return;
+    }
+    (async () => {
+      try {
+        const [p, orders, unread] = await Promise.all([
+          getUserProfile(userId),
+          getMyOrders(userId),
+          getNotificationUnreadCount(),
+        ]);
+        if (cancelled) return;
+        setProfile(p);
+        setOrderCount(orders.length);
+        setUnreadNotifications(unread);
+      } catch {
+        if (!cancelled) {
+          setProfile(null);
+          setOrderCount(null);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
     };
-    document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
-  }, [drawerOpen]);
+  }, [userId]);
+
+  const activeOrders = orderCount ?? MOCK_SNAPSHOT.activeOrders;
+  const wlCount = wishlist?.item_count ?? wishlist?.items?.length ?? MOCK_SNAPSHOT.wishlistCount;
+  const unread =
+    unreadNotifications !== null && unreadNotifications !== undefined
+      ? unreadNotifications
+      : MOCK_SNAPSHOT.unreadMessages;
 
   return (
-    <MainLayout>
-      <div className="min-h-screen bg-surface text-on-surface font-body">
-        {/*
-         * NOTE: Global <TopNav> is rendered by MainLayout — do NOT add
-         * another nav here. pt-20 clears the sticky nav bar.
-         */}
+    <>
+      <AccountMobileHeader title="My Account" />
 
-        {/* Mobile sidebar drawer overlay */}
-        {drawerOpen && (
-          <div
-            className="fixed inset-0 z-40 bg-inverse-surface/40 backdrop-blur-sm lg:hidden"
-            onClick={() => setDrawerOpen(false)}
-            aria-hidden="true"
-          />
-        )}
-        {/* Mobile sidebar drawer panel */}
-        <div
-          className={`fixed left-0 top-0 h-full w-72 z-50 bg-surface-container-lowest shadow-card flex flex-col gap-2 p-6 overflow-y-auto no-scrollbar transition-transform duration-300 lg:hidden ${
-            drawerOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
-          aria-label="Account navigation drawer"
-        >
-          <AccountSidebarContent onClose={() => setDrawerOpen(false)} />
+      {/* Greeting hero — account_central */}
+      <GreetingHero profile={profile} />
+
+      {/* KPI snapshot cards — account_overview */}
+      <SnapshotCards
+        activeOrders={activeOrders}
+        wishlistCount={wlCount}
+        unreadMessages={unread}
+      />
+
+      {/* Two-column section: activity feed + right rail */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Activity feed (2/3 width on lg+) — account_overview */}
+        <div className="lg:col-span-2 space-y-8">
+          <ActivityFeed />
+
+          {/* Order fulfillment shortcuts — account_central */}
+          <OrderFulfillmentGrid />
         </div>
 
-        <div className="pt-20 pb-24 md:pb-12 px-4 md:px-8 max-w-screen-2xl mx-auto">
-          <div className="flex flex-col lg:flex-row gap-4 md:gap-6 lg:gap-8">
-
-            {/* ----------------------------------------------------------------
-             * SIDEBAR
-             * TODO: extract to shared <AccountSidebar>
-             * ---------------------------------------------------------------- */}
-            <AccountSidebar />
-
-            {/* ----------------------------------------------------------------
-             * MAIN CONTENT
-             * ---------------------------------------------------------------- */}
-            <section className="flex-1 min-w-0 space-y-8">
-
-              {/* Mobile menu trigger — shown at <lg */}
-              <div className="lg:hidden flex items-center gap-3 pb-2">
-                <button
-                  onClick={() => setDrawerOpen(true)}
-                  aria-label="Open account menu"
-                  className="p-2 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors text-on-surface h-10 w-10 flex items-center justify-center"
-                >
-                  <Menu className="w-5 h-5" />
-                </button>
-                <span className="font-syne font-bold text-sm text-on-surface-variant uppercase tracking-widest">
-                  My Account
-                </span>
-              </div>
-
-              {/* Greeting hero — account_central */}
-              <GreetingHero />
-
-              {/* KPI snapshot cards — account_overview */}
-              <SnapshotCards />
-
-              {/* Two-column section: activity feed + right rail */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-                {/* Activity feed (2/3 width on lg+) — account_overview */}
-                <div className="lg:col-span-2 space-y-8">
-                  <ActivityFeed />
-
-                  {/* Order fulfillment shortcuts — account_central */}
-                  <OrderFulfillmentGrid />
-                </div>
-
-                {/* Right rail — account_overview */}
-                <aside className="flex flex-col gap-6">
-                  <SecuritySnapshot />
-                  <WalletPromoCard />
-                </aside>
-              </div>
-
-              {/* Quick-access shortcut grid */}
-              <ShortcutGrid />
-
-              {/* Recommended products — account_central */}
-              <RecommendedStrip />
-
-            </section>
-          </div>
-        </div>
-
-        {/* ----------------------------------------------------------------
-         * MOBILE BOTTOM NAV (< lg)
-         * TODO: extract to shared <AccountBottomNav>
-         * ---------------------------------------------------------------- */}
-        <nav className="lg:hidden fixed bottom-0 left-0 w-full bg-surface-container-lowest shadow-[0_-4px_20px_0_rgba(38,24,19,0.06)] px-6 py-3 flex justify-around items-center z-50">
-          <Link
-            href="/"
-            className="flex flex-col items-center gap-1 text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity min-w-[44px] py-1"
-          >
-            <Store className="w-6 h-6" />
-            <span className="text-[10px] font-bold">Home</span>
-          </Link>
-          <Link
-            href="/account/bids"
-            className="flex flex-col items-center gap-1 text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity min-w-[44px] py-1"
-          >
-            <Gavel className="w-6 h-6" />
-            <span className="text-[10px] font-bold">Bids</span>
-          </Link>
-          <Link
-            href="/account/requests"
-            className="flex flex-col items-center gap-1 text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity min-w-[44px] py-1"
-          >
-            <FileText className="w-6 h-6" />
-            <span className="text-[10px] font-bold">RFQs</span>
-          </Link>
-          <Link
-            href="/account"
-            className="flex flex-col items-center gap-1 text-primary-container min-w-[44px] py-1"
-          >
-            <User className="w-6 h-6 fill-current" />
-            <span className="text-[10px] font-bold">Account</span>
-          </Link>
-        </nav>
+        {/* Right rail — account_overview */}
+        <aside className="flex flex-col gap-6">
+          <SecuritySnapshot />
+          <WalletPromoCard />
+        </aside>
       </div>
-    </MainLayout>
+
+      {/* Quick-access shortcut grid */}
+      <ShortcutGrid />
+
+      {/* Recommended products — account_central */}
+      <RecommendedStrip />
+    </>
   );
 }

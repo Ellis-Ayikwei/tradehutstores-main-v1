@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
     IconArrowLeft,
     IconCheck,
     IconPlus,
     IconTrash,
     IconUpload,
-    IconX,
     IconAlertCircle,
     IconPackage,
     IconTag,
@@ -55,6 +54,7 @@ const VARIATION_THEMES = [
     { value: 'size-color-style', label: 'Size, Color & Style' },
     { value: 'RAM Capacity-memory', label: 'RAM Capacity & Memory' },
     { value: 'custom', label: 'Custom' },
+    { value: 'all', label: 'All variants (flat list)' },
 ];
 
 // Image Types
@@ -130,6 +130,93 @@ interface ProductKeyFeature {
     name: string;
 }
 
+const PRODUCTS_VARIANTS_URL = '/products/variants/';
+const PRODUCTS_IMAGES_URL = '/products/images/';
+const PRODUCTS_KEY_FEATURES_URL = '/products/key-features/';
+
+function unwrapList(payload: unknown): unknown[] {
+    if (!payload) return [];
+    if (Array.isArray(payload)) return payload;
+    if (typeof payload === 'object' && payload !== null && Array.isArray((payload as { results?: unknown[] }).results)) {
+        return (payload as { results: unknown[] }).results;
+    }
+    return [];
+}
+
+function resolveMediaUrl(maybeRelative: unknown): string {
+    const s = maybeRelative === null || maybeRelative === undefined ? '' : String(maybeRelative);
+    if (!s) return '';
+    if (s.startsWith('http://') || s.startsWith('https://')) return s;
+    const base = (axiosInstance.defaults.baseURL || '').replace(/\/$/, '');
+    return `${base}${s.startsWith('/') ? '' : '/'}${s}`;
+}
+
+function buildVariantAttributePayload(variant: ProductVariant): string[] {
+    const ids: string[] = [];
+    const firstSlot = variant.attribute_values?.[0];
+    if (firstSlot) ids.push(String(firstSlot));
+    if (variant.attribute_values1) ids.push(String(variant.attribute_values1));
+    if (variant.attribute_values2) ids.push(String(variant.attribute_values2));
+    return [...new Set(ids.filter(Boolean))];
+}
+
+function mapApiVariantToRow(v: Record<string, unknown>, theme: string): ProductVariant {
+    const rawAttrs =
+        Array.isArray(v.attribute_values)
+            ? (v.attribute_values as { id?: string; attribute_name?: string }[])
+            : [];
+    const dims =
+        theme && theme !== 'single'
+            ? theme.split('-').map((part) => part.trim().toLowerCase()).filter(Boolean)
+            : [];
+
+    const byDimIdx: Record<number, string> = {};
+    for (const row of rawAttrs) {
+        if (!row.id) continue;
+        const attrName = (row.attribute_name || '').trim().toLowerCase();
+        const idx = dims.findIndex((dim) => dim === attrName);
+        if (idx >= 0) byDimIdx[idx] = String(row.id);
+    }
+
+    let attribute_values: string[] = [];
+    let attribute_values1 = '';
+    let attribute_values2 = '';
+
+    if (dims.length >= 1) {
+        attribute_values = byDimIdx[0] ? [byDimIdx[0]] : [];
+        attribute_values1 = byDimIdx[1] || '';
+        attribute_values2 = byDimIdx[2] || '';
+    }
+
+    const idVal = v.id != null ? String(v.id) : undefined;
+
+    return {
+        id: idVal,
+        sku: String(v.sku ?? ''),
+        price: v.price !== undefined && v.price !== null ? String(v.price) : '',
+        quantity: Number(v.quantity ?? 0),
+        min_buy_amount: Number(v.min_buy_amount ?? 1),
+        attribute_values,
+        attribute_values1,
+        attribute_values2,
+        name: v.name !== undefined && v.name !== null ? String(v.name) : '',
+        images: [],
+    };
+}
+
+function collectTrackedImageIds(vVariants: ProductVariant[], tabImages: ProductImage[]): Set<string> {
+    const ids = new Set<string>();
+    vVariants.forEach((vv) =>
+        vv.images?.forEach((im) => {
+            if (im.id) ids.add(im.id);
+        }),
+    );
+    tabImages.forEach((im) => {
+        if (im.id) ids.add(im.id);
+    });
+    return ids;
+}
+
 interface Tag {
     id?: string;
     name: string;
@@ -137,6 +224,7 @@ interface Tag {
 
 const AddProduct: React.FC = () => {
     const navigate = useNavigate();
+    const { id: editProductId } = useParams<{ id?: string }>();
     const [loading, setLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [activeTab, setActiveTab] = useState<string>('basic');
@@ -153,15 +241,25 @@ const AddProduct: React.FC = () => {
     const [loadingData, setLoadingData] = useState(true);
 
     // Form state - using plain React state like the rest of the codebase
+    const suppressCategoryCascadeRef = useRef(false);
+    const baselineVariantIdsRef = useRef<Set<string>>(new Set());
+    const baselineImageIdsRef = useRef<Set<string>>(new Set());
+    const baselineKeyFeatureIdsRef = useRef<Set<string>>(new Set());
+    const persistedDefaultVariantIdRef = useRef<string | null>(null);
+    const [heroBlobUrl, setHeroBlobUrl] = useState<string | null>(null);
+    const [serverHeroUrl, setServerHeroUrl] = useState<string | null>(null);
+
     const [formData, setFormData] = useState({
         // Basic Info
         status: 'Draft',
         name: '',
+        slug: '',
         keywords: '',
         description: '',
         category: '',
         sub_category: '',
         brand: '',
+        store: '',
         condition: '',
         variation_theme: 'single',
         main_product_image: null as File | null,
@@ -193,63 +291,30 @@ const AddProduct: React.FC = () => {
     const [keyFeatures, setKeyFeatures] = useState<ProductKeyFeature[]>([]);
     const [tags, setTags] = useState<Tag[]>([]);
 
-    // Fetch dropdown data
-    useEffect(() => {
-        fetchDropdownData();
-    }, []);
+    const fetchCatalogSelections = async () => {
+        const [categoriesRes, attributesRes, sellersRes] = await Promise.all([
+            axiosInstance.get('/catalog/categories/').catch(() => ({ data: [] })),
+            axiosInstance.get('/catalog/attributes/').catch(() => ({ data: [] })),
+            axiosInstance.get('/sellers/list/').catch(() => ({ data: [] })),
+        ]);
 
-    // Fetch subcategories when category changes
-    useEffect(() => {
-        if (formData.category) {
-            fetchSubCategories(formData.category);
-        } else {
-            setSubCategories([]);
-            setFormData(prev => ({ ...prev, sub_category: '' }));
-        }
-    }, [formData.category]);
+        const categoriesData = Array.isArray(categoriesRes.data)
+            ? categoriesRes.data
+            : categoriesRes.data?.results || [];
+        const attributesData = Array.isArray(attributesRes.data)
+            ? attributesRes.data
+            : attributesRes.data?.results || [];
+        const sellersData = Array.isArray(sellersRes.data) ? sellersRes.data : sellersRes.data?.results || [];
 
-    // Fetch brands when category changes
-    useEffect(() => {
-        if (formData.category) {
-            fetchBrands(formData.category);
-        } else {
-            setBrands([]);
-            setFormData(prev => ({ ...prev, brand: '' }));
-        }
-    }, [formData.category]);
-
-    // Fetch attribute values when variation theme changes
-    useEffect(() => {
-        if (formData.variation_theme && formData.variation_theme !== 'single') {
-            fetchAttributeValuesForTheme(formData.variation_theme);
-        } else {
-            setAttributeValues([]);
-            setAttributeGroups({});
-        }
-    }, [formData.variation_theme]);
+        setCategories(categoriesData);
+        setAttributes(attributesData);
+        setSellers(sellersData);
+    };
 
     const fetchDropdownData = async () => {
         try {
             setLoadingData(true);
-            const [categoriesRes, attributesRes, sellersRes] = await Promise.all([
-                axiosInstance.get('/catalog/categories/').catch(() => ({ data: [] })),
-                axiosInstance.get('/catalog/attributes/').catch(() => ({ data: [] })),
-                axiosInstance.get('/sellers/list/').catch(() => ({ data: [] })),
-            ]);
-
-            const categoriesData = Array.isArray(categoriesRes.data)
-                ? categoriesRes.data
-                : categoriesRes.data?.results || [];
-            const attributesData = Array.isArray(attributesRes.data)
-                ? attributesRes.data
-                : attributesRes.data?.results || [];
-            const sellersData = Array.isArray(sellersRes.data)
-                ? sellersRes.data
-                : sellersRes.data?.results || [];
-
-            setCategories(categoriesData);
-            setAttributes(attributesData);
-            setSellers(sellersData);
+            await fetchCatalogSelections();
         } catch (error) {
             console.error('Error fetching dropdown data:', error);
             notifications.show({
@@ -262,9 +327,9 @@ const AddProduct: React.FC = () => {
         }
     };
 
-    const fetchSubCategories = async (categoryId: string) => {
+    const fetchSubCategories = async (categoryId: string, silent = false) => {
         try {
-            setLoading(true);
+            if (!silent) setLoading(true);
             const response = await axiosInstance.get('/catalog/subcategories/', {
                 params: { category: categoryId },
             });
@@ -281,13 +346,13 @@ const AddProduct: React.FC = () => {
                 color: 'yellow',
             });
         } finally {
-            setLoading(false);
+            if (!silent) setLoading(false);
         }
     };
 
-    const fetchBrands = async (categoryId: string) => {
+    const fetchBrands = async (categoryId: string, silent = false) => {
         try {
-            setLoading(true);
+            if (!silent) setLoading(true);
             const response = await axiosInstance.get('/catalog/brands/', {
                 params: { category: categoryId },
             });
@@ -304,7 +369,7 @@ const AddProduct: React.FC = () => {
                 color: 'yellow',
             });
         } finally {
-            setLoading(false);
+            if (!silent) setLoading(false);
         }
     };
 
@@ -341,6 +406,218 @@ const AddProduct: React.FC = () => {
             setAttributeGroups({});
         }
     };
+
+    const loadExistingProduct = async (pid: string) => {
+        suppressCategoryCascadeRef.current = true;
+        setLoadingData(true);
+        try {
+            await fetchCatalogSelections();
+            const prodRes = await axiosInstance.get(`/products/${pid}/`);
+            const raw = prodRes.data as Record<string, unknown>;
+            persistedDefaultVariantIdRef.current =
+                raw.default_variant != null ? String(raw.default_variant) : null;
+
+            const categoryId = String(raw.category ?? '');
+            await fetchSubCategories(categoryId, true);
+            await fetchBrands(categoryId, true);
+
+            const theme = raw.variation_theme != null ? String(raw.variation_theme) : 'single';
+            if (theme !== 'single') {
+                await fetchAttributeValuesForTheme(theme);
+            } else {
+                setAttributeValues([]);
+                setAttributeGroups({});
+            }
+
+            let variantRowsPayload: Record<string, unknown>[] = [];
+            try {
+                const vr = await axiosInstance.get(`/products/${pid}/variants/`);
+                variantRowsPayload = unwrapList(vr.data) as Record<string, unknown>[];
+            } catch {
+                variantRowsPayload = [];
+            }
+
+            let gallRows: Record<string, unknown>[] = [];
+            try {
+                const gr = await axiosInstance.get(`/products/${pid}/images/`);
+                gallRows = unwrapList(gr.data) as Record<string, unknown>[];
+            } catch {
+                gallRows = [];
+            }
+
+            let featRowsPayload: Record<string, unknown>[] = [];
+            try {
+                const fr = await axiosInstance.get(`/products/key-features/?product=${encodeURIComponent(pid)}`);
+                featRowsPayload = unwrapList(fr.data) as Record<string, unknown>[];
+            } catch {
+                featRowsPayload = [];
+            }
+
+            baselineVariantIdsRef.current = new Set(
+                variantRowsPayload.map((row) => (row.id != null ? String(row.id) : '')).filter(Boolean),
+            );
+            baselineImageIdsRef.current = new Set(
+                gallRows.map((row) => (row.id != null ? String(row.id) : '')).filter(Boolean),
+            );
+
+            const mappedVariants: ProductVariant[] = variantRowsPayload.map((row) => mapApiVariantToRow(row, theme));
+
+            const vidToSku = new Map<string, string>();
+            mappedVariants.forEach((mv) => {
+                if (mv.id) vidToSku.set(mv.id, mv.sku);
+            });
+
+            const tabImagesSeed: ProductImage[] = [];
+
+            gallRows.forEach((gRow) => {
+                const fk = gRow.product_variant != null ? String(gRow.product_variant) : '';
+                const urlAbs = resolveMediaUrl(gRow.image);
+                const row: ProductImage = {
+                    id: gRow.id != null ? String(gRow.id) : undefined,
+                    image: urlAbs || null,
+                    is_main: Boolean(gRow.is_main),
+                    image_type: String(gRow.image_type ?? 'supplementary'),
+                    preview: urlAbs || undefined,
+                };
+
+                const vIdx = fk ? mappedVariants.findIndex((v) => v.id === fk) : -1;
+
+                if (vIdx >= 0) {
+                    const bucket = mappedVariants[vIdx].images ?? [];
+                    bucket.push(row);
+                    mappedVariants[vIdx].images = bucket;
+                } else if (mappedVariants.length > 0) {
+                    tabImagesSeed.push({
+                        ...row,
+                        product_variant:
+                            fk && vidToSku.has(fk) ? vidToSku.get(fk)! : mappedVariants[0]?.sku ?? '',
+                    });
+                }
+            });
+
+            baselineKeyFeatureIdsRef.current = new Set(
+                featRowsPayload.map((feat) => (feat.id != null ? String(feat.id) : '')).filter(Boolean),
+            );
+            const featureState: ProductKeyFeature[] = featRowsPayload.map((feat) => ({
+                id: feat.id != null ? String(feat.id) : undefined,
+                name: String(feat.name ?? ''),
+            }));
+
+            const heroAbs = resolveMediaUrl(raw.main_product_image);
+            setServerHeroUrl(heroAbs || null);
+            setHeroBlobUrl((prev) => {
+                if (prev) URL.revokeObjectURL(prev);
+                return null;
+            });
+
+            setFormData({
+                status: raw.status != null ? String(raw.status) : 'Draft',
+                name: String(raw.name ?? ''),
+                slug: raw.slug != null ? String(raw.slug) : '',
+                keywords: raw.keywords != null ? String(raw.keywords) : '',
+                description: raw.description != null ? String(raw.description) : '',
+                category: categoryId,
+                sub_category: raw.sub_category != null ? String(raw.sub_category) : '',
+                brand: raw.brand != null ? String(raw.brand) : '',
+                store: raw.store != null ? String(raw.store) : '',
+                condition: raw.condition != null ? String(raw.condition) : '',
+                variation_theme: theme,
+                main_product_image: null,
+                min_amount: Number(raw.min_amount ?? 1) || 1,
+                inventory_level: Number(raw.inventory_level ?? 0) || 0,
+                available: Boolean(raw.available),
+                seller_profile: raw.seller_profile != null ? String(raw.seller_profile) : '',
+                meta_title: raw.meta_title != null ? String(raw.meta_title) : '',
+                meta_description: raw.meta_description != null ? String(raw.meta_description) : '',
+                discount_percentage:
+                    typeof raw.discount_percentage === 'number'
+                        ? raw.discount_percentage
+                        : Number(raw.discount_percentage ?? 0) || 0,
+                is_spare_part: Boolean(raw.is_spare_part),
+                requires_installation: Boolean(raw.requires_installation),
+                is_product_of_the_month: Boolean(raw.is_product_of_the_month),
+            });
+
+            const variantState =
+                mappedVariants.length > 0
+                    ? mappedVariants
+                    : [
+                          {
+                              sku: '',
+                              price: '',
+                              quantity: 0,
+                              min_buy_amount: 1,
+                              attribute_values: [],
+                              images: [],
+                          },
+                      ];
+            setVariants(variantState);
+            setImages(tabImagesSeed);
+            setKeyFeatures(featureState);
+            setTags([]);
+        } catch (error) {
+            console.error('Edit load failed', error);
+            notifications.show({
+                title: 'Error',
+                message: 'Could not load product for editing',
+                color: 'red',
+            });
+            navigate('/admin/products/list');
+        } finally {
+            suppressCategoryCascadeRef.current = false;
+            setLoadingData(false);
+        }
+    };
+
+    useEffect(() => {
+        if (editProductId) {
+            void loadExistingProduct(editProductId);
+            return;
+        }
+        fetchDropdownData();
+    }, [editProductId]);
+
+    useEffect(() => {
+        return () => {
+            if (heroBlobUrl) URL.revokeObjectURL(heroBlobUrl);
+        };
+    }, [heroBlobUrl]);
+
+    useEffect(() => {
+        if (suppressCategoryCascadeRef.current) {
+            return;
+        }
+        if (formData.category) {
+            fetchSubCategories(formData.category);
+        } else {
+            setSubCategories([]);
+            setFormData((prev) => ({ ...prev, sub_category: '' }));
+        }
+    }, [formData.category]);
+
+    useEffect(() => {
+        if (suppressCategoryCascadeRef.current) {
+            return;
+        }
+        if (formData.category) {
+            fetchBrands(formData.category);
+        } else {
+            setBrands([]);
+            setFormData((prev) => ({ ...prev, brand: '' }));
+        }
+    }, [formData.category]);
+
+    useEffect(() => {
+        if (suppressCategoryCascadeRef.current) {
+            return;
+        }
+        if (formData.variation_theme && formData.variation_theme !== 'single') {
+            fetchAttributeValuesForTheme(formData.variation_theme);
+        } else {
+            setAttributeValues([]);
+            setAttributeGroups({});
+        }
+    }, [formData.variation_theme]);
 
     // Variant management
     const addVariant = () => {
@@ -526,151 +803,326 @@ const AddProduct: React.FC = () => {
             return;
         }
 
+        const anchorSku = (): string =>
+            variants.map((vv) => vv.sku.trim()).filter(Boolean)[0] || '';
+
+        const variantPayloadFactory = (productPk: string) => (variant: ProductVariant) => ({
+            product: productPk,
+            sku: variant.sku,
+            price: variant.price,
+            quantity: variant.quantity,
+            min_buy_amount: variant.min_buy_amount,
+            attribute_values: buildVariantAttributePayload(variant),
+            name: variant.name?.trim() || variant.sku,
+        });
+
+        const apiErrorDetail = (err: unknown): string => {
+            if (err && typeof err === 'object' && 'response' in err) {
+                const r = err as { response?: { data?: Record<string, unknown> } };
+                const d = r.response?.data;
+                if (!d) return 'Request failed';
+                if (typeof d.detail === 'string') return d.detail;
+                try {
+                    return JSON.stringify(d).slice(0, 900);
+                } catch {
+                    return 'Request failed';
+                }
+            }
+            return err instanceof Error ? err.message : 'Request failed';
+        };
+
         setSubmitting(true);
         try {
-            // Create FormData for multipart/form-data
-            const submitFormData = new FormData();
-
-            // Add basic product fields
-            Object.keys(formData).forEach((key) => {
-                const value = formData[key as keyof typeof formData];
-                if (key === 'main_product_image' && value instanceof File) {
-                    submitFormData.append('main_product_image', value);
-                } else if (key !== 'main_product_image' && value !== null && value !== undefined) {
+            if (!editProductId) {
+                const submitFormData = new FormData();
+                (Object.keys(formData) as (keyof typeof formData)[]).forEach((key) => {
+                    if (key === 'main_product_image') return;
+                    const value = formData[key];
+                    if (value === null || value === undefined) return;
+                    if (typeof value === 'boolean') {
+                        submitFormData.append(key, value ? 'true' : 'false');
+                        return;
+                    }
                     submitFormData.append(key, String(value));
+                });
+                if (formData.main_product_image instanceof File) {
+                    submitFormData.append('main_product_image', formData.main_product_image);
                 }
-            });
 
-            // Create product
-            const productResponse = await axiosInstance.post('/products/', submitFormData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
+                const productResponse = await axiosInstance.post('/products/', submitFormData, {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                });
+                const productId = String(productResponse.data.id);
+                const variantIdMap: Record<string, string> = {};
+                const makePayloadNew = variantPayloadFactory(productId);
 
-            const productId = productResponse.data.id;
+                for (const variant of variants) {
+                    const variantResponse = await axiosInstance.post(PRODUCTS_VARIANTS_URL, makePayloadNew(variant));
+                    variantIdMap[variant.sku] = String(variantResponse.data.id);
+                }
 
-            // Create variants and store variant IDs for image linking
-            const variantIdMap: Record<string, string> = {}; // Maps SKU to variant ID
-            
-            for (let i = 0; i < variants.length; i++) {
-                const variant = variants[i];
-                // Combine attribute group selections into single array (matching Django admin behavior)
-                const combinedAttributeValues: string[] = [];
-                
-                // Add first attribute value (from attribute_values array or first element)
-                if (variant.attribute_values && variant.attribute_values.length > 0) {
-                    combinedAttributeValues.push(variant.attribute_values[0]);
-                }
-                
-                // Add second attribute value (from attribute_values1)
-                if (variant.attribute_values1) {
-                    combinedAttributeValues.push(variant.attribute_values1);
-                }
-                
-                // Add third attribute value (from attribute_values2)
-                if (variant.attribute_values2) {
-                    combinedAttributeValues.push(variant.attribute_values2);
-                }
-                
-                const variantData = {
-                    product: productId,
-                    sku: variant.sku,
-                    price: variant.price,
-                    quantity: variant.quantity,
-                    min_buy_amount: variant.min_buy_amount,
-                    attribute_values: combinedAttributeValues,
+                const anchor = anchorSku();
+
+                const postImageBlob = async (variantPk: string, row: ProductImage, blob: File) => {
+                    const fd = new FormData();
+                    fd.append('product', productId);
+                    fd.append('product_variant', variantPk);
+                    fd.append('image', blob);
+                    fd.append('is_main', row.is_main ? 'true' : 'false');
+                    fd.append('image_type', row.image_type);
+                    await axiosInstance.post(PRODUCTS_IMAGES_URL, fd, {
+                        headers: { 'Content-Type': 'multipart/form-data' },
+                    });
                 };
-                const variantResponse = await axiosInstance.post('/variants/', variantData);
-                const variantId = variantResponse.data.id;
-                variantIdMap[variant.sku] = variantId;
-                
-                // Upload variant-specific images
-                if (variant.images && variant.images.length > 0) {
-                    for (const image of variant.images) {
-                        if (image.image instanceof File) {
-                            const imageFormData = new FormData();
-                            imageFormData.append('product', productId);
-                            imageFormData.append('product_variant', variantId);
-                            imageFormData.append('image', image.image);
-                            imageFormData.append('is_main', String(image.is_main));
-                            imageFormData.append('image_type', image.image_type);
-                            await axiosInstance.post('/product-images/', imageFormData, {
-                                headers: {
-                                    'Content-Type': 'multipart/form-data',
-                                },
-                            });
-                        }
+
+                for (const variant of variants) {
+                    const vk = variantIdMap[variant.sku];
+                    if (!variant.images?.length) continue;
+                    for (const im of variant.images) {
+                        if (im.image instanceof File) await postImageBlob(vk, im, im.image);
                     }
                 }
-            }
 
-            // Upload product-level images (can optionally link to variants)
-            for (const image of images) {
-                if (image.image instanceof File) {
-                    const imageFormData = new FormData();
-                    imageFormData.append('product', productId);
-                    imageFormData.append('image', image.image);
-                    imageFormData.append('is_main', String(image.is_main));
-                    imageFormData.append('image_type', image.image_type);
-                    // If product_variant is set (by SKU), look up the variant ID
-                    if (image.product_variant && variantIdMap[image.product_variant]) {
-                        imageFormData.append('product_variant', variantIdMap[image.product_variant]);
-                    }
-                    await axiosInstance.post('/product-images/', imageFormData, {
-                        headers: {
-                            'Content-Type': 'multipart/form-data',
-                        },
-                    });
-                }
-            }
-
-            // Create key features
-            for (const feature of keyFeatures) {
-                if (feature.name.trim()) {
-                    await axiosInstance.post('/key-features/', {
-                        product: productId,
-                        name: feature.name,
-                    });
-                }
-            }
-
-            // Create tags - tags might be created via product endpoint or separate endpoint
-            for (const tag of tags) {
-                if (tag.name.trim()) {
-                    try {
-                        // Try tags endpoint first
-                        await axiosInstance.post('/tags/', {
-                            product: productId,
-                            name: tag.name,
+                for (const img of images) {
+                    if (!(img.image instanceof File)) continue;
+                    const targetSku = img.product_variant?.trim() || anchor;
+                    const variantPk =
+                        variantIdMap[targetSku] ||
+                        variantIdMap[anchor] ||
+                        Object.values(variantIdMap)[0];
+                    if (!variantPk) {
+                        notifications.show({
+                            title: 'Image error',
+                            message: 'Link gallery uploads to a variant SKU or add variants first.',
+                            color: 'red',
                         });
-                    } catch (tagError) {
-                        // If tags endpoint doesn't exist, try product tags endpoint
+                        throw new Error('missing-variant');
+                    }
+                    await postImageBlob(variantPk, img, img.image);
+                }
+
+                for (const feature of keyFeatures) {
+                    if (!feature.name.trim()) continue;
+                    await axiosInstance.post(PRODUCTS_KEY_FEATURES_URL, {
+                        product: productId,
+                        name: feature.name.trim(),
+                    });
+                }
+
+                for (const tag of tags) {
+                    if (!tag.name.trim()) continue;
+                    try {
+                        await axiosInstance.post('/tags/', { product: productId, name: tag.name.trim() });
+                    } catch {
                         try {
                             await axiosInstance.post(`/products/${productId}/tags/`, {
-                                name: tag.name,
+                                name: tag.name.trim(),
                             });
                         } catch (e) {
                             console.warn('Could not create tag:', tag.name, e);
-                            // Continue without failing the entire operation
                         }
                     }
                 }
+
+                notifications.show({
+                    title: 'Success',
+                    message: 'Product created successfully',
+                    color: 'green',
+                    icon: <IconCheck />,
+                });
+
+                navigate('/admin/products/list');
+                return;
             }
+
+            /** Update existing catalog product */
+            const pid = editProductId;
+            const patchJson = {
+                status: formData.status || null,
+                name: formData.name,
+                keywords: formData.keywords || '',
+                description: formData.description || '',
+                slug: formData.slug?.trim() ? formData.slug.trim() : null,
+                category: formData.category,
+                sub_category: formData.sub_category,
+                brand: formData.brand,
+                store: formData.store?.trim() ? formData.store.trim() : null,
+                condition: formData.condition || null,
+                variation_theme: formData.variation_theme,
+                min_amount: formData.min_amount,
+                inventory_level: formData.inventory_level,
+                available: formData.available,
+                seller_profile: formData.seller_profile?.trim() ? formData.seller_profile.trim() : null,
+                meta_title: formData.meta_title || '',
+                meta_description: formData.meta_description || '',
+                discount_percentage: formData.discount_percentage,
+                is_spare_part: formData.is_spare_part,
+                requires_installation: formData.requires_installation,
+                is_product_of_the_month: formData.is_product_of_the_month,
+            };
+
+            await axiosInstance.patch(`/products/${pid}/`, patchJson);
+
+            if (formData.main_product_image instanceof File) {
+                const heroFd = new FormData();
+                heroFd.append('main_product_image', formData.main_product_image);
+                await axiosInstance.patch(`/products/${pid}/`, heroFd, {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                });
+            }
+
+            const variantIdsBySku: Record<string, string> = {};
+            const makePayloadExisting = variantPayloadFactory(pid);
+
+            for (const variant of variants) {
+                if (variant.id) {
+                    await axiosInstance.patch(`${PRODUCTS_VARIANTS_URL}${variant.id}/`, makePayloadExisting(variant));
+                    variantIdsBySku[variant.sku] = String(variant.id);
+                }
+            }
+
+            for (const variant of variants.filter((row) => !row.id)) {
+                const vr = await axiosInstance.post(PRODUCTS_VARIANTS_URL, makePayloadExisting(variant));
+                variantIdsBySku[variant.sku] = String(vr.data.id);
+            }
+
+            const allCurrentVariantPks = new Set<string>();
+            variants.forEach((v) => {
+                const pk = v.id ? String(v.id) : variantIdsBySku[v.sku];
+                if (pk) allCurrentVariantPks.add(pk);
+            });
+
+            for (const staleId of baselineVariantIdsRef.current) {
+                if (!allCurrentVariantPks.has(staleId)) {
+                    await axiosInstance.delete(`${PRODUCTS_VARIANTS_URL}${staleId}/`);
+                }
+            }
+
+            const resolveGalleryVariantPk = (maybeSku?: string) => {
+                const anchor = anchorSku();
+                return variantIdsBySku[maybeSku?.trim() || anchor] || variantIdsBySku[anchor];
+            };
+
+            /** Metadata updates on existing uploaded images */
+            for (const variant of variants) {
+                if (!variant.id) continue;
+                const varPk = String(variant.id);
+                if (!variant.images?.length) continue;
+                for (const im of variant.images) {
+                    if (!im.id || im.image instanceof File) continue;
+                    await axiosInstance.patch(`${PRODUCTS_IMAGES_URL}${im.id}/`, {
+                        is_main: im.is_main,
+                        image_type: im.image_type,
+                        product_variant: varPk,
+                    });
+                }
+            }
+
+            for (const im of images) {
+                if (!im.id || im.image instanceof File) continue;
+                const vk = resolveGalleryVariantPk(im.product_variant);
+                if (!vk) continue;
+                await axiosInstance.patch(`${PRODUCTS_IMAGES_URL}${im.id}/`, {
+                    is_main: im.is_main,
+                    image_type: im.image_type,
+                    product_variant: vk,
+                });
+            }
+
+            const aliveTracked = collectTrackedImageIds(variants, images);
+            for (const oldImgId of baselineImageIdsRef.current) {
+                if (!aliveTracked.has(oldImgId)) {
+                    await axiosInstance.delete(`${PRODUCTS_IMAGES_URL}${oldImgId}/`);
+                }
+            }
+
+            const postImageBlobPid = async (variantPk: string, row: ProductImage, blob: File) => {
+                const fd = new FormData();
+                fd.append('product', pid);
+                fd.append('product_variant', variantPk);
+                fd.append('image', blob);
+                fd.append('is_main', row.is_main ? 'true' : 'false');
+                fd.append('image_type', row.image_type);
+                await axiosInstance.post(PRODUCTS_IMAGES_URL, fd, {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                });
+            };
+
+            for (const variant of variants) {
+                const vk = variant.id ? String(variant.id) : variantIdsBySku[variant.sku];
+                if (!vk || !variant.images?.length) continue;
+                for (const im of variant.images) {
+                    if (im.image instanceof File) await postImageBlobPid(vk, im, im.image);
+                }
+            }
+
+            for (const im of images) {
+                if (!(im.image instanceof File)) continue;
+                const vk = resolveGalleryVariantPk(im.product_variant);
+                if (!vk) {
+                    notifications.show({
+                        title: 'Image error',
+                        message: 'Select a variant SKU for each new gallery upload.',
+                        color: 'red',
+                    });
+                    throw new Error('missing-variant-gall');
+                }
+                await postImageBlobPid(vk, im, im.image);
+            }
+
+            const aliveFeatureIds = new Set(
+                keyFeatures.filter((f) => f.id).map((f) => String(f.id)),
+            );
+            for (const staleFeat of baselineKeyFeatureIdsRef.current) {
+                if (!aliveFeatureIds.has(staleFeat)) {
+                    await axiosInstance.delete(`${PRODUCTS_KEY_FEATURES_URL}${staleFeat}/`);
+                }
+            }
+
+            for (const feat of keyFeatures) {
+                const trimmed = feat.name.trim();
+                if (feat.id) {
+                    if (trimmed.length) {
+                        await axiosInstance.patch(`${PRODUCTS_KEY_FEATURES_URL}${feat.id}/`, {
+                            product: pid,
+                            name: trimmed,
+                        });
+                    } else {
+                        await axiosInstance.delete(`${PRODUCTS_KEY_FEATURES_URL}${feat.id}/`);
+                    }
+                } else if (trimmed.length) {
+                    await axiosInstance.post(PRODUCTS_KEY_FEATURES_URL, {
+                        product: pid,
+                        name: trimmed,
+                    });
+                }
+            }
+
+            let defaultVariantPk: string | null = persistedDefaultVariantIdRef.current;
+            if (defaultVariantPk && !allCurrentVariantPks.has(defaultVariantPk)) {
+                defaultVariantPk = null;
+            }
+            if (!defaultVariantPk && variants.length) {
+                const v0 = variants[0];
+                defaultVariantPk = (v0.id && String(v0.id)) || variantIdsBySku[v0.sku] || null;
+            }
+
+            await axiosInstance.patch(`/products/${pid}/`, {
+                default_variant: defaultVariantPk,
+            });
 
             notifications.show({
                 title: 'Success',
-                message: 'Product created successfully',
+                message: 'Product updated',
                 color: 'green',
                 icon: <IconCheck />,
             });
-
-            navigate('/admin/products/list');
-        } catch (error: any) {
-            console.error('Error creating product:', error);
+            navigate(`/admin/products/${pid}`);
+        } catch (error: unknown) {
+            console.error('Save product failed', error);
             notifications.show({
                 title: 'Error',
-                message: error.response?.data?.detail || 'Failed to create product',
+                message: apiErrorDetail(error),
                 color: 'red',
             });
         } finally {
@@ -685,7 +1137,7 @@ const AddProduct: React.FC = () => {
     return (
         <div className="p-6 bg-gray-50 min-h-screen">
             {/* Header */}
-            <div className="mb-6 flex items-center justify-between">
+            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => navigate('/admin/products/list')}
@@ -695,9 +1147,26 @@ const AddProduct: React.FC = () => {
                         <IconArrowLeft className="w-5 h-5 text-gray-700" />
                     </button>
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Add New Product</h1>
-                        <p className="text-gray-600 mt-1">Create a new product in your catalog</p>
+                        <h1 className="text-2xl font-bold text-gray-900">
+                            {editProductId ? 'Edit Product' : 'Add New Product'}
+                        </h1>
+                        <p className="text-gray-600 mt-1">
+                            {editProductId
+                                ? 'Update catalog fields, variants, gallery images, and key features'
+                                : 'Create a new product in your catalog'}
+                        </p>
                     </div>
+                </div>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                    {editProductId && (
+                        <button
+                            type="button"
+                            onClick={() => navigate(`/admin/products/${editProductId}`)}
+                            className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                        >
+                            View detail
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -782,6 +1251,17 @@ const AddProduct: React.FC = () => {
                                         onChange={(e) => setFormData({ ...formData, keywords: e.target.value })}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                                     />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Slug</label>
+                                    <input
+                                        type="text"
+                                        placeholder="seo-friendly-slug"
+                                        value={formData.slug}
+                                        onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                                    />
+                                    <p className="mt-1 text-xs text-gray-500">Leave blank on create to auto-generate from brand + title on the backend.</p>
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -951,13 +1431,34 @@ const AddProduct: React.FC = () => {
                                         ))}
                                     </select>
                                 </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Store (FK UUID)</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Optional store id"
+                                        value={formData.store}
+                                        onChange={(e) => setFormData({ ...formData, store: e.target.value })}
+                                        className="font-mono w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+                                    />
+                                </div>
                                 <div className="col-span-2">
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Main Product Image</label>
+                                    {(heroBlobUrl || serverHeroUrl) && (
+                                        <div className="mb-3 overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
+                                            <img
+                                                src={(heroBlobUrl || serverHeroUrl) as string}
+                                                alt="Hero preview"
+                                                className="mx-auto max-h-48 w-auto object-contain"
+                                            />
+                                        </div>
+                                    )}
                                     <input
                                         type="file"
                                         accept="image/*"
                                         onChange={(e) => {
                                             const file = e.target.files?.[0] || null;
+                                            setHeroBlobUrl(file ? URL.createObjectURL(file) : null);
+                                            setServerHeroUrl(null);
                                             setFormData({ ...formData, main_product_image: file });
                                         }}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
@@ -1058,7 +1559,10 @@ const AddProduct: React.FC = () => {
 
                             <div className="space-y-4">
                                 {variants.map((variant, index) => (
-                                    <div key={index} className="border border-gray-200 rounded-lg p-4">
+                                    <div
+                                        key={variant.id ?? `${variant.sku || 'sku'}-${index}`}
+                                        className="border border-gray-200 rounded-lg p-4"
+                                    >
                                         <div className="flex items-center justify-between mb-4">
                                             <h3 className="font-semibold text-gray-900">Variant {index + 1}</h3>
                                             {variants.length > 1 && (
@@ -1216,15 +1720,22 @@ const AddProduct: React.FC = () => {
                                             </div>
                                             {variant.images && variant.images.length > 0 ? (
                                                 <div className="grid grid-cols-4 gap-3">
-                                                    {variant.images.map((img, imgIndex) => (
-                                                        <div key={imgIndex} className="border border-gray-200 rounded-lg p-2">
-                                                            {img.preview && (
+                                                    {variant.images.map((img, imgIndex) => {
+                                                        const thumb =
+                                                            img.preview ||
+                                                            (typeof img.image === 'string' ? img.image : '');
+                                                        return (
+                                                        <div
+                                                            key={img.id ?? `${imgIndex}-${thumb.slice(0, 12)}`}
+                                                            className="border border-gray-200 rounded-lg p-2"
+                                                        >
+                                                            {thumb ? (
                                                                 <img
-                                                                    src={img.preview}
-                                                                    alt={`Variant ${index + 1} image ${imgIndex + 1}`}
+                                                                    src={thumb}
+                                                                    alt=""
                                                                     className="w-full h-24 object-cover rounded mb-2"
                                                                 />
-                                                            )}
+                                                            ) : null}
                                                             <div className="flex items-center justify-between mb-2">
                                                                 <button
                                                                     onClick={() => setVariantMainImage(index, imgIndex)}
@@ -1261,7 +1772,8 @@ const AddProduct: React.FC = () => {
                                                                 ))}
                                                             </select>
                                                         </div>
-                                                    ))}
+                                                        );
+                                                    })}
                                                 </div>
                                             ) : (
                                                 <p className="text-sm text-gray-500 italic">No images for this variant yet</p>
@@ -1299,15 +1811,19 @@ const AddProduct: React.FC = () => {
                             )}
 
                             <div className="grid grid-cols-3 gap-4">
-                                {images.map((image, index) => (
-                                    <div key={index} className="border border-gray-200 rounded-lg p-4">
-                                        {image.preview && (
+                                {images.map((image, index) => {
+                                    const src =
+                                        image.preview ||
+                                        (typeof image.image === 'string' ? image.image : '');
+                                    return (
+                                    <div key={image.id ?? `img-${index}`} className="border border-gray-200 rounded-lg p-4">
+                                        {src ? (
                                             <img
-                                                src={image.preview}
-                                                alt={`Product image ${index + 1}`}
+                                                src={src}
+                                                alt=""
                                                 className="w-full h-40 object-cover rounded-lg mb-4"
                                             />
-                                        )}
+                                        ) : null}
                                         <div className="flex items-center justify-between mb-4">
                                             <button
                                                 onClick={() => setMainImage(index)}
@@ -1338,10 +1854,13 @@ const AddProduct: React.FC = () => {
                                                     }}
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                                                 >
-                                                    <option value="">None (Product-level image)</option>
+                                                    <option value="">None (requires variant SKU for upload)</option>
                                                     {variants.map((v, vIndex) => (
-                                                        <option key={vIndex} value={v.sku}>
-                                                            {v.sku} {v.attribute_values && v.attribute_values.length > 0 ? `- Variant ${vIndex + 1}` : ''}
+                                                        <option key={v.id || vIndex} value={v.sku}>
+                                                            {v.sku}{' '}
+                                                            {v.attribute_values && v.attribute_values.length > 0
+                                                                ? `- Variant ${vIndex + 1}`
+                                                                : ''}
                                                         </option>
                                                     ))}
                                                 </select>
@@ -1366,7 +1885,8 @@ const AddProduct: React.FC = () => {
                                             </div>
                                         </div>
                                     </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>
@@ -1469,12 +1989,12 @@ const AddProduct: React.FC = () => {
                     {submitting ? (
                         <>
                             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                            Creating...
+                            {editProductId ? 'Saving...' : 'Creating...'}
                         </>
                     ) : (
                         <>
                             <IconCheck className="w-4 h-4" />
-                            Create Product
+                            {editProductId ? 'Save changes' : 'Create product'}
                         </>
                     )}
                 </button>

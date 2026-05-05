@@ -9,6 +9,7 @@ import ProductCard from '@/components/Products/ProductCard'
 import LoadingSpinner from '@/components/common/LoadingSpinner'
 import HeroWithSearch from '@/components/Home/HeroWithSearch'
 import Categories from '@/components/Home/Categories'
+import HomeMerchandising from '@/components/Home/HomeMerchandising'
 import { Button } from 'antd'
 import Link from 'next/link'
 import { 
@@ -75,6 +76,8 @@ export default function HomePage() {
         <MainLayout>
             {/* Hero Section with Search */}
             <HeroWithSearch />
+
+            <HomeMerchandising />
 
            
 

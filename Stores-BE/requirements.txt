@@ -1,20 +1,61 @@
-Django>=4.2
-djangorestframework
-djangorestframework-simplejwt
-psycopg2-binary
-gunicorn
-python-dotenv
-requests==2.31.0
-requests-cache
-beautifulsoup4>=4.12.0
-phonenumbers
-Pillow
-django-cors-headers
-channels
-django-fsm
-holidays
-stripe
-django-otp
+# ── Core framework ───────────────────────────────────────────────────────────
+Django>=4.2,<6
+djangorestframework>=3.14
+djangorestframework-simplejwt>=5.3
+django-cors-headers>=4.3
+django-fsm>=2.8
+django-otp>=1.5
+
+# ── Database & env ──────────────────────────────────────────────────────────
+psycopg2-binary>=2.9
+dj-database-url>=2.1
+python-decouple>=3.8
+python-dotenv>=1.0
+
+# ── HTTP server & static files ───────────────────────────────────────────────
+gunicorn>=22.0
+whitenoise>=6.6
+
+# ── HTTP clients (embedding service, Stripe optional path, etc.) ─────────────
+requests>=2.31,<3
+requests-cache>=1.2
+httpx>=0.27,<1
+
+# ── Storage (Cloudflare R2 / S3-compatible) ─────────────────────────────────
+django-storages[s3]>=1.14
+boto3>=1.34
+
+# ── Async / queues (broker = REDIS_URL in settings) ───────────────────────────
+celery>=5.3,<6
+redis>=5.0,<6
+
+# ── Scientific / vectors (CLIP embeddings, pgvector queries) ────────────────
+numpy>=1.26,<3
+
+# ── Full-text search (opt-in: SEARCH_ENABLE_ES) ──────────────────────────────
+django-elasticsearch-dsl>=8.0
+elasticsearch-dsl>=8.11,<9
+elasticsearch>=8.10,<9
+
+# ── Vector DB extension (opt-in: SEARCH_ENABLE_EMBEDDINGS + pgvector in DB) ─
+pgvector>=0.2,<1
+
+# ── Visual search — CLIP in-process (opt-in). Heavy (~2GB+); prefer
+# EMBEDDING_SERVICE_URL + httpx instead on small Railway dynos.
+# transformers>=4.40
+# torch>=2.2
+
+# ── Images & parsing ─────────────────────────────────────────────────────────
+Pillow>=10.0
+beautifulsoup4>=4.12
+
+# ── Realtime (WebSockets — if you add channel layers later, add channels-redis)
+channels>=4.0
+
+# ── Commerce & comms ─────────────────────────────────────────────────────────
+stripe>=7.0
+phonenumbers>=8.13
+holidays>=0.35
 sendgrid==6.11.0
 django-sendgrid-v5==1.2.3
-django-ses
+django-ses>=4.0

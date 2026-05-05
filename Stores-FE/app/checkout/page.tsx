@@ -17,13 +17,17 @@
  * - TODO: real tax + shipping calculation from backend
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSelector } from "react-redux";
+import { useSearchParams } from "next/navigation";
 import { RootState } from "@/store";
 import MainLayout from '@/components/Layouts/MainLayout'
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { postFxQuote, type FxQuoteResponse } from "@/lib/fxClient";
+import axiosInstance from "@/lib/axiosInstance";
+import { resolveMediaSrc } from "@/lib/mediaUrl";
 import {
     Check,
     ChevronDown,
@@ -72,6 +76,42 @@ interface CheckoutItem {
     unitPrice: number;
     quantity: number;
     imageUrl: string;
+}
+
+/** Align unit price with product detail page (variant + discount). */
+function computeBuyNowUnitPrice(product: Record<string, unknown>, variant: Record<string, unknown> | null): number {
+    const disc = Number(product.discount_percentage ?? 0);
+    if (variant) {
+        const raw =
+            typeof variant.price === "string"
+                ? parseFloat(variant.price)
+                : Number(variant.price ?? 0);
+        const pv = Number.isFinite(raw) ? raw : 0;
+        return disc > 0 ? pv * (1 - disc / 100) : pv;
+    }
+    const baseRaw =
+        typeof product.price === "string" ? parseFloat(String(product.price)) : Number(product.price ?? 0);
+    const base = Number.isFinite(baseRaw) ? baseRaw : 0;
+    const fpRaw = product.final_price;
+    if (fpRaw != null && fpRaw !== "") {
+        const fp = typeof fpRaw === "string" ? parseFloat(fpRaw) : Number(fpRaw);
+        if (Number.isFinite(fp)) return fp;
+    }
+    return disc > 0 ? base * (1 - disc / 100) : base;
+}
+
+/** Redux guest cart rows use nested `product`; `Cart['items']` is typed as API CartItem (flat). */
+interface CheckoutCartLine {
+    id: string | number;
+    quantity: number;
+    product: {
+        name?: string;
+        brand?: string;
+        price?: string | number;
+        final_price?: number;
+        main_product_image?: string;
+        image?: string;
+    };
 }
 
 // ─── Mock data — TODO: replace addresses + payment methods with API ───────────
@@ -489,7 +529,9 @@ function StepReview({
     onApplyPromo,
     onBack,
     onPlaceOrder,
+    formatDisplayPrice,
     formatCurrency,
+    checkoutQuote,
 }: {
     items: CheckoutItem[];
     address: Address | undefined;
@@ -504,7 +546,11 @@ function StepReview({
     onApplyPromo: () => void;
     onBack: () => void;
     onPlaceOrder: () => void;
+    /** Base → selected currency (client table / fallback). */
+    formatDisplayPrice: (n: number) => string;
+    /** Value already in selected currency (server quote). */
     formatCurrency: (n: number) => string;
+    checkoutQuote: FxQuoteResponse | null;
 }) {
     return (
         <div className="space-y-10 md:space-y-12">
@@ -573,7 +619,13 @@ function StepReview({
                     Items ({items.length})
                 </h3>
                 <div className="space-y-3">
-                    {items.map((item) => (
+                    {items.map((item, idx) => {
+                        const lineTotal = checkoutQuote?.line_items?.[idx]?.line_total
+                        const lineLabel =
+                            lineTotal != null && Number.isFinite(lineTotal)
+                                ? formatCurrency(lineTotal)
+                                : formatDisplayPrice(item.unitPrice * item.quantity)
+                        return (
                         <div
                             key={item.id}
                             className="flex gap-4 p-4 bg-zinc-50 rounded-xl border border-zinc-100"
@@ -595,15 +647,16 @@ function StepReview({
                                 <p className="text-xs text-zinc-500 mt-0.5">{item.variant}</p>
                                 <div className="flex items-center justify-between mt-2">
                                     <p className="text-xs text-zinc-400 font-mono">
-                                        {formatCurrency(item.unitPrice)} × {item.quantity}
+                                        {formatDisplayPrice(item.unitPrice)} × {item.quantity}
                                     </p>
                                     <p className="font-mono text-sm font-black text-zinc-900">
-                                        {formatCurrency(item.unitPrice * item.quantity)}
+                                        {lineLabel}
                                     </p>
                                 </div>
                             </div>
                         </div>
-                    ))}
+                        )
+                    })}
                 </div>
             </section>
 
@@ -661,7 +714,13 @@ function OrderSummary({
     deliveryLabel,
     tax,
     total,
+    formatDisplayPrice,
     formatCurrency,
+    checkoutQuote,
+    quoteApplies,
+    quoteLoading,
+    ratesHint,
+    snapshotMismatch,
 }: {
     items: CheckoutItem[];
     subtotal: number;
@@ -669,15 +728,43 @@ function OrderSummary({
     deliveryLabel: string;
     tax: number;
     total: number;
+    formatDisplayPrice: (n: number) => string;
     formatCurrency: (n: number) => string;
+    checkoutQuote: FxQuoteResponse | null;
+    quoteApplies: boolean;
+    quoteLoading: boolean;
+    ratesHint: string | null;
+    snapshotMismatch: boolean;
 }) {
+    const shipFree = quoteApplies
+        ? (checkoutQuote?.amounts.shipping ?? 0) === 0
+        : deliveryCost === 0
+
     return (
-        <div className="bg-zinc-50 rounded-3xl p-6 md:p-8 border border-zinc-100 space-y-6 md:space-y-8">
-            <h3 className="text-xl font-black text-zinc-900 uppercase tracking-tight">Order Summary</h3>
+        <div
+            className={`bg-zinc-50 rounded-3xl p-6 md:p-8 border border-zinc-100 space-y-6 md:space-y-8 transition-opacity ${quoteLoading ? "opacity-70" : ""}`}
+        >
+            <div>
+                <h3 className="text-xl font-black text-zinc-900 uppercase tracking-tight">Order Summary</h3>
+                {ratesHint ? (
+                    <p className="text-[10px] text-zinc-400 mt-1 font-medium">{ratesHint}</p>
+                ) : null}
+                {snapshotMismatch ? (
+                    <p className="text-[10px] text-amber-700 mt-1 font-bold">
+                        Rates refreshed — totals updated to the latest snapshot.
+                    </p>
+                ) : null}
+            </div>
 
             {/* Items */}
             <div className="space-y-4">
-                {items.map((item) => (
+                {items.map((item, idx) => {
+                    const lineTotal = checkoutQuote?.line_items?.[idx]?.line_total
+                    const lineLabel =
+                        quoteApplies && lineTotal != null && Number.isFinite(lineTotal)
+                            ? formatCurrency(lineTotal)
+                            : formatDisplayPrice(item.unitPrice * item.quantity)
+                    return (
                     <div key={item.id} className="flex gap-3 md:gap-4">
                         <div className="w-16 h-16 md:w-20 md:h-20 bg-zinc-200 rounded-lg overflow-hidden flex-shrink-0 relative">
                             <Image
@@ -694,15 +781,16 @@ function OrderSummary({
                             <p className="text-xs text-zinc-400 mt-0.5">{item.variant}</p>
                             <div className="flex items-center justify-between mt-2">
                                 <p className="text-xs text-zinc-400 font-mono">
-                                    {formatCurrency(item.unitPrice)} × {item.quantity}
+                                    {formatDisplayPrice(item.unitPrice)} × {item.quantity}
                                 </p>
                                 <p className="font-mono text-sm font-black text-zinc-900">
-                                    {formatCurrency(item.unitPrice * item.quantity)}
+                                    {lineLabel}
                                 </p>
                             </div>
                         </div>
                     </div>
-                ))}
+                    )
+                })}
             </div>
 
             <div className="h-px bg-zinc-200" />
@@ -711,17 +799,23 @@ function OrderSummary({
             <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                     <span className="text-zinc-500 uppercase text-xs font-bold tracking-wide">Subtotal</span>
-                    <span className="font-mono text-zinc-900 font-bold">{formatCurrency(subtotal)}</span>
+                    <span className="font-mono text-zinc-900 font-bold">
+                        {quoteApplies && checkoutQuote
+                            ? formatCurrency(checkoutQuote.amounts.subtotal)
+                            : formatDisplayPrice(subtotal)}
+                    </span>
                 </div>
                 <div className="flex justify-between">
                     <span className="text-zinc-500 uppercase text-xs font-bold tracking-wide">
                         Delivery ({deliveryLabel})
                     </span>
                     <span className="font-mono text-zinc-900 font-bold">
-                        {deliveryCost === 0 ? (
+                        {shipFree ? (
                             <span className="text-emerald-600 font-bold">Free</span>
+                        ) : quoteApplies && checkoutQuote ? (
+                            formatCurrency(checkoutQuote.amounts.shipping)
                         ) : (
-                            formatCurrency(deliveryCost)
+                            formatDisplayPrice(deliveryCost)
                         )}
                     </span>
                 </div>
@@ -729,7 +823,11 @@ function OrderSummary({
                     <span className="text-zinc-500 uppercase text-xs font-bold tracking-wide">
                         Tax ({(TAX_RATE * 100).toFixed(0)}%)
                     </span>
-                    <span className="font-mono text-zinc-900 font-bold">{formatCurrency(tax)}</span>
+                    <span className="font-mono text-zinc-900 font-bold">
+                        {quoteApplies && checkoutQuote
+                            ? formatCurrency(checkoutQuote.amounts.tax)
+                            : formatDisplayPrice(tax)}
+                    </span>
                 </div>
             </div>
 
@@ -737,7 +835,9 @@ function OrderSummary({
             <div className="pt-5 border-t border-zinc-200 flex justify-between items-end">
                 <span className="text-zinc-900 font-black uppercase text-lg">Total</span>
                 <span className="font-mono font-black text-2xl text-zinc-900 tracking-tighter">
-                    {formatCurrency(total)}
+                    {quoteApplies && checkoutQuote
+                        ? formatCurrency(checkoutQuote.amounts.total)
+                        : formatDisplayPrice(total)}
                 </span>
             </div>
 
@@ -757,7 +857,7 @@ function OrderSummary({
                 <span className="flex items-center gap-1"><ShieldCheck size={12} /> Secure</span>
                 <span className="flex items-center gap-1">
                     <Truck size={12} />
-                    Free over {formatCurrency(FREE_SHIPPING_THRESHOLD)}
+                    Free over {formatDisplayPrice(FREE_SHIPPING_THRESHOLD)}
                 </span>
             </div>
         </div>
@@ -766,12 +866,15 @@ function OrderSummary({
 
 // ─── Mobile Summary Drawer ────────────────────────────────────────────────────
 function MobileSummaryDrawer({
-    total,
-    formatCurrency,
+    totalBase,
+    formatDisplayPrice,
+    formattedStickyTotal,
     children,
 }: {
-    total: number;
-    formatCurrency: (n: number) => string;
+    totalBase: number;
+    formatDisplayPrice: (n: number) => string;
+    /** Pre-formatted total in selected currency when server quote applies. */
+    formattedStickyTotal: string | null;
     children: React.ReactNode;
 }) {
     const [open, setOpen] = useState(false);
@@ -789,7 +892,9 @@ function MobileSummaryDrawer({
                         Order Summary
                     </span>
                     <div className="flex items-center gap-3">
-                        <span className="font-mono font-black text-zinc-900">{formatCurrency(total)}</span>
+                        <span className="font-mono font-black text-zinc-900">
+                            {formattedStickyTotal ?? formatDisplayPrice(totalBase)}
+                        </span>
                         <ChevronDown
                             size={16}
                             className={`text-zinc-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
@@ -816,9 +921,21 @@ function MobileSummaryDrawer({
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
-export default function CheckoutPage() {
+function CheckoutPageInner() {
+    const searchParams = useSearchParams()
     const { cart } = useSelector((state: RootState) => state.cart)
-    const { formatCurrency } = useCurrency()
+    const {
+        formatDisplayPrice,
+        formatCurrency,
+        currency,
+        baseCurrency,
+        fxSnapshotId,
+        fxAsOf,
+        fxStale,
+    } = useCurrency()
+
+    const [checkoutQuote, setCheckoutQuote] = useState<FxQuoteResponse | null>(null)
+    const [quoteLoading, setQuoteLoading] = useState(false)
 
     const [step, setStep] = useState(1);
     const [selectedAddressId, setSelectedAddressId] = useState(
@@ -830,21 +947,143 @@ export default function CheckoutPage() {
     );
     const [promoCode, setPromoCode] = useState("");
 
-    // ── Derive CheckoutItems from Redux cart ──────────────────────────────────
-    const items: CheckoutItem[] = cart.items.map((item) => {
-        const unitPrice = Number(item.product?.final_price ?? item.product?.price ?? 0) || 0
-        return {
-            id: item.id,
-            name: item.product?.name ?? "Unknown Product",
-            variant: item.product?.brand ?? "Tradehut",
-            unitPrice,
-            quantity: Number(item.quantity) || 1,
-            imageUrl: item.product?.main_product_image || item.product?.image || "/placeholder.png",
+    const buyNowFlag =
+        searchParams.get("buyNow") === "1" || searchParams.get("buyNow") === "true";
+    const buyNowProductId = searchParams.get("product");
+    const buyNowVariantId = searchParams.get("variant");
+    const buyNowQtyParam = searchParams.get("qty");
+    const isBuyNowCheckout = Boolean(buyNowFlag && buyNowProductId);
+
+    const [buyNowItems, setBuyNowItems] = useState<CheckoutItem[]>([]);
+    const [buyNowLoadState, setBuyNowLoadState] = useState<
+        "idle" | "loading" | "error" | "done"
+    >("idle");
+    const [buyNowErrorMsg, setBuyNowErrorMsg] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!isBuyNowCheckout || !buyNowProductId) {
+            setBuyNowItems([]);
+            setBuyNowLoadState("idle");
+            setBuyNowErrorMsg(null);
+            return;
         }
-    })
+
+        let cancelled = false;
+        setBuyNowLoadState("loading");
+        setBuyNowErrorMsg(null);
+
+        const qtyRaw = parseInt(buyNowQtyParam || "1", 10);
+        const quantity = Math.max(1, Math.min(999, Number.isFinite(qtyRaw) ? qtyRaw : 1));
+
+        (async () => {
+            try {
+                const [productRes, variantsRes] = await Promise.all([
+                    axiosInstance.get(`/products/${buyNowProductId}/`),
+                    axiosInstance.get(`/products/${buyNowProductId}/variants/`),
+                ]);
+                const product = productRes.data as Record<string, unknown>;
+                const variants = Array.isArray(variantsRes.data) ? variantsRes.data : [];
+                let variant: Record<string, unknown> | null = buyNowVariantId
+                    ? (variants.find(
+                          (v: { id?: string | number }) =>
+                              String(v.id) === String(buyNowVariantId)
+                      ) as Record<string, unknown> | undefined) ?? null
+                    : null;
+
+                if (variants.length > 0 && !variant) {
+                    if (!cancelled) {
+                        setBuyNowLoadState("error");
+                        setBuyNowErrorMsg(
+                            "This product requires a variant. Open the product page and choose options."
+                        );
+                        setBuyNowItems([]);
+                    }
+                    return;
+                }
+
+                const unitPrice = computeBuyNowUnitPrice(product, variant);
+                const mainImg = product.main_product_image;
+                let imageUrl =
+                    (typeof mainImg === "string" ? mainImg : null) ||
+                    (typeof product.image === "string" ? product.image : null) ||
+                    "/placeholder.png";
+                if (imageUrl !== "/placeholder.png") {
+                    imageUrl = resolveMediaSrc(imageUrl) || imageUrl;
+                }
+                const name = (typeof product.name === "string" ? product.name : null) ?? "Product";
+                const variantLabel =
+                    (variant &&
+                        (typeof variant.name === "string"
+                            ? variant.name
+                            : typeof variant.sku === "string"
+                              ? variant.sku
+                              : null)) ||
+                    (typeof product.brand === "string" ? product.brand : null) ||
+                    "Standard";
+
+                const line: CheckoutItem = {
+                    id: `buy-now-${buyNowProductId}-${buyNowVariantId || "default"}`,
+                    name,
+                    variant: variantLabel,
+                    unitPrice,
+                    quantity,
+                    imageUrl,
+                };
+
+                if (!cancelled) {
+                    setBuyNowItems([line]);
+                    setBuyNowLoadState("done");
+                }
+            } catch {
+                if (!cancelled) {
+                    setBuyNowLoadState("error");
+                    setBuyNowErrorMsg("Could not load this product for checkout.");
+                    setBuyNowItems([]);
+                }
+            }
+        })();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [isBuyNowCheckout, buyNowProductId, buyNowVariantId, buyNowQtyParam]);
+
+    // ── Line items: buy-now (single SKU from URL) vs full cart ─────────────────
+    const items: CheckoutItem[] = useMemo(() => {
+        if (isBuyNowCheckout) {
+            if (buyNowLoadState === "done" && buyNowItems.length > 0) return buyNowItems;
+            return [];
+        }
+        const rows = cart.items as unknown as CheckoutCartLine[];
+        return rows.map((item) => {
+            const unitPrice = Number(item.product?.final_price ?? item.product?.price ?? 0) || 0;
+            const rawImg =
+                item.product?.main_product_image || item.product?.image || "/placeholder.png";
+            const imageUrl =
+                rawImg === "/placeholder.png"
+                    ? rawImg
+                    : resolveMediaSrc(rawImg) || "/placeholder.png";
+            return {
+                id: item.id,
+                name: item.product?.name ?? "Unknown Product",
+                variant: item.product?.brand ?? "Tradehut",
+                unitPrice,
+                quantity: Number(item.quantity) || 1,
+                imageUrl,
+            };
+        });
+    }, [isBuyNowCheckout, buyNowLoadState, buyNowItems, cart.items]);
+
+    const lineItemsPayload = useMemo(
+        () => items.map((i) => ({ unit_price: i.unitPrice, quantity: i.quantity })),
+        [items]
+    )
 
     // ── Totals — mirrors CartPage logic exactly ───────────────────────────────
-    const subtotal = items.reduce((acc, item) => acc + item.unitPrice * item.quantity, 0)
+    const subtotal = useMemo(
+        () => items.reduce((acc, item) => acc + item.unitPrice * item.quantity, 0),
+        [items]
+    )
 
     const deliveryOption = DELIVERY_OPTIONS.find((d) => d.id === selectedDelivery) ?? DELIVERY_OPTIONS[1]
 
@@ -853,6 +1092,42 @@ export default function CheckoutPage() {
 
     const tax = subtotal * TAX_RATE
     const total = subtotal + deliveryCost + tax
+
+    useEffect(() => {
+        if (!items.length) {
+            setCheckoutQuote(null)
+            setQuoteLoading(false)
+            return
+        }
+        let cancelled = false
+        setQuoteLoading(true)
+        postFxQuote({
+            target_currency: currency,
+            snapshot_id: fxSnapshotId ?? undefined,
+            subtotal,
+            shipping: deliveryCost,
+            tax,
+            line_items: lineItemsPayload,
+        }).then((res) => {
+            if (cancelled) return
+            setCheckoutQuote(res)
+            setQuoteLoading(false)
+        })
+        return () => {
+            cancelled = true
+        }
+    }, [currency, fxSnapshotId, subtotal, deliveryCost, tax, lineItemsPayload, items.length])
+
+    const quoteApplies = Boolean(
+        checkoutQuote?.amounts &&
+            checkoutQuote.target_currency === currency &&
+            checkoutQuote.base_currency === baseCurrency
+    )
+
+    const ratesHint =
+        quoteApplies && fxAsOf ? `Rates as of ${fxAsOf}${fxStale ? " (stale)" : ""}` : null
+
+    const snapshotMismatch = Boolean(checkoutQuote?.snapshot_mismatch)
 
     const address = MOCK_ADDRESSES.find((a) => a.id === selectedAddressId);
     const paymentMethod = MOCK_PAYMENT_METHODS.find((p) => p.id === selectedPaymentId);
@@ -867,6 +1142,83 @@ export default function CheckoutPage() {
         // TODO: validate promo code via /api/promo/validate/
     }
 
+    const stickyTotalFormatted =
+        quoteApplies && checkoutQuote ? formatCurrency(checkoutQuote.amounts.total) : null
+
+    const backHref =
+        isBuyNowCheckout && buyNowProductId ? `/products/${buyNowProductId}` : "/cart";
+    const backLabel = isBuyNowCheckout ? "Back to product" : "Return to cart";
+
+    const buyNowResolving =
+        isBuyNowCheckout &&
+        (buyNowLoadState === "idle" || buyNowLoadState === "loading");
+
+    if (!isBuyNowCheckout && (!cart.items || cart.items.length === 0)) {
+        return (
+            <MainLayout>
+                <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 text-zinc-900">
+                    <p className="text-lg font-bold mb-2">Your cart is empty</p>
+                    <p className="text-sm text-zinc-500 mb-6 text-center max-w-sm">
+                        Add something to your cart, or buy a single item from a product page.
+                    </p>
+                    <Link
+                        href="/products"
+                        className="px-6 py-3 bg-emerald-600 text-white font-bold rounded-lg hover:opacity-90 transition-opacity"
+                    >
+                        Browse products
+                    </Link>
+                </div>
+            </MainLayout>
+        );
+    }
+
+    if (buyNowResolving) {
+        return (
+            <MainLayout>
+                <div className="min-h-screen bg-white flex items-center justify-center">
+                    <div className="text-center space-y-3">
+                        <div className="mx-auto h-10 w-10 rounded-full border-2 border-zinc-200 border-t-emerald-600 animate-spin" />
+                        <p className="text-sm text-zinc-500">Preparing your order…</p>
+                    </div>
+                </div>
+            </MainLayout>
+        );
+    }
+
+    if (isBuyNowCheckout && buyNowLoadState === "error") {
+        return (
+            <MainLayout>
+                <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 text-zinc-900 gap-4">
+                    <p className="text-center text-zinc-700 max-w-md">
+                        {buyNowErrorMsg ?? "Something went wrong."}
+                    </p>
+                    <Link
+                        href={backHref}
+                        className="text-sm font-bold text-emerald-600 hover:underline flex items-center gap-1.5"
+                    >
+                        <ArrowLeft size={14} /> {backLabel}
+                    </Link>
+                </div>
+            </MainLayout>
+        );
+    }
+
+    if (isBuyNowCheckout && buyNowLoadState === "done" && items.length === 0) {
+        return (
+            <MainLayout>
+                <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 text-zinc-900 gap-4">
+                    <p className="text-center text-zinc-700">Could not build checkout for this product.</p>
+                    <Link
+                        href={backHref}
+                        className="text-sm font-bold text-emerald-600 hover:underline flex items-center gap-1.5"
+                    >
+                        <ArrowLeft size={14} /> {backLabel}
+                    </Link>
+                </div>
+            </MainLayout>
+        );
+    }
+
     const summaryNode = (
         <OrderSummary
             items={items}
@@ -875,7 +1227,13 @@ export default function CheckoutPage() {
             deliveryLabel={deliveryOption.label}
             tax={tax}
             total={total}
+            formatDisplayPrice={formatDisplayPrice}
             formatCurrency={formatCurrency}
+            checkoutQuote={checkoutQuote}
+            quoteApplies={quoteApplies}
+            quoteLoading={quoteLoading}
+            ratesHint={ratesHint}
+            snapshotMismatch={snapshotMismatch}
         />
     );
 
@@ -895,10 +1253,10 @@ export default function CheckoutPage() {
                         </div>
                     </div>
                     <Link
-                        href="/cart"
+                        href={backHref}
                         className="text-sm font-medium text-zinc-400 hover:text-zinc-900 transition-colors min-h-[44px] flex items-center gap-1.5"
                     >
-                        <ArrowLeft size={14} /> Return to cart
+                        <ArrowLeft size={14} /> {backLabel}
                     </Link>
                 </div>
             </header>
@@ -917,7 +1275,7 @@ export default function CheckoutPage() {
                                 selectedDelivery={selectedDelivery}
                                 onSelectDelivery={setSelectedDelivery}
                                 onContinue={() => setStep(2)}
-                                formatCurrency={formatCurrency}
+                                formatCurrency={formatDisplayPrice}
                             />
                         )}
                         {step === 2 && (
@@ -943,7 +1301,9 @@ export default function CheckoutPage() {
                                 onApplyPromo={handleApplyPromo}
                                 onBack={() => setStep(2)}
                                 onPlaceOrder={handlePlaceOrder}
+                                formatDisplayPrice={formatDisplayPrice}
                                 formatCurrency={formatCurrency}
+                                checkoutQuote={quoteApplies ? checkoutQuote : null}
                             />
                         )}
                     </div>
@@ -956,10 +1316,30 @@ export default function CheckoutPage() {
             </main>
 
             {/* Mobile: bottom drawer */}
-            <MobileSummaryDrawer total={total} formatCurrency={formatCurrency}>
+            <MobileSummaryDrawer
+                totalBase={total}
+                formatDisplayPrice={formatDisplayPrice}
+                formattedStickyTotal={stickyTotalFormatted}
+            >
                 {summaryNode}
             </MobileSummaryDrawer>
         </div>
         </MainLayout>
+    );
+}
+
+export default function CheckoutPage() {
+    return (
+        <Suspense
+            fallback={
+                <MainLayout>
+                    <div className="min-h-screen bg-white flex items-center justify-center">
+                        <div className="h-10 w-10 rounded-full border-2 border-zinc-200 border-t-emerald-600 animate-spin" />
+                    </div>
+                </MainLayout>
+            }
+        >
+            <CheckoutPageInner />
+        </Suspense>
     );
 }

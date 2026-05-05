@@ -20,6 +20,7 @@ import {
     SearchX,
 } from 'lucide-react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { useCurrency } from '@/contexts/CurrencyContext'
 
 // ─── Sort options ─────────────────────────────────────────────────────────────
@@ -38,20 +39,20 @@ const PAGE_SIZES = [12, 24, 48]
 
 function Breadcrumb({ items }: { items: { label: string; href?: string }[] }) {
     return (
-        <nav className="flex items-center gap-1.5 text-sm text-on-surface-variant mb-6">
+        <nav className="flex items-center gap-1.5 text-sm text-neutral-600 dark:text-neutral-400 mb-6">
             {items.map((item, i) => (
                 <span key={i} className="flex items-center gap-1.5">
-                    {i > 0 && <ChevronRight className="h-3.5 w-3.5 text-outline" />}
+                    {i > 0 && <ChevronRight className="h-3.5 w-3.5 text-neutral-400 dark:text-neutral-500" />}
                     {item.href ? (
                         <Link
                             href={item.href}
-                            className="hover:text-primary transition-colors flex items-center gap-1"
+                            className="hover:text-orange-600 dark:hover:text-orange-400 transition-colors flex items-center gap-1"
                         >
                             {i === 0 && <Home className="h-3.5 w-3.5" />}
                             {item.label}
                         </Link>
                     ) : (
-                        <span className="font-bold text-on-surface">{item.label}</span>
+                        <span className="font-bold text-neutral-900 dark:text-neutral-100">{item.label}</span>
                     )}
                 </span>
             ))}
@@ -67,13 +68,13 @@ function SortSelect({ value, onChange }: { value: string; onChange: (v: string) 
             <select
                 value={value}
                 onChange={e => onChange(e.target.value)}
-                className="appearance-none pl-4 pr-9 py-2.5 text-sm border border-outline-variant/30 rounded-xl bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer font-medium"
+                className="appearance-none pl-4 pr-9 py-2.5 text-sm border border-neutral-200 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-orange-500/25 cursor-pointer font-medium"
             >
                 {SORT_OPTIONS.map(o => (
                     <option key={o.value} value={o.value}>{o.label}</option>
                 ))}
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-outline pointer-events-none" />
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-neutral-500 dark:text-neutral-400 pointer-events-none" />
         </div>
     )
 }
@@ -89,7 +90,7 @@ function FilterChips({
     maxPrice: number
     onChange: (f: FilterState) => void
 }) {
-    const { formatCurrency } = useCurrency()
+    const { formatDisplayPrice } = useCurrency()
     const chips: { label: string; onRemove: () => void }[] = []
 
     filters.categories.forEach(c =>
@@ -125,7 +126,7 @@ function FilterChips({
     )
     if (filters.priceRange[0] > 0 || filters.priceRange[1] < maxPrice)
         chips.push({
-            label: `${formatCurrency(filters.priceRange[0])}–${formatCurrency(filters.priceRange[1])}`,
+            label: `${formatDisplayPrice(filters.priceRange[0])}–${formatDisplayPrice(filters.priceRange[1])}`,
             onRemove: () => onChange({ ...filters, priceRange: [0, maxPrice] }),
         })
     if (filters.minRating > 0)
@@ -157,18 +158,18 @@ function FilterChips({
 
     return (
         <div className="flex items-center gap-2 flex-wrap mb-5">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant shrink-0">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400 shrink-0">
                 Active:
             </span>
             {chips.map((chip, i) => (
                 <span
                     key={i}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container text-on-surface-variant text-xs font-semibold border border-outline-variant/20"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-xs font-semibold border border-neutral-200 dark:border-neutral-600"
                 >
                     {chip.label}
                     <button
                         onClick={chip.onRemove}
-                        className="hover:text-primary transition-colors active:scale-95"
+                        className="hover:text-orange-600 dark:hover:text-orange-400 transition-colors active:scale-95"
                         aria-label={`Remove ${chip.label} filter`}
                     >
                         <X className="h-3 w-3" />
@@ -177,7 +178,7 @@ function FilterChips({
             ))}
             <button
                 onClick={() => onChange({ ...DEFAULT_FILTERS, priceRange: [0, maxPrice] })}
-                className="text-xs text-outline hover:text-primary transition-colors font-medium underline underline-offset-2"
+                className="text-xs text-neutral-500 dark:text-neutral-400 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium underline underline-offset-2"
             >
                 Clear all
             </button>
@@ -191,12 +192,12 @@ function EmptyState({ onReset }: { onReset: () => void }) {
     const suggestions = ['Electronics', 'Tools', 'Industrial', 'New Arrivals', 'On Sale']
     return (
         <div className="flex flex-col items-center justify-center py-24 gap-6 text-center">
-            <div className="p-6 rounded-3xl bg-surface-container-low">
-                <SearchX className="h-14 w-14 text-outline" />
+            <div className="p-6 rounded-3xl bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
+                <SearchX className="h-14 w-14 text-neutral-400 dark:text-neutral-500" />
             </div>
             <div className="space-y-1.5">
-                <p className="font-syne font-bold text-xl text-on-surface">No products found</p>
-                <p className="text-sm text-on-surface-variant max-w-xs mx-auto">
+                <p className="font-syne font-bold text-xl text-neutral-900 dark:text-neutral-100">No products found</p>
+                <p className="text-sm text-neutral-600 dark:text-neutral-400 max-w-xs mx-auto">
                     Try adjusting your filters or browse one of these popular categories
                 </p>
             </div>
@@ -206,7 +207,7 @@ function EmptyState({ onReset }: { onReset: () => void }) {
                     <button
                         key={s}
                         onClick={onReset}
-                        className="px-4 py-2 rounded-full bg-surface-container text-on-surface-variant text-xs font-semibold border border-outline-variant/20 hover:border-primary hover:text-primary transition-all active:scale-95"
+                        className="px-4 py-2 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-xs font-semibold border border-neutral-200 dark:border-neutral-600 hover:border-orange-500 dark:hover:border-orange-500 hover:text-orange-600 dark:hover:text-orange-400 transition-all active:scale-95"
                     >
                         {s}
                     </button>
@@ -214,7 +215,7 @@ function EmptyState({ onReset }: { onReset: () => void }) {
             </div>
             <button
                 onClick={onReset}
-                className="px-6 py-3 rounded-xl primary-gradient text-on-primary font-bold text-sm transition-all active:scale-95 hover:shadow-lg"
+                className="px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 text-white font-bold text-sm transition-all active:scale-95 shadow-lg"
             >
                 Clear all filters
             </button>
@@ -226,6 +227,7 @@ function EmptyState({ onReset }: { onReset: () => void }) {
 
 export default function ProductsPage() {
     const dispatch = useDispatch<AppDispatch>()
+    const searchParams = useSearchParams()
     const { allProducts, isUpdating } = useSelector((state: RootState) => state.products)
 
     const [viewMode, setViewMode]           = useState<'grid' | 'list'>('grid')
@@ -237,8 +239,20 @@ export default function ProductsPage() {
 
     useEffect(() => {
         dispatch(fetchProducts())
-        console.log(allProducts)
     }, [dispatch])
+
+    /** Deep links: `/products?category=…&subcategory=…` (e.g. SubNav, PDP category links). */
+    useEffect(() => {
+        const cat = searchParams.get('category')?.trim() ?? ''
+        const sub = searchParams.get('subcategory')?.trim() ?? ''
+        if (!cat && !sub) return
+        setFilters(prev => ({
+            ...prev,
+            categories: cat ? [cat] : [],
+            subCategories: sub ? [sub] : [],
+        }))
+        setCurrentPage(1)
+    }, [searchParams])
 
     // ── Filter + sort ─────────────────────────────────────────────────────────
     const processedProducts = useMemo(() => {
@@ -426,7 +440,7 @@ export default function ProductsPage() {
 
     return (
         <MainLayout>
-            <div className="min-h-screen bg-surface text-on-surface">
+            <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100">
                 <div className="max-w-screen-2xl mx-auto px-4 md:px-8 py-10">
 
                     {/* Breadcrumb */}
@@ -436,11 +450,11 @@ export default function ProductsPage() {
 
                     {/* Page heading */}
                     <div className="mb-8">
-                        <h1 className="font-syne text-3xl md:text-4xl font-extrabold tracking-tight text-on-surface mb-1">
+                        <h1 className="font-syne text-3xl md:text-4xl font-extrabold tracking-tight text-neutral-900 dark:text-neutral-100 mb-1">
                             Browse Products
                         </h1>
-                        <p className="text-on-surface-variant text-sm">
-                            <span className="font-bold text-on-surface">
+                        <p className="text-neutral-600 dark:text-neutral-400 text-sm">
+                            <span className="font-bold text-neutral-900 dark:text-neutral-100">
                                 {processedProducts.length.toLocaleString()}
                             </span>{' '}
                             result{processedProducts.length !== 1 ? 's' : ''} found
@@ -471,22 +485,22 @@ export default function ProductsPage() {
                         <section className="flex-1 min-w-0">
 
                             {/* Toolbar */}
-                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 px-4 py-3 shadow-card">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5 bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-700 px-4 py-3 shadow-md dark:shadow-none dark:ring-1 dark:ring-neutral-700">
                                 <div className="flex items-center gap-3 w-full sm:w-auto">
                                     {/* Mobile filter trigger */}
                                     <button
                                         onClick={() => setMobileFiltersOpen(true)}
-                                        className="lg:hidden flex items-center gap-2 px-3 py-2.5 rounded-xl border border-outline-variant/30 text-sm font-semibold text-on-surface-variant hover:border-primary hover:text-primary transition-all active:scale-95"
+                                        className="lg:hidden flex items-center gap-2 px-3 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-600 text-sm font-semibold text-neutral-600 dark:text-neutral-400 hover:border-orange-500 dark:hover:border-orange-500 hover:text-orange-600 dark:hover:text-orange-400 transition-all active:scale-95"
                                     >
                                         <SlidersHorizontal className="h-4 w-4" />
                                         Filters
                                         {hasActiveFilters && (
-                                            <span className="w-2 h-2 rounded-full bg-primary" />
+                                            <span className="w-2 h-2 rounded-full bg-orange-500 dark:bg-orange-400" />
                                         )}
                                     </button>
 
-                                    <p className="text-sm text-on-surface-variant">
-                                        <span className="font-bold text-on-surface">
+                                    <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                                        <span className="font-bold text-neutral-900 dark:text-neutral-100">
                                             {processedProducts.length.toLocaleString()}
                                         </span>{' '}
                                         product{processedProducts.length !== 1 ? 's' : ''}
@@ -505,7 +519,7 @@ export default function ProductsPage() {
                                                 setPageSize(Number(e.target.value))
                                                 setCurrentPage(1)
                                             }}
-                                            className="appearance-none pl-4 pr-8 py-2.5 text-sm border border-outline-variant/30 rounded-xl bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
+                                            className="appearance-none pl-4 pr-8 py-2.5 text-sm border border-neutral-200 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-orange-500/25 cursor-pointer"
                                         >
                                             {PAGE_SIZES.map(s => (
                                                 <option key={s} value={s}>
@@ -513,17 +527,17 @@ export default function ProductsPage() {
                                                 </option>
                                             ))}
                                         </select>
-                                        <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-outline pointer-events-none" />
+                                        <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-neutral-500 dark:text-neutral-400 pointer-events-none" />
                                     </div>
 
                                     {/* View mode toggle */}
-                                    <div className="flex rounded-xl border border-outline-variant/30 overflow-hidden">
+                                    <div className="flex rounded-xl border border-neutral-200 dark:border-neutral-600 overflow-hidden">
                                         <button
                                             onClick={() => setViewMode('grid')}
                                             className={`p-2.5 transition-colors ${
                                                 viewMode === 'grid'
-                                                    ? 'bg-primary-container text-on-primary-container'
-                                                    : 'bg-surface-container-lowest text-outline hover:bg-surface-container-low'
+                                                    ? 'bg-orange-500 text-white dark:bg-orange-600'
+                                                    : 'bg-white dark:bg-neutral-900 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                                             }`}
                                             aria-label="Grid view"
                                         >
@@ -531,10 +545,10 @@ export default function ProductsPage() {
                                         </button>
                                         <button
                                             onClick={() => setViewMode('list')}
-                                            className={`p-2.5 border-l border-outline-variant/30 transition-colors ${
+                                            className={`p-2.5 border-l border-neutral-200 dark:border-neutral-600 transition-colors ${
                                                 viewMode === 'list'
-                                                    ? 'bg-primary-container text-on-primary-container'
-                                                    : 'bg-surface-container-lowest text-outline hover:bg-surface-container-low'
+                                                    ? 'bg-orange-500 text-white dark:bg-orange-600'
+                                                    : 'bg-white dark:bg-neutral-900 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                                             }`}
                                             aria-label="List view"
                                         >

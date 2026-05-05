@@ -28,11 +28,13 @@ export default function Pagination({
     showSummary = true,
     summary,
     baseBtnClassName = 'flex items-center justify-center h-10 min-w-[40px] px-2 rounded-xl text-sm font-medium transition-all active:scale-95',
-    activeBtnClassName = 'bg-primary-container text-on-primary-container font-bold shadow-sm',
-    inactiveBtnClassName = 'border border-outline-variant/20 text-on-surface-variant hover:border-primary hover:text-primary',
+    activeBtnClassName =
+        'bg-orange-500 text-white dark:bg-orange-600 font-bold shadow-sm dark:shadow-none',
+    inactiveBtnClassName =
+        'border border-neutral-200 dark:border-neutral-600 text-neutral-600 dark:text-neutral-400 hover:border-orange-500 dark:hover:border-orange-400 hover:text-orange-600 dark:hover:text-orange-400',
     navGapClassName = 'flex items-center gap-1.5',
-    ellipsisClassName = 'px-1 text-outline text-sm',
-    summaryClassName = 'text-xs text-on-surface-variant',
+    ellipsisClassName = 'px-1 text-neutral-500 dark:text-neutral-400 text-sm',
+    summaryClassName = 'text-xs text-neutral-600 dark:text-neutral-400',
 }: PaginationProps) {
     const totalPages = Math.ceil(total / pageSize)
     if (totalPages <= 1) return null
@@ -56,7 +58,7 @@ export default function Pagination({
                 <button
                     onClick={() => onChange(current - 1)}
                     disabled={current === 1}
-                    className={`${baseBtnClassName} border border-outline-variant/30 text-on-surface-variant hover:border-primary hover:text-primary disabled:opacity-40 disabled:cursor-not-allowed`}
+                    className={`${baseBtnClassName} border border-neutral-200 dark:border-neutral-600 text-neutral-600 dark:text-neutral-400 hover:border-orange-500 dark:hover:border-orange-400 hover:text-orange-600 dark:hover:text-orange-400 disabled:opacity-40 disabled:cursor-not-allowed`}
                     aria-label="Previous page"
                 >
                     <ChevronLeft className="h-4 w-4" />
@@ -81,7 +83,7 @@ export default function Pagination({
                 <button
                     onClick={() => onChange(current + 1)}
                     disabled={current === totalPages}
-                    className={`${baseBtnClassName} border border-outline-variant/30 text-on-surface-variant hover:border-primary hover:text-primary disabled:opacity-40 disabled:cursor-not-allowed`}
+                    className={`${baseBtnClassName} border border-neutral-200 dark:border-neutral-600 text-neutral-600 dark:text-neutral-400 hover:border-orange-500 dark:hover:border-orange-400 hover:text-orange-600 dark:hover:text-orange-400 disabled:opacity-40 disabled:cursor-not-allowed`}
                     aria-label="Next page"
                 >
                     <ChevronRight className="h-4 w-4" />
@@ -93,11 +95,11 @@ export default function Pagination({
                     {summary ?? (
                         <>
                             Showing{' '}
-                            <span className="font-bold text-on-surface">
+                            <span className="font-bold text-neutral-900 dark:text-neutral-100">
                                 {(current - 1) * pageSize + 1}–
                                 {Math.min(current * pageSize, total).toLocaleString()}
                             </span>{' '}
-                            of <span className="font-bold text-on-surface">{total.toLocaleString()}</span>{' '}
+                            of <span className="font-bold text-neutral-900 dark:text-neutral-100">{total.toLocaleString()}</span>{' '}
                             results
                         </>
                     )}

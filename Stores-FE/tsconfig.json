@@ -36,6 +36,10 @@
     ".next/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "lib/confirmDialog.tsx",
+    "lib/dropZoneComponent.tsx",
+    "lib/renderStatus.tsx",
+    "lib/tokenHelper.tsx"
   ]
 }

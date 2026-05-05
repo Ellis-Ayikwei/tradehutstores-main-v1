@@ -22,6 +22,7 @@ import {
     X,
     ArrowRight,
     Zap,
+    LayoutGrid,
 } from 'lucide-react'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -392,6 +393,8 @@ export default function SubNav() {
     const [expandedCat, setExpandedCat] = useState<number | null>(null)
     const [apiCategories, setApiCategories] = useState<Category[]>(categories)
 
+    console.log("the apiCategories", apiCategories)
+
     // Close mobile menu on resize to desktop
     useEffect(() => {
         const handler = () => { if (window.innerWidth >= 768) setMobileOpen(false) }
@@ -407,6 +410,9 @@ export default function SubNav() {
                     axiosInstance.get('/catalog/subcategories/'),
                 ])
 
+                console.log("the categoriesRes", categoriesRes)
+                console.log("the subCategoriesRes", subCategoriesRes)
+
                 const byCategory: Record<string, Subcategory[]> = {}
                 ;(categoriesRes.data ?? []).forEach((cat: any) => {
                     byCategory[cat.name] = []
@@ -418,7 +424,7 @@ export default function SubNav() {
                     if (!byCategory[parentCategory.name]) byCategory[parentCategory.name] = []
                     byCategory[parentCategory.name].push({
                         name: sub.sub_category_name,
-                        count: 0,
+                        count: sub.active_product_count ?? 0,
                     })
                 })
 
@@ -465,6 +471,13 @@ export default function SubNav() {
                             <OrderProtectionPopover />
 
                             {/* ── Quick links ── */}
+                            <Link
+                                href="/products"
+                                className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors whitespace-nowrap"
+                            >
+                                <LayoutGrid className="h-3.5 w-3.5 text-orange-500" />
+                                All products
+                            </Link>
                             <Link href="/deals" className="hidden xl:flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors whitespace-nowrap">
                                 <Flame className="h-3.5 w-3.5 text-orange-500" />
                                 Today's Deals
@@ -509,6 +522,10 @@ export default function SubNav() {
 
                             {/* Mobile quick actions */}
                             <div className="flex items-center gap-1">
+                                <Link href="/products" className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-semibold text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors">
+                                    <LayoutGrid className="h-3.5 w-3.5" />
+                                    Products
+                                </Link>
                                 <Link href="/deals" className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-semibold text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors">
                                     <Flame className="h-3.5 w-3.5" />
                                     Deals
@@ -573,6 +590,7 @@ export default function SubNav() {
                         <div className="border-t border-gray-100 dark:border-gray-800 px-3 py-2">
                             <p className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-600 mb-2 px-1 pt-1">Quick Links</p>
                             {[
+                                { href: '/products', icon: LayoutGrid, label: 'All products' },
                                 { href: '/new-arrivals', icon: Zap, label: 'New Arrivals' },
                                 { href: '/featured', icon: Star, label: 'Featured Selections' },
                                 { href: '/protection', icon: Shield, label: 'Order Protection' },

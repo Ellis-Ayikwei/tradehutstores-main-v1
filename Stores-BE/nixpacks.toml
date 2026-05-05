@@ -1,0 +1,23 @@
+# Nixpacks build plan for Railway.
+# Pins Python and installs the system libs Pillow + psycopg2 + boto3 want.
+
+[phases.setup]
+nixPkgs = ["python311", "gcc", "libjpeg", "zlib", "openssl", "postgresql"]
+
+[phases.install]
+cmds = [
+  "python -m venv /opt/venv",
+  ". /opt/venv/bin/activate && pip install --upgrade pip",
+  ". /opt/venv/bin/activate && pip install -r requirements.txt",
+]
+
+[start]
+# Procfile drives the actual processes (web / worker / release). Nixpacks
+# just needs a default; Railway overrides it with whichever process is
+# defined for the service.
+cmd = "gunicorn backend.wsgi:application --bind 0.0.0.0:${PORT:-8000}"
+
+[variables]
+PYTHONUNBUFFERED = "1"
+PYTHONDONTWRITEBYTECODE = "1"
+PIP_DISABLE_PIP_VERSION_CHECK = "1"

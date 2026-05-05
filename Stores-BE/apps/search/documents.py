@@ -52,12 +52,15 @@ if HAS_ELASTICSEARCH and getattr(settings, "SEARCH_ENABLE_ES", False):
         max_gram=20,
     )
 
+    # Index: edge_ngram only. Synonyms cannot share a chain with edge_ngram in ES 8
+    # ("Token filter [edge_ngram_filter] cannot be used to parse synonyms").
     autocomplete_analyzer = analyzer(
         "autocomplete_analyzer",
         tokenizer="standard",
-        filter=["lowercase", edge_ngram_filter, synonym_filter],
+        filter=["lowercase", edge_ngram_filter],
     )
 
+    # Query: lowercase + synonyms (matches expanded terms against ngram index).
     search_analyzer = analyzer(
         "search_analyzer",
         tokenizer="standard",
@@ -80,7 +83,7 @@ if HAS_ELASTICSEARCH and getattr(settings, "SEARCH_ENABLE_ES", False):
 
         in_stock = fields.BooleanField(attr="available")
         final_price = fields.FloatField()
-        main_product_image = fields.KeywordField(attr="main_product_image")
+        main_product_image = fields.KeywordField()
 
         class Index:
             name = getattr(settings, "SEARCH_ES_INDEX", "tradehut_products")
@@ -103,6 +106,15 @@ if HAS_ELASTICSEARCH and getattr(settings, "SEARCH_ENABLE_ES", False):
             ]
             ignore_signals = True   # we trigger via apps.search.signals
             auto_refresh = False
+
+        def prepare_main_product_image(self, instance: Product) -> str:
+            f = instance.display_main_image
+            name = getattr(f, "name", None) if f else None
+            return str(name) if name else ""
+
+        def prepare_average_rating(self, instance: Product) -> float:
+            v = instance.average_rating
+            return float(v) if v is not None else 0.0
 
         def prepare_final_price(self, instance: Product) -> float | None:
             try:

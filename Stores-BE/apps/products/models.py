@@ -85,6 +85,10 @@ VARIATION_THEMES = [
         "custom",
         "Custom",
     ),  # Fallback for any unique or future combination not covered above.
+    (
+        "all",
+        "All variants (flat list)",
+    ),  # FE: show every variant as a card; no ordered axis UI.
 ]
 
 
@@ -100,6 +104,10 @@ def generate_unique_numbers():
 
 def get_thin():
     return "TH-" + uuid.uuid4().hex[:9]
+
+
+def _image_file_nonempty(f) -> bool:
+    return bool(f and getattr(f, "name", None))
 
 
 class Product(BaseModel):
@@ -217,6 +225,29 @@ class Product(BaseModel):
         if not self.slug:
             self.slug = slugify(f"{self.brand} {self.name}")
         super().save(*args, **kwargs)
+
+    @property
+    def display_main_image(self):
+        """
+        Image shown as the product hero: ``main_product_image`` when set,
+        else the first ``ProductImage`` with type ``main``, then ``supplementary``,
+        then any remaining gallery row (ordered by ``is_main``, then ``created_at``).
+        """
+        if _image_file_nonempty(self.main_product_image):
+            return self.main_product_image
+        qs = (
+            self.product_images.exclude(image="")
+            .exclude(image__isnull=True)
+            .order_by("-is_main", "created_at")
+        )
+        row = qs.filter(image_type="main").first()
+        if row and _image_file_nonempty(row.image):
+            return row.image
+        row = qs.filter(image_type="supplementary").first()
+        if row and _image_file_nonempty(row.image):
+            return row.image
+        row = qs.first()
+        return row.image if row and _image_file_nonempty(row.image) else None
 
     # def clean(self):
     #     # Validate variation theme consistency

@@ -1,37 +1,15 @@
 """
 Initial migration for apps.search.
 
-Creates the ProductEmbedding sidecar. The embedding column adapts to the
-runtime environment:
-
-  * If ``pgvector`` is installed, a 512-dim ``vector`` column is created.
-  * Otherwise, a JSONField fallback is created so signals/tasks keep working
-    (cosine queries are unavailable in fallback mode).
-
-To enable the pgvector path you must also run, once, in your Postgres DB:
-
-    CREATE EXTENSION IF NOT EXISTS vector;
+Embeddings are stored as JSON (list of floats). This avoids requiring the
+PostgreSQL ``vector`` type / ``pgvector`` extension at migrate time; ANN
+queries use application-side cosine similarity (see ``apps.search.views``).
 """
 
 import uuid
 
 import django.db.models.deletion
 from django.db import migrations, models
-
-
-# Mirror apps.search.compat — kept inline so the migration is self-contained.
-try:
-    from pgvector.django import VectorField  # type: ignore
-    _HAS_PGVECTOR = True
-except Exception:  # noqa: BLE001
-    _HAS_PGVECTOR = False
-    VectorField = None  # type: ignore
-
-
-def _embedding_field():
-    if _HAS_PGVECTOR:
-        return VectorField(dimensions=512, null=True, blank=True)
-    return models.JSONField(null=True, blank=True)
 
 
 class Migration(migrations.Migration):
@@ -57,7 +35,7 @@ class Migration(migrations.Migration):
                 ),
                 ("created_at", models.DateTimeField(auto_now=True)),
                 ("updated_at", models.DateTimeField(auto_now=True)),
-                ("image_embedding", _embedding_field()),
+                ("image_embedding", models.JSONField(blank=True, null=True)),
                 (
                     "model_name",
                     models.CharField(

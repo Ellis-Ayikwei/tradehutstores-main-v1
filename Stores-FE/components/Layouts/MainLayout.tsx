@@ -11,7 +11,7 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children }: MainLayoutProps) {
     return (
-        <div className="min-h-screen flex flex-col bg-white dark:from-crypto-bg dark:to-crypto-card">
+        <div className="min-h-screen flex flex-col bg-white dark:bg-gray-950">
             <div className="sticky top-0 z-50">
                 <PromoBar />
                 <TopNav />

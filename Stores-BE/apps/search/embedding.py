@@ -53,6 +53,11 @@ def _embedding_service_url() -> Optional[str]:
     return getattr(settings, "EMBEDDING_SERVICE_URL", None) or None
 
 
+def _join_embedding_service_url(base: str, path: str) -> str:
+    """Build ``…/embed/image`` without ``//`` when *base* ends with ``/``."""
+    return f"{base.strip().rstrip('/')}/{path.lstrip('/')}"
+
+
 # ─── Public API ───────────────────────────────────────────────────────────────
 
 
@@ -68,7 +73,7 @@ def embed_image_bytes(data: bytes):
 
         with httpx.Client(timeout=30) as client:
             resp = client.post(
-                f"{url}/embed/image",
+                _join_embedding_service_url(url, "embed/image"),
                 files={"file": ("image.jpg", data, "image/jpeg")},
             )
         resp.raise_for_status()
@@ -95,7 +100,9 @@ def embed_text(text: str):
         import httpx
 
         with httpx.Client(timeout=30) as client:
-            resp = client.get(f"{url}/embed/text", params={"q": text})
+            resp = client.get(
+                _join_embedding_service_url(url, "embed/text"), params={"q": text}
+            )
         resp.raise_for_status()
         return np.asarray(resp.json()["embedding"], dtype=np.float32)
 

@@ -23,11 +23,13 @@ import { useSelector } from 'react-redux'
 import { RootState } from '@/store'
 import { motion, AnimatePresence } from 'framer-motion'
 import SearchBar from '@/components/common/SearchBar'
+import { useAuthModal } from '@/providers/AuthModalProvider'
 
 export default function Navbar() {
     const [isSearchOpen, setIsSearchOpen] = useState(false)
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const [showSearchBar, setShowSearchBar] = useState(false)
+    const { openAuthModal } = useAuthModal()
     const pathname = usePathname()
     const { theme, toggleTheme } = useTheme()
     const { currency, setCurrency } = useCurrency()
@@ -172,13 +174,15 @@ export default function Navbar() {
                             </Badge>
                         </Link>
 
-                        {/* User Account */}
-                        <Link 
-                            href="/auth/login" 
+                        {/* User Account — opens AuthModal in-place rather than navigating away */}
+                        <button
+                            type="button"
+                            onClick={() => openAuthModal('auto')}
                             className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                            aria-label="Sign in"
                         >
                             <User className="h-5 w-5 text-gray-700 dark:text-gray-200" />
-                        </Link>
+                        </button>
 
                         {/* Mobile Menu Toggle */}
                         <button

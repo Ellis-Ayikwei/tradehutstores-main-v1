@@ -387,178 +387,136 @@ const categories = [
     },
 ]
 
-export default function Categories() {
+export default function CategoryCarousel() {
     const scrollRef = useRef<HTMLDivElement>(null)
     const [canScrollLeft, setCanScrollLeft] = useState(false)
     const [canScrollRight, setCanScrollRight] = useState(true)
-    const [isScrolling, setIsScrolling] = useState(false)
 
     const checkScroll = () => {
         if (scrollRef.current) {
             const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current
-            const hasScroll = scrollWidth > clientWidth
-            setCanScrollLeft(hasScroll && scrollLeft > 10)
-            setCanScrollRight(hasScroll && scrollLeft < scrollWidth - clientWidth - 10)
+            setCanScrollLeft(scrollLeft > 20)
+            setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 20)
         }
     }
 
     const scroll = (direction: 'left' | 'right') => {
-        if (scrollRef.current && !isScrolling) {
-            setIsScrolling(true)
-            const scrollAmount = scrollRef.current.clientWidth * 0.75
+        if (scrollRef.current) {
+            const scrollAmount = scrollRef.current.clientWidth * 0.8
             scrollRef.current.scrollBy({
                 left: direction === 'left' ? -scrollAmount : scrollAmount,
-                behavior: 'auto'
+                behavior: 'smooth'
             })
-            setTimeout(() => {
-                checkScroll()
-                setIsScrolling(false)
-            }, 400)
         }
     }
 
-    // Check scroll on mount and resize
     useEffect(() => {
+        const currentRef = scrollRef.current
         checkScroll()
-        const handleResize = () => {
-            setTimeout(checkScroll, 100)
+        window.addEventListener('resize', checkScroll)
+        currentRef?.addEventListener('scroll', checkScroll)
+        return () => {
+            window.removeEventListener('resize', checkScroll)
+            currentRef?.removeEventListener('scroll', checkScroll)
         }
-        window.addEventListener('resize', handleResize)
-        return () => window.removeEventListener('resize', handleResize)
     }, [])
 
-    // Keyboard navigation
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'ArrowLeft' && canScrollLeft) {
-                e.preventDefault()
-                scroll('left')
-            } else if (e.key === 'ArrowRight' && canScrollRight) {
-                e.preventDefault()
-                scroll('right')
-            }
-        }
-        window.addEventListener('keydown', handleKeyDown)
-        return () => window.removeEventListener('keydown', handleKeyDown)
-    }, [canScrollLeft, canScrollRight])
-
-    // Split categories into two rows
-    const firstRow = categories.slice(0, Math.ceil(categories.length / 2))
-    const secondRow = categories.slice(Math.ceil(categories.length / 2))
-
-    const CategoryCard = ({ category, index }: { category: typeof categories[0], index: number }) => {
-        const Icon = category.icon
-        return (
-            <div className="group relative flex-shrink-0">
-                <Link href={`/products?category=${category.name.toLowerCase().replace(/\s+/g, '-')}`}>
-                    <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full border-2 border-gray-200 dark:border-gray-700 group-hover:border-primary-500 overflow-hidden shadow-md group-hover:shadow-xl">
-                        <div className={`absolute inset-0 bg-gradient-to-br ${category.gradient}`} />
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10" />
-                        <div className="absolute inset-0 flex flex-col items-center justify-center p-3">
-                            <Icon className="h-7 w-7 sm:h-9 sm:w-9 text-white mb-1" />
-                            <h3 className="text-white font-semibold text-[9px] sm:text-[10px] text-center leading-tight mb-0.5 line-clamp-2 drop-shadow-sm">
-                                {category.name}
-                            </h3>
-                            <p className="text-white/80 text-[8px] sm:text-[9px] text-center drop-shadow-sm">
-                                {category.count.toLocaleString()}
-                            </p>
-                        </div>
-                    </div>
-                </Link>
-            </div>
-        )
-    }
-
     return (
-        <section className="py-12 sm:py-16 bg-gray-50 dark:bg-gray-900/50">
-            <div className="container mx-auto px-4">
-                <div className="text-center mb-8 sm:mb-12">
-                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
-                        Shop by Category
-                    </h2>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base lg:text-lg">
-                        Explore our wide range of product categories
-                    </p>
-                </div>
+        <section className="py-16 bg-white dark:bg-slate-950">
+            <div className="container mx-auto px-6">
                 
-                {/* Scrollable Container */}
-                <div className="relative group/container">
-                    {/* Gradient Fade - Left */}
-                    {canScrollLeft && (
-                        <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-20 bg-gradient-to-r from-gray-50 dark:from-gray-900/50 to-transparent z-10 pointer-events-none" />
-                    )}
+                {/* Header Section */}
+                <div className="flex items-end justify-between mb-10">
+                    <div className="space-y-2">
+                        <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
+                            Shop by Category
+                        </h2>
+                        <p className="text-slate-500 dark:text-slate-400 text-lg max-w-2xl">
+                            Explore our meticulously curated collections designed for every lifestyle.
+                        </p>
+                    </div>
+                    
+                    {/* Minimalist Controls */}
+                    <div className="hidden sm:flex items-center gap-3">
+                        <button
+                            onClick={() => scroll('left')}
+                            disabled={!canScrollLeft}
+                            className={`p-3 rounded-full border transition-all duration-300 ${
+                                canScrollLeft 
+                                ? 'border-slate-200 text-slate-900 hover:bg-slate-50 dark:border-slate-800 dark:text-white dark:hover:bg-slate-900 shadow-sm' 
+                                : 'border-slate-100 text-slate-300 cursor-not-allowed dark:border-slate-900 dark:text-slate-700'
+                            }`}
+                        >
+                            <ChevronLeft className="h-5 w-5" />
+                        </button>
+                        <button
+                            onClick={() => scroll('right')}
+                            disabled={!canScrollRight}
+                            className={`p-3 rounded-full border transition-all duration-300 ${
+                                canScrollRight 
+                                ? 'border-slate-200 text-slate-900 hover:bg-slate-50 dark:border-slate-800 dark:text-white dark:hover:bg-slate-900 shadow-sm' 
+                                : 'border-slate-100 text-slate-300 cursor-not-allowed dark:border-slate-900 dark:text-slate-700'
+                            }`}
+                        >
+                            <ChevronRight className="h-5 w-5" />
+                        </button>
+                    </div>
+                </div>
 
-                    {/* Gradient Fade - Right */}
-                    {canScrollRight && (
-                        <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-20 bg-gradient-to-l from-gray-50 dark:from-gray-900/50 to-transparent z-10 pointer-events-none" />
-                    )}
-
-                    {/* Left Arrow */}
-                    <button
-                        onClick={() => scroll('left')}
-                        disabled={!canScrollLeft || isScrolling}
-                        className={`absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white dark:bg-gray-800 shadow-xl border border-gray-200 dark:border-gray-700 flex items-center justify-center ${
-                            canScrollLeft 
-                                ? 'opacity-100 hover:bg-primary-50 dark:hover:bg-gray-700 hover:border-primary-300 dark:hover:border-primary-600' 
-                                : 'opacity-0 pointer-events-none'
-                        }`}
-                        aria-label="Scroll left"
-                    >
-                        <ChevronLeft className={`h-5 w-5 sm:h-6 sm:w-6 ${
-                            canScrollLeft ? 'text-gray-700 dark:text-gray-300' : 'text-gray-400'
-                        }`} />
-                    </button>
-
-                    {/* Right Arrow */}
-                    <button
-                        onClick={() => scroll('right')}
-                        disabled={!canScrollRight || isScrolling}
-                        className={`absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white dark:bg-gray-800 shadow-xl border border-gray-200 dark:border-gray-700 flex items-center justify-center ${
-                            canScrollRight 
-                                ? 'opacity-100 hover:bg-primary-50 dark:hover:bg-gray-700 hover:border-primary-300 dark:hover:border-primary-600' 
-                                : 'opacity-0 pointer-events-none'
-                        }`}
-                        aria-label="Scroll right"
-                    >
-                        <ChevronRight className={`h-5 w-5 sm:h-6 sm:w-6 ${
-                            canScrollRight ? 'text-gray-700 dark:text-gray-300' : 'text-gray-400'
-                        }`} />
-                    </button>
-
-                    {/* Scrollable Content */}
+                {/* Carousel Container */}
+                <div className="relative group">
                     <div 
                         ref={scrollRef}
-                        onScroll={checkScroll}
-                        className="overflow-x-auto"
-                        style={{ 
-                            scrollbarWidth: 'none',
-                            msOverflowStyle: 'none',
-                            WebkitOverflowScrolling: 'touch',
-                        }}
+                        className="flex gap-6 overflow-x-auto pb-8 pt-4 no-scrollbar scroll-smooth snap-x snap-mandatory"
+                        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                     >
-                        <style jsx>{`
-                            div::-webkit-scrollbar {
-                                display: none;
-                            }
-                        `}</style>
-                        <div className="flex flex-col gap-4 px-12 sm:px-16 pb-2">
-                            {/* First Row */}
-                            <div className="flex gap-4 sm:gap-5">
-                                {firstRow.map((category, index) => (
-                                    <CategoryCard key={index} category={category} index={index} />
-                                ))}
-                            </div>
+                        {categories.map((cat, idx) => {
+                            const Icon = cat.icon
+                            return (
+                                <Link 
+                                    key={idx}
+                                    href={`/category/${cat.name.toLowerCase()}`}
+                                    className="flex-shrink-0 snap-start group/card"
+                                >
+                                    <div className="flex flex-col items-center gap-4 w-32 sm:w-40">
+                                        {/* Gradient ring + theme-aware inner squircle */}
+                                        <div
+                                            className={`relative h-24 w-24 sm:h-32 sm:w-32 rounded-[2.5rem] p-[2px] bg-gradient-to-br ${cat.gradient} transition-all duration-500 group-hover/card:rounded-3xl group-hover/card:-translate-y-2 group-hover/card:shadow-xl group-hover/card:shadow-slate-300/40 dark:group-hover/card:shadow-black/50`}
+                                        >
+                                            <div className="flex h-full w-full items-center justify-center rounded-[calc(2.5rem-2px)] bg-slate-50 transition-colors duration-500 group-hover/card:rounded-[calc(1.5rem-2px)] group-hover/card:bg-white dark:rounded-[calc(2.5rem-2px)] dark:bg-slate-900 dark:group-hover/card:rounded-[calc(1.5rem-2px)] dark:group-hover/card:bg-slate-800/90">
+                                                <div className="text-slate-700 transition-transform duration-500 group-hover/card:scale-110 dark:text-slate-200">
+                                                    <Icon strokeWidth={1.5} size={40} className="text-inherit" />
+                                                </div>
+                                            </div>
+                                        </div>
 
-                            {/* Second Row */}
-                            <div className="flex gap-4 sm:gap-5">
-                                {secondRow.map((category, index) => (
-                                    <CategoryCard key={index + firstRow.length} category={category} index={index + firstRow.length} />
-                                ))}
-                            </div>
-                        </div>
+                                        {/* Labels */}
+                                        <div className="text-center">
+                                            <span className="block text-sm font-bold text-slate-900 transition-colors duration-300 dark:text-slate-100 group-hover/card:text-slate-950 dark:group-hover/card:text-white">
+                                                {cat.name}
+                                            </span>
+                                            <span className="mt-1 block text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                                                {cat.count.toLocaleString()} Items
+                                            </span>
+                                        </div>
+                                    </div>
+                                </Link>
+                            )
+                        })}
                     </div>
+
+                    {/* Edge Fades */}
+                    <div className="absolute top-0 bottom-8 left-0 w-20 bg-gradient-to-r from-white dark:from-slate-950 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute top-0 bottom-8 right-0 w-20 bg-gradient-to-l from-white dark:from-slate-950 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
             </div>
+
+            {/* Custom Scrollbar CSS for Webkit */}
+            <style jsx global>{`
+                .no-scrollbar::-webkit-scrollbar {
+                    display: none;
+                }
+            `}</style>
         </section>
     )
 }

@@ -75,7 +75,7 @@ class SearchProductSerializer(serializers.ModelSerializer):
         return self._image_url(obj)
 
     def _image_url(self, obj: Product) -> str | None:
-        img = obj.main_product_image
+        img = obj.display_main_image
         if not img:
             return None
         try:

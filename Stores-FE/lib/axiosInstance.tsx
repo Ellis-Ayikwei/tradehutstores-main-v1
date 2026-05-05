@@ -1,8 +1,8 @@
 import axios from 'axios';
 import authAxiosInstance from './authAxiosInstance';
 import { getCookie } from './authAxiosInstance';
-
-export const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://192.168.100.12:8000/tradehut/api/v1/'
+import { tryOpenAuthModalFromBridge } from './authModalBridge';
+import { apiUrl } from './config';
 
 const axiosInstance = axios.create({
     baseURL: apiUrl,
@@ -93,7 +93,10 @@ axiosInstance.interceptors.response.use(
             } catch (refreshError) {
                 console.error('Token refresh failed:', refreshError);
                 if (typeof window !== 'undefined') {
-                    window.location.href = '/auth/login';
+                    const modalOpened = tryOpenAuthModalFromBridge('login');
+                    if (!modalOpened) {
+                        window.location.href = '/auth/login';
+                    }
                 }
                 return Promise.reject(refreshError);
             }

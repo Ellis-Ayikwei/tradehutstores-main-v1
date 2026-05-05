@@ -292,7 +292,8 @@ const cartSlice = createSlice({
                     product: {
                         id: product.id || product_id,
                         name: product.name,
-                        price: variant?.price || product.price || product.final_price || '0',
+                        price: String(variant?.price ?? product.price ?? product.final_price ?? '0'),
+                        final_price: Number(product.final_price ?? product.price ?? 0) || 0,
                         main_product_image: product.main_product_image || product.image,
                         image: product.image || product.main_product_image,
                         brand: product.brand,

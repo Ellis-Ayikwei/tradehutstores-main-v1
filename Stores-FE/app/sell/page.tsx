@@ -139,7 +139,12 @@ export default function SellerDashboard() {
                     draft: 'Draft',
                     out_of_stock: 'Out of Stock'
                 }
-                return <Badge status={colors[status] as any} text={labels[status]} />
+                return (
+                    <Badge
+                        status={colors[status as keyof typeof colors] as any}
+                        text={labels[status as keyof typeof labels]}
+                    />
+                )
             }
         },
         {
@@ -190,7 +195,12 @@ export default function SellerDashboard() {
                     shipped: 'warning',
                     delivered: 'success'
                 }
-                return <Badge status={colors[status] as any} text={status.charAt(0).toUpperCase() + status.slice(1)} />
+                return (
+                    <Badge
+                        status={colors[status as keyof typeof colors] as any}
+                        text={status.charAt(0).toUpperCase() + status.slice(1)}
+                    />
+                )
             }
         },
         {

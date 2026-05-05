@@ -4,12 +4,14 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import useSignIn from 'react-auth-kit/hooks/useSignIn'
+import { useDispatch } from 'react-redux'
+import type { AppDispatch } from '@/store'
+import { loginUser } from '@/store/authSlice'
 import { 
   Mail, 
   Lock, 
   Eye, 
   EyeOff, 
-  ArrowRight, 
   Chrome, 
   Apple, 
   Facebook, 
@@ -17,7 +19,6 @@ import {
   ChevronRight,
   Info
 } from 'lucide-react'
-import axios from 'axios'
 import Logo from '../../../components/common/logo'
 
 
@@ -69,6 +70,7 @@ const InputField = ({ label, type, value, onChange, placeholder, icon: Icon, isP
 
 export default function LoginPage() {
   const signIn = useSignIn()
+  const dispatch = useDispatch<AppDispatch>()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
@@ -88,18 +90,16 @@ export default function LoginPage() {
 
     setLoading(true)
     try {
-      const response = await axios.post('/api/auth/login', { email, password })
-      if (response.data.token) {
-        signIn({
-          token: response.data.token,
-          expiresIn: 3600,
-          tokenType: 'Bearer',
-          authState: { user: response.data.user },
+      await dispatch(
+        loginUser({
+          email: email.trim(),
+          password,
+          extra: { signIn },
         })
-        router.push('/dashboard')
-      }
-    } catch {
-      setServerError('Access Denied: Invalid Credentials')
+      ).unwrap()
+      router.push('/')
+    } catch (err) {
+      setServerError(typeof err === 'string' ? err : 'Access Denied: Invalid Credentials')
     } finally {
       setLoading(false)
     }
@@ -173,7 +173,7 @@ export default function LoginPage() {
                 error={errors.password} isPassword placeholder="••••••••" 
               />
               <div className="flex justify-end px-1">
-                <Link href="/auth/forgot-password" size={14} className="text-[10px] font-black uppercase tracking-widest text-primary-container hover:underline">
+                <Link href="/auth/forgot-password" className="text-[10px] font-black uppercase tracking-widest text-primary-container hover:underline">
                   Reset Key?
                 </Link>
               </div>

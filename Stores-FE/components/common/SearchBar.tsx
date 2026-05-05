@@ -11,6 +11,7 @@ import {
     saveRecentSearch,
     type AutocompleteHit,
 } from '@/lib/searchClient'
+import { useCurrency } from '@/contexts/CurrencyContext'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -77,16 +78,18 @@ function highlightMatch(text: string, query: string) {
 
 // ─── Dropdown ─────────────────────────────────────────────────────────────────
 
-function SearchDropdown({ query, recent, suggestions, hits, loading, onSelect, onRemoveRecent, variant }: {
+function SearchDropdown({ query, recent, suggestions, hits, loading, onSelect, onSelectProduct, onRemoveRecent, variant }: {
     query: string
     recent: string[]
     suggestions: Suggestion[]
     hits: AutocompleteHit[]
     loading: boolean
     onSelect: (label: string) => void
+    onSelectProduct: (hit: AutocompleteHit) => void
     onRemoveRecent: (label: string) => void
     variant: 'hero' | 'navbar'
 }) {
+    const { formatDisplayPrice } = useCurrency()
     const hasQuery = query.trim().length > 0
 
     const row = `flex items-center gap-3 w-full px-4 py-2.5 text-left hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors group cursor-pointer`
@@ -127,7 +130,7 @@ function SearchDropdown({ query, recent, suggestions, hits, loading, onSelect, o
                 <div className="border-t border-gray-100 dark:border-gray-800 py-1.5">
                     <p className="px-4 pt-1 pb-1.5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-600">Top products</p>
                     {hits.map((p) => (
-                        <button key={p.id} className={row} onClick={() => onSelect(p.name)}>
+                        <button key={p.id} type="button" className={row} onClick={() => onSelectProduct(p)}>
                             {p.image ? (
                                 // eslint-disable-next-line @next/next/no-img-element
                                 <img src={p.image} alt="" className="h-8 w-8 rounded object-cover shrink-0" />
@@ -137,7 +140,7 @@ function SearchDropdown({ query, recent, suggestions, hits, loading, onSelect, o
                             <span className="flex-1 text-sm text-gray-800 dark:text-gray-200 truncate">{p.name}</span>
                             {typeof p.price === 'number' && (
                                 <span className="shrink-0 text-xs font-semibold text-gray-700 dark:text-gray-300">
-                                    {p.price.toLocaleString(undefined, { style: 'currency', currency: 'USD' })}
+                                    {formatDisplayPrice(p.price ?? 0)}
                                 </span>
                             )}
                         </button>
@@ -269,6 +272,13 @@ export default function SearchBar({ variant = 'hero', className = '' }: SearchBa
         router.push(`/products?search=${encodeURIComponent(t)}`)
     }, [router])
 
+    const navigateToProduct = useCallback((hit: AutocompleteHit) => {
+        const id = String(hit.id ?? '').trim()
+        if (!id) return
+        setOpen(false)
+        router.push(`/products/${encodeURIComponent(id)}`)
+    }, [router])
+
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') navigate(query)
         if (e.key === 'Escape') { setOpen(false); inputRef.current?.blur() }
@@ -333,6 +343,7 @@ export default function SearchBar({ variant = 'hero', className = '' }: SearchBa
                             hits={apiHits}
                             loading={loading}
                             onSelect={navigate}
+                            onSelectProduct={navigateToProduct}
                             onRemoveRecent={handleRemoveRecent}
                             variant="navbar"
                         />
@@ -404,6 +415,7 @@ export default function SearchBar({ variant = 'hero', className = '' }: SearchBa
                         hits={apiHits}
                         loading={loading}
                         onSelect={navigate}
+                        onSelectProduct={navigateToProduct}
                         onRemoveRecent={handleRemoveRecent}
                         variant="hero"
                     />

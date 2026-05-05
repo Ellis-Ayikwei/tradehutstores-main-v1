@@ -16,6 +16,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import MainLayout from "@/components/Layouts/MainLayout";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -284,14 +285,6 @@ const QUICK_STATS = [
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-function formatAmount(n: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  }).format(n);
-}
-
 function daysLeftBadge(days: number): string {
   if (days <= 5) return "bg-error-container text-on-error-container";
   if (days <= 14) return "bg-bid-amber/10 text-bid-amber";
@@ -333,6 +326,9 @@ function SideLink({
 
 /** Active return request card */
 function RequestCard({ req }: { req: ReturnRequest }) {
+  const { formatDisplayPrice } = useCurrency();
+  const formatAmount = (n: number) => formatDisplayPrice(n);
+
   return (
     <div className="bg-surface-container-lowest rounded-2xl p-5 md:p-6 shadow-card border border-outline-variant/15 flex flex-col md:flex-row gap-5 md:gap-6 relative overflow-hidden group">
       {/* Decorative blob */}
@@ -412,6 +408,9 @@ function RequestCard({ req }: { req: ReturnRequest }) {
 
 /** Returnable item card */
 function ReturnableCard({ item }: { item: ReturnableItem }) {
+  const { formatDisplayPrice } = useCurrency();
+  const formatAmount = (n: number) => formatDisplayPrice(n);
+
   return (
     <div className="group cursor-pointer">
       <div className="bg-surface-container-low aspect-[4/5] rounded-3xl overflow-hidden relative mb-4">
@@ -485,6 +484,9 @@ function FaqRow({ item }: { item: FaqItem }) {
 // Page
 // ---------------------------------------------------------------------------
 export default function ReturnsPage() {
+  const { formatDisplayPrice } = useCurrency();
+  const formatAmount = (n: number) => formatDisplayPrice(n);
+
   return (
     <MainLayout>
       <div className="min-h-screen bg-surface text-on-surface font-body">

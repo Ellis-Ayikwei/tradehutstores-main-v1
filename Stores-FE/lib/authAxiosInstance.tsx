@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { apiUrl } from './config';
 
 // const authApiUrl = 'https://127.0.0.1/sc/api/v1';
-export const authApiUrl = 'http://127.0.0.1:8000/alumni/api/v1/auth';
+export const authApiUrl = `${apiUrl}auth/`;
 //const authApiUrl = 'http://172.20.10.4:5004/alumni/api/v1/auth';
 
 export const getCookie = (name: string): string | undefined => {

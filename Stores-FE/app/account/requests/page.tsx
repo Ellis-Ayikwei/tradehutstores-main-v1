@@ -11,30 +11,19 @@
  * // TODO: extract to shared <AccountSidebar>
  */
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import MainLayout from "@/components/Layouts/MainLayout";
+import { AccountMobileHeader } from "@/components/account/AccountShell";
 import {
-  LayoutDashboard,
-  ShoppingBag,
   Gavel,
   FileText,
-  Heart,
-  MapPin,
-  CreditCard,
-  Bell,
-  Shield,
-  LogOut,
   ArrowRight,
   Plus,
   ChevronLeft,
   ChevronRight,
   Clock,
   User,
-  Store,
-  Menu,
-  X,
 } from "lucide-react";
 
 // ---------------------------------------------------------------------------
@@ -434,250 +423,15 @@ function EmptyState({ status }: { status: RFQStatus }) {
 // ---------------------------------------------------------------------------
 export default function MyRequestsPage() {
   const [activeTab, setActiveTab] = useState<RFQStatus>("open");
-  const [drawerOpen, setDrawerOpen] = useState(false);
 
   // TODO: fetch from /api/rfqs/?mine=true&status=... (replace inline data below)
   const filteredRfqs = DEMO_RFQS.filter((r) => r.status === activeTab);
 
-  useEffect(() => {
-    if (!drawerOpen) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setDrawerOpen(false);
-    };
-    document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
-  }, [drawerOpen]);
-
   return (
-    <MainLayout>
-      <div className="min-h-screen bg-surface text-on-surface font-body">
-        {/*
-         * NOTE: Global <TopNav> is rendered by MainLayout — do NOT add
-         * another nav here. pt-20 clears the sticky nav bar.
-         */}
+    <>
+      <AccountMobileHeader title="My Requests" />
 
-        {/* Mobile sidebar drawer overlay */}
-        {drawerOpen && (
-          <div
-            className="fixed inset-0 z-40 bg-inverse-surface/40 backdrop-blur-sm lg:hidden"
-            onClick={() => setDrawerOpen(false)}
-            aria-hidden="true"
-          />
-        )}
-        {/* Mobile sidebar drawer panel */}
-        <div
-          className={`fixed left-0 top-0 h-full w-72 z-50 bg-surface-container-lowest shadow-card flex flex-col gap-2 p-6 overflow-y-auto no-scrollbar transition-transform duration-300 lg:hidden ${
-            drawerOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
-          aria-label="Account navigation drawer"
-        >
-          <div className="mb-8 flex items-center justify-between">
-            <div>
-              <h2 className="font-syne text-xl font-bold text-on-surface tracking-tight">
-                My Account
-              </h2>
-              <p className="text-xs text-on-surface-variant font-medium mt-1 opacity-60">
-                Manage your TradeHut profile
-              </p>
-            </div>
-            <button
-              onClick={() => setDrawerOpen(false)}
-              aria-label="Close menu"
-              className="p-2 rounded-xl hover:bg-surface-container transition-colors text-on-surface-variant"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-          <nav className="flex flex-col gap-1 flex-1">
-            {[
-              { href: "/account", Icon: LayoutDashboard, label: "Overview" },
-              { href: "/account/orders", Icon: ShoppingBag, label: "Orders" },
-              { href: "/account/bids", Icon: Gavel, label: "Bids & Auctions" },
-              { href: "/account/messages", Icon: Bell, label: "Messages" },
-              { href: "/account/wishlist", Icon: Heart, label: "Wishlist" },
-              { href: "/account/addresses", Icon: MapPin, label: "Addresses" },
-              { href: "/account/payment-methods", Icon: CreditCard, label: "Payment Methods" },
-              { href: "/account/notifications", Icon: Bell, label: "Notifications" },
-              { href: "/account/security", Icon: Shield, label: "Security" },
-            ].map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setDrawerOpen(false)}
-                className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-              >
-                <link.Icon className="w-5 h-5" />
-                <span className="font-body uppercase tracking-widest text-[10px] font-bold">{link.label}</span>
-              </Link>
-            ))}
-            <Link
-              href="/account/requests"
-              onClick={() => setDrawerOpen(false)}
-              className="bg-surface-container-lowest text-primary-container shadow-card rounded-xl px-4 py-3 flex items-center gap-3 transition-all hover:translate-x-1 duration-200"
-            >
-              <FileText className="w-5 h-5" />
-              <span className="font-body uppercase tracking-widest text-[10px] font-bold">My Requests</span>
-            </Link>
-          </nav>
-          <div className="mt-auto pt-6 border-t border-surface-container-highest/30">
-            <Link
-              href="/auth/login"
-              className="w-full bg-surface-container-low text-on-surface-variant font-bold py-3 rounded-xl hover:bg-error-container hover:text-error transition-all flex items-center justify-center gap-2 active:scale-95"
-            >
-              <LogOut className="w-4 h-4" />
-              Sign Out
-            </Link>
-          </div>
-        </div>
-
-        <div className="pt-20 pb-24 md:pb-12 px-4 md:px-6 lg:px-8 max-w-screen-2xl mx-auto">
-          <div className="flex flex-col lg:flex-row gap-4 md:gap-6 lg:gap-8">
-
-            {/* ----------------------------------------------------------------
-             * SIDEBAR — account nav
-             * TODO: extract to shared <AccountSidebar>
-             * ---------------------------------------------------------------- */}
-            <aside className="hidden lg:flex md:sticky md:top-24 md:h-[calc(100vh-6rem)] w-72 flex-shrink-0 flex-col gap-2 p-6 bg-surface rounded-2xl overflow-y-auto no-scrollbar">
-              <div className="mb-8">
-                <h2 className="font-syne text-xl font-bold text-on-surface tracking-tight">
-                  Account Settings
-                </h2>
-                <p className="text-xs text-on-surface-variant font-medium mt-1 opacity-60">
-                  Manage your TradeHut profile
-                </p>
-              </div>
-
-              <nav className="flex flex-col gap-1 flex-1">
-                {/* Overview */}
-                <Link
-                  href="/account"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <LayoutDashboard className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Overview
-                  </span>
-                </Link>
-
-                {/* Orders */}
-                <Link
-                  href="/account/orders"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <ShoppingBag className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Orders
-                  </span>
-                </Link>
-
-                {/* Bids & Auctions */}
-                <Link
-                  href="/account/bids"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <Gavel className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Bids &amp; Auctions
-                  </span>
-                </Link>
-
-                {/* My Requests — ACTIVE */}
-                <Link
-                  href="/account/requests"
-                  className="bg-surface-container-lowest text-primary-container shadow-card rounded-xl px-4 py-3 flex items-center gap-3 transition-all hover:translate-x-1 duration-200"
-                >
-                  <FileText className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    My Requests
-                  </span>
-                </Link>
-
-                {/* Wishlist */}
-                <Link
-                  href="/account/wishlist"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <Heart className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Wishlist
-                  </span>
-                </Link>
-
-                {/* Addresses */}
-                <Link
-                  href="/account/addresses"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <MapPin className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Addresses
-                  </span>
-                </Link>
-
-                {/* Payment Methods */}
-                <Link
-                  href="/account/payment-methods"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <CreditCard className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Payment Methods
-                  </span>
-                </Link>
-
-                {/* Notifications */}
-                <Link
-                  href="/account/notifications"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <Bell className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Notifications
-                  </span>
-                </Link>
-
-                {/* Security */}
-                <Link
-                  href="/account/security"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <Shield className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Security
-                  </span>
-                </Link>
-              </nav>
-
-              {/* Logout */}
-              <div className="mt-auto pt-6 border-t border-surface-container-highest/30">
-                <Link
-                  href="/auth/login"
-                  className="w-full bg-surface-container-low text-on-surface-variant font-bold py-3 rounded-xl hover:bg-error-container hover:text-error transition-all flex items-center justify-center gap-2 active:scale-95"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Logout
-                </Link>
-              </div>
-            </aside>
-
-            {/* ----------------------------------------------------------------
-             * MAIN CONTENT
-             * ---------------------------------------------------------------- */}
             <section className="flex-1 min-w-0">
-
-              {/* Mobile menu trigger */}
-              <div className="lg:hidden flex items-center gap-3 mb-4">
-                <button
-                  onClick={() => setDrawerOpen(true)}
-                  aria-label="Open account menu"
-                  className="p-2 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors text-on-surface h-10 w-10 flex items-center justify-center"
-                >
-                  <Menu className="w-5 h-5" />
-                </button>
-                <span className="font-syne font-bold text-sm text-on-surface-variant uppercase tracking-widest">
-                  My Requests
-                </span>
-              </div>
 
               {/* Page header */}
               <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 md:mb-12">
@@ -778,46 +532,6 @@ export default function MyRequestsPage() {
                 </>
               )}
             </section>
-          </div>
-        </div>
-
-        {/* ----------------------------------------------------------------
-         * MOBILE BOTTOM NAV
-         * Replaces the sidebar on small screens (< lg).
-         * TODO: extract to a shared <AccountBottomNav> or replace with the
-         * global mobile nav once that component exists.
-         * ---------------------------------------------------------------- */}
-        <nav className="lg:hidden fixed bottom-0 left-0 w-full bg-surface-container-lowest shadow-[0_-4px_20px_0_rgba(38,24,19,0.06)] px-6 py-3 flex justify-around items-center z-50">
-          <Link
-            href="/"
-            className="flex flex-col items-center gap-1 text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity min-w-[44px] py-1"
-          >
-            <Store className="w-6 h-6" />
-            <span className="text-[10px] font-bold">Home</span>
-          </Link>
-          <Link
-            href="/account/bids"
-            className="flex flex-col items-center gap-1 text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity min-w-[44px] py-1"
-          >
-            <Gavel className="w-6 h-6" />
-            <span className="text-[10px] font-bold">Bids</span>
-          </Link>
-          <Link
-            href="/account/requests"
-            className="flex flex-col items-center gap-1 text-tertiary min-w-[44px] py-1"
-          >
-            <FileText className="w-6 h-6 fill-current" />
-            <span className="text-[10px] font-bold">RFQs</span>
-          </Link>
-          <Link
-            href="/account"
-            className="flex flex-col items-center gap-1 text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity min-w-[44px] py-1"
-          >
-            <User className="w-6 h-6" />
-            <span className="text-[10px] font-bold">Profile</span>
-          </Link>
-        </nav>
-      </div>
-    </MainLayout>
+    </>
   );
 }

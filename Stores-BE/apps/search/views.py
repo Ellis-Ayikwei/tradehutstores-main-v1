@@ -53,7 +53,7 @@ def _es_enabled() -> bool:
 
 
 def _vector_enabled() -> bool:
-    return HAS_PGVECTOR and getattr(settings, "SEARCH_ENABLE_EMBEDDINGS", False)
+    return getattr(settings, "SEARCH_ENABLE_EMBEDDINGS", False)
 
 
 def _base_queryset():
@@ -302,7 +302,8 @@ def _autocomplete_orm(request, q: str):
         suggestions.append(p.name)
         seen.add(p.name.lower())
         try:
-            image = p.main_product_image.url if p.main_product_image else None
+            disp = p.display_main_image
+            image = disp.url if disp else None
         except Exception:  # noqa: BLE001
             image = None
         products_payload.append(
@@ -546,35 +547,81 @@ def _vector_search(
     limit: int = PAGE_SIZE,
     threshold: float = SIMILARITY_THRESHOLD,
 ):
-    """Cosine-similarity search over ``ProductEmbedding`` with pgvector."""
-    from pgvector.django import CosineDistance  # type: ignore
-
+    """Cosine similarity over ``ProductEmbedding`` — pgvector SQL when available."""
     from .models import ProductEmbedding
 
-    qs = (
-        ProductEmbedding.objects.exclude(image_embedding__isnull=True)
-        .select_related(
-            "product", "product__category", "product__brand", "product__default_variant"
+    if HAS_PGVECTOR:
+        from pgvector.django import CosineDistance  # type: ignore
+
+        qs = (
+            ProductEmbedding.objects.exclude(image_embedding__isnull=True)
+            .select_related(
+                "product",
+                "product__category",
+                "product__brand",
+                "product__default_variant",
+            )
+            .annotate(distance=CosineDistance("image_embedding", query_vector))
+            .order_by("distance")
         )
-        .annotate(distance=CosineDistance("image_embedding", query_vector))
-        .order_by("distance")
+        if exclude_product_id:
+            qs = qs.exclude(product_id=exclude_product_id)
+
+        results = []
+        for emb in qs[: limit * 3]:
+            if emb.distance is None:
+                continue
+            if emb.distance > threshold:
+                break
+            product_payload = SearchProductSerializer(
+                emb.product, context={"request": request}
+            ).data
+            product_payload["similarity"] = round(1 - float(emb.distance), 3)
+            results.append(product_payload)
+            if len(results) >= limit:
+                break
+        return results
+
+    import numpy as np
+
+    q = np.asarray(query_vector, dtype=np.float32).reshape(-1)
+    qn = np.linalg.norm(q)
+    if qn == 0:
+        return []
+    q = q / qn
+
+    qs = ProductEmbedding.objects.exclude(image_embedding__isnull=True).select_related(
+        "product", "product__category", "product__brand", "product__default_variant"
     )
     if exclude_product_id:
         qs = qs.exclude(product_id=exclude_product_id)
 
-    results = []
-    for emb in qs[: limit * 2]:
-        if emb.distance is None:
+    scored = []
+    for emb in qs.iterator(chunk_size=256):
+        raw = emb.image_embedding
+        if raw is None:
             continue
-        if emb.distance > threshold:
-            break
+        v = np.asarray(raw, dtype=np.float32).reshape(-1)
+        if v.size != q.size:
+            continue
+        vn = np.linalg.norm(v)
+        if vn == 0:
+            continue
+        v = v / vn
+        distance = 1.0 - float(np.dot(q, v))
+        if distance > threshold:
+            continue
+        scored.append((distance, emb))
+
+    scored.sort(key=lambda x: x[0])
+
+    results = []
+    for distance, emb in scored[:limit]:
         product_payload = SearchProductSerializer(
             emb.product, context={"request": request}
         ).data
-        product_payload["similarity"] = round(1 - float(emb.distance), 3)
+        product_payload["similarity"] = round(1 - float(distance), 3)
         results.append(product_payload)
-        if len(results) >= limit:
-            break
     return results
 
 
@@ -613,7 +660,7 @@ def admin_stats(request):
     products_total = Product.objects.count()
     embeddings_total = ProductEmbedding.objects.exclude(
         image_embedding__isnull=True
-    ).count() if HAS_PGVECTOR else 0
+    ).count()
 
     coverage = (
         round((embeddings_total / products_total) * 100, 2)

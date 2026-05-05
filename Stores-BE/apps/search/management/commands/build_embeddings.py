@@ -24,9 +24,10 @@ from __future__ import annotations
 import time
 
 from django.core.management.base import BaseCommand
+from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 
-from apps.products.models import Product
+from apps.products.models import Product, ProductImage
 
 from apps.search.compat import HAS_PGVECTOR
 from apps.search.embedding import embed_image_bytes, hash_image_bytes
@@ -72,8 +73,18 @@ class Command(BaseCommand):
                 )
             )
 
-        qs = Product.objects.exclude(main_product_image__exact="").exclude(
-            main_product_image__isnull=True
+        has_gallery = Exists(
+            ProductImage.objects.filter(product_id=OuterRef("pk"))
+            .exclude(image="")
+            .exclude(image__isnull=True)
+        )
+        nonempty_main = Q(main_product_image__isnull=False) & ~Q(
+            main_product_image__exact=""
+        )
+        qs = (
+            Product.objects.filter(nonempty_main | has_gallery)
+            .distinct()
+            .prefetch_related("product_images")
         )
 
         if options["product_ids"]:
@@ -103,10 +114,11 @@ class Command(BaseCommand):
         for batch_start in range(0, total, batch_size):
             batch = list(qs[batch_start : batch_start + batch_size])
             for product in batch:
-                if not product.main_product_image:
+                img = product.display_main_image
+                if not img:
                     continue
                 try:
-                    image_bytes = _fetch_image_bytes(product.main_product_image)
+                    image_bytes = _fetch_image_bytes(img)
                 except Exception as exc:  # noqa: BLE001
                     failed += 1
                     self.stderr.write(f"  ✗ product {product.pk}: fetch failed ({exc})")
@@ -153,7 +165,7 @@ class Command(BaseCommand):
 
         if HAS_PGVECTOR:
             self.stdout.write(
-                "\nNext step: ensure the pgvector index exists in Postgres:\n"
+                "\nOptional ANN index (PostgreSQL + pgvector), after migrate:\n"
                 "  CREATE INDEX IF NOT EXISTS product_embedding_idx\n"
                 "    ON product_embeddings\n"
                 "    USING ivfflat (image_embedding vector_cosine_ops)\n"

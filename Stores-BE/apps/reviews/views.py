@@ -21,6 +21,13 @@ class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = [ReviewPermission]
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        product_id = self.request.query_params.get("product")
+        if product_id:
+            qs = qs.filter(product_id=product_id)
+        return qs.order_by("-created_at")
+
     def perform_create(self, serializer):
         if serializer.validated_data.get("user") is None:
             serializer.save(user=self.request.user)

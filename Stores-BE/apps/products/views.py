@@ -1,8 +1,9 @@
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django.db.models import Q
+from django.db.models import Prefetch, Q
 
+from apps.catalog.models import AttributeValue
 from .models import (
     Product,
     ProductVariant,
@@ -15,6 +16,7 @@ from .serializers import (
     ProductSerializer,
     ProductCatalogSerializer,
     ProductVariantSerializer,
+    ProductVariantWriteSerializer,
     ProductImageSerializer,
     InventorySerializer,
     ProductDiscountSerializer,
@@ -84,13 +86,31 @@ class ProductViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["get"])
     def variants(self, request, pk=None):
         product = self.get_object()
-        serializer = ProductVariantSerializer(product.variants.all(), many=True)
+        qs = product.variants.prefetch_related(
+            Prefetch(
+                "attribute_values",
+                queryset=AttributeValue.objects.select_related("attribute"),
+            ),
+            Prefetch(
+                "product_variant_images",
+                queryset=ProductImage.objects.exclude(image="")
+                .exclude(image__isnull=True)
+                .order_by("-is_main", "created_at"),
+            ),
+        )
+        serializer = ProductVariantSerializer(
+            qs, many=True, context={"request": request}
+        )
         return Response(serializer.data)
 
     @action(detail=True, methods=["get"])
     def images(self, request, pk=None):
         product = self.get_object()
-        serializer = ProductImageSerializer(product.product_images.all(), many=True)
+        serializer = ProductImageSerializer(
+            product.product_images.all(),
+            many=True,
+            context={"request": request},
+        )
         return Response(serializer.data)
 
     @action(detail=True, methods=["get"])
@@ -134,6 +154,11 @@ class ProductVariantViewSet(viewsets.ModelViewSet):
     serializer_class = ProductVariantSerializer
     permission_classes = [StaffWritePermission]
 
+    def get_serializer_class(self):
+        if self.request.method in ("POST", "PUT", "PATCH"):
+            return ProductVariantWriteSerializer
+        return ProductVariantSerializer
+
 
 class ProductImageViewSet(viewsets.ModelViewSet):
     queryset = ProductImage.objects.select_related("product", "product_variant")
@@ -146,6 +171,13 @@ class InventoryViewSet(viewsets.ModelViewSet):
     serializer_class = InventorySerializer
     permission_classes = [StaffWritePermission]
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        product_id = self.request.query_params.get("product")
+        if product_id:
+            qs = qs.filter(product_id=product_id)
+        return qs.order_by("-created_at")
+
 
 class ProductDiscountViewSet(viewsets.ModelViewSet):
     queryset = ProductDiscount.objects.select_related("product")
@@ -157,3 +189,10 @@ class ProductKeyFeatureViewSet(viewsets.ModelViewSet):
     queryset = ProductKeyFeature.objects.select_related("product")
     serializer_class = ProductKeyFeatureSerializer
     permission_classes = [StaffWritePermission]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        product_id = self.request.query_params.get("product")
+        if product_id:
+            qs = qs.filter(product_id=product_id)
+        return qs.order_by("id")

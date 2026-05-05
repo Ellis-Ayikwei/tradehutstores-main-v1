@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import '@/styles/globals.css'
 import StoreProvider from '@/providers/StoreProvider'
 import AuthProvider from '@/providers/AuthProvider'
+import { AuthModalProvider } from '@/providers/AuthModalProvider'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import { CurrencyProvider } from '@/contexts/CurrencyContext'
 
@@ -24,9 +25,11 @@ export default function RootLayout({
                 <ThemeProvider>
                     <StoreProvider>
                         <AuthProvider>
-                            <CurrencyProvider>
-                                {children}
-                            </CurrencyProvider>
+                            <AuthModalProvider>
+                                <CurrencyProvider>
+                                    {children}
+                                </CurrencyProvider>
+                            </AuthModalProvider>
                         </AuthProvider>
                     </StoreProvider>
                 </ThemeProvider>

@@ -1,5 +1,5 @@
 from rest_framework import viewsets, permissions
-from django.db.models import Q
+from django.db.models import Q, Count, Prefetch
 from .models import Category, SubCategory, Brand, Attribute, AttributeValue
 from .serializers import (
     CategorySerializer,
@@ -15,10 +15,36 @@ class PublicReadOnly(permissions.BasePermission):
         return True
 
 
+def _parse_include_subcategories(request) -> bool:
+    """True when ``?include=subcategories`` or ``?include=foo,subcategories``."""
+    raw = (request.query_params.get("include") or "").strip()
+    if not raw:
+        return False
+    parts = {p.strip().lower() for p in raw.split(",") if p.strip()}
+    return "subcategories" in parts
+
+
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [PublicReadOnly]
+
+    def get_queryset(self):
+        qs = Category.objects.all()
+        if _parse_include_subcategories(self.request):
+            sub_qs = SubCategory.objects.select_related("category").annotate(
+                active_product_count=Count(
+                    "product", filter=Q(product__status="Active")
+                ),
+            )
+            qs = qs.prefetch_related(
+                Prefetch("subcategory_set", queryset=sub_qs.order_by("sub_category_name"))
+            )
+        return qs
+
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+        ctx["include_subcategories"] = _parse_include_subcategories(self.request)
+        return ctx
 
 
 class SubCategoryViewSet(viewsets.ReadOnlyModelViewSet):
@@ -26,7 +52,9 @@ class SubCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [PublicReadOnly]
 
     def get_queryset(self):
-        qs = SubCategory.objects.select_related("category")
+        qs = SubCategory.objects.select_related("category").annotate(
+            active_product_count=Count("product", filter=Q(product__status="Active")),
+        )
         category_id = self.request.query_params.get("category")
         if category_id:
             qs = qs.filter(category_id=category_id)

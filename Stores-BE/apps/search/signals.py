@@ -18,7 +18,7 @@ from django.conf import settings
 from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 
-from apps.products.models import Product
+from apps.products.models import Product, ProductImage
 
 from .tasks import (
     deindex_product_task,
@@ -35,7 +35,7 @@ def _on_product_saved(sender, instance, created, **_kwargs):
         index_product_task.delay(instance.pk)
 
     if getattr(settings, "SEARCH_ENABLE_EMBEDDINGS", False):
-        current = getattr(instance, "main_product_image", None)
+        current = getattr(instance, "display_main_image", None)
         old = getattr(instance, "_search_old_image", None)
         if created or (str(current) != str(old)):
             generate_product_embedding.delay(instance.pk)
@@ -45,12 +45,27 @@ def _on_product_saved(sender, instance, created, **_kwargs):
 def _capture_old_image(sender, instance, **_kwargs):
     if instance.pk:
         try:
-            previous = Product.objects.only("main_product_image").get(pk=instance.pk)
-            instance._search_old_image = previous.main_product_image
+            previous = Product.objects.prefetch_related("product_images").get(
+                pk=instance.pk
+            )
+            instance._search_old_image = previous.display_main_image
         except Product.DoesNotExist:
             instance._search_old_image = None
     else:
         instance._search_old_image = None
+
+
+@receiver(post_save, sender=ProductImage)
+@receiver(post_delete, sender=ProductImage)
+def _on_product_image_changed(sender, instance, **_kwargs):
+    """Gallery rows affect ``display_main_image``; refresh search index / embeddings."""
+    pid = getattr(instance, "product_id", None)
+    if not pid:
+        return
+    if getattr(settings, "SEARCH_ENABLE_ES", False):
+        index_product_task.delay(pid)
+    if getattr(settings, "SEARCH_ENABLE_EMBEDDINGS", False):
+        generate_product_embedding.delay(pid)
 
 
 @receiver(post_delete, sender=Product)

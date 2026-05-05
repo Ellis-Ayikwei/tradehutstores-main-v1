@@ -37,6 +37,7 @@ import {
 } from 'lucide-react'
 import MainLayout from '@/components/Layouts/MainLayout'
 import Pagination from '@/components/common/Pagination'
+import { useCurrency } from '@/contexts/CurrencyContext'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -190,10 +191,6 @@ const PAGE_SIZE = 8
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function formatPrice(n: number) {
-  return n.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 })
-}
-
 function StarRating({ rating, count }: { rating: number; count: number }) {
   return (
     <div className="flex items-center gap-1">
@@ -246,6 +243,9 @@ function ListingBadge({ type, isLive }: { type: ListingType; isLive?: boolean })
 // ─── Price block ──────────────────────────────────────────────────────────────
 
 function PriceBlock({ product }: { product: Product }) {
+  const { formatDisplayPrice } = useCurrency()
+  const formatPrice = (n: number) => formatDisplayPrice(n)
+
   if (product.listingType === 'rfq') {
     return (
       <Link
@@ -357,6 +357,9 @@ function GridCard({ product }: { product: Product }) {
 // ─── List row card (from search_results_2 — horizontal layout with more meta) ─
 
 function ListCard({ product }: { product: Product }) {
+  const { formatDisplayPrice } = useCurrency()
+  const formatPrice = (n: number) => formatDisplayPrice(n)
+
   return (
     <article className="group bg-surface-container-lowest rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden flex flex-col sm:flex-row">
       {/* Image */}
@@ -494,6 +497,7 @@ function ListCard({ product }: { product: Product }) {
 
 function FilterSidebarContent() {
   const [resetKey, setResetKey] = useState(0)
+  const { currency } = useCurrency()
 
   return (
     <form
@@ -525,7 +529,7 @@ function FilterSidebarContent() {
       {/* Price Range */}
       <div>
         <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60 mb-3">
-          Price Range (USD)
+          Price Range ({currency})
         </p>
         {/* Decorative range track — TODO: wire to real range input */}
         <div className="px-2 mb-2">
@@ -642,11 +646,12 @@ function FilterSidebarContent() {
 // ─── Sponsored bento cards (from search_results_1 + _2) ───────────────────────
 
 function SponsoredRow() {
+  const { formatDisplayPrice } = useCurrency()
   const items = [
     {
       title: 'VORTEX PRO 900',
       desc: 'High-frequency industrial oscillator featuring dual-core magnetic stabilization and titanium housing.',
-      price: '$12,450.00',
+      priceUsd: 12450,
       slug: 'vortex-pro-900',
       imgUrl:
         'https://lh3.googleusercontent.com/aida-public/AB6AXuAIkLFUiYQ3gBcT4e-z07-oGTYBQCvWDS5Tc_GlQDvrMVcIJbhAI1cSV2FQ54jY0yveWrByCFvzmgJU7f-inPGjxVcn0KRCyCUI0BcY-Mp7TkXIuQZDyaYrrvNDFt82mOyNhOKInTtsZvKjdJESs4p6sWzb3cQq6EsahavcYd6zuPu4Q9NrY3-kiSrST_YRAoVCQYIvBZzGkJjGdKBSWOWVO-sDwJlcmkJA48Bk8LYzcpXFu33KIai-zvZbNsNayaq2-c6pmHVHMrc',
@@ -655,7 +660,7 @@ function SponsoredRow() {
     {
       title: 'AURA SYNC-X',
       desc: 'Modular synchronization array for large-scale installations and technical labs.',
-      price: '$8,900.00',
+      priceUsd: 8900,
       slug: 'aura-sync-x',
       imgUrl:
         'https://lh3.googleusercontent.com/aida-public/AB6AXuAvfO9ibLVsraEpcJLgrncqy7bDXWiaEFPCWebceg8A9A-nQ_SBihIArSTdSLkHgorsdj_BEXlPKTH1l32OyyBqBQjjz1hAetcSPaK55nZVB5Yu7jemfHA26fVYgGa_gPr7OEP4Dnh5Il7ByDl-SddPnB2f-_gJrMQ8BKzAcdL9ENx42rxQ-SDybGotz7gBxkkjk2Y9ByMcsTR_GGeBD_hvP4BqqxTMDFaNinaVlt9kvv583n46Wh3qA8PNXQlbqxzmehvZlqabbLI',
@@ -703,7 +708,7 @@ function SponsoredRow() {
               </div>
               <div className="flex items-end justify-between mt-4 sm:mt-0">
                 <div className="font-mono text-xl font-bold tracking-tight text-primary">
-                  {item.price}
+                  {formatDisplayPrice(item.priceUsd)}
                 </div>
                 <span className="h-12 w-12 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-lg shadow-primary/20 transition-transform group-hover:scale-110">
                   <ArrowUpRight className="w-5 h-5" />

@@ -4,6 +4,7 @@ import themeConfigSlice from './themeConfigSlice'
 import cartSlice from './cartSlice'
 import wishListSlice from './wishListSlice'
 import checkoutSlice from './checkoutSlice'
+import authReducer from './authSlice'
 
 export const store = configureStore({
     reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
         cart: cartSlice,
         wishlist: wishListSlice,
         checkout: checkoutSlice,
+        auth: authReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({

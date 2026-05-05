@@ -84,8 +84,10 @@ def generate_product_embedding(self, product_id):
         from .embedding import embed_image_bytes, hash_image_bytes
         from .models import ProductEmbedding
 
-        product = Product.objects.only("id", "main_product_image").get(pk=product_id)
-        image_field = product.main_product_image
+        product = Product.objects.prefetch_related(
+            "product_images",
+        ).get(pk=product_id)
+        image_field = product.display_main_image
         if not image_field:
             return
 

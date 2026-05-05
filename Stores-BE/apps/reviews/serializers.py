@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from apps.users.serializers import UserBasicSerializer
 from .models import Review, ProductReviewImage
 
 
@@ -11,9 +12,10 @@ class ProductReviewImageSerializer(serializers.ModelSerializer):
 
 class ReviewSerializer(serializers.ModelSerializer):
     images = ProductReviewImageSerializer(source="productreviewimage_set", many=True, read_only=True)
+    user = UserBasicSerializer(read_only=True)
 
     class Meta:
         model = Review
         fields = ["id", "product", "user", "rating", "comment", "verified", "images", "created_at", "updated_at"]
-        read_only_fields = ["id", "created_at", "updated_at"]
+        read_only_fields = ["id", "user", "created_at", "updated_at"]
 

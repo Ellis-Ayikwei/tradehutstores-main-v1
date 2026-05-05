@@ -13,18 +13,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import MainLayout from "@/components/Layouts/MainLayout";
+import { AccountMobileHeader } from "@/components/account/AccountShell";
 import {
-  LayoutDashboard,
-  ShoppingBag,
-  Gavel,
-  FileText,
-  Heart,
   MapPin,
-  CreditCard,
-  Bell,
-  Shield,
-  LogOut,
   Home,
   Building2,
   Phone,
@@ -32,8 +23,6 @@ import {
   Trash2,
   Plus,
   X,
-  Store,
-  User,
 } from "lucide-react";
 
 // ---------------------------------------------------------------------------
@@ -602,14 +591,14 @@ function DeleteConfirmDialog({
 // ---------------------------------------------------------------------------
 export default function SavedAddressesPage() {
   const [addresses, setAddresses] = useState<Address[]>(DEMO_ADDRESSES);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [addressFormOpen, setAddressFormOpen] = useState(false);
   const [form, setForm] = useState<AddressFormState>(EMPTY_FORM);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   // -- Form helpers --
   function openAddDrawer() {
     setForm(EMPTY_FORM);
-    setDrawerOpen(true);
+    setAddressFormOpen(true);
   }
 
   function openEditDrawer(addr: Address) {
@@ -627,7 +616,7 @@ export default function SavedAddressesPage() {
       landmark: addr.landmark ?? "",
       postalCode: addr.postalCode ?? "",
     });
-    setDrawerOpen(true);
+    setAddressFormOpen(true);
   }
 
   function handleFormChange(field: keyof AddressFormState, value: string) {
@@ -677,7 +666,7 @@ export default function SavedAddressesPage() {
       };
       setAddresses((prev) => [...prev, newAddr]);
     }
-    setDrawerOpen(false);
+    setAddressFormOpen(false);
     setForm(EMPTY_FORM);
   }
 
@@ -701,145 +690,9 @@ export default function SavedAddressesPage() {
   }
 
   return (
-    <MainLayout>
-      <div className="min-h-screen bg-surface text-on-surface font-body">
-        {/*
-         * NOTE: The global <TopNav> is rendered by MainLayout and
-         * must NOT be modified here. pt-20 clears the fixed nav.
-         */}
-        <div className="pt-20 pb-24 lg:pb-12 px-4 md:px-8 max-w-screen-2xl mx-auto">
-          <div className="flex flex-col lg:flex-row gap-8">
+    <>
+      <AccountMobileHeader title="Saved Addresses" />
 
-            {/* ----------------------------------------------------------------
-             * SIDEBAR — account nav
-             * TODO: extract to shared <AccountSidebar>
-             * ---------------------------------------------------------------- */}
-            <aside className="hidden lg:flex lg:sticky lg:top-24 lg:h-[calc(100vh-6rem)] w-72 flex-shrink-0 flex-col gap-2 p-6 bg-surface-container-low rounded-2xl overflow-y-auto no-scrollbar">
-              <div className="mb-8">
-                <h2 className="font-syne text-xl font-bold text-on-surface tracking-tight">
-                  Account Settings
-                </h2>
-                <p className="text-xs text-on-surface-variant font-medium mt-1 opacity-60">
-                  Manage your TradeHut profile
-                </p>
-              </div>
-
-              <nav className="flex flex-col gap-1 flex-1">
-                {/* Overview */}
-                <Link
-                  href="/account"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <LayoutDashboard className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Overview
-                  </span>
-                </Link>
-
-                {/* Orders */}
-                <Link
-                  href="/account/orders"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <ShoppingBag className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Orders
-                  </span>
-                </Link>
-
-                {/* Bids & Auctions */}
-                <Link
-                  href="/account/bids"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <Gavel className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Bids &amp; Auctions
-                  </span>
-                </Link>
-
-                {/* My Requests */}
-                <Link
-                  href="/account/requests"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <FileText className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    My Requests
-                  </span>
-                </Link>
-
-                {/* Wishlist */}
-                <Link
-                  href="/account/wishlist"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <Heart className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Wishlist
-                  </span>
-                </Link>
-
-                {/* Addresses — ACTIVE */}
-                <Link
-                  href="/account/addresses"
-                  className="bg-surface-container-lowest text-primary-container shadow-card rounded-xl px-4 py-3 flex items-center gap-3 transition-all"
-                >
-                  <MapPin className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Addresses
-                  </span>
-                </Link>
-
-                {/* Payment Methods */}
-                <Link
-                  href="/account/payment-methods"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <CreditCard className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Payment Methods
-                  </span>
-                </Link>
-
-                {/* Notifications */}
-                <Link
-                  href="/account/notifications"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <Bell className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Notifications
-                  </span>
-                </Link>
-
-                {/* Security */}
-                <Link
-                  href="/account/security"
-                  className="text-on-surface px-4 py-3 flex items-center gap-3 opacity-70 hover:opacity-100 hover:translate-x-1 transition-all duration-200 rounded-xl"
-                >
-                  <Shield className="w-5 h-5" />
-                  <span className="font-body uppercase tracking-widest text-[10px] font-bold">
-                    Security
-                  </span>
-                </Link>
-              </nav>
-
-              {/* Logout */}
-              <div className="mt-auto pt-6 border-t border-surface-container-highest/30">
-                <Link
-                  href="/auth/login"
-                  className="w-full bg-surface-container text-on-surface-variant font-bold py-3 rounded-xl hover:bg-error-container hover:text-error transition-all flex items-center justify-center gap-2 active:scale-95"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Logout
-                </Link>
-              </div>
-            </aside>
-
-            {/* ----------------------------------------------------------------
-             * MAIN CONTENT
-             * ---------------------------------------------------------------- */}
             <section className="flex-1 min-w-0">
 
               {/* Page header */}
@@ -931,66 +784,20 @@ export default function SavedAddressesPage() {
                 </div>
               </div>
             </section>
-          </div>
-        </div>
 
-        {/* ------------------------------------------------------------------
-         * MOBILE BOTTOM NAV
-         * Replaces the sidebar on small screens (< lg).
-         * TODO: extract to a shared <AccountBottomNav> or replace with the
-         * global mobile nav once that component exists.
-         * ------------------------------------------------------------------ */}
-        <nav className="lg:hidden fixed bottom-0 left-0 w-full bg-surface-container-lowest shadow-[0_-4px_20px_0_rgba(38,24,19,0.06)] px-6 py-3 flex justify-around items-center z-50">
-          <Link
-            href="/"
-            className="flex flex-col items-center gap-1 text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity min-w-[44px] py-1"
-          >
-            <Store className="w-6 h-6" />
-            <span className="text-[10px] font-bold">Home</span>
-          </Link>
-          <Link
-            href="/account/bids"
-            className="flex flex-col items-center gap-1 text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity min-w-[44px] py-1"
-          >
-            <Gavel className="w-6 h-6" />
-            <span className="text-[10px] font-bold">Bids</span>
-          </Link>
-          <Link
-            href="/account/addresses"
-            className="flex flex-col items-center gap-1 text-primary min-w-[44px] py-1"
-          >
-            <MapPin className="w-6 h-6" />
-            <span className="text-[10px] font-bold">Addresses</span>
-          </Link>
-          <Link
-            href="/account"
-            className="flex flex-col items-center gap-1 text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity min-w-[44px] py-1"
-          >
-            <User className="w-6 h-6" />
-            <span className="text-[10px] font-bold">Profile</span>
-          </Link>
-        </nav>
-
-        {/* ------------------------------------------------------------------
-         * ADD / EDIT DRAWER
-         * ------------------------------------------------------------------ */}
         <AddressDrawer
-          open={drawerOpen}
+          open={addressFormOpen}
           form={form}
-          onClose={() => setDrawerOpen(false)}
+          onClose={() => setAddressFormOpen(false)}
           onChange={handleFormChange}
           onSubmit={handleFormSubmit}
         />
 
-        {/* ------------------------------------------------------------------
-         * DELETE CONFIRMATION DIALOG
-         * ------------------------------------------------------------------ */}
         <DeleteConfirmDialog
           open={deleteTargetId !== null}
           onCancel={() => setDeleteTargetId(null)}
           onConfirm={handleDeleteConfirm}
         />
-      </div>
-    </MainLayout>
+    </>
   );
 }

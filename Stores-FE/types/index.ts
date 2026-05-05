@@ -193,4 +193,13 @@ export interface Wishlist {
     item_count: number;
 }
 
-export interface WishListItem extends CartItem {}
+/** Wishlist item row from API — not the same shape as cart catalog `CartItem`. */
+export interface WishListItem {
+    id: string
+    product?: unknown
+    product_name?: string
+    product_slug?: string
+    product_price?: string | number
+    product_image?: string | null
+    created_at?: string
+}

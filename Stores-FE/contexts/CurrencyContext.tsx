@@ -1,43 +1,62 @@
 'use client'
 
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react'
+import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback, useMemo } from 'react'
+import {
+    STORE_BASE_CURRENCY,
+    DEFAULT_FX_RATES,
+    convertWithRates,
+} from '@/lib/storeCurrency'
+import { fetchFxSnapshot } from '@/lib/fxClient'
 
 interface CurrencyContextType {
+    /** ISO code the shopper is viewing prices in (navbar selector). */
     currency: string
     setCurrency: (currency: string) => void
+    /** ISO code catalog / API amounts are stored in until models expose per-row currency. */
+    baseCurrency: string
+    /** Last GET …/core/fx/snapshot/ metadata (for POST …/fx/quote/). */
+    fxSnapshotId: string | null
+    fxAsOf: string | null
+    fxStale: boolean
+    fxSource: string | null
     exchangeRates: { [key: string]: number }
+    /** Merge rates (e.g. tests); normal flow uses full snapshot from backend. */
+    mergeFxRates: (partial: Record<string, number>) => void
+    /** `amount` is in `from` (default: store base); result is numeric value in `to` (default: selected `currency`). */
     convert: (amount: number, from?: string, to?: string) => number
+    /** Format a value already in **selected** `currency` (no conversion). */
     formatCurrency: (amount: number) => string
+    /** Convert from store/pricing currency (or `fromCurrency`) into selected currency, then format. */
+    formatDisplayPrice: (amount: number, fromCurrency?: string) => string
 }
 
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined)
 
 export const CurrencyProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    // Always start with 'USD' to match server render, then update after hydration
     const [currency, setCurrency] = useState<string>('USD')
     const [mounted, setMounted] = useState(false)
+    const baseCurrency = STORE_BASE_CURRENCY
+
+    const [fxSnapshotId, setFxSnapshotId] = useState<string | null>(null)
+    const [fxAsOf, setFxAsOf] = useState<string | null>(null)
+    const [fxStale, setFxStale] = useState(false)
+    const [fxSource, setFxSource] = useState<string | null>(null)
+
+    const [exchangeRates, setExchangeRates] = useState<{ [key: string]: number }>(() => ({
+        ...DEFAULT_FX_RATES,
+    }))
 
     useEffect(() => {
         setMounted(true)
-        // After hydration, read from localStorage
         const savedCurrency = localStorage.getItem('selectedCurrency')
         if (savedCurrency) {
             setCurrency(savedCurrency)
         }
     }, [])
 
-    const [exchangeRates, setExchangeRates] = useState<{ [key: string]: number }>({
-        USD: 1,
-        EUR: 0.85,
-        GBP: 0.73,
-        JPY: 110.14,
-        AUD: 1.35,
-        CAD: 1.25,
-        CHF: 0.91,
-        CNY: 6.45,
-        SEK: 8.51,
-        NZD: 1.42,
-    })
+    const mergeFxRates = useCallback((partial: Record<string, number>) => {
+        setExchangeRates((prev) => ({ ...prev, ...partial }))
+    }, [])
 
     useEffect(() => {
         if (mounted) {
@@ -45,13 +64,27 @@ export const CurrencyProvider: React.FC<{ children: ReactNode }> = ({ children }
         }
     }, [currency, mounted])
 
-    const convert = (amount: number, from: string = 'USD', to: string = currency): number => {
-        if (from === to) return amount
-        const amountInUSD = amount / exchangeRates[from]
-        return amountInUSD * exchangeRates[to]
-    }
+    useEffect(() => {
+        if (!mounted) return
+        fetchFxSnapshot().then((data) => {
+            if (!data?.rates || typeof data.rates !== 'object') return
+            setExchangeRates({ ...data.rates })
+            setFxSnapshotId(data.snapshot_id ?? null)
+            setFxAsOf(data.as_of ?? null)
+            setFxStale(Boolean(data.stale))
+            setFxSource(data.source ?? null)
+        })
+    }, [mounted])
 
-    const formatCurrency = (amount: number): string => {
+    const convert = useCallback(
+        (amount: number, from: string = baseCurrency, to: string = currency): number => {
+            return convertWithRates(amount, from, to, exchangeRates)
+        },
+        [baseCurrency, currency, exchangeRates]
+    )
+
+    const formatCurrency = useCallback((amount: number): string => {
+        if (!Number.isFinite(amount)) return '—'
         const formatter = new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: currency,
@@ -59,15 +92,46 @@ export const CurrencyProvider: React.FC<{ children: ReactNode }> = ({ children }
             maximumFractionDigits: 2,
         })
         return formatter.format(amount)
-    }
+    }, [currency])
 
-    const value: CurrencyContextType = {
-        currency,
-        setCurrency,
-        exchangeRates,
-        convert,
-        formatCurrency,
-    }
+    const formatDisplayPrice = useCallback(
+        (amount: number, fromCurrency?: string): string => {
+            if (!Number.isFinite(amount)) return '—'
+            const converted = convert(amount, fromCurrency ?? baseCurrency)
+            return formatCurrency(converted)
+        },
+        [baseCurrency, convert, formatCurrency]
+    )
+
+    const value: CurrencyContextType = useMemo(
+        () => ({
+            currency,
+            setCurrency,
+            baseCurrency,
+            fxSnapshotId,
+            fxAsOf,
+            fxStale,
+            fxSource,
+            exchangeRates,
+            mergeFxRates,
+            convert,
+            formatCurrency,
+            formatDisplayPrice,
+        }),
+        [
+            currency,
+            baseCurrency,
+            fxSnapshotId,
+            fxAsOf,
+            fxStale,
+            fxSource,
+            exchangeRates,
+            mergeFxRates,
+            convert,
+            formatCurrency,
+            formatDisplayPrice,
+        ]
+    )
 
     return <CurrencyContext.Provider value={value}>{children}</CurrencyContext.Provider>
 }

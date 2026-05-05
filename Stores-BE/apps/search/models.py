@@ -8,9 +8,10 @@ image embedding lives on a sidecar ``ProductEmbedding`` row with a 1:1 link to
 the product. This keeps the products app oblivious to search infrastructure
 and lets the embedding column be created/dropped independently.
 
-If pgvector is not installed, the embedding column degrades to a JSON-encoded
-list — callers should check :data:`apps.search.compat.HAS_PGVECTOR` before
-running cosine-distance queries.
+Primary storage uses PostgreSQL ``vector(512)`` after migration ``0002`` (requires
+the ``pgvector`` extension). Until then, or without the Python ``pgvector``
+package, the column is JSON and similarity search uses a NumPy fallback in
+``apps.search.views``.
 """
 
 from django.db import models
@@ -26,11 +27,8 @@ EMBEDDING_DIM = 512
 
 
 def _embedding_field():
-    """Return the appropriate column for the current install."""
     if HAS_PGVECTOR:
         return VectorField(dimensions=EMBEDDING_DIM, null=True, blank=True)
-    # Graceful fallback: store the raw vector as JSON. ANN is unavailable
-    # without pgvector, but signals/tasks still keep working.
     return models.JSONField(null=True, blank=True)
 
 
@@ -64,8 +62,8 @@ class ProductEmbedding(BaseModel):
         verbose_name = "Product embedding"
         verbose_name_plural = "Product embeddings"
         indexes = [
-            models.Index(fields=["model_name"]),
-            models.Index(fields=["last_indexed_at"]),
+            models.Index(fields=["model_name"], name="prod_embed_model_idx"),
+            models.Index(fields=["last_indexed_at"], name="prod_embed_indexed_idx"),
         ]
 
     def __str__(self) -> str:  # pragma: no cover

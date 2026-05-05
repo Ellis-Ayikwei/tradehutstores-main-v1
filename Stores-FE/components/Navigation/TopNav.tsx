@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { usePathname } from 'next/navigation'
 import {
     ShoppingCart,
@@ -12,9 +12,20 @@ import {
     Sun,
     Moon,
     Heart,
+    Package,
+    Gavel,
+    FileText,
+    CreditCard,
+    Bell,
+    Shield,
+    LogOut,
 } from 'lucide-react'
-import { useSelector } from 'react-redux'
-import { RootState } from '@/store'
+import { useSelector, useDispatch } from 'react-redux'
+import type { AppDispatch, RootState } from '@/store'
+import { logoutUser } from '@/store/authSlice'
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser'
+import useIsAuthenticated from 'react-auth-kit/hooks/useIsAuthenticated'
+import useSignOut from 'react-auth-kit/hooks/useSignOut'
 import { useCurrency } from '@/contexts/CurrencyContext'
 import { useTheme } from '@/contexts/ThemeContext'
 import Logo from '../common/logo'
@@ -51,12 +62,34 @@ const COUNTRIES = [
 
 const CURRENCIES = ['USD', 'EUR', 'GBP', 'GHS', 'NGN', 'KES']
 
+type AuthKitUser = { id: string; name: string; email: string; uuid?: string }
+
+const PROFILE_MENU = [
+    { href: '/account/orders',           label: 'Orders',            icon: Package },
+    { href: '/account/bids',             label: 'Bids & Auctions',   icon: Gavel },
+    { href: '/account/requests',        label: 'My Requests',       icon: FileText },
+    { href: '/wishlist',                label: 'Wishlist',            icon: Heart },
+    { href: '/account/addresses',        label: 'Addresses',         icon: MapPin },
+    { href: '/account/payment-methods', label: 'Payment Methods',   icon: CreditCard },
+    { href: '/account/notifications',   label: 'Notifications',     icon: Bell },
+    { href: '/account/security',        label: 'Security',          icon: Shield },
+] as const
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function TopNav() {
     const [selectedCountry, setSelectedCountry] = useState(COUNTRIES[0])
     const [countryOpen, setCountryOpen] = useState(false)
+    const [profileOpen, setProfileOpen] = useState(false)
     const countryRef = useRef<HTMLDivElement>(null)
+    const profileRef = useRef<HTMLDivElement>(null)
+
+    const dispatch = useDispatch<AppDispatch>()
+    const signOut = useSignOut()
+    const isAuthenticated = useIsAuthenticated()
+    const authUser = useAuthUser<AuthKitUser>()
+
+    console.log("the autUser", authUser)
 
     const cart     = useSelector((state: RootState) => state.cart.cart)
     const wishlist = useSelector((state: RootState) => state.wishlist.wishlist)
@@ -65,16 +98,33 @@ export default function TopNav() {
     const { theme, toggleTheme }    = useTheme()
     const pathname = usePathname()
 
-    const cartCount     = cart?.item_count  ?? 0
-    const wishlistCount = wishlist?.length  ?? 0
+    const displayName = authUser?.name?.trim() || authUser?.email?.split('@')[0] || 'Account'
+    const displayEmail = authUser?.email?.trim() ?? ''
+
+    const initials = useMemo(() => {
+        const n = authUser?.name?.trim()
+        if (n) {
+            const parts = n.split(/\s+/).filter(Boolean)
+            if (parts.length >= 2) {
+                return `${parts[0][0] ?? ''}${parts[parts.length - 1][0] ?? ''}`.toUpperCase()
+            }
+            return (parts[0]?.slice(0, 2) ?? 'U').toUpperCase()
+        }
+        const e = authUser?.email?.trim()
+        if (e) return e.slice(0, 2).toUpperCase()
+        return 'U'
+    }, [authUser?.name, authUser?.email])
+
+    const cartCount = cart?.item_count ?? 0
+    const wishlistCount =
+        wishlist?.item_count ?? wishlist?.items?.length ?? 0
     const showTopSearch = pathname !== '/'
 
-    // Close country dropdown on outside click
     useEffect(() => {
         function handler(e: MouseEvent) {
-            if (countryRef.current && !countryRef.current.contains(e.target as Node)) {
-                setCountryOpen(false)
-            }
+            const t = e.target as Node
+            if (countryRef.current && !countryRef.current.contains(t)) setCountryOpen(false)
+            if (profileRef.current && !profileRef.current.contains(t)) setProfileOpen(false)
         }
         document.addEventListener('mousedown', handler)
         return () => document.removeEventListener('mousedown', handler)
@@ -197,22 +247,101 @@ export default function TopNav() {
                             <NavBadge count={cartCount}>
                                 <ShoppingCart className="h-4 w-4" />
                             </NavBadge>
-                            <span className="hidden md:inline text-xs font-medium">
+                            {/* <span className="hidden md:inline text-xs font-medium">
                                 Cart
                                 {cartCount > 0 && (
                                     <span className="ml-1 text-orange-500 font-bold">({cartCount})</span>
                                 )}
-                            </span>
+                            </span> */}
                         </Link>
 
-                        {/* Sign In */}
-                        <Link
-                            href="/auth/login"
-                            className="flex items-center gap-1 px-2 sm:px-3 py-1.5 ml-0.5 rounded-md bg-orange-500 hover:bg-orange-600 active:bg-orange-700 transition-colors font-semibold text-xs text-white shadow-sm whitespace-nowrap"
-                        >
-                            <User className="h-3.5 w-3.5 shrink-0" />
-                            <span className="hidden sm:inline">Sign In</span>
-                        </Link>
+                        {/* Account — profile menu or Sign In */}
+                        {isAuthenticated && authUser ? (
+                            <div ref={profileRef} className="relative ml-0.5">
+                                <button
+                                    type="button"
+                                    onClick={() => setProfileOpen(v => !v)}
+                                    aria-expanded={profileOpen}
+                                    aria-haspopup="menu"
+                                    className="flex items-center gap-1.5 pl-1.5 pr-2 py-1.5 rounded-md bg-orange-500 hover:bg-orange-600 active:bg-orange-700 transition-colors font-semibold text-xs text-white shadow-sm whitespace-nowrap max-w-[min(200px,42vw)]"
+                                >
+                                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/20 text-[10px] font-extrabold">
+                                        {initials}
+                                    </span>
+                                    {/* <span className="hidden sm:inline truncate">{displayName}</span> */}
+                                    <ChevronDown
+                                        className={`h-3 w-3 shrink-0 opacity-90 transition-transform duration-200 ${profileOpen ? 'rotate-180' : ''}`}
+                                    />
+                                </button>
+
+                                {profileOpen && (
+                                    <div
+                                        className="absolute top-full right-0 mt-2 w-64 max-h-[min(70vh,520px)] overflow-y-auto bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 py-1.5 z-[200]"
+                                        style={{ animation: 'dropIn 0.15s cubic-bezier(0.16,1,0.3,1) forwards' }}
+                                        role="menu"
+                                    >
+                                        <div className="px-3 pt-1 pb-2 border-b border-gray-100 dark:border-gray-700/80">
+                                            <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                                                {displayName}
+                                            </p>
+                                            {displayEmail ? (
+                                                <p className="text-[11px] text-gray-500 dark:text-gray-400 truncate mt-0.5">
+                                                    {displayEmail}
+                                                </p>
+                                            ) : null}
+                                            <Link
+                                                href="/account"
+                                                onClick={() => setProfileOpen(false)}
+                                                className="mt-2 block text-center text-xs font-semibold rounded-md py-1.5 bg-orange-50 dark:bg-orange-900/25 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/40 transition-colors"
+                                            >
+                                                Account overview
+                                            </Link>
+                                        </div>
+                                        <p className="px-3 pt-2 pb-1 text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-500">
+                                            Your account
+                                        </p>
+                                        {PROFILE_MENU.map(({ href, label, icon: Icon }) => (
+                                            <Link
+                                                key={href}
+                                                href={href}
+                                                onClick={() => setProfileOpen(false)}
+                                                role="menuitem"
+                                                className={`flex items-center gap-3 px-3 py-2 text-sm transition-colors
+                                                    ${pathname === href || pathname.startsWith(`${href}/`)
+                                                        ? 'bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 font-semibold'
+                                                        : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+                                                    }`}
+                                            >
+                                                <Icon className="h-4 w-4 shrink-0 text-gray-500 dark:text-gray-400" />
+                                                <span>{label}</span>
+                                            </Link>
+                                        ))}
+                                        <div className="mt-1 pt-1 border-t border-gray-100 dark:border-gray-700">
+                                            <button
+                                                type="button"
+                                                role="menuitem"
+                                                className="flex w-full items-center gap-3 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+                                                onClick={() => {
+                                                    setProfileOpen(false)
+                                                    void dispatch(logoutUser({ signOut }))
+                                                }}
+                                            >
+                                                <LogOut className="h-4 w-4 shrink-0" />
+                                                Sign out
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <Link
+                                href="/auth/login"
+                                className="flex items-center gap-1 px-2 sm:px-3 py-1.5 ml-0.5 rounded-md bg-orange-500 hover:bg-orange-600 active:bg-orange-700 transition-colors font-semibold text-xs text-white shadow-sm whitespace-nowrap"
+                            >
+                                <User className="h-3.5 w-3.5 shrink-0" />
+                                <span className="hidden sm:inline">Sign In</span>
+                            </Link>
+                        )}
                     </div>
                 </div>
 

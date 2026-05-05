@@ -20,6 +20,7 @@ import {
     IconCreditCard,
     IconBuildingStore,
     IconSearch,
+    IconLayoutGrid,
 } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -115,6 +116,12 @@ const Sidebar = () => {
                 { path: '/admin/categories', icon: IconClipboardList, label: 'Categories', allowedGroups: ['Administrators', 'Inventory Managers'] },
                 { path: '/admin/brands', icon: IconClipboardList, label: 'Brands', allowedGroups: ['Administrators', 'Inventory Managers'] },
                 { path: '/admin/search', icon: IconSearch, label: 'Search Ops', allowedGroups: ['Administrators', 'Inventory Managers'] },
+                {
+                    path: '/admin/merchandising/homepage',
+                    icon: IconLayoutGrid,
+                    label: 'Homepage merchandising',
+                    allowedGroups: ['Administrators', 'Inventory Managers'],
+                },
             ],
         },
         {

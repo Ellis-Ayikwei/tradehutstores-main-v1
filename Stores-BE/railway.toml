@@ -1,0 +1,12 @@
+# Railway service configuration for the Django backend.
+# Each Railway service points at the same repo + root dir but overrides the
+# start command so we get one container per role (web / worker).
+
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
+healthcheckPath = "/tradehut/api/v1/search/health/"
+healthcheckTimeout = 30

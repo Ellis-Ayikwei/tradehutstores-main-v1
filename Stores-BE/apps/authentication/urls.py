@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path, include, re_path
 from rest_framework.routers import DefaultRouter
 
 from .views import (
@@ -28,6 +28,7 @@ from .views import (
     AdminOTPDebugLogsView,
     AdminViewUserOTPsView,
 )
+from . import modal_views
 
 
 # Create a router for the UserViewSet
@@ -53,7 +54,8 @@ urlpatterns = [
         name="password_reset_confirm",
     ),
     path("change_password/", PasswordChangeAPIView.as_view(), name="change_password"),
-    path("refresh_token/", TokenRefreshView.as_view(), name="token_refresh"),
+    # Optional trailing slash so POST clients are not broken by APPEND_SLASH.
+    re_path(r"^refresh_token/?$", TokenRefreshView.as_view(), name="token_refresh"),
     path("verify_token/", TokenVerifyView.as_view(), name="token_verify"),
     path("debug_token/", DebugTokenView.as_view(), name="debug_token"),
     # OTP endpoints
@@ -87,6 +89,17 @@ urlpatterns = [
         AdminViewUserOTPsView.as_view(),
         name="admin_view_user_otps",
     ),
+    # ── Modal auth flow (state-machine, opt-in for the FE AuthModal) ─────
+    # Mounted under /modal/ so the legacy /login, /register, /otp/ endpoints
+    # above are not disturbed. See apps/authentication/MODAL_FLOW.md.
+    path("modal/identify/",      modal_views.identify,       name="modal_identify"),
+    path("modal/send-otp/",      modal_views.send_otp,       name="modal_send_otp"),
+    path("modal/verify-otp/",    modal_views.verify_otp,     name="modal_verify_otp"),
+    path("modal/login-password/", modal_views.login_password, name="modal_login_password"),
+    path("modal/set-password/",  modal_views.set_password,   name="modal_set_password"),
+    path("modal/create-account/", modal_views.create_account, name="modal_create_account"),
+    path("modal/refresh/",       modal_views.refresh,        name="modal_refresh"),
+    path("modal/logout/",        modal_views.logout,         name="modal_logout"),
 ]
 
 # Available endpoints:
