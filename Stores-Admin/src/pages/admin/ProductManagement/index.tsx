@@ -1,6 +1,11 @@
 import {
+    IconAlertTriangle,
+    IconEdit,
+    IconEye,
     IconPackage,
+    IconPlus,
     IconTag,
+    IconTrash,
 } from '@tabler/icons-react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -151,6 +156,7 @@ const ProductManagement: React.FC = () => {
         }).format(amount);
     };
 
+    const getStatusBadge = (status?: string | null) => {
         const label = String(status ?? 'Unknown').trim() || 'Unknown';
         const key = label.toLowerCase();
         const greens = ['active', 'published'];

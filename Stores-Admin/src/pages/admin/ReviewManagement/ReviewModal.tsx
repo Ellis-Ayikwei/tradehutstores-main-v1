@@ -343,13 +343,15 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
                                         
                                         {/* Review Text */}
                                         <div className="mb-6">
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            <label htmlFor="review-text" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                                 Review Text
                                             </label>
                                             <textarea
+                                                id="review-text"
                                                 value={form.review_text}
                                                 onChange={(e) => onFormChange('review_text', e.target.value)}
                                                 rows={5}
+                                                maxLength={1000}
                                                 className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-green-500 resize-none"
                                                 placeholder="Share your detailed experience with this provider..."
                                             />

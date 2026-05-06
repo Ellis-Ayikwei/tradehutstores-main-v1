@@ -45,11 +45,18 @@ const InventoryManagement: React.FC = () => {
         try {
             setLoading(true);
             setError(null);
-            const response = await axiosInstance.get('/inventory/');
-            setInventory(response.data);
+            const response = await axiosInstance.get('/products/inventory/');
+            const data = response.data;
+            const list = Array.isArray(data)
+                ? data
+                : Array.isArray(data?.results)
+                ? data.results
+                : [];
+            setInventory(list);
         } catch (err) {
             setError('Failed to fetch inventory. Please try again later.');
             console.error('Error fetching inventory:', err);
+            setInventory([]);
         } finally {
             setLoading(false);
         }
@@ -98,7 +105,7 @@ const InventoryManagement: React.FC = () => {
                     ? selectedItem.current_stock + stockAdjustment.quantity
                     : selectedItem.current_stock - stockAdjustment.quantity;
 
-                await axiosInstance.patch(`/inventory/${selectedItem.id}/`, {
+                await axiosInstance.patch(`/products/inventory/${selectedItem.id}/`, {
                     current_stock: newStock,
                     adjustment_reason: stockAdjustment.reason,
                 });

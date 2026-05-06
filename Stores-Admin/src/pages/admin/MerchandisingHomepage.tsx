@@ -1,11 +1,21 @@
 import {
     IconAlertTriangle,
+    IconBolt,
+    IconCalendarTime,
+    IconCheck,
+    IconCircleCheckFilled,
+    IconClock,
     IconEdit,
+    IconEyeOff,
     IconLayoutGrid,
+    IconList,
     IconPlus,
+    IconRefresh,
+    IconSearch,
     IconTrash,
+    IconX,
 } from '@tabler/icons-react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import IconLoader from '../../components/Icon/IconLoader';
 import axiosInstance from '../../services/axiosInstance';
 import {
@@ -48,6 +58,13 @@ const RULE_TYPES = [
     { value: 'trending', label: 'Trending (views)' },
     { value: 'manual_override', label: 'Manual only (rule off)' },
 ];
+
+const SECTION_TYPE_LABEL: Record<string, string> = Object.fromEntries(
+    SECTION_TYPES.map((o) => [o.value, o.label])
+);
+const STRATEGY_LABEL: Record<string, string> = Object.fromEntries(
+    STRATEGIES.map((o) => [o.value, o.label])
+);
 
 function slugify(s: string): string {
     return s
@@ -92,10 +109,133 @@ function fromDatetimeLocal(v: string): string | null {
     return Number.isNaN(d.getTime()) ? null : d.toISOString();
 }
 
+const inputCls =
+    'w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-on-surface dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent';
+
+type ColorPreset = { name: string; value: string };
+
+const BACKGROUND_PRESETS: ColorPreset[] = [
+    { name: 'None', value: '' },
+    { name: 'Cream', value: '#fff8f6' },
+    { name: 'Peach', value: '#fff1ec' },
+    { name: 'Blush', value: '#ffe9e2' },
+    { name: 'Soft rose', value: '#fef2f2' },
+    { name: 'Honey', value: '#fff7ed' },
+    { name: 'Butter', value: '#fefce8' },
+    { name: 'Mint', value: '#ecfdf5' },
+    { name: 'Sky', value: '#eff6ff' },
+    { name: 'Lavender', value: '#f5f3ff' },
+    { name: 'Slate', value: '#f1f5f9' },
+    { name: 'Charcoal', value: '#1f2937' },
+];
+
+const ACCENT_PRESETS: ColorPreset[] = [
+    { name: 'None', value: '' },
+    { name: 'TradeHut orange', value: '#a43d00' },
+    { name: 'Flame', value: '#f5620f' },
+    { name: 'Sunset', value: '#f97316' },
+    { name: 'Crimson', value: '#dc2626' },
+    { name: 'Rose', value: '#e11d48' },
+    { name: 'Bid green', value: '#006c4b' },
+    { name: 'Emerald', value: '#10b981' },
+    { name: 'RFQ blue', value: '#0058ca' },
+    { name: 'Cyan', value: '#0891b2' },
+    { name: 'Indigo', value: '#4f46e5' },
+    { name: 'Violet', value: '#7c3aed' },
+    { name: 'Amber', value: '#f59e0b' },
+    { name: 'Slate', value: '#475569' },
+];
+
+const ColorSwatchPicker: React.FC<{
+    value: string;
+    presets: ColorPreset[];
+    onChange: (v: string) => void;
+}> = ({ value, presets, onChange }) => {
+    const matched = presets.find((p) => p.value.toLowerCase() === value.toLowerCase());
+    const isCustom = !!value && !matched;
+    return (
+        <div className="space-y-2">
+            <div className="flex flex-wrap gap-2">
+                {presets.map((p) => {
+                    const selected = (p.value || '') === (matched?.value || (value ? '' : ''));
+                    const isNone = p.value === '';
+                    return (
+                        <button
+                            key={p.name}
+                            type="button"
+                            onClick={() => onChange(p.value)}
+                            title={`${p.name}${p.value ? ` · ${p.value}` : ''}`}
+                            className={`relative h-8 w-8 rounded-full border-2 transition shrink-0 ${
+                                selected
+                                    ? 'border-primary ring-2 ring-primary/30'
+                                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-400'
+                            } ${isNone ? 'bg-white dark:bg-gray-800' : ''}`}
+                            style={!isNone ? { backgroundColor: p.value } : undefined}
+                        >
+                            {isNone && (
+                                <span className="absolute inset-0 flex items-center justify-center">
+                                    <span className="block h-px w-5 rotate-45 bg-gray-400" />
+                                </span>
+                            )}
+                            {selected && !isNone && (
+                                <IconCheck size={14} className="absolute inset-0 m-auto text-white drop-shadow" />
+                            )}
+                        </button>
+                    );
+                })}
+            </div>
+            <div className="flex items-center gap-2">
+                <span
+                    className="h-6 w-6 rounded-md border border-gray-200 dark:border-gray-700 shrink-0"
+                    style={{ backgroundColor: value || 'transparent' }}
+                />
+                <input
+                    className={`${inputCls} font-mono text-xs flex-1`}
+                    value={value}
+                    placeholder="Custom hex (e.g. #ff8800)"
+                    onChange={(e) => onChange(e.target.value)}
+                />
+                {isCustom && (
+                    <button
+                        type="button"
+                        onClick={() => onChange('')}
+                        className="text-xs font-semibold text-on-surface-variant hover:text-error transition px-2 py-1"
+                    >
+                        Clear
+                    </button>
+                )}
+            </div>
+            <p className="text-xs text-on-surface-variant dark:text-gray-500">
+                {matched ? matched.name : isCustom ? `Custom · ${value}` : 'No color (uses default surface)'}
+            </p>
+        </div>
+    );
+};
+
+const StatCard: React.FC<{
+    icon: React.ReactNode;
+    label: string;
+    value: number | string;
+    accent?: string;
+}> = ({ icon, label, value, accent = 'text-primary' }) => (
+    <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-5 shadow-card">
+        <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+                <p className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant dark:text-gray-500">{label}</p>
+                <p className="mt-2 text-3xl font-bold text-on-surface dark:text-white">{value}</p>
+            </div>
+            <div className={`shrink-0 ${accent}`}>{icon}</div>
+        </div>
+    </div>
+);
+
 const MerchandisingHomepage: React.FC = () => {
     const [rows, setRows] = useState<HomepageSectionAdminList[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [search, setSearch] = useState('');
+    const [statusFilter, setStatusFilter] = useState<'all' | 'live' | 'scheduled' | 'inactive'>('all');
+
     const [modalOpen, setModalOpen] = useState(false);
     const [saving, setSaving] = useState(false);
     const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -138,19 +278,55 @@ const MerchandisingHomepage: React.FC = () => {
     useEffect(() => {
         (async () => {
             try {
-                const { data } = await axiosInstance.get<Record<string, unknown>[]>('/categories/');
-                const list = Array.isArray(data) ? data : [];
+                const { data } = await axiosInstance.get<unknown>('/catalog/categories/');
+                const list: Record<string, unknown>[] = Array.isArray(data)
+                    ? (data as Record<string, unknown>[])
+                    : Array.isArray((data as { results?: unknown[] })?.results)
+                    ? ((data as { results: Record<string, unknown>[] }).results)
+                    : [];
                 setCategories(
-                    list.map((c) => ({
-                        id: String((c as { id?: string }).id ?? ''),
-                        name: String((c as { name?: string }).name ?? ''),
-                    }))
+                    list
+                        .map((c) => ({
+                            id: String((c as { id?: string | number }).id ?? ''),
+                            name: String(
+                                (c as { name?: string; title?: string }).name ??
+                                    (c as { name?: string; title?: string }).title ??
+                                    ''
+                            ),
+                        }))
+                        .filter((c) => c.id && c.name)
                 );
-            } catch {
+            } catch (err) {
+                console.error('Failed to load categories', err);
                 setCategories([]);
             }
         })();
     }, []);
+
+    const stats = useMemo(() => {
+        const total = rows.length;
+        const live = rows.filter((r) => r.is_live).length;
+        const active = rows.filter((r) => r.is_active).length;
+        const items = rows.reduce((sum, r) => sum + (r.items_count || 0), 0);
+        return { total, live, active, items };
+    }, [rows]);
+
+    const filteredRows = useMemo(() => {
+        const q = search.trim().toLowerCase();
+        return rows
+            .filter((r) => {
+                if (statusFilter === 'live' && !r.is_live) return false;
+                if (statusFilter === 'scheduled' && (r.is_live || !r.is_active)) return false;
+                if (statusFilter === 'inactive' && r.is_active) return false;
+                if (!q) return true;
+                return (
+                    r.title.toLowerCase().includes(q) ||
+                    r.slug.toLowerCase().includes(q) ||
+                    r.section_type.toLowerCase().includes(q)
+                );
+            })
+            .sort((a, b) => a.position - b.position);
+    }, [rows, search, statusFilter]);
 
     const openCreate = () => {
         setSelectedId(null);
@@ -247,7 +423,7 @@ const MerchandisingHomepage: React.FC = () => {
     };
 
     const handleDelete = async (r: HomepageSectionAdminList) => {
-        if (!window.confirm(`Delete section “${r.title}”?`)) return;
+        if (!window.confirm(`Delete section "${r.title}"?`)) return;
         try {
             await deleteMerchSection(r.id);
             await load();
@@ -286,108 +462,269 @@ const MerchandisingHomepage: React.FC = () => {
 
     if (loading && rows.length === 0) {
         return (
-            <div className="flex items-center justify-center min-h-[320px]">
-                <IconLoader className="w-8 h-8 animate-spin text-primary" />
+            <div className="flex items-center justify-center min-h-[60vh]">
+                <IconLoader className="w-10 h-10 animate-spin text-primary" />
             </div>
         );
     }
 
     return (
-        <div className="panel border-white-light px-0 dark:border-[#1b2e4b]">
-            <div className="mb-6 flex flex-wrap items-center justify-between gap-4 px-5">
+        <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+            {/* Header */}
+            <header className="flex flex-wrap items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold flex items-center gap-2">
+                    <h1 className="flex items-center gap-2 text-2xl font-bold text-on-surface dark:text-white">
                         <IconLayoutGrid className="text-primary" />
-                        Homepage merchandising
+                        Homepage Merchandising
                     </h1>
-                    <p className="text-white-dark mt-1 text-sm">
-                        Curate storefront homepage sections (public API:{' '}
-                        <code className="text-xs bg-gray-100 dark:bg-gray-800 px-1 rounded">homepage/sections/</code>
-                        ). Staff API requires Django <strong>is_staff</strong>.
+                    <p className="mt-1 text-sm text-on-surface-variant dark:text-gray-400">
+                        Curate the storefront homepage — sections, schedules and pinned product picks.
                     </p>
                 </div>
-                <button type="button" onClick={openCreate} className="btn btn-primary gap-2">
-                    <IconPlus className="w-4 h-4" /> New section
-                </button>
-            </div>
+                <div className="flex items-center gap-2">
+                    <button
+                        type="button"
+                        onClick={load}
+                        disabled={loading}
+                        className="inline-flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-2 text-sm font-semibold text-on-surface dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 transition"
+                    >
+                        <IconRefresh size={16} className={loading ? 'animate-spin' : ''} />
+                        Refresh
+                    </button>
+                    <button
+                        type="button"
+                        onClick={openCreate}
+                        className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:opacity-90 transition shadow-card"
+                    >
+                        <IconPlus size={16} />
+                        New section
+                    </button>
+                </div>
+            </header>
 
+            {/* Error banner */}
             {error && (
-                <div className="mx-5 mb-4 flex items-start gap-2 rounded border border-warning/40 bg-warning/10 px-4 py-3 text-sm">
+                <div className="flex items-start gap-2 rounded-xl border border-warning/40 bg-warning/10 px-4 py-3 text-sm text-on-surface dark:text-white">
                     <IconAlertTriangle className="w-5 h-5 shrink-0 text-warning" />
-                    <span>{error}</span>
+                    <span className="flex-1">{error}</span>
+                    <button type="button" onClick={() => setError(null)} className="text-on-surface-variant hover:text-on-surface">
+                        <IconX size={16} />
+                    </button>
                 </div>
             )}
 
-            <div className="table-responsive mb-6">
-                <table className="table-hover">
-                    <thead>
-                        <tr>
-                            <th>Pos</th>
-                            <th>Title</th>
-                            <th>Slug</th>
-                            <th>Type</th>
-                            <th>Strategy</th>
-                            <th>Active</th>
-                            <th>Live</th>
-                            <th>Items</th>
-                            <th className="text-end">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {rows.map((r) => (
-                            <tr key={r.id}>
-                                <td>{r.position}</td>
-                                <td className="font-semibold">{r.title}</td>
-                                <td>
-                                    <code className="text-xs">{r.slug}</code>
-                                </td>
-                                <td className="text-sm">{r.section_type}</td>
-                                <td className="text-sm">{r.strategy}</td>
-                                <td>{r.is_active ? 'Yes' : 'No'}</td>
-                                <td>{r.is_live ? 'Yes' : 'No'}</td>
-                                <td>{r.items_count}</td>
-                                <td className="text-end">
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-primary btn-sm gap-1 mr-2"
-                                        onClick={() => openEdit(r)}
-                                    >
-                                        <IconEdit className="w-4 h-4" /> Edit
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-danger btn-sm gap-1"
-                                        onClick={() => handleDelete(r)}
-                                    >
-                                        <IconTrash className="w-4 h-4" />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-                {rows.length === 0 && !loading && (
-                    <p className="px-5 py-8 text-center text-white-dark">No homepage sections yet. Create one to drive the customer homepage.</p>
-                )}
-            </div>
+            {/* Stat cards */}
+            <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <StatCard
+                    icon={<IconLayoutGrid size={28} />}
+                    label="Total sections"
+                    value={stats.total}
+                    accent="text-primary"
+                />
+                <StatCard
+                    icon={<IconBolt size={28} />}
+                    label="Live now"
+                    value={stats.live}
+                    accent="text-emerald-600"
+                />
+                <StatCard
+                    icon={<IconCalendarTime size={28} />}
+                    label="Active"
+                    value={stats.active}
+                    accent="text-tertiary"
+                />
+                <StatCard
+                    icon={<IconList size={28} />}
+                    label="Pinned items"
+                    value={stats.items}
+                    accent="text-amber-600"
+                />
+            </section>
 
+            {/* Filter / search */}
+            <section className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-4 flex flex-wrap items-center gap-3">
+                <div className="relative flex-1 min-w-[220px]">
+                    <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                    <input
+                        type="text"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        placeholder="Search by title, slug, or type…"
+                        className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                </div>
+                <div className="flex items-center gap-1 rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-sm">
+                    {(
+                        [
+                            { v: 'all', label: `All (${rows.length})` },
+                            { v: 'live', label: `Live (${stats.live})` },
+                            { v: 'scheduled', label: 'Scheduled' },
+                            { v: 'inactive', label: 'Inactive' },
+                        ] as const
+                    ).map((opt) => (
+                        <button
+                            key={opt.v}
+                            type="button"
+                            onClick={() => setStatusFilter(opt.v)}
+                            className={`px-3 py-1.5 rounded-md font-semibold transition ${
+                                statusFilter === opt.v
+                                    ? 'bg-white dark:bg-gray-900 text-primary shadow-sm'
+                                    : 'text-on-surface-variant dark:text-gray-400 hover:text-on-surface dark:hover:text-white'
+                            }`}
+                        >
+                            {opt.label}
+                        </button>
+                    ))}
+                </div>
+            </section>
+
+            {/* Table */}
+            <section className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden">
+                {filteredRows.length === 0 ? (
+                    <div className="px-6 py-16 text-center">
+                        <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                            <IconLayoutGrid size={24} />
+                        </div>
+                        <p className="mt-4 text-sm font-semibold text-on-surface dark:text-white">
+                            {rows.length === 0 ? 'No homepage sections yet' : 'No sections match this filter'}
+                        </p>
+                        <p className="mt-1 text-sm text-on-surface-variant dark:text-gray-400">
+                            {rows.length === 0
+                                ? 'Create your first section to drive the customer homepage.'
+                                : 'Try a different search or filter.'}
+                        </p>
+                        {rows.length === 0 && (
+                            <button
+                                type="button"
+                                onClick={openCreate}
+                                className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:opacity-90 transition"
+                            >
+                                <IconPlus size={16} /> New section
+                            </button>
+                        )}
+                    </div>
+                ) : (
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                            <thead>
+                                <tr className="text-left text-xs font-semibold uppercase tracking-wider text-on-surface-variant dark:text-gray-500 border-b border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50">
+                                    <th className="px-5 py-3">#</th>
+                                    <th className="px-5 py-3">Section</th>
+                                    <th className="px-5 py-3">Type</th>
+                                    <th className="px-5 py-3">Strategy</th>
+                                    <th className="px-5 py-3">Items</th>
+                                    <th className="px-5 py-3">Status</th>
+                                    <th className="px-5 py-3 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredRows.map((r) => (
+                                    <tr
+                                        key={r.id}
+                                        className="border-b border-gray-100 dark:border-gray-800/60 last:border-0 hover:bg-gray-50/60 dark:hover:bg-gray-800/40 transition"
+                                    >
+                                        <td className="px-5 py-4 text-on-surface-variant dark:text-gray-400 font-mono">
+                                            {r.position}
+                                        </td>
+                                        <td className="px-5 py-4">
+                                            <div className="font-semibold text-on-surface dark:text-white">{r.title}</div>
+                                            <code className="text-xs text-on-surface-variant dark:text-gray-500">{r.slug}</code>
+                                        </td>
+                                        <td className="px-5 py-4 text-on-surface-variant dark:text-gray-400">
+                                            {SECTION_TYPE_LABEL[r.section_type] ?? r.section_type}
+                                        </td>
+                                        <td className="px-5 py-4 text-on-surface-variant dark:text-gray-400">
+                                            {STRATEGY_LABEL[r.strategy] ?? r.strategy}
+                                        </td>
+                                        <td className="px-5 py-4 font-mono text-on-surface dark:text-white">
+                                            {r.items_count}
+                                        </td>
+                                        <td className="px-5 py-4">
+                                            <div className="flex flex-wrap items-center gap-1.5">
+                                                {r.is_live ? (
+                                                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 text-xs font-semibold text-emerald-600">
+                                                        <IconCircleCheckFilled size={12} /> Live
+                                                    </span>
+                                                ) : r.is_active ? (
+                                                    <span className="inline-flex items-center gap-1 rounded-full bg-tertiary/10 px-2 py-0.5 text-xs font-semibold text-tertiary">
+                                                        <IconClock size={12} /> Scheduled
+                                                    </span>
+                                                ) : (
+                                                    <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 dark:bg-gray-800 px-2 py-0.5 text-xs font-semibold text-on-surface-variant">
+                                                        <IconEyeOff size={12} /> Inactive
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </td>
+                                        <td className="px-5 py-4">
+                                            <div className="flex justify-end gap-1">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => openEdit(r)}
+                                                    title="Edit section"
+                                                    className="p-2 rounded-lg text-tertiary hover:bg-tertiary/10 transition"
+                                                >
+                                                    <IconEdit size={16} />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleDelete(r)}
+                                                    title="Delete section"
+                                                    className="p-2 rounded-lg text-error hover:bg-error/10 transition"
+                                                >
+                                                    <IconTrash size={16} />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </section>
+
+            {/* Help footer */}
+            <p className="text-xs text-on-surface-variant dark:text-gray-500">
+                Public API: <code className="font-mono px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-800">homepage/sections/</code>
+                {' · '}Staff endpoints require Django <strong>is_staff</strong>.
+            </p>
+
+            {/* Edit / Create modal */}
             {modalOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
-                    <div className="bg-white dark:bg-[#0e1726] rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-white-light dark:border-[#1b2e4b]">
-                        <div className="sticky top-0 flex items-center justify-between border-b border-white-light dark:border-[#1b2e4b] px-5 py-4 bg-inherit">
-                            <h2 className="text-lg font-bold">{selectedId == null ? 'New section' : 'Edit section'}</h2>
-                            <button type="button" className="text-white-dark hover:text-primary" onClick={() => setModalOpen(false)}>
-                                ✕
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="w-full max-w-2xl max-h-[92vh] overflow-hidden flex flex-col rounded-2xl bg-white dark:bg-gray-900 shadow-2xl border border-gray-200 dark:border-gray-800">
+                        {/* Modal header */}
+                        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-800">
+                            <div>
+                                <h2 className="text-lg font-bold text-on-surface dark:text-white">
+                                    {selectedId == null ? 'New section' : 'Edit section'}
+                                </h2>
+                                {selectedId != null && detail && (
+                                    <p className="text-xs text-on-surface-variant dark:text-gray-500 font-mono">
+                                        {detail.slug}
+                                    </p>
+                                )}
+                            </div>
+                            <button
+                                type="button"
+                                className="p-2 rounded-lg text-on-surface-variant hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-on-surface dark:hover:text-white transition"
+                                onClick={() => setModalOpen(false)}
+                            >
+                                <IconX size={18} />
                             </button>
                         </div>
 
-                        <div className="flex gap-2 border-b border-white-light dark:border-[#1b2e4b] px-5">
+                        {/* Tabs */}
+                        <div className="flex gap-1 px-6 pt-3 border-b border-gray-200 dark:border-gray-800">
                             {(['general', 'rule', 'items'] as const).map((t) => (
                                 <button
                                     key={t}
                                     type="button"
-                                    className={`px-3 py-2 text-sm capitalize border-b-2 -mb-px ${
-                                        tab === t ? 'border-primary text-primary font-semibold' : 'border-transparent text-white-dark'
+                                    className={`px-3 py-2 text-sm font-semibold capitalize border-b-2 -mb-px transition ${
+                                        tab === t
+                                            ? 'border-primary text-primary'
+                                            : 'border-transparent text-on-surface-variant hover:text-on-surface dark:hover:text-white'
                                     }`}
                                     onClick={() => setTab(t)}
                                 >
@@ -396,32 +733,55 @@ const MerchandisingHomepage: React.FC = () => {
                             ))}
                         </div>
 
-                        <div className="p-5 space-y-4">
+                        {/* Modal body */}
+                        <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
                             {tab === 'general' && (
                                 <>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="block text-sm mb-1">Title</label>
+                                        <div className="sm:col-span-2">
+                                            <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1.5">
+                                                Title
+                                            </label>
                                             <input
-                                                className="form-input"
+                                                className={inputCls}
                                                 value={title}
                                                 onChange={(e) => {
                                                     setTitle(e.target.value);
                                                     if (selectedId == null) setSlug(slugify(e.target.value));
                                                 }}
+                                                placeholder="Trending right now"
+                                            />
+                                        </div>
+                                        <div className="sm:col-span-2">
+                                            <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1.5">
+                                                Subtitle
+                                            </label>
+                                            <input
+                                                className={inputCls}
+                                                value={subtitle}
+                                                onChange={(e) => setSubtitle(e.target.value)}
+                                                placeholder="Optional caption shown under the title"
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-sm mb-1">Slug</label>
-                                            <input className="form-input font-mono text-sm" value={slug} onChange={(e) => setSlug(e.target.value)} />
-                                        </div>
-                                        <div className="sm:col-span-2">
-                                            <label className="block text-sm mb-1">Subtitle</label>
-                                            <input className="form-input" value={subtitle} onChange={(e) => setSubtitle(e.target.value)} />
+                                            <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1.5">
+                                                Slug
+                                            </label>
+                                            <input
+                                                className={`${inputCls} font-mono text-xs`}
+                                                value={slug}
+                                                onChange={(e) => setSlug(e.target.value)}
+                                            />
                                         </div>
                                         <div>
-                                            <label className="block text-sm mb-1">Section type</label>
-                                            <select className="form-select" value={sectionType} onChange={(e) => setSectionType(e.target.value)}>
+                                            <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1.5">
+                                                Section type
+                                            </label>
+                                            <select
+                                                className={inputCls}
+                                                value={sectionType}
+                                                onChange={(e) => setSectionType(e.target.value)}
+                                            >
                                                 {SECTION_TYPES.map((o) => (
                                                     <option key={o.value} value={o.value}>
                                                         {o.label}
@@ -430,8 +790,14 @@ const MerchandisingHomepage: React.FC = () => {
                                             </select>
                                         </div>
                                         <div>
-                                            <label className="block text-sm mb-1">Strategy</label>
-                                            <select className="form-select" value={strategy} onChange={(e) => setStrategy(e.target.value)}>
+                                            <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1.5">
+                                                Strategy
+                                            </label>
+                                            <select
+                                                className={inputCls}
+                                                value={strategy}
+                                                onChange={(e) => setStrategy(e.target.value)}
+                                            >
                                                 {STRATEGIES.map((o) => (
                                                     <option key={o.value} value={o.value}>
                                                         {o.label}
@@ -440,64 +806,103 @@ const MerchandisingHomepage: React.FC = () => {
                                             </select>
                                         </div>
                                         <div>
-                                            <label className="block text-sm mb-1">Max products</label>
+                                            <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1.5">
+                                                Max products
+                                            </label>
                                             <input
                                                 type="number"
                                                 min={1}
-                                                className="form-input"
+                                                className={inputCls}
                                                 value={maxProducts}
                                                 onChange={(e) => setMaxProducts(Number(e.target.value))}
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-sm mb-1">Position (sort)</label>
+                                            <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1.5">
+                                                Position
+                                            </label>
                                             <input
                                                 type="number"
                                                 min={0}
-                                                className="form-input"
+                                                className={inputCls}
                                                 value={position}
                                                 onChange={(e) => setPosition(Number(e.target.value))}
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-sm mb-1">Start (optional)</label>
-                                            <input type="datetime-local" className="form-input" value={startsAt} onChange={(e) => setStartsAt(e.target.value)} />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm mb-1">End (optional)</label>
-                                            <input type="datetime-local" className="form-input" value={endsAt} onChange={(e) => setEndsAt(e.target.value)} />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm mb-1">Background color</label>
+                                            <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1.5">
+                                                Starts at
+                                            </label>
                                             <input
-                                                className="form-input"
-                                                placeholder="#fef2f2"
-                                                value={backgroundColor}
-                                                onChange={(e) => setBackgroundColor(e.target.value)}
+                                                type="datetime-local"
+                                                className={inputCls}
+                                                value={startsAt}
+                                                onChange={(e) => setStartsAt(e.target.value)}
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-sm mb-1">Accent color</label>
-                                            <input className="form-input" placeholder="#f97316" value={accentColor} onChange={(e) => setAccentColor(e.target.value)} />
+                                            <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1.5">
+                                                Ends at
+                                            </label>
+                                            <input
+                                                type="datetime-local"
+                                                className={inputCls}
+                                                value={endsAt}
+                                                onChange={(e) => setEndsAt(e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="sm:col-span-2">
+                                            <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1.5">
+                                                Background color
+                                            </label>
+                                            <ColorSwatchPicker
+                                                value={backgroundColor}
+                                                presets={BACKGROUND_PRESETS}
+                                                onChange={setBackgroundColor}
+                                            />
+                                        </div>
+                                        <div className="sm:col-span-2">
+                                            <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1.5">
+                                                Accent color
+                                            </label>
+                                            <ColorSwatchPicker
+                                                value={accentColor}
+                                                presets={ACCENT_PRESETS}
+                                                onChange={setAccentColor}
+                                            />
                                         </div>
                                     </div>
-                                    <label className="flex items-center gap-2 cursor-pointer">
-                                        <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
-                                        <span>Active</span>
-                                    </label>
-                                    <label className="flex items-center gap-2 cursor-pointer">
-                                        <input type="checkbox" checked={showCountdown} onChange={(e) => setShowCountdown(e.target.checked)} />
-                                        <span>Show countdown (requires end date)</span>
-                                    </label>
+                                    <div className="flex flex-wrap gap-x-6 gap-y-2 pt-2 border-t border-gray-200 dark:border-gray-800">
+                                        <label className="flex items-center gap-2 cursor-pointer text-sm text-on-surface dark:text-white">
+                                            <input
+                                                type="checkbox"
+                                                checked={isActive}
+                                                onChange={(e) => setIsActive(e.target.checked)}
+                                                className="h-4 w-4 rounded text-primary focus:ring-primary"
+                                            />
+                                            <span>Active</span>
+                                        </label>
+                                        <label className="flex items-center gap-2 cursor-pointer text-sm text-on-surface dark:text-white">
+                                            <input
+                                                type="checkbox"
+                                                checked={showCountdown}
+                                                onChange={(e) => setShowCountdown(e.target.checked)}
+                                                className="h-4 w-4 rounded text-primary focus:ring-primary"
+                                            />
+                                            <span>Show countdown <span className="text-on-surface-variant text-xs">(needs end date)</span></span>
+                                        </label>
+                                    </div>
                                 </>
                             )}
 
                             {tab === 'rule' && strategy !== 'manual' && (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="sm:col-span-2">
-                                        <label className="block text-sm mb-1">Rule type</label>
+                                        <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1.5">
+                                            Rule type
+                                        </label>
                                         <select
-                                            className="form-select"
+                                            className={inputCls}
                                             value={rule.rule_type}
                                             onChange={(e) => setRule((r) => ({ ...r, rule_type: e.target.value }))}
                                         >
@@ -509,38 +914,46 @@ const MerchandisingHomepage: React.FC = () => {
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="block text-sm mb-1">Lookback (days)</label>
+                                        <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1.5">
+                                            Lookback (days)
+                                        </label>
                                         <input
                                             type="number"
                                             min={1}
-                                            className="form-input"
+                                            className={inputCls}
                                             value={rule.lookback_days}
                                             onChange={(e) => setRule((r) => ({ ...r, lookback_days: Number(e.target.value) }))}
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm mb-1">Min rating</label>
+                                        <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1.5">
+                                            Min rating
+                                        </label>
                                         <input
                                             type="number"
                                             step="0.1"
-                                            className="form-input"
+                                            className={inputCls}
                                             value={rule.min_rating}
                                             onChange={(e) => setRule((r) => ({ ...r, min_rating: Number(e.target.value) }))}
                                         />
                                     </div>
                                     <div className="sm:col-span-2">
-                                        <label className="block text-sm mb-1">Tag / keyword filter</label>
+                                        <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1.5">
+                                            Tag / keyword filter
+                                        </label>
                                         <input
-                                            className="form-input"
+                                            className={inputCls}
                                             value={rule.tag}
                                             onChange={(e) => setRule((r) => ({ ...r, tag: e.target.value }))}
                                             placeholder="For tag_filter rule"
                                         />
                                     </div>
                                     <div className="sm:col-span-2">
-                                        <label className="block text-sm mb-1">Category (category_best)</label>
+                                        <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1.5">
+                                            Category (category_best)
+                                        </label>
                                         <select
-                                            className="form-select"
+                                            className={inputCls}
                                             value={rule.category || ''}
                                             onChange={(e) =>
                                                 setRule((r) => ({ ...r, category: e.target.value ? e.target.value : null }))
@@ -555,30 +968,40 @@ const MerchandisingHomepage: React.FC = () => {
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="block text-sm mb-1">Low stock threshold</label>
+                                        <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1.5">
+                                            Low stock threshold
+                                        </label>
                                         <input
                                             type="number"
-                                            className="form-input"
+                                            className={inputCls}
                                             value={rule.low_stock_threshold}
-                                            onChange={(e) => setRule((r) => ({ ...r, low_stock_threshold: Number(e.target.value) }))}
+                                            onChange={(e) =>
+                                                setRule((r) => ({ ...r, low_stock_threshold: Number(e.target.value) }))
+                                            }
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm mb-1">Cache (minutes)</label>
+                                        <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1.5">
+                                            Cache (minutes)
+                                        </label>
                                         <input
                                             type="number"
                                             min={1}
-                                            className="form-input"
+                                            className={inputCls}
                                             value={rule.cache_minutes}
-                                            onChange={(e) => setRule((r) => ({ ...r, cache_minutes: Number(e.target.value) }))}
+                                            onChange={(e) =>
+                                                setRule((r) => ({ ...r, cache_minutes: Number(e.target.value) }))
+                                            }
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm mb-1">Min price</label>
+                                        <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1.5">
+                                            Min price
+                                        </label>
                                         <input
                                             type="number"
                                             step="0.01"
-                                            className="form-input"
+                                            className={inputCls}
                                             value={rule.min_price ?? ''}
                                             onChange={(e) =>
                                                 setRule((r) => ({ ...r, min_price: e.target.value === '' ? null : e.target.value }))
@@ -586,85 +1009,134 @@ const MerchandisingHomepage: React.FC = () => {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm mb-1">Max price</label>
+                                        <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1.5">
+                                            Max price
+                                        </label>
                                         <input
                                             type="number"
                                             step="0.01"
-                                            className="form-input"
+                                            className={inputCls}
                                             value={rule.max_price ?? ''}
                                             onChange={(e) =>
                                                 setRule((r) => ({ ...r, max_price: e.target.value === '' ? null : e.target.value }))
                                             }
                                         />
                                     </div>
-                                    <label className="flex items-center gap-2 sm:col-span-2 cursor-pointer">
-                                        <input
-                                            type="checkbox"
-                                            checked={rule.only_in_stock}
-                                            onChange={(e) => setRule((r) => ({ ...r, only_in_stock: e.target.checked }))}
-                                        />
-                                        <span>Only in stock</span>
-                                    </label>
-                                    <label className="flex items-center gap-2 sm:col-span-2 cursor-pointer">
-                                        <input
-                                            type="checkbox"
-                                            checked={rule.only_available}
-                                            onChange={(e) => setRule((r) => ({ ...r, only_available: e.target.checked }))}
-                                        />
-                                        <span>Only available flag</span>
-                                    </label>
+                                    <div className="sm:col-span-2 flex flex-wrap gap-x-6 gap-y-2 pt-2 border-t border-gray-200 dark:border-gray-800">
+                                        <label className="flex items-center gap-2 cursor-pointer text-sm text-on-surface dark:text-white">
+                                            <input
+                                                type="checkbox"
+                                                checked={rule.only_in_stock}
+                                                onChange={(e) => setRule((r) => ({ ...r, only_in_stock: e.target.checked }))}
+                                                className="h-4 w-4 rounded text-primary focus:ring-primary"
+                                            />
+                                            <span>Only in stock</span>
+                                        </label>
+                                        <label className="flex items-center gap-2 cursor-pointer text-sm text-on-surface dark:text-white">
+                                            <input
+                                                type="checkbox"
+                                                checked={rule.only_available}
+                                                onChange={(e) => setRule((r) => ({ ...r, only_available: e.target.checked }))}
+                                                className="h-4 w-4 rounded text-primary focus:ring-primary"
+                                            />
+                                            <span>Only available flag</span>
+                                        </label>
+                                    </div>
                                 </div>
                             )}
 
                             {tab === 'rule' && strategy === 'manual' && (
-                                <p className="text-sm text-white-dark">Manual strategy uses only pinned rows from the Manual picks tab (no population rule).</p>
+                                <div className="rounded-xl border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50/60 dark:bg-gray-800/40 px-4 py-6 text-center">
+                                    <p className="text-sm text-on-surface-variant dark:text-gray-400">
+                                        Manual strategy uses only the pinned products from the <strong>Manual picks</strong> tab — no rule needed.
+                                    </p>
+                                </div>
                             )}
 
                             {tab === 'items' && (
                                 <div className="space-y-4">
                                     {selectedId == null ? (
-                                        <p className="text-sm text-warning">Save the section first, then add product UUIDs.</p>
+                                        <div className="rounded-xl border border-warning/40 bg-warning/10 px-4 py-3 text-sm text-on-surface dark:text-white flex items-center gap-2">
+                                            <IconAlertTriangle className="w-5 h-5 text-warning shrink-0" />
+                                            Save the section first, then add product UUIDs here.
+                                        </div>
                                     ) : (
                                         <>
                                             <div className="flex flex-wrap gap-2 items-end">
-                                                <div className="flex-1 min-w-[200px]">
-                                                    <label className="block text-sm mb-1">Product ID (UUID)</label>
+                                                <div className="flex-1 min-w-[220px]">
+                                                    <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1.5">
+                                                        Product UUID
+                                                    </label>
                                                     <input
-                                                        className="form-input font-mono text-xs"
+                                                        className={`${inputCls} font-mono text-xs`}
                                                         value={newProductId}
                                                         onChange={(e) => setNewProductId(e.target.value)}
                                                         placeholder="From product list / Django admin"
                                                     />
                                                 </div>
-                                                <button type="button" className="btn btn-primary" onClick={handleAddItem}>
+                                                <button
+                                                    type="button"
+                                                    className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:opacity-90 transition disabled:opacity-50"
+                                                    onClick={handleAddItem}
+                                                    disabled={!newProductId.trim()}
+                                                >
                                                     Add product
                                                 </button>
                                             </div>
-                                            <ul className="divide-y divide-white-light dark:divide-[#1b2e4b] border border-white-light dark:border-[#1b2e4b] rounded">
-                                                {(detail?.items ?? []).map((it) => (
-                                                    <li key={it.id} className="flex items-center justify-between gap-2 px-3 py-2 text-sm">
-                                                        <span>
-                                                            <span className="font-mono text-xs text-white-dark">{it.product}</span>
-                                                            <span className="ml-2">{it.product_name}</span>
-                                                        </span>
-                                                        <button type="button" className="text-danger" onClick={() => handleRemoveItem(it.id)}>
-                                                            <IconTrash className="w-4 h-4" />
-                                                        </button>
-                                                    </li>
-                                                ))}
-                                            </ul>
+                                            {(detail?.items?.length ?? 0) === 0 ? (
+                                                <div className="rounded-xl border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50/60 dark:bg-gray-800/40 px-4 py-6 text-center text-sm text-on-surface-variant">
+                                                    No pinned items yet.
+                                                </div>
+                                            ) : (
+                                                <ul className="divide-y divide-gray-100 dark:divide-gray-800 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+                                                    {(detail?.items ?? []).map((it) => (
+                                                        <li
+                                                            key={it.id}
+                                                            className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition"
+                                                        >
+                                                            <div className="min-w-0">
+                                                                <p className="font-medium text-on-surface dark:text-white truncate">
+                                                                    {it.product_name || '(unnamed product)'}
+                                                                </p>
+                                                                <code className="text-xs text-on-surface-variant dark:text-gray-500 font-mono">
+                                                                    {it.product}
+                                                                </code>
+                                                            </div>
+                                                            <button
+                                                                type="button"
+                                                                className="p-2 rounded-lg text-error hover:bg-error/10 transition shrink-0"
+                                                                onClick={() => handleRemoveItem(it.id)}
+                                                                title="Remove pinned product"
+                                                            >
+                                                                <IconTrash size={16} />
+                                                            </button>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
                                         </>
                                     )}
                                 </div>
                             )}
                         </div>
 
-                        <div className="sticky bottom-0 flex justify-end gap-2 border-t border-white-light dark:border-[#1b2e4b] px-5 py-4 bg-inherit">
-                            <button type="button" className="btn btn-outline-primary" onClick={() => setModalOpen(false)}>
+                        {/* Modal footer */}
+                        <div className="flex justify-end gap-2 px-6 py-4 border-t border-gray-200 dark:border-gray-800 bg-gray-50/60 dark:bg-gray-900/60">
+                            <button
+                                type="button"
+                                className="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-2 text-sm font-semibold text-on-surface dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+                                onClick={() => setModalOpen(false)}
+                            >
                                 Cancel
                             </button>
                             {tab !== 'items' && (
-                                <button type="button" className="btn btn-primary" disabled={saving || !title.trim()} onClick={handleSave}>
+                                <button
+                                    type="button"
+                                    className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:opacity-90 transition disabled:opacity-50 inline-flex items-center gap-2"
+                                    disabled={saving || !title.trim()}
+                                    onClick={handleSave}
+                                >
+                                    {saving && <IconLoader className="w-4 h-4 animate-spin" />}
                                     {saving ? 'Saving…' : 'Save section'}
                                 </button>
                             )}

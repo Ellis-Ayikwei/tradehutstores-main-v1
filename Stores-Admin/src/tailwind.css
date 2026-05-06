@@ -1,5 +1,7 @@
 /* Animate css */
 @import './assets/css/animate.css';
+/* Material Symbols Outlined — required by Kinetic icons (must precede @font-face / @tailwind). */
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 
 @font-face {
     font-family: 'Charlie';
@@ -16,10 +18,6 @@
     font-style: normal;
     font-display: swap;
 }
-
-/* Material Symbols Outlined — required by Kinetic icons. The Charlie font
-   stack stays as configured upstream. */
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 
 @tailwind base;
 @tailwind components;

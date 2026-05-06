@@ -78,6 +78,9 @@ export const LoginUser = createAsyncThunk(
             });
             
             const { signIn } = extra;
+            // expiresIn must match BE ACCESS_TOKEN_LIFETIME_MINUTES (30 min) —
+            // without it react-auth-kit treats the cookie as immediately stale
+            // and useIsAuthenticated() flips to false right after sign-in.
             const isSignedIn = signIn({
                 auth: {
                     token: cleanAccessToken,
@@ -85,6 +88,7 @@ export const LoginUser = createAsyncThunk(
                 },
                 refresh: refreshToken,
                 userState: user,
+                expiresIn: 30,
             });
 
             // Also set cookies manually to ensure axios interceptor can read them immediately
@@ -184,7 +188,7 @@ export const MfaLoginUser = createAsyncThunk('auth/MfaLoginUser', async (
                     },
                     refresh: refreshToken,
                     userState: user,
-                    expiresIn: 60,
+                    expiresIn: 30,
                 });
 
                 // Also set cookies manually to ensure axios interceptor can read them immediately
@@ -314,7 +318,7 @@ export const VerifyMfaLogin = createAsyncThunk(
             },
             refresh: refreshToken,
             userState: user,
-            expiresIn: 60,
+            expiresIn: 30,
         });
 
         // Also set cookies manually to ensure axios interceptor can read them immediately

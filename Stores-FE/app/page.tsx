@@ -392,6 +392,8 @@ export default function HomePage() {
                     </motion.div>
                 </div>
             </section>
+
+            <HomeMerchandising />
         </MainLayout>
     )
 }

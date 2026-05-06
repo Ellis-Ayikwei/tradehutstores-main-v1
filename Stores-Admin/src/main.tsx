@@ -55,49 +55,51 @@ const i18n = import('./i18n');
 //   },
 // });
 
+// BE access token TTL is 30 minutes (Stores-BE/backend/settings.py
+// ACCESS_TOKEN_LIFETIME_MINUTES). We refresh well before that to keep every
+// outbound request authenticated and avoid the user-visible "logged out" jump.
+const ACCESS_TOKEN_TTL_MINUTES = 30;
+const REFRESH_INTERVAL_MINUTES = 10;
+
 const authStore = createStore({
     authName: '_auth',
     authType: 'cookie',
     cookieDomain: window.location.hostname,
     cookieSecure: window.location.protocol === 'https:',
-    debug: true,
+    debug: false,
     refresh: createRefresh({
-        interval: 60,
+        interval: REFRESH_INTERVAL_MINUTES,
         refreshApiCallback: async () => {
             try {
-                const response = await authAxiosInstance.post('/refresh_token/', {
-                    withCredentials: true,
-                    // Automatically sends refresh cookie
-                });
+                // authAxiosInstance already has withCredentials: true, and the
+                // request interceptor copies the _auth_refresh cookie into the
+                // X-Refresh-Token header that the BE TokenRefreshView expects.
+                const response = await authAxiosInstance.post('/refresh_token/', null);
+
+                const authHeader: string | undefined =
+                    response.headers?.authorization || response.headers?.Authorization;
+
+                if (!authHeader) {
+                    throw new Error('Refresh response missing Authorization header');
+                }
+
+                // Match the cookie format the LoginUser thunk uses
+                // (Bearer-prefixed) so the request interceptor's
+                // already-prefixed branch handles both flows identically.
+                const newToken = authHeader.startsWith('Bearer ')
+                    ? authHeader
+                    : `Bearer ${authHeader}`;
+
                 return {
                     isSuccess: true,
-                    newAuthToken: response.headers.authorization,
-                    newAuthTokenExpireIn: 1900, // 15 minutes
+                    newAuthToken: newToken,
+                    newAuthTokenExpireIn: ACCESS_TOKEN_TTL_MINUTES,
                 };
             } catch (error) {
-                // Error refreshing token - handled by error boundary
-                
-                // Clear all auth data on refresh failure
-                const clearAuthData = () => {
-                    document.cookie = '_auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                    document.cookie = '_auth_refresh=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                    localStorage.removeItem('userId');
-                    localStorage.removeItem('__auth_kit');
-                    localStorage.removeItem('__auth_kit_refresh');
-                    sessionStorage.clear();
-                };
-                
-                clearAuthData();
-                
-                // Only redirect if not already on login page
-                if (!window.location.pathname.includes('/login')) {
-                    window.location.href = '/login';
-                }
-                
+                console.error('[auth] token refresh failed', error);
                 return {
                     isSuccess: false,
-                    newAuthToken: '', // Ensure newAuthToken is always a string
-                    newAuthTokenExpireIn: undefined,
+                    newAuthToken: '',
                 };
             }
         },

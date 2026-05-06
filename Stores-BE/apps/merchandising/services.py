@@ -121,9 +121,9 @@ def _sold_since_cutoff(qs, cutoff):
     return qs.annotate(
         units_sold_count=Coalesce(
             Sum(
-                "orderitem_set__quantity",
+                "orderitem__quantity",
                 filter=Q(
-                    orderitem_set__order__created_at__gte=cutoff,
+                    orderitem__order__created_at__gte=cutoff,
                 ),
             ),
             0,
@@ -176,8 +176,8 @@ def _apply_rule(rule: PopulationRule, limit: int) -> list:
         cutoff = timezone.now() - timezone.timedelta(hours=max(1, int(rule.lookback_days) * 24))
         qs = qs.annotate(
             recent_views=Count(
-                "productview_set",
-                filter=Q(productview_set__timestamp__gte=cutoff),
+                "productview",
+                filter=Q(productview__timestamp__gte=cutoff),
             )
         ).order_by("-recent_views", "-created_at")
 

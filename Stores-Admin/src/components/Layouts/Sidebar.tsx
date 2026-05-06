@@ -55,7 +55,6 @@ const Sidebar = () => {
         }));
     };
 
-    // Normalize a value to lowercase string array (supports array of strings/objects or comma-separated string)
     const toLowerStringArray = (input: any): string[] => {
         if (!input) return [];
         if (Array.isArray(input)) {
@@ -79,23 +78,21 @@ const Sidebar = () => {
         return [];
     };
 
-    // Derive user groups and global-admin bypass from auth state
-    // Extract user ID - handle both nested (authUser.user.id) and direct (authUser.id) structures
-    const userId = authUser?.user?.id || authUser?.id || (authUser && typeof authUser === 'object' && 'id' in authUser ? authUser.id : null);
-    
-    const{ data: userProfile, isLoading: userProfileLoading, error: userProfileError } = useSWR(
+    const userId =
+        authUser?.user?.id ||
+        authUser?.id ||
+        (authUser && typeof authUser === 'object' && 'id' in authUser ? authUser.id : null);
+
+    const { data: userProfile, isLoading: userProfileLoading, error: userProfileError } = useSWR(
         userId ? `/users/${userId}/profile/` : null,
         fetcher,
-        {
-            revalidateOnFocus: false,
-            keepPreviousData: true,
-        }
+        { revalidateOnFocus: false, keepPreviousData: true }
     );
+
     const userGroups = toLowerStringArray(userProfile?.groups || []);
     const userTypeLc = (userProfile?.user_type || userProfile?.role || '').toString().toLowerCase();
     const isGlobalAdmin = userGroups.includes('super admins') || userTypeLc === 'super_admin';
 
-    // Helper to check if a menu item is allowed
     const isAllowed = (allowedGroups?: string[]) => {
         if (!allowedGroups || allowedGroups.length === 0) return true;
         if (isGlobalAdmin) return true;
@@ -104,7 +101,12 @@ const Sidebar = () => {
     };
 
     const menuItems = [
-        { path: '/admin/dashboard', icon: IconLayoutDashboard, label: 'Dashboard', allowedGroups: ['Administrators', 'Finance Officers', 'Inventory Managers', 'Support'] },
+        {
+            path: '/admin/dashboard',
+            icon: IconLayoutDashboard,
+            label: 'Dashboard',
+            allowedGroups: ['Administrators', 'Finance Officers', 'Inventory Managers', 'Support'],
+        },
         {
             path: '/admin/products',
             icon: IconClipboardList,
@@ -119,7 +121,7 @@ const Sidebar = () => {
                 {
                     path: '/admin/merchandising/homepage',
                     icon: IconLayoutGrid,
-                    label: 'Homepage merchandising',
+                    label: 'Homepage Merchandising',
                     allowedGroups: ['Administrators', 'Inventory Managers'],
                 },
             ],
@@ -145,7 +147,6 @@ const Sidebar = () => {
                 { path: '/admin/users/roles', icon: IconShieldLock, label: 'User Roles', allowedGroups: ['Administrators'] },
             ],
         },
-
         {
             path: '/admin/customers',
             icon: IconUsers,
@@ -203,12 +204,9 @@ const Sidebar = () => {
         { path: '/admin/configurations', icon: IconSettings, label: 'Settings', allowedGroups: ['Administrators'] },
     ];
 
-    const isPathActive = (path: string) => {
-        return location.pathname.startsWith(path);
-    };
+    const isPathActive = (path: string) => location.pathname.startsWith(path);
 
     const renderMenuItem = (item: any, isSubItem = false) => {
-        // Filter item by allowedGroups
         if (!isAllowed(item.allowedGroups)) return null;
 
         const isActive = isPathActive(item.path);
@@ -216,130 +214,158 @@ const Sidebar = () => {
         const isExpanded = expandedSections[item.path];
         const Icon = item.icon;
 
+        // ── Leaf node ────────────────────────────────────────────────────────
         if (!hasSubItems) {
             return (
-                <li key={item.path} className="menu nav-item last:border-b-0">
+                <li key={item.path}>
                     <NavLink
                         to={item.path}
                         className={({ isActive: navActive }) =>
-                            `flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${isSubItem ? 'pl-8' : ''} ${
+                            [
+                                'group flex items-center gap-3 rounded-md transition-all duration-150',
+                                isSubItem
+                                    ? 'pl-9 pr-3 py-2 text-[11.5px] font-medium tracking-wide'
+                                    : 'px-3 py-2.5 text-[12.5px] font-semibold tracking-wide',
                                 navActive || isActive
-                                    ? 'text-primary-container font-bold border-r-4 border-primary-container bg-surface-container-low'
-                                    : 'text-on-surface opacity-70 hover:opacity-100 hover:bg-surface-container-low'
-                            }`
+                                    ? 'bg-primary-container/15 text-primary-container border-r-2 border-primary-container'
+                                    : 'text-on-surface/50 hover:text-on-surface hover:bg-surface-container-low/60',
+                            ].join(' ')
                         }
                     >
-                        <Icon className="!w-5 !h-5 flex-shrink-0" />
-                        <span className="text-sm">{item.label}</span>
+                        <Icon
+                            className={[
+                                'flex-shrink-0 transition-colors duration-150',
+                                isSubItem ? 'w-3.5 h-3.5' : 'w-4 h-4',
+                                isActive ? 'text-primary-container' : 'text-on-surface/40 group-hover:text-on-surface/70',
+                            ].join(' ')}
+                        />
+                        <span className="truncate">{item.label}</span>
                     </NavLink>
                 </li>
             );
         }
 
-        // Filter subitems
-        const filteredSubItems = item.subItems.filter((subItem: any) => isAllowed(subItem.allowedGroups));
+        // ── Guard: no visible children ────────────────────────────────────────
+        const filteredSubItems = item.subItems.filter((sub: any) => isAllowed(sub.allowedGroups));
         if (!filteredSubItems.length) return null;
 
+        // ── Parent node ───────────────────────────────────────────────────────
         return (
-            <li key={item.path} className="menu nav-item last:border-b-0">
+            <li key={item.path}>
                 <button
                     type="button"
-                    className={`nav-link flex items-center gap-3 px-4 py-3 rounded-lg w-full transition-all duration-200 ${
-                        isActive || isExpanded
-                            ? 'text-primary-container font-bold bg-surface-container-low'
-                            : 'text-on-surface opacity-70 hover:opacity-100 hover:bg-surface-container-low'
-                    }`}
                     onClick={() => toggleMenu(item.path)}
+                    className={[
+                        'group w-full flex items-center gap-3 px-3 py-2.5 rounded-md',
+                        'text-[12.5px] font-semibold tracking-wide transition-all duration-150',
+                        isActive || isExpanded
+                            ? 'text-on-surface bg-surface-container-low/60'
+                            : 'text-on-surface/50 hover:text-on-surface hover:bg-surface-container-low/60',
+                    ].join(' ')}
                 >
-                    <Icon className="!w-5 !h-5 flex-shrink-0" />
-                    <span className="text-sm flex-1 text-left">{item.label}</span>
-                    <IconChevronRight className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${isExpanded ? 'rotate-90' : 'rtl:rotate-180'}`} />
+                    <Icon
+                        className={[
+                            'w-4 h-4 flex-shrink-0 transition-colors duration-150',
+                            isActive || isExpanded
+                                ? 'text-primary-container'
+                                : 'text-on-surface/40 group-hover:text-on-surface/70',
+                        ].join(' ')}
+                    />
+                    <span className="flex-1 text-left truncate">{item.label}</span>
+                    <IconChevronRight
+                        className={[
+                            'w-3 h-3 flex-shrink-0 text-on-surface/30 transition-transform duration-200',
+                            isExpanded ? 'rotate-90' : 'rtl:rotate-180',
+                        ].join(' ')}
+                    />
                 </button>
 
-                {isExpanded && (
-                    <ul className="sub-menu bg-surface-container-low/30 rounded-lg mt-0.5">
+                {/* Sub-menu — CSS height transition via max-height trick */}
+                <ul
+                    className={[
+                        'overflow-hidden transition-all duration-200 ease-in-out',
+                        isExpanded ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0',
+                    ].join(' ')}
+                >
+                    {/* Left rail accent */}
+                    <div className="relative ml-[22px] border-l border-outline-variant/20 py-0.5">
                         {filteredSubItems.map((subItem: any) => renderMenuItem(subItem, true))}
-                    </ul>
-                )}
+                    </div>
+                </ul>
             </li>
         );
     };
 
-    // Show loading state while user profile is being fetched
-    // if (userProfileLoading || !authUser?.user?.id) {
-    //     return (
-    //         <div className={semidark ? 'dark' : ''}>
-    //             <nav className={`sidebar fixed min-h-screen h-full top-0 bottom-0 w-[260px] sm:w-[280px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] z-50 transition-all duration-300`}>
-    //                 <div className="bg-primary dark:bg-primary h-full flex flex-col">
-    //                     <div className="flex justify-between items-center px-3 py-2">
-    //                         <NavLink to="/" className="main-logo flex items-center shrink-0">
-    //                             <img className="w-[160px] sm:w-[180px] ml-[5px] flex-none" src="/assets/images/tradehut-text.png" alt="TradeHut Logo" />
-    //                         </NavLink>
-    //                     </div>
-    //                     <div className="flex-1 flex items-center justify-center">
-    //                         <div className="text-white text-sm">Loading...</div>
-    //                     </div>
-    //                 </div>
-    //             </nav>
-    //         </div>
-    //     );
-    // }
+    // ── Derived display values (no new state) ─────────────────────────────────
+    const displayName =
+        userProfile?.name ||
+        userProfile?.email ||
+        authUser?.user?.name ||
+        authUser?.user?.email ||
+        'Admin User';
+
+    const displayRole =
+        userProfile?.user_type ||
+        authUser?.user?.user_type ||
+        'Administrator';
+
+    const displayInitial = displayName.charAt(0).toUpperCase();
 
     return (
         <div className={semidark ? 'dark' : ''}>
-            {/* ── Kinetic sidebar shell ─────────────────────────────────────────────
-                Visual treatment updated to Kinetic tokens.
-                Route list, NavLink targets, toggleSidebar logic — all UNCHANGED.
-            ──────────────────────────────────────────────────────────────────── */}
-            <nav className={`sidebar fixed min-h-screen h-full top-0 bottom-0 w-[260px] sm:w-[280px] z-50 transition-all duration-300 shadow-card`}>
-                <div className="bg-surface dark:bg-[#1a1a1a] h-full flex flex-col border-r border-outline-variant/10">
+            <nav className="sidebar fixed top-0 bottom-0 left-0 w-[240px] sm:w-[256px] z-50 transition-all duration-300">
+                <div className="bg-surface dark:bg-[#111] h-full flex flex-col border-r border-outline-variant/10">
 
-                    {/* ── Brand + collapse toggle ── */}
-                    <div className="flex justify-between items-center px-4 py-4 border-b border-outline-variant/10">
-                        <NavLink to="/" className="main-logo flex items-center shrink-0 gap-2">
+                    {/* ── Header ─────────────────────────────────────────────── */}
+                    <div className="flex items-center justify-between px-4 py-3.5 border-b border-outline-variant/10">
+                        <NavLink to="/" className="flex items-center shrink-0">
                             <img
-                                className="w-[100px] sm:w-[110px] flex-none"
                                 src="/assets/images/logos/tradehutfullText.png"
-                                alt="TradeHut Logo"
+                                alt="TradeHut"
+                                className="w-24 sm:w-28 flex-none"
                                 loading="lazy"
                             />
                         </NavLink>
                         <button
                             type="button"
-                            className="collapse-icon w-8 h-8 rounded-lg flex items-center justify-center hover:bg-surface-container-low transition-colors duration-200 rtl:rotate-180"
+                            aria-label="Toggle sidebar"
                             onClick={() => dispatch(toggleSidebar())}
+                            className="w-7 h-7 rounded-md flex items-center justify-center
+                                       text-on-surface-variant hover:bg-surface-container-low
+                                       transition-colors duration-150 rtl:rotate-180"
                         >
-                            <IconMenu2 className="w-5 h-5 text-on-surface-variant" />
+                            <IconMenu2 className="w-4 h-4" />
                         </button>
                     </div>
 
-                    {/* ── Identity card ── */}
-                    <div className="px-4 py-3 border-b border-outline-variant/10">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center flex-shrink-0">
-                                <IconUser className="w-5 h-5 text-on-surface-variant" />
-                            </div>
-                            <div className="min-w-0">
-                                <p className="text-sm font-bold text-on-surface truncate">
-                                    {userProfile?.name || userProfile?.email || authUser?.user?.name || authUser?.user?.email || 'Admin User'}
-                                </p>
-                                <p className="text-[10px] uppercase tracking-widest text-on-surface-variant opacity-60 truncate">
-                                    {userProfile?.user_type || authUser?.user?.user_type || 'Administrator'}
-                                </p>
-                            </div>
+                    {/* ── Identity card ──────────────────────────────────────── */}
+                    <div className="flex items-center gap-3 px-4 py-3 border-b border-outline-variant/10">
+                        {/* Avatar — initial-based, no image needed */}
+                        <div className="w-8 h-8 rounded-md bg-primary-container/20 flex items-center justify-center flex-shrink-0">
+                            <span className="text-xs font-bold text-primary-container leading-none">
+                                {displayInitial}
+                            </span>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                            <p className="text-xs font-semibold text-on-surface leading-tight truncate">
+                                {displayName}
+                            </p>
+                            <p className="text-[9.5px] font-medium uppercase tracking-[0.12em] text-on-surface-variant/50 mt-0.5 truncate">
+                                {displayRole}
+                            </p>
                         </div>
                     </div>
 
-                    {/* ── Nav links ── */}
+                    {/* ── Navigation ─────────────────────────────────────────── */}
                     <div className="flex-1 flex flex-col min-h-0">
-                        <PerfectScrollbar className="flex-1">
-                            <ul className="relative space-y-0.5 p-3 py-2 text-base">
+                        <PerfectScrollbar className="flex-1 px-2 py-2">
+                            <ul className="space-y-0.5">
                                 {menuItems.map((item) => renderMenuItem(item))}
                             </ul>
                         </PerfectScrollbar>
 
-                        {/* ── Logout ── */}
-                        <div className="p-3 border-t border-outline-variant/10 mt-auto">
+                        {/* ── Logout ─────────────────────────────────────────── */}
+                        <div className="px-2 py-2 border-t border-outline-variant/10">
                             <button
                                 onClick={() => {
                                     localStorage.removeItem('userRole');
@@ -347,13 +373,18 @@ const Sidebar = () => {
                                     localStorage.removeItem('token');
                                     window.location.href = '/login';
                                 }}
-                                className="flex items-center w-full px-3 py-2 text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface rounded-lg transition-colors duration-200 active:scale-95"
+                                className="group w-full flex items-center gap-3 px-3 py-2 rounded-md
+                                           text-[12px] font-semibold tracking-wide
+                                           text-on-surface-variant/50
+                                           hover:text-on-surface hover:bg-surface-container-low/60
+                                           transition-all duration-150 active:scale-[0.98]"
                             >
-                                <IconLogout className="w-5 h-5 flex-shrink-0" />
-                                <span className="ml-2 text-sm font-medium">Logout</span>
+                                <IconLogout className="w-4 h-4 flex-shrink-0 group-hover:text-red-500 transition-colors duration-150" />
+                                <span>Logout</span>
                             </button>
                         </div>
                     </div>
+
                 </div>
             </nav>
         </div>
