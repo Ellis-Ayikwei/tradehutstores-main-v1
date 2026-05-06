@@ -261,7 +261,8 @@ function findAttrValueForOption(
     }
     if (!priorOk) continue
     if ((m[key] ?? '') !== optionValue) continue
-    return (v.attribute_values ?? []).find(
+    const attrs = (v.attribute_values ?? []) as VariantAttributeValue[]
+    return attrs.find(
       a =>
         (a.attribute_name ?? '').toLowerCase().trim() === key &&
         (a.value_name ?? '').trim() === optionValue
