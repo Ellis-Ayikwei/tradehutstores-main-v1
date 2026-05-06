@@ -1,4 +1,4 @@
-import { apiUrl } from '@/lib/axiosInstance'
+import { apiUrl } from '@/lib/config'
 
 export type FxSnapshotResponse = {
     base_currency: string
