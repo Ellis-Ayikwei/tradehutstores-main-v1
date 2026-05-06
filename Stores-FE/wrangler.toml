@@ -1,5 +1,11 @@
 # Cloudflare Pages deployment config.
 #
+# Dashboard (Pages → project → Builds):
+# - Build command:    npm run build:cf   (runs next build + @cloudflare/next-on-pages)
+# - Deploy command:  npm run deploy:pages   (NOT `wrangler deploy` — that targets Workers only)
+#
+# Or one deploy line: npx wrangler pages deploy .vercel/output/static
+#
 # Project name is whatever you created in the Cloudflare dashboard.
 # `pages_build_output_dir` matches @cloudflare/next-on-pages output.
 #
