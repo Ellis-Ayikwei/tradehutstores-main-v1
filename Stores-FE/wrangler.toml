@@ -12,7 +12,7 @@
 # Environment variables go in the Pages dashboard (or `wrangler pages secret put`)
 # — keep this file free of secrets.
 
-name = "tradehut-stores-fe"
+name = "tradehutstores-main-v1"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".vercel/output/static"
