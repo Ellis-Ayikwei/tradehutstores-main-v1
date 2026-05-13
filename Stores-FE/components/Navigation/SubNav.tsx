@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import Link from 'next/link'
-import axiosInstance from '@/lib/axiosInstance'
+import { useCatalogCategories } from '@/hooks/useCatalogCategories'
 import {
     Shield,
     Star,
@@ -110,7 +110,7 @@ function HoverPopover({
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
-const categories: Category[] = [
+const staticNavCategories: Category[] = [
     {
         name: 'Electronics',
         icon: '📱',
@@ -391,58 +391,22 @@ function OrderProtectionPopover() {
 export default function SubNav() {
     const [mobileOpen, setMobileOpen] = useState(false)
     const [expandedCat, setExpandedCat] = useState<number | null>(null)
-    const [apiCategories, setApiCategories] = useState<Category[]>(categories)
+    const { categories: catalogRows } = useCatalogCategories()
 
-    console.log("the apiCategories", apiCategories)
+    const apiCategories = useMemo((): Category[] => {
+        if (catalogRows.length === 0) return staticNavCategories
+        return catalogRows.map((row, index) => ({
+            name: row.name,
+            icon: categoryIcons[index % categoryIcons.length],
+            subcategories: row.subcategories,
+        }))
+    }, [catalogRows])
 
     // Close mobile menu on resize to desktop
     useEffect(() => {
         const handler = () => { if (window.innerWidth >= 768) setMobileOpen(false) }
         window.addEventListener('resize', handler)
         return () => window.removeEventListener('resize', handler)
-    }, [])
-
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const [categoriesRes, subCategoriesRes] = await Promise.all([
-                    axiosInstance.get('/catalog/categories/'),
-                    axiosInstance.get('/catalog/subcategories/'),
-                ])
-
-                console.log("the categoriesRes", categoriesRes)
-                console.log("the subCategoriesRes", subCategoriesRes)
-
-                const byCategory: Record<string, Subcategory[]> = {}
-                ;(categoriesRes.data ?? []).forEach((cat: any) => {
-                    byCategory[cat.name] = []
-                })
-
-                ;(subCategoriesRes.data ?? []).forEach((sub: any) => {
-                    const parentCategory = (categoriesRes.data ?? []).find((cat: any) => cat.id === sub.category)
-                    if (!parentCategory?.name) return
-                    if (!byCategory[parentCategory.name]) byCategory[parentCategory.name] = []
-                    byCategory[parentCategory.name].push({
-                        name: sub.sub_category_name,
-                        count: sub.active_product_count ?? 0,
-                    })
-                })
-
-                const normalizedCategories: Category[] = (categoriesRes.data ?? []).map((cat: any, index: number) => ({
-                    name: cat.name,
-                    icon: categoryIcons[index % categoryIcons.length],
-                    subcategories: (byCategory[cat.name] ?? []).sort((a, b) => a.name.localeCompare(b.name)),
-                }))
-
-                if (normalizedCategories.length > 0) {
-                    setApiCategories(normalizedCategories)
-                }
-            } catch {
-                // Keep static fallback if API is unavailable.
-            }
-        }
-
-        fetchCategories()
     }, [])
 
     return (

@@ -21,6 +21,8 @@ import {
     IconBuildingStore,
     IconSearch,
     IconLayoutGrid,
+    IconSpeakerphone,
+    IconDiscount2,
 } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -115,13 +117,24 @@ const Sidebar = () => {
             subItems: [
                 { path: '/admin/products/list', icon: IconClipboardList, label: 'All Products', allowedGroups: ['Administrators', 'Inventory Managers'] },
                 { path: '/admin/products/new', icon: IconClipboardList, label: 'Add Product', allowedGroups: ['Administrators', 'Inventory Managers'] },
-                { path: '/admin/categories', icon: IconClipboardList, label: 'Categories', allowedGroups: ['Administrators', 'Inventory Managers'] },
-                { path: '/admin/brands', icon: IconClipboardList, label: 'Brands', allowedGroups: ['Administrators', 'Inventory Managers'] },
+                { path: '/admin/catalog', icon: IconClipboardList, label: 'Catalog', allowedGroups: ['Administrators', 'Inventory Managers'] },
                 { path: '/admin/search', icon: IconSearch, label: 'Search Ops', allowedGroups: ['Administrators', 'Inventory Managers'] },
                 {
                     path: '/admin/merchandising/homepage',
                     icon: IconLayoutGrid,
                     label: 'Homepage Merchandising',
+                    allowedGroups: ['Administrators', 'Inventory Managers'],
+                },
+                {
+                    path: '/admin/ads',
+                    icon: IconSpeakerphone,
+                    label: 'Ads & Promotions',
+                    allowedGroups: ['Administrators', 'Inventory Managers'],
+                },
+                {
+                    path: '/admin/promos',
+                    icon: IconDiscount2,
+                    label: 'Promo Codes',
                     allowedGroups: ['Administrators', 'Inventory Managers'],
                 },
             ],

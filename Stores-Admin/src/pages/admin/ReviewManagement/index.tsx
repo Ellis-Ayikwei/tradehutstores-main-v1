@@ -81,6 +81,17 @@ interface Job {
     status: string;
 }
 
+/** Normalize list endpoints that may return a bare array or DRF `{ results }` / `{ data }`. */
+function unwrapList<T>(payload: unknown): T[] {
+    if (Array.isArray(payload)) return payload;
+    if (payload && typeof payload === 'object') {
+        const o = payload as Record<string, unknown>;
+        if (Array.isArray(o.results)) return o.results as T[];
+        if (Array.isArray(o.data)) return o.data as T[];
+    }
+    return [];
+}
+
 const ReviewManagement: React.FC = () => {
     const { hasPermission } = usePermissionService() as any;
     
@@ -120,21 +131,17 @@ const ReviewManagement: React.FC = () => {
     const { data: reviewsData, isLoading: reviewsLoading, error: reviewsError } = useSWR('reviews/', fetcher);
     const { data: providersData } = useSWR('providers/', fetcher);
     const { data: customersData } = useSWR('customers/', fetcher);
-
-    console.log("the reviews data", reviewsData)
-    console.log("the providers data", providersData)
-    console.log("the customers data", customersData)
     const { data: jobsData } = useSWR('jobs/', fetcher);
 
-    const providers: Provider[] = providersData || [];
-    const customers: Customer[] = customersData || [];
-    const jobs: Job[] = jobsData || [];
+    const providers: Provider[] = unwrapList<Provider>(providersData);
+    const customers: Customer[] = unwrapList<Customer>(customersData);
+    const jobs: Job[] = unwrapList<Job>(jobsData);
 
     useEffect(() => {
-        if (reviewsData) {
-            setReviews(reviewsData);
-            setFilteredReviews(reviewsData);
-        }
+        if (reviewsData == null) return;
+        const list = unwrapList<Review>(reviewsData);
+        setReviews(list);
+        setFilteredReviews(list);
     }, [reviewsData]);
 
     // Filter reviews

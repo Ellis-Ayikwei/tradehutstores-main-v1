@@ -71,11 +71,19 @@ def embed_image_bytes(data: bytes):
     if url:
         import httpx
 
+        embed_url = _join_embedding_service_url(url, "embed/image")
         with httpx.Client(timeout=30) as client:
             resp = client.post(
-                _join_embedding_service_url(url, "embed/image"),
+                embed_url,
                 files={"file": ("image.jpg", data, "image/jpeg")},
             )
+        if resp.status_code == 404:
+            raise RuntimeError(
+                f"Embedding HTTP 404: {embed_url!r}. "
+                "EMBEDDING_SERVICE_URL must be the FastAPI embedding service root "
+                "(e.g. http://127.0.0.1:8001), not Django on :8000. "
+                "R2 image URLs are downloaded separately by Django; this request only runs CLIP."
+            ) from None
         resp.raise_for_status()
         return np.asarray(resp.json()["embedding"], dtype=np.float32)
 
@@ -99,10 +107,14 @@ def embed_text(text: str):
     if url:
         import httpx
 
+        text_url = _join_embedding_service_url(url, "embed/text")
         with httpx.Client(timeout=30) as client:
-            resp = client.get(
-                _join_embedding_service_url(url, "embed/text"), params={"q": text}
-            )
+            resp = client.get(text_url, params={"q": text})
+        if resp.status_code == 404:
+            raise RuntimeError(
+                f"Embedding HTTP 404: {text_url!r}. "
+                "EMBEDDING_SERVICE_URL must be the FastAPI service root (e.g. http://127.0.0.1:8001), not Django."
+            ) from None
         resp.raise_for_status()
         return np.asarray(resp.json()["embedding"], dtype=np.float32)
 

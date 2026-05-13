@@ -26,6 +26,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import IconLoader from '../../../components/Icon/IconLoader';
 import axiosInstance from '../../../services/axiosInstance';
+import { useCurrency } from '../../../contexts/CurrencyContext';
 
 // ─── Types (unchanged from original) ────────────────────────────────────────
 interface Order {
@@ -43,9 +44,6 @@ interface Order {
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
-const formatCurrency = (amount: number): string =>
-    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
-
 const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-GB', {
@@ -316,6 +314,7 @@ const OrderManagement: React.FC = () => {
     const [page, setPage] = useState(1);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+    const { formatDisplayPrice: formatCurrency } = useCurrency();
 
     // ── Data fetch (unchanged) ────────────────────────────────────────────────
     const fetchOrders = async () => {

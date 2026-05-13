@@ -21,6 +21,7 @@ import showNotification from '../../../utilities/showNotifcation';
 import revenueService from './services/revenueService';
 import { RefundModal, StatusOverrideModal, PaymentDetailModal, ConfirmModal } from './components';
 import DraggableDataTable, { type ColumnDefinition } from '../../../components/ui/DraggableDataTable';
+import { useCurrency } from '../../../contexts/CurrencyContext';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, PointElement, LineElement, ArcElement, Title, Tooltip, Legend);
 
@@ -585,13 +586,7 @@ const RevenueManagement: React.FC = () => {
         }).format(date);
     };
 
-    const formatCurrency = (amount: number): string => {
-        return new Intl.NumberFormat('en-GB', {
-            style: 'currency',
-            currency: 'GBP',
-            minimumFractionDigits: 2,
-        }).format(amount);
-    };
+    const { formatDisplayPrice: formatCurrency } = useCurrency();
 
     const months = Object.keys(revenueStats?.revenueByMonth || {});
     const monthlyRevenue = Object.values(revenueStats?.revenueByMonth || {});

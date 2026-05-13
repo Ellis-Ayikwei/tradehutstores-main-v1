@@ -1,6 +1,12 @@
 # Elasticsearch single-node deployment for a Hetzner CX22 (4 GB RAM).
 #
 # ELASTIC_PASSWORD: set in `.env` (see `.env.example`) or export in the shell.
+# KIBANA_SYSTEM_PASSWORD (optional): password for the reserved `kibana_system`
+#   user. If unset, the bootstrap step sets it to the same value as ELASTIC_PASSWORD.
+#
+# Kibana 8.x forbids using the `elastic` superuser — it connects as `kibana_system`.
+# The `es-bootstrap-kibana-user` service runs once and sets that password via the API.
+#
 # If unset, a local-dev default is used — override in production.
 #
 # Place this on the box at /opt/tradehut-search/docker-compose.yml and run:
@@ -38,16 +44,67 @@ services:
       # NOTE: bind to 127.0.0.1 + reverse-proxy via Caddy/nginx with TLS,
       # OR firewall this port to Railway's egress block.
       - "9200:9200"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -sf -u elastic:${ELASTIC_PASSWORD:-LocalDevElasticsearch_ChangeMeInProd} http://127.0.0.1:9200/_cluster/health | grep -qE 'green|yellow'",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 90s
+
+  # Sets password for reserved user kibana_system (required before Kibana 8 can start).
+  # Waits for ES on the Docker network — healthcheck passes inside the ES container;
+  # peers can still see a short window where port 9200 is not ready.
+  es-bootstrap-kibana-user:
+    image: curlimages/curl:8.5.0
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-LocalDevElasticsearch_ChangeMeInProd}
+      KIBANA_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-${ELASTIC_PASSWORD:-LocalDevElasticsearch_ChangeMeInProd}}
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -e
+        echo "Waiting for Elasticsearch (elasticsearch:9200)..."
+        n=0
+        until curl -sf -u "elastic:$$ELASTIC_PASSWORD" "http://elasticsearch:9200/_cluster/health" >/dev/null 2>&1; do
+          n=$$((n + 1))
+          if [ "$$n" -ge 90 ]; then
+            echo "Timeout: Elasticsearch did not become reachable (180s). Is the es container running? docker compose logs elasticsearch"
+            exit 1
+          fi
+          sleep 2
+        done
+        echo "Setting kibana_system password for Kibana..."
+        HTTP_CODE=$$(curl -sS -o /tmp/body -w "%{http_code}" -u "elastic:$$ELASTIC_PASSWORD" \
+          -X POST "http://elasticsearch:9200/_security/user/kibana_system/_password" \
+          -H "Content-Type: application/json" \
+          -d "{\"password\":\"$$KIBANA_PASSWORD\"}")
+        if [ "$$HTTP_CODE" != "200" ]; then
+          echo "Failed (HTTP $$HTTP_CODE):"; cat /tmp/body; exit 1
+        fi
+        echo "kibana_system password OK."
+    restart: "no"
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.13.4
     container_name: kibana
     restart: unless-stopped
-    depends_on: [elasticsearch]
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      es-bootstrap-kibana-user:
+        condition: service_completed_successfully
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD:-LocalDevElasticsearch_ChangeMeInProd}
+      # Kibana 8.x rejects username "elastic" — use reserved kibana_system user.
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=${KIBANA_SYSTEM_PASSWORD:-${ELASTIC_PASSWORD:-LocalDevElasticsearch_ChangeMeInProd}}
     ports:
       - "5601:5601"
 

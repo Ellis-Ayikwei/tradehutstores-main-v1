@@ -7,6 +7,8 @@ import Image from 'next/image';
 import MainLayout from '@/components/Layouts/MainLayout';
 import { Share2, Bookmark, ThumbsUp, ArrowRight } from 'lucide-react';
 
+export const runtime = 'edge';
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------

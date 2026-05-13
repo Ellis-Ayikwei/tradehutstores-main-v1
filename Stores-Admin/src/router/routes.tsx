@@ -1,4 +1,5 @@
 import { lazy, useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import AdminDashboard from '../pages/admin/AdminDashboard';
 // import Homepage from '../pages/website-preauth/Homepage';
 // import HowItWorks from '../pages/website-preauth/HowItWorks';
@@ -94,12 +95,14 @@ import ProductDetail from '../pages/admin/ProductManagement/ProductDetail';
 import AddProduct from '../pages/admin/ProductManagement/AddProduct';
 import OrderManagement from '../pages/admin/OrderManagement';
 import SearchOpsPage from '../pages/admin/Search';
-import CategoryManagement from '../pages/admin/CategoryManagement';
+import CatalogManagement from '../pages/admin/CatalogManagement';
 import CustomerManagement from '../pages/admin/CustomerManagement';
 import SellerManagement from '../pages/admin/SellerManagement';
 import InventoryManagement from '../pages/admin/InventoryManagement';
 import EcommerceDashboard from '../pages/admin/EcommerceDashboard';
 import MerchandisingHomepage from '../pages/admin/MerchandisingHomepage';
+import AdsManagement from '../pages/admin/AdsManagement';
+import PromosManagement from '../pages/admin/PromosManagement';
 
 // Revenue Management Pages
 import RevenueOverview from '../pages/admin/RevenueManagement/RevenueOverview';
@@ -540,6 +543,24 @@ const routes = [
         layout: 'admin',
     },
     {
+        path: '/admin/ads',
+        element: (
+            <ProtectedRoute allowedGroups={['Administrators', 'Inventory Managers']}>
+                <AdsManagement />
+            </ProtectedRoute>
+        ),
+        layout: 'admin',
+    },
+    {
+        path: '/admin/promos',
+        element: (
+            <ProtectedRoute allowedGroups={['Administrators', 'Inventory Managers']}>
+                <PromosManagement />
+            </ProtectedRoute>
+        ),
+        layout: 'admin',
+    },
+    {
         path: '/admin/orders/list',
         element: (
             <ProtectedRoute allowedGroups={['Administrators', 'Order Managers']}>
@@ -567,10 +588,19 @@ const routes = [
         layout: 'admin',
     },
     {
+        path: '/admin/catalog',
+        element: (
+            <ProtectedRoute allowedGroups={['Administrators', 'Inventory Managers']}>
+                <CatalogManagement />
+            </ProtectedRoute>
+        ),
+        layout: 'admin',
+    },
+    {
         path: '/admin/categories',
         element: (
             <ProtectedRoute allowedGroups={['Administrators', 'Inventory Managers']}>
-                <CategoryManagement />
+                <Navigate to="/admin/catalog" replace />
             </ProtectedRoute>
         ),
         layout: 'admin',
@@ -579,7 +609,7 @@ const routes = [
         path: '/admin/brands',
         element: (
             <ProtectedRoute allowedGroups={['Administrators', 'Inventory Managers']}>
-                <CategoryManagement />
+                <Navigate to="/admin/catalog?tab=brands" replace />
             </ProtectedRoute>
         ),
         layout: 'admin',

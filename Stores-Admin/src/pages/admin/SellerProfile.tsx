@@ -10,6 +10,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import IconLoader from '../../components/Icon/IconLoader';
+import { useCurrency } from '../../contexts/CurrencyContext';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -78,9 +79,6 @@ interface ActivityEvent {
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
-
-const fmt$ = (n: number) =>
-    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(n);
 
 const fmtDate = (d: string) =>
     new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(d));
@@ -346,6 +344,7 @@ function AdminActionsPanel({ seller, onStatusChange, onCommissionChange, onNoteA
 const SellerProfile = () => {
     const { id } = useParams<{ id: string }>();
     const dispatch = useDispatch();
+    const { formatDisplayPrice: fmt$ } = useCurrency();
 
     const [loading, setLoading] = useState(true);
     const [seller, setSeller] = useState<SellerDetail | null>(null);

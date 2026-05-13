@@ -48,6 +48,10 @@ urlpatterns = [
                 # Products endpoints
                 path("products/", include("apps.products.urls")),
                 path("", include("apps.merchandising.urls")),
+                # Ad system (placements, campaigns, creatives, slots, beacons)
+                path("", include("apps.ads.urls")),
+                # Promo codes (validate / auto-apply / admin + seller CRUD)
+                path("", include("apps.promotions.urls")),
                 # Hybrid search (full-text + visual). Always mounted — the app
                 # gracefully degrades when ES/pgvector are unavailable, so
                 # clients can keep calling it across all environments.

@@ -3,7 +3,7 @@
  * Stores-BE/apps/core/currency.py (same keys and numeric values).
  *
  * Convention — `rates[code]` = units of `code` per **1 unit of the store base currency**
- * (TRADEHUT_STORE_BASE_CURRENCY / NEXT_PUBLIC_TRADEHUT_STORE_BASE_CURRENCY, default USD).
+ * (TRADEHUT_STORE_BASE_CURRENCY / NEXT_PUBLIC_TRADEHUT_STORE_BASE_CURRENCY, default GHS).
  *
  * Example (base USD): rates.JPY = 110 → 110 JPY equals 1 USD. To convert 220 JPY → EUR:
  *   (220 / rates.JPY) * rates.EUR
@@ -17,24 +17,28 @@
  * against your new base (or load rates from GET …/core/fx/snapshot/).
  */
 
-export const STORE_BASE_CURRENCY: string =
-    (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_TRADEHUT_STORE_BASE_CURRENCY) || 'USD'
+export const STORE_BASE_CURRENCY: string = (
+    typeof process !== 'undefined' && process.env.NEXT_PUBLIC_TRADEHUT_STORE_BASE_CURRENCY
+        ? process.env.NEXT_PUBLIC_TRADEHUT_STORE_BASE_CURRENCY
+        : 'GHS'
+).toUpperCase()
 
-/** Placeholder rates; replace via CurrencyProvider state from backend when ready. */
+/** Fallback until GET …/core/fx/snapshot/ loads; GHS-centered (same cross-rates as legacy USD table / 15.2). */
+const _G = 15.2
 export const DEFAULT_FX_RATES: Record<string, number> = {
-    USD: 1,
-    EUR: 0.85,
-    GBP: 0.73,
-    JPY: 110.14,
-    AUD: 1.35,
-    CAD: 1.25,
-    CHF: 0.91,
-    CNY: 6.45,
-    SEK: 8.51,
-    NZD: 1.42,
-    GHS: 15.2,
-    NGN: 1550,
-    KES: 130,
+    GHS: 1,
+    USD: 1 / _G,
+    EUR: 0.85 / _G,
+    GBP: 0.73 / _G,
+    JPY: 110.14 / _G,
+    AUD: 1.35 / _G,
+    CAD: 1.25 / _G,
+    CHF: 0.91 / _G,
+    CNY: 6.45 / _G,
+    SEK: 8.51 / _G,
+    NZD: 1.42 / _G,
+    NGN: 1550 / _G,
+    KES: 130 / _G,
 }
 
 export function convertWithRates(

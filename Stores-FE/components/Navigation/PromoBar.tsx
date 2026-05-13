@@ -3,8 +3,21 @@
 import { X, Tag } from 'lucide-react'
 import { useState } from 'react'
 import Link from 'next/link'
+import AdTopBar from '@/components/Ads/AdTopBar'
 
+/**
+ * Promo strip above the main nav.
+ *
+ * Behaviour:
+ *   1. Fetches the `homepage-top-bar` ad placement and renders the served creative.
+ *   2. If no ad is live, falls back to the legacy hardcoded "50% OFF" message.
+ *   3. Either way, dismissible per-session.
+ */
 export default function PromoBar() {
+    return <AdTopBar slug="homepage-top-bar" fallback={<LegacyPromoBar />} />
+}
+
+function LegacyPromoBar() {
     const [isVisible, setIsVisible] = useState(true)
 
     if (!isVisible) return null

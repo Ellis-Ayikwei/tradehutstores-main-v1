@@ -38,6 +38,8 @@ import {
 import { useCurrency } from '@/contexts/CurrencyContext'
 import { resolveMediaSrc } from '@/lib/mediaUrl'
 import { mapReviewFromApi } from '@/lib/reviewUtils'
+import { AdSlot } from '@/components/Ads'
+import { SellerPromosStrip } from '@/components/Promo'
 import { wishlistItemProductId } from '@/lib/wishlistUtils'
 import WriteReviewModal from '@/components/Products/WriteReviewModal'
 
@@ -1247,6 +1249,11 @@ export default function ProductDetailPage() {
       <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100">
         <div className="max-w-screen-2xl mx-auto px-4 md:px-8 py-4 md:py-8">
 
+          {/* Product page ad placement — admin-managed; renders nothing if no live ad */}
+          <div className="mb-4 md:mb-6">
+            <AdSlot slug="product-page" aspectClass="aspect-[21/4] md:aspect-[21/3]" rounded="rounded-xl" />
+          </div>
+
           {/* ── Breadcrumb ───────────────────────────────────────────────── */}
           <nav
             aria-label="Breadcrumb"
@@ -1408,6 +1415,17 @@ export default function ProductDetailPage() {
                     <Share2 className="w-4 h-4" />
                   </button>
                 </div>
+
+                {/* Seller's live promo codes — chip strip; renders nothing if none. */}
+                {productDetail.seller && (
+                  <div className="mt-3">
+                    <SellerPromosStrip
+                      sellerId={String(productDetail.seller.id)}
+                      sellerName={productDetail.seller.username}
+                      variant="compact"
+                    />
+                  </div>
+                )}
               </section>
 
               {/* Price block */}

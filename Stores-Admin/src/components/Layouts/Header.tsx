@@ -5,6 +5,7 @@ import useSignOut from 'react-auth-kit/hooks/useSignOut';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import CurrencySwitcher from './Header/CurrencySwitcher';
 import NotificationBell from './Header/NotificationBell';
 import { AppDispatch, IRootState } from '../../store';
 import { LogoutUser } from '../../store/authSlice';
@@ -254,6 +255,11 @@ const Header = () => {
                                         <IconMoon className="w-5 h-5" />
                                     </button>
                                 )}
+                            </div>
+
+                            {/* Currency Switcher */}
+                            <div className="dropdown shrink-0">
+                                <CurrencySwitcher />
                             </div>
 
                             {/* Language Selector */}

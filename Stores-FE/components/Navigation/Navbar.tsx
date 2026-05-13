@@ -145,6 +145,7 @@ export default function Navbar() {
                                 onChange={(e) => setCurrency(e.target.value)}
                                 className="appearance-none bg-transparent text-gray-700 dark:text-gray-200 pr-8 pl-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm font-medium"
                             >
+                                <option value="GHS">GHS</option>
                                 <option value="USD">USD</option>
                                 <option value="EUR">EUR</option>
                                 <option value="GBP">GBP</option>
@@ -247,6 +248,7 @@ export default function Navbar() {
                                         onChange={(e) => setCurrency(e.target.value)}
                                         className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
                                     >
+                                        <option value="GHS">GHS</option>
                                         <option value="USD">USD</option>
                                         <option value="EUR">EUR</option>
                                         <option value="GBP">GBP</option>

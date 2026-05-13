@@ -71,7 +71,7 @@ function mapLineItem(it: ApiOrderItem): OrdersListOrderItem {
     }
 }
 
-export function mapApiOrdersToListOrders(orders: ApiOrder[], currency = 'USD'): OrdersListOrder[] {
+export function mapApiOrdersToListOrders(orders: ApiOrder[], currency = 'GHS'): OrdersListOrder[] {
     return orders.map((o) => ({
         id: String(o.id),
         reference: `#${String(o.id).slice(0, 8).toUpperCase()}`,
@@ -167,7 +167,7 @@ function formatDetailDate(iso: string | undefined): string {
     }
 }
 
-export function mapApiOrderToDetail(o: ApiOrder, currency = 'USD'): OrderDetailUi {
+export function mapApiOrderToDetail(o: ApiOrder, currency = 'GHS'): OrderDetailUi {
     const items = o.items || []
     const subtotal = items.reduce((acc, it) => acc + num(it.total_price), 0)
     const total = num(o.total_amount)

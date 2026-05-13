@@ -138,7 +138,7 @@ class ProductSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data["pricing_currency"] = str(
-            getattr(settings, "TRADEHUT_STORE_BASE_CURRENCY", "USD")
+            getattr(settings, "TRADEHUT_STORE_BASE_CURRENCY", "GHS")
         ).upper()
         disp = instance.display_main_image
         if disp:
@@ -218,7 +218,7 @@ class ProductCatalogSerializer(serializers.ModelSerializer):
         ]
 
     def get_pricing_currency(self, _obj) -> str:
-        return str(getattr(settings, "TRADEHUT_STORE_BASE_CURRENCY", "USD")).upper()
+        return str(getattr(settings, "TRADEHUT_STORE_BASE_CURRENCY", "GHS")).upper()
 
     def get_main_product_image(self, obj):
         f = obj.display_main_image

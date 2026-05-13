@@ -13,6 +13,7 @@ import IconLoader from '../../../components/Icon/IconLoader';
 import DraggableDataTable, { ColumnDefinition } from '../../../components/ui/DraggableDataTable';
 import FilterSelect from '../../../components/ui/FilterSelect';
 import axiosInstance from '../../../services/axiosInstance';
+import { useCurrency } from '../../../contexts/CurrencyContext';
 
 interface Product {
     id: string;
@@ -149,12 +150,7 @@ const ProductManagement: React.FC = () => {
         }
     };
 
-    const formatCurrency = (amount: number): string => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-        }).format(amount);
-    };
+    const { formatDisplayPrice: formatCurrency } = useCurrency();
 
     const getStatusBadge = (status?: string | null) => {
         const label = String(status ?? 'Unknown').trim() || 'Unknown';

@@ -7,6 +7,7 @@ import useSWR from 'swr';
 import fetcher from '../../services/fetcher';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import IconLoader from '../../components/Icon/IconLoader';
+import { useCurrency } from '../../contexts/CurrencyContext';
 
 // ─── Types (unchanged from original) ────────────────────────────────────────
 interface DashboardStats {
@@ -42,9 +43,6 @@ interface TopProduct {
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
-const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(amount);
-
 const formatDate = (dateString: string) =>
     new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).format(new Date(dateString));
 
@@ -112,6 +110,7 @@ const CHART_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const EcommerceDashboard = () => {
     const dispatch = useDispatch();
     const [activePeriod, setActivePeriod] = useState<'7d' | '30d' | '90d'>('7d');
+    const { formatDisplayPrice, baseCurrency, currency } = useCurrency();
 
     useEffect(() => {
         dispatch(setPageTitle('Seller Dashboard'));
@@ -154,11 +153,28 @@ const EcommerceDashboard = () => {
     return (
         <div className="p-6 md:p-8 space-y-8 max-w-7xl mx-auto pb-20 md:pb-12">
 
+            {/* ── Currency Context Strip ──────────────────────────────────── */}
+            <div className="flex flex-wrap items-center gap-3 text-[10px] uppercase tracking-widest text-on-surface-variant">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-tertiary/10 text-tertiary font-bold">
+                    <span className="material-symbols-outlined text-sm">savings</span>
+                    Base · {baseCurrency}
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-container/10 text-primary-container font-bold">
+                    <span className="material-symbols-outlined text-sm">visibility</span>
+                    Viewing · {currency}
+                </span>
+                {currency !== baseCurrency && (
+                    <span className="text-on-surface-variant opacity-70 normal-case tracking-normal">
+                        Amounts are converted from <strong>{baseCurrency}</strong> for display.
+                    </span>
+                )}
+            </div>
+
             {/* ── KPI Bar ─────────────────────────────────────────────────── */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <KpiCard
                     label="Gross Merchandise Value"
-                    value={formatCurrency(gmv)}
+                    value={formatDisplayPrice(gmv)}
                     icon="trending_up"
                     iconColor="text-bid-green"
                     delta={gmvGrowth}
@@ -245,7 +261,7 @@ const EcommerceDashboard = () => {
                         </div>
                         <div className="space-y-1">
                             {/* TODO: wire to API — payout balance */}
-                            <span className="font-mono text-4xl font-bold">{formatCurrency(payoutBalance)}</span>
+                            <span className="font-mono text-4xl font-bold">{formatDisplayPrice(payoutBalance)}</span>
                             <p className="text-sm opacity-50">Next payout scheduled: Oct 24, 2023</p>
                         </div>
                     </div>
@@ -316,7 +332,7 @@ const EcommerceDashboard = () => {
                                             {formatDate(order.created_at)}
                                         </td>
                                         <td className="px-6 py-4 font-mono font-bold text-on-surface whitespace-nowrap">
-                                            {formatCurrency(order.total_amount)}
+                                            {formatDisplayPrice(order.total_amount)}
                                         </td>
                                     </tr>
                                 ))
@@ -342,7 +358,7 @@ const EcommerceDashboard = () => {
                                             <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-secondary-container text-on-secondary-container uppercase">Processing</span>
                                         </td>
                                         <td className="px-6 py-4 text-sm text-on-surface-variant">Oct 18, 2023</td>
-                                        <td className="px-6 py-4 font-mono font-bold text-on-surface">$599.00</td>
+                                        <td className="px-6 py-4 font-mono font-bold text-on-surface">{formatDisplayPrice(599, 'USD')}</td>
                                     </tr>
                                     <tr className="hover:bg-surface-container-low/30 transition-colors">
                                         <td className="px-6 py-4 font-mono text-sm text-on-surface">#TRH-8290</td>
@@ -363,7 +379,7 @@ const EcommerceDashboard = () => {
                                             <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-surface-container-highest text-on-surface-variant uppercase tracking-wider">Shipped</span>
                                         </td>
                                         <td className="px-6 py-4 text-sm text-on-surface-variant">Oct 17, 2023</td>
-                                        <td className="px-6 py-4 font-mono font-bold text-on-surface">$249.50</td>
+                                        <td className="px-6 py-4 font-mono font-bold text-on-surface">{formatDisplayPrice(249.5, 'USD')}</td>
                                     </tr>
                                     <tr className="hover:bg-surface-container-low/30 transition-colors">
                                         <td className="px-6 py-4 font-mono text-sm text-on-surface">#TRH-8288</td>
@@ -384,7 +400,7 @@ const EcommerceDashboard = () => {
                                             <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-error-container text-on-error-container uppercase">Refunded</span>
                                         </td>
                                         <td className="px-6 py-4 text-sm text-on-surface-variant">Oct 16, 2023</td>
-                                        <td className="px-6 py-4 font-mono font-bold text-on-surface">$120.00</td>
+                                        <td className="px-6 py-4 font-mono font-bold text-on-surface">{formatDisplayPrice(120, 'USD')}</td>
                                     </tr>
                                 </>
                             )}
@@ -430,7 +446,7 @@ const EcommerceDashboard = () => {
                                     <p className="font-medium text-sm text-on-surface truncate">{product.name}</p>
                                     <p className="text-[10px] uppercase tracking-widest text-on-surface-variant opacity-70">{product.sales_count} sales</p>
                                 </div>
-                                <span className="font-mono font-bold text-on-surface whitespace-nowrap">{formatCurrency(product.revenue)}</span>
+                                <span className="font-mono font-bold text-on-surface whitespace-nowrap">{formatDisplayPrice(product.revenue)}</span>
                             </Link>
                         ))}
                     </div>

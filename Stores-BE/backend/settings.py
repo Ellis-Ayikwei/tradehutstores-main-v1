@@ -109,6 +109,7 @@ INSTALLED_APPS = [
     "apps.catalog",
     "apps.products",
     "apps.merchandising",
+    "apps.ads",
     "apps.orders",
     "apps.cart",
     "apps.reviews",
@@ -145,6 +146,13 @@ ELASTICSEARCH_URL = config("ELASTICSEARCH_URL", default="http://localhost:9200")
 ELASTICSEARCH_USER = config("ELASTICSEARCH_USER", default="")
 ELASTICSEARCH_PASSWORD = config("ELASTICSEARCH_PASSWORD", default="")
 REDIS_URL = config("REDIS_URL", default="redis://localhost:6379/0")
+
+# Optional DB index / host for JWT denylist keys (defaults to ``REDIS_URL``).
+REDIS_DENYLIST_URL = config("REDIS_DENYLIST_URL", default="")
+# ``off`` — stateless JWT only. ``redis`` — check denylist on each authenticated request.
+AUTH_TOKEN_DENYLIST_BACKEND = (
+    config("AUTH_TOKEN_DENYLIST_BACKEND", default="off").strip().lower()
+)
 EMBEDDING_SERVICE_URL = config("EMBEDDING_SERVICE_URL", default="")
 
 
@@ -393,6 +401,11 @@ REST_FRAMEWORK = {
     },
 }
 
+if AUTH_TOKEN_DENYLIST_BACKEND == "redis":
+    REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"] = [
+        "apps.authentication.authentication.DenylistJWTAuthentication",
+    ]
+
 
 # ── CORS ──────────────────────────────────────────────────────────────────────
 # Only wide-open in DEBUG; production must whitelist explicit origins through
@@ -439,6 +452,8 @@ if not DEBUG:
 # JWT Authentication Settings
 ACCESS_TOKEN_LIFETIME_MINUTES = 30  # 30 minutes
 REFRESH_TOKEN_LIFETIME_DAYS = 7  # 7 days
+ACCESS_TOKEN_LIFETIME_SECONDS = int(ACCESS_TOKEN_LIFETIME_MINUTES * 60)
+REFRESH_TOKEN_LIFETIME_SECONDS = int(REFRESH_TOKEN_LIFETIME_DAYS * 24 * 3600)
 
 # OTP / 2FA Settings
 OTP_EXPIRY_MINUTES = 5  # OTP expires in 5 minutes
@@ -461,7 +476,7 @@ DEFAULT_FROM_EMAIL = "noreply@tradehut.com"
 # ── Store catalogue currency (aligned with Stores-FE/lib/storeCurrency.ts) ───
 # All placeholder FX rates are expressed per 1 unit of this ISO code.
 # Product/catalog JSON amounts are in this currency unless a field specifies otherwise.
-TRADEHUT_STORE_BASE_CURRENCY = config("TRADEHUT_STORE_BASE_CURRENCY", default="USD")
+TRADEHUT_STORE_BASE_CURRENCY = config("TRADEHUT_STORE_BASE_CURRENCY", default="GHS")
 # Frankfurter (tradehut_currency-style) — cached server-side; FE also calls fx/snapshot/
 TRADEHUT_FX_FETCH_FRANKFURTER = _bool_env("TRADEHUT_FX_FETCH_FRANKFURTER", default=True)
 TRADEHUT_FX_CACHE_SECONDS = config("TRADEHUT_FX_CACHE_SECONDS", default=14400, cast=int)

@@ -476,26 +476,25 @@ class LogoutAPIView(APIView):
             # Extract the token
             token = auth_header.split(" ")[1]
 
-            # Use JWT's built-in blacklisting mechanism
-            from rest_framework_simplejwt.tokens import AccessToken
-            from rest_framework_simplejwt.token_blacklist.models import (
-                BlacklistedToken,
-                OutstandingToken,
-            )
+            from .jwt_denylist import logout_block_tokens
 
-            # Decode the token to get user info
+            logout_block_tokens(request)
+
             token_backend = TokenBackend(algorithm=api_settings.ALGORITHM)
             token_data = token_backend.decode(token, verify=False)
 
-            # Find the outstanding token and blacklist it
             try:
+                from rest_framework_simplejwt.token_blacklist.models import (
+                    BlacklistedToken,
+                    OutstandingToken,
+                )
+
                 outstanding_token = OutstandingToken.objects.get(
                     jti=token_data.get("jti"), user_id=token_data.get("user_id")
                 )
                 BlacklistedToken.objects.create(token=outstanding_token)
-            except OutstandingToken.DoesNotExist:
-                # If token not found in outstanding tokens, it's likely already expired or blacklisted
-                # This is normal behavior, so we don't need to log it as a warning
+            except Exception:
+                # App not installed, tables missing, no matching row, etc. — Redis denylist still applied above
                 pass
 
             # Track logout activity
@@ -755,7 +754,13 @@ class TokenRefreshView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            # Optional blacklist check omitted to avoid dependency on blacklist app state
+            from .jwt_denylist import is_jti_blocked
+
+            if is_jti_blocked(refresh_obj.get("jti")):
+                return Response(
+                    {"detail": "Invalid or expired token."},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
 
             user_id = refresh_obj.get("user_id")
             if not user_id:
@@ -829,12 +834,11 @@ class TokenVerifyView(APIView):
 
             user = User.objects.get(id=user_id)
 
-            # Check if token is blacklisted
-            from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken
+            from .jwt_denylist import is_jti_blocked
 
-            if BlacklistedToken.objects.filter(token=token).exists():
+            if is_jti_blocked(token_data.get("jti")):
                 return Response(
-                    {"detail": "Token has been blacklisted."},
+                    {"detail": "Token has been invalidated."},
                     status=status.HTTP_401_UNAUTHORIZED,
                 )
 

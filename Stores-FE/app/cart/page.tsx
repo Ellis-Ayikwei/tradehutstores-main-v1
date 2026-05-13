@@ -10,6 +10,8 @@ import Image from 'next/image'
 import { useCurrency } from '@/contexts/CurrencyContext'
 import { removeFromCart, updateCart } from '@/store/cartSlice'
 import { resolveMediaSrc } from '@/lib/mediaUrl'
+import { PromoCodeInput } from '@/components/Promo'
+import type { PromoResult } from '@/hooks/usePromo'
 
 // ─── Config ────────────────────────────────────────────────────────────────────
 // Move these to env/config if they come from backend eventually
@@ -58,7 +60,7 @@ export default function CartPage() {
     const { cart } = useSelector((state: RootState) => state.cart)
     const { formatDisplayPrice } = useCurrency()
 
-    const [promoCode, setPromoCode] = useState('')
+    const [appliedPromo, setAppliedPromo] = useState<PromoResult | null>(null)
     // Track which cart item IDs are mid-update to prevent concurrent dispatches
     const [updatingIds, setUpdatingIds] = useState<Set<string | number>>(new Set())
 
@@ -68,9 +70,13 @@ export default function CartPage() {
         return acc + getUnitPrice(item) * (Number(item.quantity) || 0)
     }, 0)
 
-    const shipping = subtotal > FREE_SHIPPING_THRESHOLD ? 0 : FLAT_SHIPPING_COST
-    const tax = subtotal * TAX_RATE
-    const total = subtotal + shipping + tax
+    const promoDiscount = appliedPromo?.valid ? parseFloat(appliedPromo.discount_amount || '0') : 0
+    const subtotalAfterPromo = Math.max(0, subtotal - promoDiscount)
+    const promoFreeShipping = !!appliedPromo?.free_shipping
+    const shipping =
+        promoFreeShipping || subtotalAfterPromo > FREE_SHIPPING_THRESHOLD ? 0 : FLAT_SHIPPING_COST
+    const tax = subtotalAfterPromo * TAX_RATE
+    const total = subtotalAfterPromo + shipping + tax
 
     // ─── Handlers ────────────────────────────────────────────────────────────
     /**
@@ -246,27 +252,19 @@ export default function CartPage() {
                                     Summary
                                 </h2>
 
-                                {/* Promo code — wired up when backend is ready */}
+                                {/* Promo code */}
                                 <div className="mb-6 md:mb-8">
-                                    <label className="text-[10px] font-black uppercase text-zinc-400 dark:text-neutral-500 mb-2 block tracking-widest">
-                                        Promotion Code
-                                    </label>
-                                    <div className="flex gap-2">
-                                        <input
-                                            type="text"
-                                            placeholder="CODE"
-                                            value={promoCode}
-                                            onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                                            className="flex-grow bg-white dark:bg-neutral-950 border border-zinc-200 dark:border-neutral-700 rounded-lg py-3 px-4 text-xs font-bold text-zinc-900 dark:text-neutral-100 placeholder:text-zinc-400 dark:placeholder:text-neutral-600 focus:border-black dark:focus:border-neutral-400 outline-none transition-all uppercase"
-                                        />
-                                        <button
-                                            className="bg-zinc-200 dark:bg-neutral-700 text-zinc-900 dark:text-neutral-100 px-4 py-3 rounded-lg font-bold text-xs hover:bg-zinc-300 dark:hover:bg-neutral-600 transition-colors uppercase disabled:opacity-40"
-                                            disabled={!promoCode.trim()}
-                                            // TODO: wire up promo code API call
-                                        >
-                                            Apply
-                                        </button>
-                                    </div>
+                                    <PromoCodeInput
+                                        cart={{
+                                            subtotal,
+                                            item_count: lines.length,
+                                            item_ids: lines
+                                                .map((l) => String((l as { id?: string | number }).id ?? ''))
+                                                .filter(Boolean),
+                                        }}
+                                        initial={appliedPromo}
+                                        onChange={setAppliedPromo}
+                                    />
                                 </div>
 
                                 {/* Line items */}

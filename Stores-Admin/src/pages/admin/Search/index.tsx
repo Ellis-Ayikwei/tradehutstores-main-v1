@@ -32,6 +32,7 @@ import {
     type SearchAdminStats,
     type SearchHealth,
 } from '../../../services/searchService';
+import { useCurrency } from '../../../contexts/CurrencyContext';
 
 const SearchOpsPage: React.FC = () => {
     const [health, setHealth] = useState<SearchHealth | null>(null);
@@ -260,6 +261,7 @@ const StatCard: React.FC<{ stats: SearchAdminStats | null }> = ({ stats }) => (
 );
 
 const ResultsTable: React.FC<{ results: AdminSearchHit[] }> = ({ results }) => {
+    const { formatDisplayPrice } = useCurrency();
     if (results.length === 0) return null;
     return (
         <div className="mt-4 overflow-x-auto">
@@ -294,9 +296,9 @@ const ResultsTable: React.FC<{ results: AdminSearchHit[] }> = ({ results }) => {
                             <td className="py-2 pr-4 text-on-surface-variant">{hit.category ?? '—'}</td>
                             <td className="py-2 pr-4 font-mono">
                                 {typeof hit.final_price === 'number'
-                                    ? hit.final_price.toLocaleString(undefined, { style: 'currency', currency: 'USD' })
+                                    ? formatDisplayPrice(hit.final_price)
                                     : typeof hit.price === 'number'
-                                    ? hit.price.toLocaleString(undefined, { style: 'currency', currency: 'USD' })
+                                    ? formatDisplayPrice(hit.price)
                                     : '—'}
                             </td>
                             <td className="py-2 pr-4 text-xs text-gray-400">

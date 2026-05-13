@@ -33,7 +33,7 @@ interface CurrencyContextType {
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined)
 
 export const CurrencyProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [currency, setCurrency] = useState<string>('USD')
+    const [currency, setCurrency] = useState<string>('GHS')
     const [mounted, setMounted] = useState(false)
     const baseCurrency = STORE_BASE_CURRENCY
 

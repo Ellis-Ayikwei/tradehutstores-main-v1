@@ -424,6 +424,10 @@ def refresh(request):
         return Response({"detail": "refresh token required"}, status=400)
     try:
         token = RefreshToken(refresh_token)
+        from .jwt_denylist import is_jti_blocked
+
+        if is_jti_blocked(token.get("jti")):
+            return Response({"detail": "refresh token invalidated"}, status=401)
         return Response({"access": str(token.access_token)})
     except Exception as exc:  # noqa: BLE001
         return Response({"detail": str(exc)}, status=401)
@@ -434,6 +438,9 @@ def refresh(request):
 @permission_classes([IsAuthenticated])
 def logout(request):
     """Best-effort blacklist of the refresh token; idempotent."""
+    from .jwt_denylist import logout_block_tokens
+
+    logout_block_tokens(request)
     refresh_token = request.data.get("refresh") or request.data.get("refresh_token")
     if refresh_token:
         try:

@@ -28,6 +28,9 @@ import { useCurrency } from "@/contexts/CurrencyContext";
 import { postFxQuote, type FxQuoteResponse } from "@/lib/fxClient";
 import axiosInstance from "@/lib/axiosInstance";
 import { resolveMediaSrc } from "@/lib/mediaUrl";
+import { AdSlot } from "@/components/Ads";
+import { PromoCodeInput } from "@/components/Promo";
+import type { PromoResult } from "@/hooks/usePromo";
 import {
     Check,
     ChevronDown,
@@ -524,9 +527,8 @@ function StepReview({
     deliveryCost,
     tax,
     total,
-    promoCode,
+    appliedPromo,
     onPromoChange,
-    onApplyPromo,
     onBack,
     onPlaceOrder,
     formatDisplayPrice,
@@ -541,9 +543,8 @@ function StepReview({
     deliveryCost: number;
     tax: number;
     total: number;
-    promoCode: string;
-    onPromoChange: (v: string) => void;
-    onApplyPromo: () => void;
+    appliedPromo: PromoResult | null;
+    onPromoChange: (r: PromoResult | null) => void;
     onBack: () => void;
     onPlaceOrder: () => void;
     /** Base → selected currency (client table / fallback). */
@@ -662,25 +663,15 @@ function StepReview({
 
             {/* Promo code */}
             <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block mb-2">
-                    Promo Code
-                </label>
-                <div className="flex gap-2">
-                    <input
-                        type="text"
-                        value={promoCode}
-                        onChange={(e) => onPromoChange(e.target.value.toUpperCase())}
-                        placeholder="ENTER CODE"
-                        className="flex-1 bg-zinc-50 border border-zinc-200 rounded-lg py-3 px-4 text-xs font-bold text-zinc-900 focus:border-zinc-900 outline-none transition-all uppercase"
-                    />
-                    <button
-                        onClick={onApplyPromo}
-                        disabled={!promoCode.trim()}
-                        className="px-5 py-3 bg-zinc-200 text-zinc-900 text-xs font-bold rounded-lg hover:bg-zinc-300 transition-colors disabled:opacity-40 uppercase"
-                    >
-                        Apply
-                    </button>
-                </div>
+                <PromoCodeInput
+                    cart={{
+                        subtotal,
+                        item_count: items.length,
+                        item_ids: items.map((i) => String(i.id)),
+                    }}
+                    initial={appliedPromo}
+                    onChange={onPromoChange}
+                />
             </div>
 
             {/* CTA row */}
@@ -945,7 +936,7 @@ function CheckoutPageInner() {
     const [selectedPaymentId, setSelectedPaymentId] = useState(
         MOCK_PAYMENT_METHODS[0]?.id ?? ""
     );
-    const [promoCode, setPromoCode] = useState("");
+    const [appliedPromo, setAppliedPromo] = useState<PromoResult | null>(null);
 
     const buyNowFlag =
         searchParams.get("buyNow") === "1" || searchParams.get("buyNow") === "true";
@@ -1087,11 +1078,17 @@ function CheckoutPageInner() {
 
     const deliveryOption = DELIVERY_OPTIONS.find((d) => d.id === selectedDelivery) ?? DELIVERY_OPTIONS[1]
 
-    // Override free-shipping threshold from cart config; delivery option cost only applies when below threshold
-    const deliveryCost = subtotal > FREE_SHIPPING_THRESHOLD ? 0 : deliveryOption.cost
+    // Promo discount + free-shipping override
+    const promoDiscount = appliedPromo?.valid ? parseFloat(appliedPromo.discount_amount || '0') : 0
+    const subtotalAfterPromo = Math.max(0, subtotal - promoDiscount)
+    const promoFreeShipping = !!appliedPromo?.free_shipping
 
-    const tax = subtotal * TAX_RATE
-    const total = subtotal + deliveryCost + tax
+    // Override free-shipping threshold from cart config; delivery option cost only applies when below threshold
+    const deliveryCost =
+        promoFreeShipping || subtotalAfterPromo > FREE_SHIPPING_THRESHOLD ? 0 : deliveryOption.cost
+
+    const tax = subtotalAfterPromo * TAX_RATE
+    const total = subtotalAfterPromo + deliveryCost + tax
 
     useEffect(() => {
         if (!items.length) {
@@ -1133,13 +1130,9 @@ function CheckoutPageInner() {
     const paymentMethod = MOCK_PAYMENT_METHODS.find((p) => p.id === selectedPaymentId);
 
     function handlePlaceOrder() {
-        // TODO: POST /api/orders/ with cart items + address + payment
+        // TODO: POST /api/orders/ with cart items + address + payment + appliedPromo?.code
         // TODO: integrate Stripe/Paystack
         alert("Order placed! (Integration pending)");
-    }
-
-    function handleApplyPromo() {
-        // TODO: validate promo code via /api/promo/validate/
     }
 
     const stickyTotalFormatted =
@@ -1263,6 +1256,10 @@ function CheckoutPageInner() {
 
             {/* Main */}
             <main className="max-w-screen-xl mx-auto px-4 md:px-8 py-8 md:py-12 pb-32 lg:pb-12">
+                {/* Checkout banner — admin-managed (e.g. payment partner promo) */}
+                <div className="mb-6">
+                    <AdSlot slug="checkout-banner" aspectClass="aspect-[21/3]" rounded="rounded-xl" />
+                </div>
                 <div className="flex flex-col lg:flex-row gap-8 lg:gap-16">
                     {/* Left: stepper + step forms */}
                     <div className="lg:w-[65%]">
@@ -1296,9 +1293,8 @@ function CheckoutPageInner() {
                                 deliveryCost={deliveryCost}
                                 tax={tax}
                                 total={total}
-                                promoCode={promoCode}
-                                onPromoChange={setPromoCode}
-                                onApplyPromo={handleApplyPromo}
+                                appliedPromo={appliedPromo}
+                                onPromoChange={setAppliedPromo}
                                 onBack={() => setStep(2)}
                                 onPlaceOrder={handlePlaceOrder}
                                 formatDisplayPrice={formatDisplayPrice}

@@ -2,7 +2,7 @@
 Store catalogue FX — mirror Stores-FE/lib/storeCurrency.ts (same DEFAULT_FX_RATES keys/values
 and the same convert_currency formula).
 
-`rates[code]` = units of `code` per **1 unit of** TRADEHUT_STORE_BASE_CURRENCY (default USD).
+`rates[code]` = units of `code` per **1 unit of** TRADEHUT_STORE_BASE_CURRENCY (default GHS).
 
 Catalog `Decimal`/`float` prices should be interpreted in the store base unless a model exposes
 a per-row currency field (pass that ISO code as `from_curr`).
@@ -20,24 +20,26 @@ from django.conf import settings
 
 
 def get_store_base_currency() -> str:
-    return str(getattr(settings, "TRADEHUT_STORE_BASE_CURRENCY", "USD")).upper()
+    return str(getattr(settings, "TRADEHUT_STORE_BASE_CURRENCY", "GHS")).upper()
 
 
-# Keep numeric values aligned with Stores-FE/lib/storeCurrency.ts DEFAULT_FX_RATES.
+# Keep formula + cross-rates aligned with Stores-FE/lib/storeCurrency.ts DEFAULT_FX_RATES.
+# GHS-centered: units of quote per 1 GHS (legacy table was USD-centered; values = old_quote / 15.2).
+_LEGACY_USD_PER_GHS = 15.2
 DEFAULT_FX_RATES: dict[str, float] = {
-    "USD": 1,
-    "EUR": 0.85,
-    "GBP": 0.73,
-    "JPY": 110.14,
-    "AUD": 1.35,
-    "CAD": 1.25,
-    "CHF": 0.91,
-    "CNY": 6.45,
-    "SEK": 8.51,
-    "NZD": 1.42,
-    "GHS": 15.2,
-    "NGN": 1550,
-    "KES": 130,
+    "GHS": 1.0,
+    "USD": 1.0 / _LEGACY_USD_PER_GHS,
+    "EUR": 0.85 / _LEGACY_USD_PER_GHS,
+    "GBP": 0.73 / _LEGACY_USD_PER_GHS,
+    "JPY": 110.14 / _LEGACY_USD_PER_GHS,
+    "AUD": 1.35 / _LEGACY_USD_PER_GHS,
+    "CAD": 1.25 / _LEGACY_USD_PER_GHS,
+    "CHF": 0.91 / _LEGACY_USD_PER_GHS,
+    "CNY": 6.45 / _LEGACY_USD_PER_GHS,
+    "SEK": 8.51 / _LEGACY_USD_PER_GHS,
+    "NZD": 1.42 / _LEGACY_USD_PER_GHS,
+    "NGN": 1550 / _LEGACY_USD_PER_GHS,
+    "KES": 130 / _LEGACY_USD_PER_GHS,
 }
 
 

@@ -21,7 +21,7 @@ def fetch_frankfurter_rates(base_currency: str) -> dict[str, float] | None:
     """
     Returns {BASE: 1.0, **uppercase ISO rates} or None on failure.
     """
-    base = (base_currency or "USD").upper()
+    base = (base_currency or "GHS").upper()
     try:
         resp = requests.get(
             FRANKFURTER_LATEST,

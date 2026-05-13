@@ -19,6 +19,7 @@ import IconLoader from '../../../components/Icon/IconLoader';
 import DraggableDataTable, { ColumnDefinition } from '../../../components/ui/DraggableDataTable';
 import FilterSelect from '../../../components/ui/FilterSelect';
 import axiosInstance from '../../../services/axiosInstance';
+import { useCurrency } from '../../../contexts/CurrencyContext';
 
 interface Customer {
     id: string;
@@ -150,12 +151,7 @@ const CustomerManagement: React.FC = () => {
         }
     };
 
-    const formatCurrency = (amount: number): string => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-        }).format(amount);
-    };
+    const { formatDisplayPrice: formatCurrency } = useCurrency();
 
     const formatDate = (dateString: string): string => {
         const date = new Date(dateString);

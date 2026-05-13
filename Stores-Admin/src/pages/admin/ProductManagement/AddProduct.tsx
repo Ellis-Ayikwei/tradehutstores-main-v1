@@ -103,8 +103,18 @@ interface Seller {
     };
 }
 
+/** Stable React list key for new variants (never use `sku` in `key` — it changes while typing). */
+function newVariantClientKey(): string {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+        return crypto.randomUUID();
+    }
+    return `v-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+}
+
 interface ProductVariant {
     id?: string;
+    /** Client-only; used as row key until the variant has a server `id`. */
+    clientRowKey?: string;
     sku: string;
     price: string;
     quantity: number;
@@ -192,6 +202,7 @@ function mapApiVariantToRow(v: Record<string, unknown>, theme: string): ProductV
 
     return {
         id: idVal,
+        clientRowKey: idVal ? undefined : newVariantClientKey(),
         sku: String(v.sku ?? ''),
         price: v.price !== undefined && v.price !== null ? String(v.price) : '',
         quantity: Number(v.quantity ?? 0),
@@ -279,6 +290,7 @@ const AddProduct: React.FC = () => {
 
     const [variants, setVariants] = useState<ProductVariant[]>([
         {
+            clientRowKey: newVariantClientKey(),
             sku: '',
             price: '',
             quantity: 0,
@@ -543,6 +555,7 @@ const AddProduct: React.FC = () => {
                     ? mappedVariants
                     : [
                           {
+                              clientRowKey: newVariantClientKey(),
                               sku: '',
                               price: '',
                               quantity: 0,
@@ -622,6 +635,7 @@ const AddProduct: React.FC = () => {
     // Variant management
     const addVariant = () => {
         const newVariant: ProductVariant = {
+            clientRowKey: newVariantClientKey(),
             sku: '',
             price: '',
             quantity: 0,
@@ -1560,7 +1574,7 @@ const AddProduct: React.FC = () => {
                             <div className="space-y-4">
                                 {variants.map((variant, index) => (
                                     <div
-                                        key={variant.id ?? `${variant.sku || 'sku'}-${index}`}
+                                        key={variant.id ?? variant.clientRowKey ?? `variant-${index}`}
                                         className="border border-gray-200 rounded-lg p-4"
                                     >
                                         <div className="flex items-center justify-between mb-4">

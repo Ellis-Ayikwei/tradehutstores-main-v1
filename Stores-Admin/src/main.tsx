@@ -31,6 +31,7 @@ import createStore from 'react-auth-kit/createStore';
 import { Provider } from 'react-redux';
 import store from './store/index';
 import { ChatProvider } from './contexts/ChatContext';
+import { CurrencyProvider } from './contexts/CurrencyContext';
 import authAxiosInstance from './services/authAxiosInstance';
 
 // Dynamic imports for non-critical paths
@@ -59,7 +60,8 @@ const i18n = import('./i18n');
 // ACCESS_TOKEN_LIFETIME_MINUTES). We refresh well before that to keep every
 // outbound request authenticated and avoid the user-visible "logged out" jump.
 const ACCESS_TOKEN_TTL_MINUTES = 30;
-const REFRESH_INTERVAL_MINUTES = 10;
+/** react-auth-kit passes this to setInterval as `minutes * 60 * 1000` */
+const REFRESH_INTERVAL_SECONDS = 30;
 
 const authStore = createStore({
     authName: '_auth',
@@ -68,7 +70,7 @@ const authStore = createStore({
     cookieSecure: window.location.protocol === 'https:',
     debug: false,
     refresh: createRefresh({
-        interval: REFRESH_INTERVAL_MINUTES,
+        interval: REFRESH_INTERVAL_SECONDS / 60,
         refreshApiCallback: async () => {
             try {
                 // authAxiosInstance already has withCredentials: true, and the
@@ -115,11 +117,13 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
                     <DatesProvider settings={{ locale: 'en' }}>
                         <Provider store={store}>
                             <AuthProvider store={authStore}>
-                                <ChatProvider>
-                                    {/* <PersistGate loading={null} persistor={persistor}> */}
-                                    <RouterProvider router={router} />
-                                    {/* </PersistGate> */}
-                                </ChatProvider>
+                                <CurrencyProvider>
+                                    <ChatProvider>
+                                        {/* <PersistGate loading={null} persistor={persistor}> */}
+                                        <RouterProvider router={router} />
+                                        {/* </PersistGate> */}
+                                    </ChatProvider>
+                                </CurrencyProvider>
                             </AuthProvider>
                         </Provider>
                     </DatesProvider>
