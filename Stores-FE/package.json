@@ -11,7 +11,7 @@
     "pages:build": "npx @cloudflare/next-on-pages",
     "pages:dev": "wrangler pages dev .vercel/output/static --compatibility-date=2024-09-23 --compatibility-flag=nodejs_compat",
     "pages:deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static",
-    "deploy:pages": "wrangler pages deploy .vercel/output/static"
+    "deploy:pages": "wrangler pages deploy .vercel/output/static --project-name=tradehutstores-main-v1"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
