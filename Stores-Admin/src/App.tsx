@@ -1,4 +1,4 @@
-import { PropsWithChildren, useEffect, useState } from 'react';
+import { PropsWithChildren, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import store, { AppDispatch, IRootState } from './store';
 import { toggleAnimation, toggleLayout, toggleLocale, toggleMenu, toggleNavbar, toggleRTL, toggleSemidark, toggleTheme } from './store/themeConfigSlice';
@@ -20,6 +20,13 @@ function App({ children }: PropsWithChildren) {
     const drafts = useSelector((state: IRootState) => state.draftRequests.drafts);
 
     useEffect(() => {
+        const mq = window.matchMedia('(prefers-color-scheme: dark)');
+        const onOsThemeChange = () => {
+            if (store.getState().themeConfig.theme === 'system') {
+                dispatch(toggleTheme('system'));
+            }
+        };
+        mq.addEventListener('change', onOsThemeChange);
         dispatch(toggleTheme((localStorage.getItem('theme') as any) || themeConfig.theme));
         dispatch(toggleMenu((localStorage.getItem('menu') as any) || themeConfig.menu));
         dispatch(toggleLayout((localStorage.getItem('layout') as any) || themeConfig.layout));
@@ -29,9 +36,7 @@ function App({ children }: PropsWithChildren) {
         dispatch(toggleLocale(localStorage.getItem('i18nextLng') || themeConfig.locale));
         dispatch(toggleSemidark(localStorage.getItem('semidark') === 'true' || themeConfig.semidark));
 
-     
-
-       
+        return () => mq.removeEventListener('change', onOsThemeChange);
     }, [dispatch, themeConfig.theme, themeConfig.menu, themeConfig.layout, themeConfig.rtlClass, themeConfig.animation, themeConfig.navbar, themeConfig.locale, themeConfig.semidark, drafts]);
 
     return (

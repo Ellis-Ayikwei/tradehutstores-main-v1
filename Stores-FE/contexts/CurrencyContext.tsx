@@ -7,13 +7,18 @@ import {
     convertWithRates,
 } from '@/lib/storeCurrency'
 import { fetchFxSnapshot } from '@/lib/fxClient'
+import { useStoreConfig } from '@/contexts/StoreConfigContext'
 
 interface CurrencyContextType {
     /** ISO code the shopper is viewing prices in (navbar selector). */
     currency: string
     setCurrency: (currency: string) => void
-    /** ISO code catalog / API amounts are stored in until models expose per-row currency. */
+    /** ISO code catalog / API amounts are stored in until models expose per-row currency.
+     *  Sourced from /store/config/public/ when available; otherwise the build-time env var. */
     baseCurrency: string
+    /** ISO codes the navbar selector is allowed to show. Falls back to all
+     *  rates when the BE has not (yet) sent an enabled list. */
+    enabledDisplayCurrencies: string[] | null
     /** Last GET …/core/fx/snapshot/ metadata (for POST …/fx/quote/). */
     fxSnapshotId: string | null
     fxAsOf: string | null
@@ -33,9 +38,17 @@ interface CurrencyContextType {
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined)
 
 export const CurrencyProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const { config: storeConfig } = useStoreConfig()
     const [currency, setCurrency] = useState<string>('GHS')
     const [mounted, setMounted] = useState(false)
-    const baseCurrency = STORE_BASE_CURRENCY
+    // Prefer the BE-stored base currency once StoreConfig has loaded; fall back
+    // to the env-baked default until then so server-rendered prices have a
+    // value during the first paint.
+    const baseCurrency = storeConfig?.currency_base ?? STORE_BASE_CURRENCY
+    const enabledDisplayCurrencies =
+        storeConfig?.currency_enabled_display && storeConfig.currency_enabled_display.length > 0
+            ? storeConfig.currency_enabled_display
+            : null
 
     const [fxSnapshotId, setFxSnapshotId] = useState<string | null>(null)
     const [fxAsOf, setFxAsOf] = useState<string | null>(null)
@@ -53,6 +66,16 @@ export const CurrencyProvider: React.FC<{ children: ReactNode }> = ({ children }
             setCurrency(savedCurrency)
         }
     }, [])
+
+    // If the BE limits display currencies and the user's saved choice is no
+    // longer allowed, snap them to the base — otherwise the formatter would
+    // try to display in a currency that's been disabled by the admin.
+    useEffect(() => {
+        if (!mounted || !enabledDisplayCurrencies) return
+        if (!enabledDisplayCurrencies.includes(currency)) {
+            setCurrency(baseCurrency)
+        }
+    }, [mounted, enabledDisplayCurrencies, currency, baseCurrency])
 
     const mergeFxRates = useCallback((partial: Record<string, number>) => {
         setExchangeRates((prev) => ({ ...prev, ...partial }))
@@ -108,6 +131,7 @@ export const CurrencyProvider: React.FC<{ children: ReactNode }> = ({ children }
             currency,
             setCurrency,
             baseCurrency,
+            enabledDisplayCurrencies,
             fxSnapshotId,
             fxAsOf,
             fxStale,
@@ -121,6 +145,7 @@ export const CurrencyProvider: React.FC<{ children: ReactNode }> = ({ children }
         [
             currency,
             baseCurrency,
+            enabledDisplayCurrencies,
             fxSnapshotId,
             fxAsOf,
             fxStale,

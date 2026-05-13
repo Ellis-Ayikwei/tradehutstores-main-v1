@@ -12,13 +12,18 @@ interface IUserData {
     uuid?: string
 }
 
+// Mirrors Stores-BE/backend/settings.py ACCESS_TOKEN_LIFETIME_MINUTES.
+const ACCESS_TOKEN_TTL_MINUTES = 30
+/** Minutes — react-auth-kit schedules refresh at interval * 60 * 1000 ms */
+const PROACTIVE_REFRESH_INTERVAL_MINUTES = 20
+
 const store = createStore<IUserData>({
     authName: '_auth',
     authType: 'cookie',
     cookieDomain: typeof window !== 'undefined' ? window.location.hostname : 'localhost',
     cookieSecure: typeof window !== 'undefined' ? window.location.protocol === 'https:' : false,
     refresh: createRefresh({
-        interval: 60,
+        interval: PROACTIVE_REFRESH_INTERVAL_MINUTES,
         refreshApiCallback: async () => {
             try {
                 const response = await authAxiosInstance.post('refresh_token/')
@@ -34,6 +39,7 @@ const store = createStore<IUserData>({
                     isSuccess: true,
                     newAuthToken: token,
                     newAuthTokenType: 'Bearer',
+                    newAuthTokenExpireIn: ACCESS_TOKEN_TTL_MINUTES,
                     ...(typeof nextRefresh === 'string' && nextRefresh
                         ? { newRefreshToken: nextRefresh }
                         : {}),

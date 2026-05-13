@@ -9,4 +9,5 @@ builder = "NIXPACKS"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
 healthcheckPath = "/tradehut/api/v1/search/health/"
-healthcheckTimeout = 30
+# Cold start with gunicorn + heavy deps (optional torch, etc.) can exceed 30s.
+healthcheckTimeout = 120

@@ -58,6 +58,8 @@ urlpatterns = [
                 path("search/", include("apps.search.urls")),
                 # Store FX snapshot (base + rates; mirrors apps.core.currency)
                 path("core/", include("apps.core.urls")),
+                # Marketplace-wide configuration (StoreConfig singleton).
+                path("store/", include("apps.store.urls")),
                 # Orders endpoints (when created)
                 # path("orders/", include("apps.orders.urls")),
                 # Cart endpoints (when created)

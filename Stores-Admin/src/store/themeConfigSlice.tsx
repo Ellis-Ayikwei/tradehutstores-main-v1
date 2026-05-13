@@ -74,15 +74,27 @@ const defaultState: ThemeState = {
     fontSize: 16,
 };
 
-const getInitialTheme = (): ThemeMode => {
-    const savedTheme = (localStorage.getItem('theme') as ThemeMode) || themeConfig.theme;
-    if (savedTheme === 'system') {
-        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-    return savedTheme;
-};
+/** Persisted choice: light | dark | follow OS (`system`). */
+function readStoredThemeMode(): ThemeMode {
+    if (typeof window === 'undefined') return themeConfig.theme as ThemeMode;
+    return ((localStorage.getItem('theme') as ThemeMode) || themeConfig.theme) as ThemeMode;
+}
+
+/** Resolved presentation for Tailwind `dark:` — uses OS preference when mode is `system`. */
+export function resolveIsDark(mode: ThemeMode): boolean {
+    if (mode === 'dark') return true;
+    if (mode === 'light') return false;
+    if (typeof window === 'undefined') return false;
+    return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+}
+
+function syncHtmlDarkClass(isDark: boolean): void {
+    if (typeof document === 'undefined') return;
+    document.documentElement.classList.toggle('dark', isDark);
+}
 
 const getInitialAnimation = (): AnimationMode => {
+    if (typeof window === 'undefined') return '';
     const savedAnimation = localStorage.getItem('animation');
     if (savedAnimation && savedAnimation.startsWith('animate__')) {
         return savedAnimation as AnimationMode;
@@ -90,22 +102,33 @@ const getInitialAnimation = (): AnimationMode => {
     return '';
 };
 
+const savedThemeMode = readStoredThemeMode();
+
 const initialState: ThemeState = {
-    theme: getInitialTheme(),
-    menu: (localStorage.getItem('menu') as MenuMode) || themeConfig.menu,
-    layout: (localStorage.getItem('layout') as LayoutMode) || themeConfig.layout,
-    rtlClass: (localStorage.getItem('rtlClass') as RTLMode) || themeConfig.rtlClass,
+    theme: savedThemeMode,
+    menu: (typeof window !== 'undefined' && (localStorage.getItem('menu') as MenuMode)) || themeConfig.menu,
+    layout: (typeof window !== 'undefined' && (localStorage.getItem('layout') as LayoutMode)) || themeConfig.layout,
+    rtlClass: (typeof window !== 'undefined' && (localStorage.getItem('rtlClass') as RTLMode)) || themeConfig.rtlClass,
     animation: getInitialAnimation(),
-    navbar: (localStorage.getItem('navbar') as NavbarMode) || themeConfig.navbar,
-    locale: localStorage.getItem('i18nextLng') || themeConfig.locale,
-    isDarkMode: getInitialTheme() === 'dark',
-    sidebar: localStorage.getItem('sidebar') === 'true' || defaultState.sidebar,
-    semidark: localStorage.getItem('semidark') === 'true' || themeConfig.semidark,
+    navbar: (typeof window !== 'undefined' && (localStorage.getItem('navbar') as NavbarMode)) || themeConfig.navbar,
+    locale: (typeof window !== 'undefined' && localStorage.getItem('i18nextLng')) || themeConfig.locale,
+    isDarkMode: resolveIsDark(savedThemeMode),
+    sidebar:
+        (typeof window !== 'undefined' && localStorage.getItem('sidebar') === 'true') || defaultState.sidebar,
+    semidark:
+        (typeof window !== 'undefined' && localStorage.getItem('semidark') === 'true') || themeConfig.semidark,
     languageList: defaultState.languageList,
-    accentColor: localStorage.getItem('accentColor') || defaultState.accentColor,
-    fontSize: Number(localStorage.getItem('fontSize')) || defaultState.fontSize,
+    accentColor:
+        (typeof window !== 'undefined' && localStorage.getItem('accentColor')) || defaultState.accentColor,
+    fontSize:
+        (typeof window !== 'undefined' && Number(localStorage.getItem('fontSize'))) || defaultState.fontSize,
     pageTitle: '',
 };
+
+/* Before React paints: align `html.dark` with persisted theme (fixes light flash on refresh). */
+if (typeof window !== 'undefined') {
+    syncHtmlDarkClass(resolveIsDark(savedThemeMode));
+}
 
 const themeConfigSlice = createSlice({
     name: 'themeConfig',
@@ -124,11 +147,7 @@ const themeConfigSlice = createSlice({
                 state.isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             }
 
-            if (state.isDarkMode) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
+            syncHtmlDarkClass(state.isDarkMode);
         },
         toggleMenu(state, action: PayloadAction<MenuMode>) {
             const payload = action.payload || state.menu;

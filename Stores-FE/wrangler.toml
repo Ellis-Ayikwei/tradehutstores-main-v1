@@ -12,7 +12,7 @@
 # Environment variables go in the Pages dashboard (or `wrangler pages secret put`)
 # — keep this file free of secrets.
 
-name = "tradehut-stores-fe"
+name = "tradehutstores-main-v1"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".vercel/output/static"
@@ -20,7 +20,7 @@ pages_build_output_dir = ".vercel/output/static"
 [vars]
 # Public, non-secret values. Override per-environment in the Pages dashboard.
 # NEXT_PUBLIC_API_URL is read by lib/axiosInstance.tsx.
-NEXT_PUBLIC_API_URL = "https://api.tradehut.com/tradehut/api/v1/"
+NEXT_PUBLIC_API_URL = "https://api-staging.tradehut.com/tradehut/api/v1/"
 NEXT_PUBLIC_IMAGE_HOST = "https://images.tradehut.com"
 
 [env.preview.vars]

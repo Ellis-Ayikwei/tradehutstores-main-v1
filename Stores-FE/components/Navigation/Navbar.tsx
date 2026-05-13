@@ -13,11 +13,11 @@ import {
     X,
     Sun,
     Moon,
-    Globe,
     Bell
 } from 'lucide-react'
 import { useTheme } from '@/contexts/ThemeContext'
-import { useCurrency } from '@/contexts/CurrencyContext'
+import CurrencyPicker from '@/components/Navigation/CurrencyPicker'
+import ShipToPicker from '@/components/Navigation/ShipToPicker'
 import { Badge } from 'antd'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/store'
@@ -32,7 +32,8 @@ export default function Navbar() {
     const { openAuthModal } = useAuthModal()
     const pathname = usePathname()
     const { theme, toggleTheme } = useTheme()
-    const { currency, setCurrency } = useCurrency()
+    // Currency + ship-to are now rendered via the dedicated picker components,
+    // which read from CurrencyContext / ShipToContext directly.
     const cart = useSelector((state: RootState) => state.cart.cart)
     const wishlist = useSelector((state: RootState) => state.wishlist.wishlist)
 
@@ -138,21 +139,9 @@ export default function Navbar() {
                             )}
                         </button>
 
-                        {/* Currency Selector */}
-                        <div className="relative hidden md:block">
-                            <select
-                                value={currency}
-                                onChange={(e) => setCurrency(e.target.value)}
-                                className="appearance-none bg-transparent text-gray-700 dark:text-gray-200 pr-8 pl-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm font-medium"
-                            >
-                                <option value="GHS">GHS</option>
-                                <option value="USD">USD</option>
-                                <option value="EUR">EUR</option>
-                                <option value="GBP">GBP</option>
-                                <option value="JPY">JPY</option>
-                            </select>
-                            <Globe className="absolute right-2 top-2.5 h-4 w-4 text-gray-400 pointer-events-none" />
-                        </div>
+                        {/* Ship-to + currency pickers (admin-driven) */}
+                        <ShipToPicker variant="compact" className="hidden md:block" />
+                        <CurrencyPicker variant="inline" className="hidden md:block" />
 
                         {/* Notifications */}
                         <Link href="/notifications" className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
@@ -241,19 +230,10 @@ export default function Navbar() {
                                     </Link>
                                 ))}
                                 
-                                {/* Mobile Currency Selector */}
-                                <div className="px-4 py-2">
-                                    <select
-                                        value={currency}
-                                        onChange={(e) => setCurrency(e.target.value)}
-                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                                    >
-                                        <option value="GHS">GHS</option>
-                                        <option value="USD">USD</option>
-                                        <option value="EUR">EUR</option>
-                                        <option value="GBP">GBP</option>
-                                        <option value="JPY">JPY</option>
-                                    </select>
+                                {/* Mobile ship-to + currency pickers */}
+                                <div className="px-4 py-2 space-y-2">
+                                    <ShipToPicker variant="panel" />
+                                    <CurrencyPicker variant="panel" />
                                 </div>
                             </div>
                         </motion.div>

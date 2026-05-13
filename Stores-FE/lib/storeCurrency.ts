@@ -41,6 +41,66 @@ export const DEFAULT_FX_RATES: Record<string, number> = {
     KES: 130 / _G,
 }
 
+// ─── Display metadata for the navbar pickers ────────────────────────────────
+// Symbol + human-readable label per ISO code. Mirrors SUPPORTED_CURRENCIES on
+// Stores-Admin/src/utilities/storeCurrency.ts — keep them in sync if you add
+// a new currency here.
+export const CURRENCY_META: Record<string, { symbol: string; label: string }> = {
+    GHS: { symbol: 'GH₵', label: 'Ghana Cedi' },
+    USD: { symbol: '$', label: 'US Dollar' },
+    EUR: { symbol: '€', label: 'Euro' },
+    GBP: { symbol: '£', label: 'British Pound' },
+    NGN: { symbol: '₦', label: 'Nigerian Naira' },
+    KES: { symbol: 'KSh', label: 'Kenyan Shilling' },
+    CNY: { symbol: '¥', label: 'Chinese Yuan' },
+    JPY: { symbol: '¥', label: 'Japanese Yen' },
+    AUD: { symbol: 'A$', label: 'Australian Dollar' },
+    CAD: { symbol: 'C$', label: 'Canadian Dollar' },
+    CHF: { symbol: 'CHF', label: 'Swiss Franc' },
+    SEK: { symbol: 'kr', label: 'Swedish Krona' },
+    NZD: { symbol: 'NZ$', label: 'New Zealand Dollar' },
+    ZAR: { symbol: 'R', label: 'South African Rand' },
+}
+
+// ─── Country metadata for the ship-to picker ────────────────────────────────
+// Keep this list aligned with the markets the BE knows about (StoreConfig
+// shipping_zones uses the same 2-letter ISO codes). The "*" wildcard in a
+// shipping zone means "all countries" — handled by getShippableCountries().
+export const COUNTRY_META: Record<string, { name: string; flag: string }> = {
+    GH: { name: 'Ghana', flag: '🇬🇭' },
+    NG: { name: 'Nigeria', flag: '🇳🇬' },
+    KE: { name: 'Kenya', flag: '🇰🇪' },
+    ZA: { name: 'South Africa', flag: '🇿🇦' },
+    CI: { name: "Côte d'Ivoire", flag: '🇨🇮' },
+    SN: { name: 'Senegal', flag: '🇸🇳' },
+    BJ: { name: 'Benin', flag: '🇧🇯' },
+    TG: { name: 'Togo', flag: '🇹🇬' },
+    BF: { name: 'Burkina Faso', flag: '🇧🇫' },
+    GB: { name: 'United Kingdom', flag: '🇬🇧' },
+    US: { name: 'United States', flag: '🇺🇸' },
+    CA: { name: 'Canada', flag: '🇨🇦' },
+    AU: { name: 'Australia', flag: '🇦🇺' },
+    DE: { name: 'Germany', flag: '🇩🇪' },
+    FR: { name: 'France', flag: '🇫🇷' },
+    CN: { name: 'China', flag: '🇨🇳' },
+}
+
+/** Resolve which countries the storefront should offer in its ship-to picker
+ *  given the admin's enabled shipping zones. "*" means "any country". */
+export function getShippableCountries(
+    zones: { countries: string[]; enabled: boolean }[] | undefined | null
+): string[] {
+    if (!zones || zones.length === 0) return Object.keys(COUNTRY_META)
+    const enabled = zones.filter((z) => z.enabled)
+    if (enabled.length === 0) return Object.keys(COUNTRY_META)
+    if (enabled.some((z) => (z.countries ?? []).includes('*'))) {
+        return Object.keys(COUNTRY_META)
+    }
+    const codes = new Set<string>()
+    enabled.forEach((z) => (z.countries ?? []).forEach((c) => codes.add(c)))
+    return Array.from(codes)
+}
+
 export function convertWithRates(
     amount: number,
     from: string,

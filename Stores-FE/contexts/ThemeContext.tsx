@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useCallback, useContext, useLayoutEffect, useState } from 'react'
 
 type Theme = 'light' | 'dark'
 
@@ -11,34 +11,36 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-    // Always start with 'light' to match server render, then update after hydration
-    const [theme, setTheme] = useState<Theme>('light')
-    const [mounted, setMounted] = useState(false)
+function resolveTheme(): Theme {
+    if (typeof window === 'undefined') return 'light'
+    const saved = localStorage.getItem('theme') as Theme | null
+    if (saved === 'light' || saved === 'dark') return saved
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+}
 
-    useEffect(() => {
-        setMounted(true)
-        // After hydration, read from localStorage or system preference
-        const savedTheme = localStorage.getItem('theme') as Theme
-        if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
-            setTheme(savedTheme)
-        } else {
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-            setTheme(prefersDark ? 'dark' : 'light')
-        }
+function applyDomTheme(theme: Theme): void {
+    const root = document.documentElement
+    root.classList.remove('light', 'dark')
+    root.classList.add(theme)
+    localStorage.setItem('theme', theme)
+}
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+    const [theme, setTheme] = useState<Theme>('light')
+
+    useLayoutEffect(() => {
+        const resolved = resolveTheme()
+        setTheme(resolved)
+        applyDomTheme(resolved)
     }, [])
 
-    useEffect(() => {
-        if (!mounted) return
-        const root = window.document.documentElement
-        root.classList.remove('light', 'dark')
-        root.classList.add(theme)
-        localStorage.setItem('theme', theme)
-    }, [theme, mounted])
-
-    const toggleTheme = () => {
-        setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'))
-    }
+    const toggleTheme = useCallback(() => {
+        setTheme((prev) => {
+            const next = prev === 'light' ? 'dark' : 'light'
+            applyDomTheme(next)
+            return next
+        })
+    }, [])
 
     return <ThemeContext.Provider value={{ theme, toggleTheme }}>{children}</ThemeContext.Provider>
 }

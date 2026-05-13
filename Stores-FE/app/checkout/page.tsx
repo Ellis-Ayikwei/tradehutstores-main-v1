@@ -21,10 +21,12 @@ import React, { useState, useEffect, useMemo, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSelector } from "react-redux";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
+import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
 import { RootState } from "@/store";
 import MainLayout from '@/components/Layouts/MainLayout'
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useStoreConfig } from "@/contexts/StoreConfigContext";
 import { postFxQuote, type FxQuoteResponse } from "@/lib/fxClient";
 import axiosInstance from "@/lib/axiosInstance";
 import { resolveMediaSrc } from "@/lib/mediaUrl";
@@ -44,10 +46,11 @@ import {
     ArrowLeft,
 } from "lucide-react";
 
-// ─── Config (keep in sync with CartPage) ─────────────────────────────────────
-const TAX_RATE = 0.15
-const FREE_SHIPPING_THRESHOLD = 500
-const FLAT_SHIPPING_COST = 50
+// ─── Fallback config (keep in sync with CartPage) ────────────────────────────
+// Replaced at runtime by StoreConfig values via useStoreConfig().
+const FALLBACK_TAX_RATE = 0.15
+const FALLBACK_FREE_SHIPPING_THRESHOLD = 500
+const FALLBACK_FLAT_SHIPPING_COST = 50
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Address {
@@ -705,6 +708,8 @@ function OrderSummary({
     deliveryLabel,
     tax,
     total,
+    taxRate,
+    freeShippingThreshold,
     formatDisplayPrice,
     formatCurrency,
     checkoutQuote,
@@ -719,6 +724,10 @@ function OrderSummary({
     deliveryLabel: string;
     tax: number;
     total: number;
+    /** 0–1 fraction (e.g. 0.125 for 12.5%). Sourced from StoreConfig. */
+    taxRate: number;
+    /** Cart subtotal at/above which shipping is free. Sourced from StoreConfig. */
+    freeShippingThreshold: number;
     formatDisplayPrice: (n: number) => string;
     formatCurrency: (n: number) => string;
     checkoutQuote: FxQuoteResponse | null;
@@ -812,7 +821,7 @@ function OrderSummary({
                 </div>
                 <div className="flex justify-between">
                     <span className="text-zinc-500 uppercase text-xs font-bold tracking-wide">
-                        Tax ({(TAX_RATE * 100).toFixed(0)}%)
+                        Tax ({(taxRate * 100).toFixed(0)}%)
                     </span>
                     <span className="font-mono text-zinc-900 font-bold">
                         {quoteApplies && checkoutQuote
@@ -848,7 +857,7 @@ function OrderSummary({
                 <span className="flex items-center gap-1"><ShieldCheck size={12} /> Secure</span>
                 <span className="flex items-center gap-1">
                     <Truck size={12} />
-                    Free over {formatDisplayPrice(FREE_SHIPPING_THRESHOLD)}
+                    Free over {formatDisplayPrice(freeShippingThreshold)}
                 </span>
             </div>
         </div>
@@ -914,6 +923,9 @@ function MobileSummaryDrawer({
 // ─── Main Page ────────────────────────────────────────────────────────────────
 function CheckoutPageInner() {
     const searchParams = useSearchParams()
+    const router = useRouter()
+    const isAuthenticated = useIsAuthenticated()
+    const { config: storeConfig } = useStoreConfig()
     const { cart } = useSelector((state: RootState) => state.cart)
     const {
         formatDisplayPrice,
@@ -924,6 +936,26 @@ function CheckoutPageInner() {
         fxAsOf,
         fxStale,
     } = useCurrency()
+
+    // Admin-configured cart math, with fallbacks until /store/config/public/ loads.
+    const TAX_RATE = (storeConfig?.tax_default_rate ?? FALLBACK_TAX_RATE * 100) / 100
+    const TAX_INCLUSIVE = storeConfig?.tax_mode === 'inclusive'
+    const TAX_ON_SHIPPING = storeConfig?.tax_charge_on_shipping ?? false
+    const FREE_SHIPPING_THRESHOLD =
+        storeConfig?.shipping_free_threshold ?? FALLBACK_FREE_SHIPPING_THRESHOLD
+    // (FLAT_SHIPPING_COST falls out of the selected delivery option below.)
+    const allowGuestCheckout = storeConfig?.customers_allow_guest_checkout ?? true
+
+    // Bounce unauthenticated visitors to login when the admin has disabled
+    // guest checkout. Wait for the BE response so the first paint doesn't
+    // redirect optimistically.
+    useEffect(() => {
+        if (!storeConfig) return
+        if (!allowGuestCheckout && !isAuthenticated) {
+            const next = encodeURIComponent('/checkout')
+            router.replace(`/login?next=${next}`)
+        }
+    }, [storeConfig, allowGuestCheckout, isAuthenticated, router])
 
     const [checkoutQuote, setCheckoutQuote] = useState<FxQuoteResponse | null>(null)
     const [quoteLoading, setQuoteLoading] = useState(false)
@@ -1085,10 +1117,14 @@ function CheckoutPageInner() {
 
     // Override free-shipping threshold from cart config; delivery option cost only applies when below threshold
     const deliveryCost =
-        promoFreeShipping || subtotalAfterPromo > FREE_SHIPPING_THRESHOLD ? 0 : deliveryOption.cost
+        promoFreeShipping || subtotalAfterPromo >= FREE_SHIPPING_THRESHOLD ? 0 : deliveryOption.cost
 
-    const tax = subtotalAfterPromo * TAX_RATE
-    const total = subtotalAfterPromo + deliveryCost + tax
+    // Mirror the math in app/cart/page.tsx so cart and checkout never disagree.
+    const taxBase = TAX_ON_SHIPPING ? subtotalAfterPromo + deliveryCost : subtotalAfterPromo
+    const tax = TAX_INCLUSIVE ? (taxBase * TAX_RATE) / (1 + TAX_RATE) : taxBase * TAX_RATE
+    const total = TAX_INCLUSIVE
+        ? subtotalAfterPromo + deliveryCost
+        : subtotalAfterPromo + deliveryCost + tax
 
     useEffect(() => {
         if (!items.length) {
@@ -1220,6 +1256,8 @@ function CheckoutPageInner() {
             deliveryLabel={deliveryOption.label}
             tax={tax}
             total={total}
+            taxRate={TAX_RATE}
+            freeShippingThreshold={FREE_SHIPPING_THRESHOLD}
             formatDisplayPrice={formatDisplayPrice}
             formatCurrency={formatCurrency}
             checkoutQuote={checkoutQuote}

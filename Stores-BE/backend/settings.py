@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import os
+from datetime import timedelta
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
@@ -71,6 +72,18 @@ if DEBUG:
 _railway_host = config("RAILWAY_PUBLIC_DOMAIN", default="")
 if _railway_host and _railway_host not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(_railway_host)
+
+# On Railway, probes and the default public URL use *.up.railway.app (and
+# related hostnames). Strict ALLOWED_HOSTS like api.example.com alone will
+# reject those Host headers with 400 before the view runs — the edge then
+# often surfaces that as an unhealthy service.
+if os.environ.get("RAILWAY_PROJECT_ID"):
+    for _pattern in (".up.railway.app", ".railway.app"):
+        if _pattern not in ALLOWED_HOSTS:
+            ALLOWED_HOSTS.append(_pattern)
+    for _loop in ("127.0.0.1", "localhost"):
+        if _loop not in ALLOWED_HOSTS:
+            ALLOWED_HOSTS.append(_loop)
 
 # Browser Origin must match for unsafe methods when SessionAuthentication (or
 # Django form views) enforces CSRF. LAN dev (e.g. FE on :3000) needs http origins
@@ -454,6 +467,15 @@ ACCESS_TOKEN_LIFETIME_MINUTES = 30  # 30 minutes
 REFRESH_TOKEN_LIFETIME_DAYS = 7  # 7 days
 ACCESS_TOKEN_LIFETIME_SECONDS = int(ACCESS_TOKEN_LIFETIME_MINUTES * 60)
 REFRESH_TOKEN_LIFETIME_SECONDS = int(REFRESH_TOKEN_LIFETIME_DAYS * 24 * 3600)
+
+# Minted JWT claims (`RefreshToken.for_user`, `refresh.access_token`, blacklist).
+# Without this block, SimpleJWT falls back to ~5m access / ~1d refresh.
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=ACCESS_TOKEN_LIFETIME_MINUTES),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=REFRESH_TOKEN_LIFETIME_DAYS),
+    "SIGNING_KEY": SECRET_KEY,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
 
 # OTP / 2FA Settings
 OTP_EXPIRY_MINUTES = 5  # OTP expires in 5 minutes

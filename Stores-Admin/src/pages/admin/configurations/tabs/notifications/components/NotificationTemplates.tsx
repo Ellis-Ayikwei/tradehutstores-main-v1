@@ -11,7 +11,7 @@ import {
   Eye,
   Languages
 } from 'lucide-react';
-import { columnTypes } from '../../../ui/ColumnHelpers';
+import { columnTypes } from '../../../../../../components/ui/ColumnHelpers';
 
 interface NotificationTemplate {
   id: string;

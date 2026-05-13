@@ -8,7 +8,6 @@ import {
     User,
     MapPin,
     ChevronDown,
-    Globe,
     Sun,
     Moon,
     Heart,
@@ -26,10 +25,11 @@ import { logoutUser } from '@/store/authSlice'
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser'
 import useIsAuthenticated from 'react-auth-kit/hooks/useIsAuthenticated'
 import useSignOut from 'react-auth-kit/hooks/useSignOut'
-import { useCurrency } from '@/contexts/CurrencyContext'
 import { useTheme } from '@/contexts/ThemeContext'
 import Logo from '../common/logo'
 import SearchBar from '@/components/common/SearchBar'
+import CurrencyPicker from '@/components/Navigation/CurrencyPicker'
+import ShipToPicker from '@/components/Navigation/ShipToPicker'
 
 // ─── Custom badge — no antd dependency ───────────────────────────────────────
 // Renders a small pill over the top-right of any child element.
@@ -51,17 +51,6 @@ function NavBadge({ count, children }: { count: number; children: React.ReactNod
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
-const COUNTRIES = [
-    { code: 'GH', name: 'Ghana',          flag: '🇬🇭' },
-    { code: 'US', name: 'United States',  flag: '🇺🇸' },
-    { code: 'GB', name: 'United Kingdom', flag: '🇬🇧' },
-    { code: 'NG', name: 'Nigeria',        flag: '🇳🇬' },
-    { code: 'KE', name: 'Kenya',          flag: '🇰🇪' },
-    { code: 'ZA', name: 'South Africa',   flag: '🇿🇦' },
-]
-
-const CURRENCIES = ['USD', 'EUR', 'GBP', 'GHS', 'NGN', 'KES']
-
 type AuthKitUser = { id: string; name: string; email: string; uuid?: string }
 
 const PROFILE_MENU = [
@@ -78,10 +67,7 @@ const PROFILE_MENU = [
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function TopNav() {
-    const [selectedCountry, setSelectedCountry] = useState(COUNTRIES[0])
-    const [countryOpen, setCountryOpen] = useState(false)
     const [profileOpen, setProfileOpen] = useState(false)
-    const countryRef = useRef<HTMLDivElement>(null)
     const profileRef = useRef<HTMLDivElement>(null)
 
     const dispatch = useDispatch<AppDispatch>()
@@ -94,8 +80,7 @@ export default function TopNav() {
     const cart     = useSelector((state: RootState) => state.cart.cart)
     const wishlist = useSelector((state: RootState) => state.wishlist.wishlist)
 
-    const { currency, setCurrency } = useCurrency()
-    const { theme, toggleTheme }    = useTheme()
+    const { theme, toggleTheme } = useTheme()
     const pathname = usePathname()
 
     const displayName = authUser?.name?.trim() || authUser?.email?.split('@')[0] || 'Account'
@@ -123,7 +108,6 @@ export default function TopNav() {
     useEffect(() => {
         function handler(e: MouseEvent) {
             const t = e.target as Node
-            if (countryRef.current && !countryRef.current.contains(t)) setCountryOpen(false)
             if (profileRef.current && !profileRef.current.contains(t)) setProfileOpen(false)
         }
         document.addEventListener('mousedown', handler)
@@ -150,67 +134,14 @@ export default function TopNav() {
                     {/* ── Right cluster ── */}
                     <div className="flex items-center gap-0.5 sm:gap-1 min-w-0">
 
-                        {/* Country selector */}
-                        <div ref={countryRef} className="relative hidden md:block">
-                            <button
-                                onClick={() => setCountryOpen(v => !v)}
-                                onMouseEnter={() => setCountryOpen(true)}
-                                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700/70 transition-colors text-xs font-medium text-gray-700 dark:text-white whitespace-nowrap"
-                            >
-                                <MapPin className="h-3.5 w-3.5 shrink-0 text-gray-500 dark:text-white" />
-                                <span className="hidden lg:inline text-gray-400 dark:text-white/70">Ship to</span>
-                                <span className="font-semibold text-gray-900 dark:text-white">
-                                    {selectedCountry.flag} {selectedCountry.code}
-                                </span>
-                                <ChevronDown className={`h-3 w-3 text-gray-400 dark:text-white/70 transition-transform duration-200 ${countryOpen ? 'rotate-180' : ''}`} />
-                            </button>
-
-                            {countryOpen && (
-                                <div
-                                    className="absolute top-full left-0 mt-2 w-52 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 py-1.5 z-[200] overflow-hidden"
-                                    style={{ animation: 'dropIn 0.15s cubic-bezier(0.16,1,0.3,1) forwards' }}
-                                    onMouseLeave={() => setCountryOpen(false)}
-                                >
-                                    <p className="px-3 pt-1 pb-1.5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-500">
-                                        Delivery region
-                                    </p>
-                                    {COUNTRIES.map(c => (
-                                        <button
-                                            key={c.code}
-                                            onClick={() => { setSelectedCountry(c); setCountryOpen(false) }}
-                                            className={`w-full flex items-center gap-3 px-3 py-2 text-sm transition-colors
-                                                ${selectedCountry.code === c.code
-                                                    ? 'bg-orange-50 dark:bg-orange-900/20 text-orange-500 dark:text-orange-400 font-semibold'
-                                                    : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
-                                                }`}
-                                        >
-                                            <span className="text-xl leading-none">{c.flag}</span>
-                                            <span>{c.name}</span>
-                                            {selectedCountry.code === c.code && (
-                                                <span className="ml-auto text-orange-500 text-xs">✓</span>
-                                            )}
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
+                        {/* Ship-to picker (admin-driven shipping zones) */}
+                        <ShipToPicker variant="compact" className="hidden md:block" />
 
                         {/* Divider */}
                         <div className="hidden md:block h-4 w-px bg-gray-200 dark:bg-gray-700 mx-1" />
 
-                        {/* Currency selector */}
-                        <div className="hidden sm:flex items-center gap-1 px-2 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700/70 transition-colors">
-                            <Globe className="h-3.5 w-3.5 text-gray-500 dark:text-white shrink-0" />
-                            <select
-                                value={currency}
-                                onChange={e => setCurrency(e.target.value)}
-                                className="bg-transparent border-none text-gray-700 dark:text-white focus:outline-none cursor-pointer font-medium text-xs leading-none"
-                            >
-                                {CURRENCIES.map(c => (
-                                    <option key={c} value={c} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">{c}</option>
-                                ))}
-                            </select>
-                        </div>
+                        {/* Currency picker (admin-driven enabled list) */}
+                        <CurrencyPicker variant="compact" className="hidden sm:block" />
 
                         {/* Divider */}
                         <div className="hidden sm:block h-4 w-px bg-gray-200 dark:bg-gray-700 mx-1" />

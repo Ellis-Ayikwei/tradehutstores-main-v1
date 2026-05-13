@@ -52,6 +52,71 @@ export const SUPPORTED_CURRENCIES: { code: string; label: string; symbol: string
     { code: 'NZD', label: 'New Zealand Dollar', symbol: 'NZ$' },
 ];
 
+// ─── Country list for shipping zone editor ──────────────────────────────────
+// Mirrors Stores-FE/lib/storeCurrency.ts COUNTRY_META — keep them aligned so
+// admin-picked countries render in the storefront ship-to picker.
+export interface Country {
+    code: string;
+    name: string;
+    flag: string;
+    region: 'africa' | 'europe' | 'americas' | 'asia-pacific' | 'middle-east';
+}
+
+export const COUNTRIES: Country[] = [
+    // ── Africa ──
+    { code: 'GH', name: 'Ghana', flag: '🇬🇭', region: 'africa' },
+    { code: 'NG', name: 'Nigeria', flag: '🇳🇬', region: 'africa' },
+    { code: 'KE', name: 'Kenya', flag: '🇰🇪', region: 'africa' },
+    { code: 'ZA', name: 'South Africa', flag: '🇿🇦', region: 'africa' },
+    { code: 'CI', name: "Côte d'Ivoire", flag: '🇨🇮', region: 'africa' },
+    { code: 'SN', name: 'Senegal', flag: '🇸🇳', region: 'africa' },
+    { code: 'BJ', name: 'Benin', flag: '🇧🇯', region: 'africa' },
+    { code: 'TG', name: 'Togo', flag: '🇹🇬', region: 'africa' },
+    { code: 'BF', name: 'Burkina Faso', flag: '🇧🇫', region: 'africa' },
+    { code: 'ML', name: 'Mali', flag: '🇲🇱', region: 'africa' },
+    { code: 'ET', name: 'Ethiopia', flag: '🇪🇹', region: 'africa' },
+    { code: 'EG', name: 'Egypt', flag: '🇪🇬', region: 'africa' },
+    { code: 'MA', name: 'Morocco', flag: '🇲🇦', region: 'africa' },
+    { code: 'TZ', name: 'Tanzania', flag: '🇹🇿', region: 'africa' },
+    { code: 'UG', name: 'Uganda', flag: '🇺🇬', region: 'africa' },
+    { code: 'RW', name: 'Rwanda', flag: '🇷🇼', region: 'africa' },
+    // ── Europe ──
+    { code: 'GB', name: 'United Kingdom', flag: '🇬🇧', region: 'europe' },
+    { code: 'DE', name: 'Germany', flag: '🇩🇪', region: 'europe' },
+    { code: 'FR', name: 'France', flag: '🇫🇷', region: 'europe' },
+    { code: 'IT', name: 'Italy', flag: '🇮🇹', region: 'europe' },
+    { code: 'ES', name: 'Spain', flag: '🇪🇸', region: 'europe' },
+    { code: 'NL', name: 'Netherlands', flag: '🇳🇱', region: 'europe' },
+    { code: 'CH', name: 'Switzerland', flag: '🇨🇭', region: 'europe' },
+    { code: 'SE', name: 'Sweden', flag: '🇸🇪', region: 'europe' },
+    // ── Americas ──
+    { code: 'US', name: 'United States', flag: '🇺🇸', region: 'americas' },
+    { code: 'CA', name: 'Canada', flag: '🇨🇦', region: 'americas' },
+    { code: 'BR', name: 'Brazil', flag: '🇧🇷', region: 'americas' },
+    { code: 'MX', name: 'Mexico', flag: '🇲🇽', region: 'americas' },
+    // ── Asia-Pacific ──
+    { code: 'CN', name: 'China', flag: '🇨🇳', region: 'asia-pacific' },
+    { code: 'JP', name: 'Japan', flag: '🇯🇵', region: 'asia-pacific' },
+    { code: 'IN', name: 'India', flag: '🇮🇳', region: 'asia-pacific' },
+    { code: 'AU', name: 'Australia', flag: '🇦🇺', region: 'asia-pacific' },
+    { code: 'SG', name: 'Singapore', flag: '🇸🇬', region: 'asia-pacific' },
+    // ── Middle East ──
+    { code: 'AE', name: 'United Arab Emirates', flag: '🇦🇪', region: 'middle-east' },
+    { code: 'SA', name: 'Saudi Arabia', flag: '🇸🇦', region: 'middle-east' },
+    { code: 'TR', name: 'Turkey', flag: '🇹🇷', region: 'middle-east' },
+];
+
+export const REGION_LABELS: Record<Country['region'], string> = {
+    africa: 'Africa',
+    europe: 'Europe',
+    americas: 'Americas',
+    'asia-pacific': 'Asia · Pacific',
+    'middle-east': 'Middle East',
+};
+
+/** A zone's `countries: ["*"]` is the wildcard meaning "every country". */
+export const COUNTRY_WILDCARD = '*';
+
 export function convertWithRates(
     amount: number,
     from: string,

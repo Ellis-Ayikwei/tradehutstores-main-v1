@@ -1,178 +1,314 @@
-import React, { useState } from 'react';
-import { 
-  Settings, 
-  Package, 
-  DollarSign, 
-  Shield, 
-  Bell,
-  CreditCard,
-  MapPin,
-  Truck,
-  Users,
-  Database,
-  Globe,
-  Cog,
-  Car
-} from 'lucide-react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
-// Import existing components
+// Existing modules embedded as deep tabs
 import AdminConsole from '../CommonItems/AdminConsole';
 import PricingAdmin from '../pricing';
-import AdminSettings from '../AdminSettings';
-
-// Import service configurations
-import ServicesConfig from './tabs/services';
-import VehicleConfigurations from './tabs/VehicleConfiguartions';
 import NotificationsConfig from './tabs/notifications';
 
+// New ecommerce-store config tabs
+import StorefrontConfig from './tabs/StorefrontConfig';
+import CurrencyTaxConfig from './tabs/CurrencyTaxConfig';
+import PaymentsConfig from './tabs/PaymentsConfig';
+import ShippingConfig from './tabs/ShippingConfig';
+import LocalizationConfig from './tabs/LocalizationConfig';
+import CustomersConfig from './tabs/CustomersConfig';
+import SystemConfig from './tabs/SystemConfig';
+
+// ─── Tab definitions ────────────────────────────────────────────────────────
 interface ConfigTab {
-  key: string;
-  label: string;
-  icon: any;
-  component: React.ComponentType;
-  description: string;
+    key: string;
+    label: string;
+    icon: string;
+    section: 'store' | 'commerce' | 'platform';
+    description: string;
+    component: React.ComponentType;
+    badge?: string;
 }
 
+const TABS: ConfigTab[] = [
+    {
+        key: 'storefront',
+        label: 'Storefront',
+        icon: 'storefront',
+        section: 'store',
+        description: 'Identity, contact, mode',
+        component: StorefrontConfig,
+    },
+    {
+        key: 'currency-tax',
+        label: 'Currency & Tax',
+        icon: 'savings',
+        section: 'store',
+        description: 'Base currency, FX, VAT',
+        component: CurrencyTaxConfig,
+    },
+    {
+        key: 'localization',
+        label: 'Localization',
+        icon: 'translate',
+        section: 'store',
+        description: 'Languages, timezone, units',
+        component: LocalizationConfig,
+    },
+    {
+        key: 'catalog',
+        label: 'Catalog',
+        icon: 'category',
+        section: 'commerce',
+        description: 'Categories, brands, attributes',
+        component: AdminConsole,
+    },
+    {
+        key: 'pricing',
+        label: 'Pricing',
+        icon: 'price_change',
+        section: 'commerce',
+        description: 'Rules, factors, surcharges',
+        component: PricingAdmin,
+    },
+    {
+        key: 'payments',
+        label: 'Payments',
+        icon: 'credit_card',
+        section: 'commerce',
+        description: 'Gateways, payouts, risk',
+        component: PaymentsConfig,
+    },
+    {
+        key: 'shipping',
+        label: 'Shipping',
+        icon: 'local_shipping',
+        section: 'commerce',
+        description: 'Zones, methods, packaging',
+        component: ShippingConfig,
+    },
+    {
+        key: 'customers',
+        label: 'Customers',
+        icon: 'how_to_reg',
+        section: 'commerce',
+        description: 'Accounts, checkout, security',
+        component: CustomersConfig,
+    },
+    {
+        key: 'notifications',
+        label: 'Notifications',
+        icon: 'notifications',
+        section: 'platform',
+        description: 'Email, SMS, push, webhooks',
+        component: NotificationsConfig,
+    },
+    {
+        key: 'system',
+        label: 'System',
+        icon: 'settings',
+        section: 'platform',
+        description: 'Maintenance, backups, API',
+        component: SystemConfig,
+    },
+];
+
+const SECTION_LABELS: Record<ConfigTab['section'], string> = {
+    store: 'Store',
+    commerce: 'Commerce',
+    platform: 'Platform',
+};
+
+// ─── Persisted active tab ───────────────────────────────────────────────────
+const TAB_KEY = 'admin:configurations:tab';
+
+// ─── Main component ─────────────────────────────────────────────────────────
 const SystemConfigurations: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('common-items');
+    const dispatch = useDispatch();
+    const [activeTab, setActiveTab] = useState<string>(() => {
+        if (typeof window === 'undefined') return TABS[0].key;
+        return localStorage.getItem(TAB_KEY) || TABS[0].key;
+    });
+    const [search, setSearch] = useState('');
+    const contentRef = useRef<HTMLDivElement>(null);
 
-  const configTabs: ConfigTab[] = [
-    {
-      key: 'common-items',
-      label: 'Common Items',
-      icon: Package,
-      component: AdminConsole,
-      description: 'Manage categories, brands, models, and common items'
-    },
-    {
-      key: 'services',
-      label: 'Services',
-      icon: Truck,
-      component: ServicesConfig,
-      description: 'Configure service types, categories, and specializations'
-    },
-    {
-      key: 'vehicles',
-      label: 'Vehicles',
-      icon: Car,
-      component: VehicleConfigurations,
-      description: 'Manage vehicle types, sizes, and categories'
-    },
-    {
-      key: 'pricing',
-      label: 'Pricing',
-      icon: DollarSign,
-      component: PricingAdmin,
-      description: 'Manage pricing factors, configurations, and rules'
-    },
-    // {
-    //   key: 'notifications',
-    //   label: 'Notifications',
-    //   icon: Bell,
-    //   component: NotificationsConfig,
-    //   description: 'Manage email, SMS, and push notification settings'
-    // },
-    // {
-    //   key: 'payments',
-    //   label: 'Payments',
-    //   icon: CreditCard,
-    //   component: () => <div className="p-6"><h3 className="text-lg font-semibold mb-4">Payment Configuration</h3><p className="text-gray-600">Payment configuration coming soon...</p></div>,
-    //   description: 'Configure payment gateways and transaction settings'
-    // },
-    // {
-    //   key: 'locations',
-    //   label: 'Locations',
-    //   icon: MapPin,
-    //   component: () => <div className="p-6"><h3 className="text-lg font-semibold mb-4">Location Configuration</h3><p className="text-gray-600">Location configuration coming soon...</p></div>,
-    //   description: 'Manage service areas, zones, and location settings'
-    // },
-    {
-      key: 'system',
-      label: 'System',
-      icon: Cog,
-      component: () => <div className="p-6"><h3 className="text-lg font-semibold mb-4">System Configuration</h3><p className="text-gray-600">System configuration coming soon...</p></div>,
-      description: 'General system settings and maintenance'
-    }
-  ];
+    useEffect(() => {
+        dispatch(setPageTitle('Store Configurations'));
+    }, [dispatch]);
 
-  const ActiveComponent = configTabs.find(tab => tab.key === activeTab)?.component || AdminConsole;
+    useEffect(() => {
+        if (typeof window !== 'undefined') localStorage.setItem(TAB_KEY, activeTab);
+        // Smooth-scroll content area to top on tab switch
+        contentRef.current?.scrollTo?.({ top: 0, behavior: 'smooth' });
+    }, [activeTab]);
 
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      {/* <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="py-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                  <Settings className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                    System Configurations
-                  </h1>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Manage all system settings and configurations
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> */}
+    const sections = useMemo(() => {
+        const filtered = TABS.filter(
+            (t) =>
+                !search.trim() ||
+                t.label.toLowerCase().includes(search.toLowerCase()) ||
+                t.description.toLowerCase().includes(search.toLowerCase())
+        );
+        return (Object.keys(SECTION_LABELS) as ConfigTab['section'][]).map((sec) => ({
+            section: sec,
+            label: SECTION_LABELS[sec],
+            tabs: filtered.filter((t) => t.section === sec),
+        }));
+    }, [search]);
 
-      <div className="mx-auto px-4 sm:px-6 lg:px-2 py-8">
-        {/* Tab Navigation */}
-        <div className="mb-2">
-          <div className="border-b border-gray-200 dark:border-gray-700">
-            <nav className="-mb-px flex space-x-8 overflow-x-auto">
-              {configTabs.map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
-                  className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 transition-colors duration-200 ${
-                    activeTab === tab.key
-                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
-                  }`}
+    const active = TABS.find((t) => t.key === activeTab) ?? TABS[0];
+    const ActiveComponent = active.component;
+
+    return (
+        <div className="min-h-screen bg-surface">
+            <div className="max-w-[1500px] mx-auto p-4 sm:p-6 lg:p-8 pb-24 md:pb-12">
+                {/* ── Page header ───────────────────────────────────────── */}
+                <header className="mb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+                    <div>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant opacity-70">
+                            Admin · Settings
+                        </p>
+                        <h1 className="font-syne text-3xl md:text-4xl font-extrabold tracking-tight text-on-surface mt-1">
+                            Store Configurations
+                        </h1>
+                        <p className="text-sm text-on-surface-variant opacity-80 mt-1 max-w-2xl">
+                            Storefront identity, currency, payments, shipping, and platform settings
+                            for the marketplace.
+                        </p>
+                    </div>
+
+                    {/* Quick search across tabs */}
+                    <div className="relative md:w-72">
+                        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-60 text-base pointer-events-none">
+                            search
+                        </span>
+                        <input
+                            type="search"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="Find a setting"
+                            className="w-full bg-surface-container-lowest border border-outline-variant/15 rounded-xl pl-9 pr-3 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary-container shadow-card"
+                        />
+                    </div>
+                </header>
+
+                {/* ── Mobile: horizontal pill nav ────────────────────────── */}
+                <nav
+                    className="lg:hidden mb-4 -mx-4 sm:-mx-6 px-4 sm:px-6 overflow-x-auto no-scrollbar"
+                    aria-label="Configuration sections (mobile)"
                 >
-                  {React.createElement(tab.icon, { className: "w-4 h-4" })}
-                  <span>{tab.label}</span>
-                </button>
-              ))}
-            </nav>
-          </div>
-        </div>
+                    <div className="flex gap-2 pb-2 min-w-min">
+                        {TABS.map((t) => {
+                            const isActive = t.key === activeTab;
+                            return (
+                                <button
+                                    key={t.key}
+                                    type="button"
+                                    onClick={() => setActiveTab(t.key)}
+                                    className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all active:scale-95 ${
+                                        isActive
+                                            ? 'bg-primary-container text-on-primary shadow-card'
+                                            : 'bg-surface-container-lowest text-on-surface hover:bg-surface-container-low border border-outline-variant/15'
+                                    }`}
+                                >
+                                    <span className="material-symbols-outlined text-base">{t.icon}</span>
+                                    {t.label}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </nav>
 
-        {/* Tab Description */}
-        {/* <div className="mb-6">
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-            <div className="flex items-start space-x-3">
-              {React.createElement(configTabs.find(tab => tab.key === activeTab)?.icon || Settings, {
-                className: "w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5"
-              })}
-              <div>
-                <h3 className="text-sm font-medium text-blue-900 dark:text-blue-100">
-                  {configTabs.find(tab => tab.key === activeTab)?.label}
-                </h3>
-                <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                  {configTabs.find(tab => tab.key === activeTab)?.description}
-                </p>
-              </div>
+                <div className="lg:grid lg:grid-cols-[260px,1fr] lg:gap-6">
+                    {/* ── Desktop sidebar ───────────────────────────────── */}
+                    <aside
+                        className="hidden lg:block sticky top-24 self-start"
+                        aria-label="Configuration sections"
+                    >
+                        <div className="bg-surface-container-lowest rounded-2xl shadow-card overflow-hidden">
+                            {sections.map(({ section, label, tabs }) =>
+                                tabs.length === 0 ? null : (
+                                    <div key={section}>
+                                        <p className="px-4 pt-4 pb-2 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant opacity-70">
+                                            {label}
+                                        </p>
+                                        <ul className="px-2 pb-2 space-y-0.5">
+                                            {tabs.map((t) => {
+                                                const isActive = t.key === activeTab;
+                                                return (
+                                                    <li key={t.key}>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setActiveTab(t.key)}
+                                                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors active:scale-[0.98] ${
+                                                                isActive
+                                                                    ? 'bg-primary-container/10 text-primary-container'
+                                                                    : 'text-on-surface hover:bg-surface-container-low'
+                                                            }`}
+                                                        >
+                                                            <span
+                                                                className={`material-symbols-outlined text-lg ${
+                                                                    isActive
+                                                                        ? 'text-primary-container'
+                                                                        : 'text-on-surface-variant'
+                                                                }`}
+                                                            >
+                                                                {t.icon}
+                                                            </span>
+                                                            <span className="flex-1 min-w-0">
+                                                                <span className="block text-sm font-bold truncate">
+                                                                    {t.label}
+                                                                </span>
+                                                                <span className="block text-[11px] text-on-surface-variant opacity-70 truncate">
+                                                                    {t.description}
+                                                                </span>
+                                                            </span>
+                                                            {isActive && (
+                                                                <span className="material-symbols-outlined text-base text-primary-container">
+                                                                    chevron_right
+                                                                </span>
+                                                            )}
+                                                        </button>
+                                                    </li>
+                                                );
+                                            })}
+                                        </ul>
+                                    </div>
+                                )
+                            )}
+                        </div>
+
+                        {/* Help card */}
+                        <div className="mt-4 bg-surface-container-low rounded-2xl p-4 border border-outline-variant/10">
+                            <div className="flex items-center gap-2 mb-1">
+                                <span className="material-symbols-outlined text-base text-tertiary">
+                                    help
+                                </span>
+                                <p className="text-sm font-bold text-on-surface">Need a hand?</p>
+                            </div>
+                            <p className="text-xs text-on-surface-variant opacity-80">
+                                Each section saves independently. Currency changes propagate everywhere
+                                via the global Currency context.
+                            </p>
+                        </div>
+                    </aside>
+
+                    {/* ── Active panel ──────────────────────────────────── */}
+                    <div ref={contentRef} className="min-w-0">
+                        {/* Section breadcrumb */}
+                        <div className="hidden lg:flex items-center gap-2 mb-4 text-xs text-on-surface-variant">
+                            <span className="font-bold uppercase tracking-widest opacity-70">
+                                {SECTION_LABELS[active.section]}
+                            </span>
+                            <span className="material-symbols-outlined text-sm opacity-60">
+                                chevron_right
+                            </span>
+                            <span className="font-bold text-on-surface">{active.label}</span>
+                        </div>
+
+                        <ActiveComponent />
+                    </div>
+                </div>
             </div>
-          </div>
-        </div> */}
-
-        {/* Tab Content */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-          <div className="p-6">
-            <ActiveComponent />
-          </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default SystemConfigurations;

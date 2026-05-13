@@ -8,16 +8,18 @@ import { Minus, Plus, Trash2, ShoppingCart, ArrowRight, ShieldCheck, Truck } fro
 import Link from 'next/link'
 import Image from 'next/image'
 import { useCurrency } from '@/contexts/CurrencyContext'
+import { useStoreConfig } from '@/contexts/StoreConfigContext'
 import { removeFromCart, updateCart } from '@/store/cartSlice'
 import { resolveMediaSrc } from '@/lib/mediaUrl'
 import { PromoCodeInput } from '@/components/Promo'
 import type { PromoResult } from '@/hooks/usePromo'
 
-// ─── Config ────────────────────────────────────────────────────────────────────
-// Move these to env/config if they come from backend eventually
-const TAX_RATE = 0.15
-const FREE_SHIPPING_THRESHOLD = 500
-const FLAT_SHIPPING_COST = 50
+// ─── Fallback config ──────────────────────────────────────────────────────────
+// Used until /store/config/public/ has loaded. The hook below replaces these
+// with admin-configured values from StoreConfig (see Stores-BE/apps/store).
+const FALLBACK_TAX_RATE = 0.15
+const FALLBACK_FREE_SHIPPING_THRESHOLD = 500
+const FALLBACK_FLAT_SHIPPING_COST = 50
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 // Mirror your actual CartItem shape from the Redux slice.
@@ -59,6 +61,20 @@ export default function CartPage() {
     const dispatch = useDispatch<AppDispatch>()
     const { cart } = useSelector((state: RootState) => state.cart)
     const { formatDisplayPrice } = useCurrency()
+    const { config: storeConfig } = useStoreConfig()
+
+    // Admin-configured cart math, with fallbacks for first paint.
+    const FREE_SHIPPING_THRESHOLD =
+        storeConfig?.shipping_free_threshold ?? FALLBACK_FREE_SHIPPING_THRESHOLD
+    const TAX_RATE = (storeConfig?.tax_default_rate ?? FALLBACK_TAX_RATE * 100) / 100
+    const TAX_INCLUSIVE = storeConfig?.tax_mode === 'inclusive'
+    const TAX_ON_SHIPPING = storeConfig?.tax_charge_on_shipping ?? false
+    // Cheapest enabled non-free method as the "standard" rate; fall back to
+    // the legacy flat cost if none are configured.
+    const FLAT_SHIPPING_COST =
+        storeConfig?.shipping_methods
+            ?.filter((m) => m.enabled && m.rate > 0)
+            .sort((a, b) => a.rate - b.rate)[0]?.rate ?? FALLBACK_FLAT_SHIPPING_COST
 
     const [appliedPromo, setAppliedPromo] = useState<PromoResult | null>(null)
     // Track which cart item IDs are mid-update to prevent concurrent dispatches
@@ -74,9 +90,15 @@ export default function CartPage() {
     const subtotalAfterPromo = Math.max(0, subtotal - promoDiscount)
     const promoFreeShipping = !!appliedPromo?.free_shipping
     const shipping =
-        promoFreeShipping || subtotalAfterPromo > FREE_SHIPPING_THRESHOLD ? 0 : FLAT_SHIPPING_COST
-    const tax = subtotalAfterPromo * TAX_RATE
-    const total = subtotalAfterPromo + shipping + tax
+        promoFreeShipping || subtotalAfterPromo >= FREE_SHIPPING_THRESHOLD ? 0 : FLAT_SHIPPING_COST
+    // Tax base depends on inclusive/exclusive mode and whether shipping is taxable.
+    // - Inclusive: prices already contain tax — strip it for display, don't double-charge.
+    // - Exclusive: tax is added on top of subtotal (and shipping, if configured).
+    const taxBase = TAX_ON_SHIPPING ? subtotalAfterPromo + shipping : subtotalAfterPromo
+    const tax = TAX_INCLUSIVE ? (taxBase * TAX_RATE) / (1 + TAX_RATE) : taxBase * TAX_RATE
+    const total = TAX_INCLUSIVE
+        ? subtotalAfterPromo + shipping
+        : subtotalAfterPromo + shipping + tax
 
     // ─── Handlers ────────────────────────────────────────────────────────────
     /**
