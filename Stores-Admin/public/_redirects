@@ -1,0 +1,4 @@
+# SPA fallback for Cloudflare Pages.
+# React Router handles all paths client-side, so every request that didn't
+# match a static asset falls back to index.html with a 200.
+/*    /index.html   200

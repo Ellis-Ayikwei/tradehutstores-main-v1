@@ -6,6 +6,7 @@ import { useShipTo } from '@/contexts/ShipToContext'
 import { COUNTRY_META } from '@/lib/storeCurrency'
 
 type Variant = 'compact' | 'panel'
+type Align = 'left' | 'right'
 
 interface ShipToPickerProps {
     /**
@@ -13,10 +14,17 @@ interface ShipToPickerProps {
      * panel   – full-width touchable button (Navbar mobile menu)
      */
     variant?: Variant
+    /** Anchor side for the popover. Use 'left' when the trigger sits at the left
+     *  edge of the screen so the popover doesn't clip off-screen. */
+    align?: Align
     className?: string
 }
 
-export default function ShipToPicker({ variant = 'compact', className = '' }: ShipToPickerProps) {
+export default function ShipToPicker({
+    variant = 'compact',
+    align = 'right',
+    className = '',
+}: ShipToPickerProps) {
     const { country, setCountry, shippableCountries, countryName, countryFlag } = useShipTo()
 
     const [open, setOpen] = useState(false)
@@ -55,7 +63,7 @@ export default function ShipToPicker({ variant = 'compact', className = '' }: Sh
     const panelClass =
         variant === 'panel'
             ? 'absolute left-0 right-0 top-full mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 z-[200] overflow-hidden'
-            : 'absolute right-0 top-full mt-2 w-72 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 z-[200] overflow-hidden'
+            : `absolute ${align === 'left' ? 'left-0' : 'right-0'} top-full mt-2 w-72 max-w-[calc(100vw-1.5rem)] bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 z-[200] overflow-hidden`
 
     return (
         <div ref={ref} className={`relative ${className}`}>

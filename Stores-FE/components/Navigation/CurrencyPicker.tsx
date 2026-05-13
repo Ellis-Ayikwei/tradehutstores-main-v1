@@ -6,6 +6,7 @@ import { useCurrency } from '@/contexts/CurrencyContext'
 import { CURRENCY_META } from '@/lib/storeCurrency'
 
 type Variant = 'compact' | 'inline' | 'panel'
+type Align = 'left' | 'right'
 
 interface CurrencyPickerProps {
     /**
@@ -14,12 +15,19 @@ interface CurrencyPickerProps {
      * panel   – full-width touchable button (Navbar mobile menu)
      */
     variant?: Variant
+    /** Anchor side for the popover. Use 'left' when the trigger sits at the left
+     *  edge of the screen so the popover doesn't clip off-screen. */
+    align?: Align
     className?: string
 }
 
 const FALLBACK = ['GHS', 'USD', 'EUR', 'GBP', 'NGN', 'KES']
 
-export default function CurrencyPicker({ variant = 'compact', className = '' }: CurrencyPickerProps) {
+export default function CurrencyPicker({
+    variant = 'compact',
+    align = 'right',
+    className = '',
+}: CurrencyPickerProps) {
     const { currency, setCurrency, enabledDisplayCurrencies, baseCurrency } = useCurrency()
     const options =
         enabledDisplayCurrencies && enabledDisplayCurrencies.length > 0
@@ -51,7 +59,7 @@ export default function CurrencyPicker({ variant = 'compact', className = '' }: 
     const panelClass =
         variant === 'panel'
             ? 'absolute left-0 right-0 top-full mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 py-1.5 z-[200] overflow-hidden'
-            : 'absolute right-0 top-full mt-2 w-64 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 py-1.5 z-[200] overflow-hidden'
+            : `absolute ${align === 'left' ? 'left-0' : 'right-0'} top-full mt-2 w-64 max-w-[calc(100vw-1.5rem)] bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 py-1.5 z-[200] overflow-hidden`
 
     return (
         <div ref={ref} className={`relative ${className}`}>

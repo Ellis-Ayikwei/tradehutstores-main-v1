@@ -1,0 +1,30 @@
+# Cloudflare Pages deployment config for Stores-Admin (Vite + React SPA).
+#
+# Dashboard (Pages → project → Builds):
+#   Framework preset:    None / Vite
+#   Build command:       npm run build
+#   Build output dir:    dist
+#   Root directory:      Stores-Admin
+#
+# Or one-shot deploy:    npm run deploy:pages
+#                        (uses npx wrangler — no devDependency required)
+#
+# SPA routing & cache:   public/_redirects   (all routes → /index.html)
+#                        public/_headers     (long-cache for hashed assets)
+#
+# Env vars: set per-environment in the Pages dashboard, or non-secret values
+# below in [vars]. NEVER commit secrets here — use `wrangler pages secret put`.
+
+name = "tradehutstores-admin-v1"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = "dist"
+
+[vars]
+# Public, non-secret values. Override per-environment in the Pages dashboard.
+# VITE_API_URL is read by src/services/axiosInstance.tsx.
+VITE_API_URL = "https://api-staging.tradehut.com/tradehut/api/v1/"
+VITE_TRADEHUT_STORE_BASE_CURRENCY = "GHS"
+
+[env.preview.vars]
+VITE_API_URL = "https://api-staging.tradehut.com/tradehut/api/v1/"
+VITE_TRADEHUT_STORE_BASE_CURRENCY = "GHS"

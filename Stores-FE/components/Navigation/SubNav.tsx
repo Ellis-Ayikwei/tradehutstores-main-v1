@@ -24,6 +24,8 @@ import {
     Zap,
     LayoutGrid,
 } from 'lucide-react'
+import CurrencyPicker from '@/components/Navigation/CurrencyPicker'
+import ShipToPicker from '@/components/Navigation/ShipToPicker'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -419,6 +421,17 @@ export default function SubNav() {
             `}</style>
 
             <nav className="bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 shadow-sm relative z-50">
+                {/* ── Mobile always-visible strip: ship-to + currency ────────────────
+                   Renders only under md so it doesn't double-up with the navbar
+                   pickers on desktop. Stays in flow above the menu row so it never
+                   gets hidden behind the hamburger drawer. */}
+                <div className="md:hidden border-b border-gray-100 dark:border-gray-900 bg-gray-50/60 dark:bg-gray-900/40">
+                    <div className="max-w-screen-2xl mx-auto px-3 flex items-center justify-between gap-2 h-9">
+                        <ShipToPicker variant="compact" align="left" />
+                        <CurrencyPicker variant="compact" align="right" />
+                    </div>
+                </div>
+
                 <div className="max-w-screen-2xl mx-auto px-3 sm:px-6">
                     <div className="flex items-center h-11 gap-1">
 

@@ -6,7 +6,9 @@
     "scripts": {
         "dev": "vite --host",
         "build": "vite build",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "pages:deploy": "npm run build && npx wrangler pages deploy dist --project-name=tradehutstores-admin-v1",
+        "pages:dev": "npm run build && npx wrangler pages dev dist --compatibility-date=2024-09-23"
     },
     "dependencies": {
         "@ant-design/x": "^1.6.1",
