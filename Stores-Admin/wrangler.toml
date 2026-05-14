@@ -1,7 +1,7 @@
 # Cloudflare Pages deployment config for Stores-Admin (Vite + React SPA).
 #
 # Dashboard (Pages → project → Builds):
-#   Framework preset:    None / Vite
+#   Framework preset:    Vite
 #   Build command:       npm run build
 #   Build output dir:    dist
 #   Root directory:      Stores-Admin
