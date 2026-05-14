@@ -17,15 +17,13 @@ import {
     Lock,
     Flame,
     Tag,
-    Menu,
     Gavel,
     X,
     ArrowRight,
     Zap,
     LayoutGrid,
+    MoreHorizontal,
 } from 'lucide-react'
-import CurrencyPicker from '@/components/Navigation/CurrencyPicker'
-import ShipToPicker from '@/components/Navigation/ShipToPicker'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -388,6 +386,51 @@ function OrderProtectionPopover() {
     )
 }
 
+/** All products, auctions hub, help — keeps the sub-nav row uncluttered. */
+function ShopMorePopover({ dense = false }: { dense?: boolean }) {
+    const items = [
+        { href: '/products', icon: LayoutGrid, label: 'All products' },
+        { href: '/auctions', icon: Gavel, label: 'Bid Zone' },
+        { href: '/help', icon: HelpCircle, label: 'Help' },
+    ] as const
+
+    return (
+        <HoverPopover
+            trigger={(open) => (
+                <span
+                    className={`flex items-center gap-1.5 rounded-md font-medium transition-all whitespace-nowrap
+                        ${dense ? 'px-2 py-1.5 text-xs' : 'px-3 py-2 text-sm'}
+                        ${open
+                            ? 'bg-orange-500 text-white shadow-md shadow-orange-200 dark:shadow-none'
+                            : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+                >
+                    <MoreHorizontal className={`shrink-0 ${dense ? 'h-4 w-4' : 'h-4 w-4'}`} />
+                    <span className={dense ? '' : 'hidden sm:inline'}>More</span>
+                    <ChevronDown className={`shrink-0 transition-transform duration-200 ${dense ? 'h-3 w-3' : 'h-3.5 w-3.5'} ${open ? 'rotate-180' : ''}`} />
+                </span>
+            )}
+            panel={(close) => (
+                <div className="w-56 rounded-xl shadow-2xl ring-1 ring-black/[0.08] dark:ring-white/10 bg-white dark:bg-gray-900 overflow-hidden py-1">
+                    <p className="px-3 pt-2 pb-1 text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-500">
+                        Shop
+                    </p>
+                    {items.map(({ href, icon: Icon, label }) => (
+                        <Link
+                            key={href}
+                            href={href}
+                            onClick={close}
+                            className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-800 dark:text-gray-100 hover:bg-orange-50 dark:hover:bg-orange-900/20 hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
+                        >
+                            <Icon className="h-4 w-4 text-gray-500 dark:text-gray-400 shrink-0" />
+                            {label}
+                        </Link>
+                    ))}
+                </div>
+            )}
+        />
+    )
+}
+
 // ─── SubNav ───────────────────────────────────────────────────────────────────
 
 export default function SubNav() {
@@ -421,17 +464,6 @@ export default function SubNav() {
             `}</style>
 
             <nav className="bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 shadow-sm relative z-50">
-                {/* ── Mobile always-visible strip: ship-to + currency ────────────────
-                   Renders only under md so it doesn't double-up with the navbar
-                   pickers on desktop. Stays in flow above the menu row so it never
-                   gets hidden behind the hamburger drawer. */}
-                <div className="md:hidden border-b border-gray-100 dark:border-gray-900 bg-gray-50/60 dark:bg-gray-900/40">
-                    <div className="max-w-screen-2xl mx-auto px-3 flex items-center justify-between gap-2 h-9">
-                        <ShipToPicker variant="compact" align="left" />
-                        <CurrencyPicker variant="compact" align="right" />
-                    </div>
-                </div>
-
                 <div className="max-w-screen-2xl mx-auto px-3 sm:px-6">
                     <div className="flex items-center h-11 gap-1">
 
@@ -447,14 +479,9 @@ export default function SubNav() {
                             {/* ── Order Protection ── */}
                             <OrderProtectionPopover />
 
-                            {/* ── Quick links ── */}
-                            <Link
-                                href="/products"
-                                className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors whitespace-nowrap"
-                            >
-                                <LayoutGrid className="h-3.5 w-3.5 text-orange-500" />
-                                All products
-                            </Link>
+                            {/* ── More: all products, bid zone, help ── */}
+                            <ShopMorePopover />
+
                             <Link href="/deals" className="hidden xl:flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors whitespace-nowrap">
                                 <Flame className="h-3.5 w-3.5 text-orange-500" />
                                 Today's Deals
@@ -470,10 +497,6 @@ export default function SubNav() {
                             <Link href="/buyer-central" className="px-3 py-2 rounded-md text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 font-medium transition-colors whitespace-nowrap">
                                 Buyer Central
                             </Link>
-                            <Link href="/help" className="flex items-center gap-1.5 px-3 py-2 rounded-md text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 font-medium transition-colors whitespace-nowrap">
-                                <HelpCircle className="h-3.5 w-3.5" />
-                                Help
-                            </Link>
                             <Link href="/sell" className="flex items-center gap-1.5 px-3 py-2 ml-1 rounded-md bg-tertiary hover:bg-orange-600 active:bg-orange-700 text-white text-sm font-bold transition-colors whitespace-nowrap shadow-sm">
                                 <Store className="h-3.5 w-3.5" />
                                 <span className="hidden lg:inline">Start Selling</span>
@@ -482,13 +505,13 @@ export default function SubNav() {
                         </div>
 
                         {/* ════════════════════ MOBILE ════════════════════ */}
-                        <div className="md:hidden flex items-center justify-between w-full">
+                        <div className="md:hidden flex items-center justify-between w-full gap-1 min-w-0">
                             {/* Hamburger */}
                             <button
                                 onClick={() => setMobileOpen((v) => !v)}
                                 aria-label="Toggle menu"
                                 aria-expanded={mobileOpen}
-                                className="flex items-center gap-2 px-2 py-1.5 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                className="flex items-center gap-2 px-2 py-1.5 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors shrink-0"
                             >
                                 {mobileOpen
                                     ? <X className="h-5 w-5 text-orange-500" />
@@ -498,24 +521,13 @@ export default function SubNav() {
                             </button>
 
                             {/* Mobile quick actions */}
-                            <div className="flex items-center gap-1">
-                                <Link href="/products" className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-semibold text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors">
-                                    <LayoutGrid className="h-3.5 w-3.5" />
-                                    Products
-                                </Link>
-                                <Link href="/deals" className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-semibold text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors">
+                            <div className="flex items-center gap-1 min-w-0 justify-end">
+                                <ShopMorePopover dense />
+                                <Link href="/deals" className="flex items-center gap-1 px-2 py-1.5 rounded-md text-xs font-semibold text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors shrink-0">
                                     <Flame className="h-3.5 w-3.5" />
                                     Deals
                                 </Link>
-                                <Link href="/deals" className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-semibold text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors">
-                                    <Gavel className="h-3.5 w-3.5" />
-                                    Bid Zone
-                                </Link>
-                                <Link href="/help" className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                                    <HelpCircle className="h-3.5 w-3.5" />
-                                    Help
-                                </Link>
-                                <Link href="/sell" className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold transition-colors shadow-sm">
+                                <Link href="/sell" className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold transition-colors shadow-sm shrink-0">
                                     <Store className="h-3 w-3" />
                                     Sell
                                 </Link>
@@ -568,10 +580,12 @@ export default function SubNav() {
                             <p className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-600 mb-2 px-1 pt-1">Quick Links</p>
                             {[
                                 { href: '/products', icon: LayoutGrid, label: 'All products' },
+                                { href: '/auctions', icon: Gavel, label: 'Bid Zone' },
                                 { href: '/new-arrivals', icon: Zap, label: 'New Arrivals' },
                                 { href: '/featured', icon: Star, label: 'Featured Selections' },
                                 { href: '/protection', icon: Shield, label: 'Order Protection' },
                                 { href: '/buyer-central', icon: Tag, label: 'Buyer Central' },
+                                { href: '/help', icon: HelpCircle, label: 'Help' },
                             ].map(({ href, icon: Icon, label }) => (
                                 <Link
                                     key={href}

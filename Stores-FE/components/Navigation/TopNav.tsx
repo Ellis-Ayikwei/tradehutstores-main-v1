@@ -75,8 +75,6 @@ export default function TopNav() {
     const isAuthenticated = useIsAuthenticated()
     const authUser = useAuthUser<AuthKitUser>()
 
-    console.log("the autUser", authUser)
-
     const cart     = useSelector((state: RootState) => state.cart.cart)
     const wishlist = useSelector((state: RootState) => state.wishlist.wishlist)
 
@@ -134,17 +132,11 @@ export default function TopNav() {
                     {/* ── Right cluster ── */}
                     <div className="flex items-center gap-0.5 sm:gap-1 min-w-0">
 
-                        {/* Ship-to picker (admin-driven shipping zones) */}
-                        <ShipToPicker variant="compact" className="hidden md:block" />
-
-                        {/* Divider */}
-                        <div className="hidden md:block h-4 w-px bg-gray-200 dark:bg-gray-700 mx-1" />
-
-                        {/* Currency picker (admin-driven enabled list) */}
-                        <CurrencyPicker variant="compact" className="hidden sm:block" />
-
-                        {/* Divider */}
-                        <div className="hidden sm:block h-4 w-px bg-gray-200 dark:bg-gray-700 mx-1" />
+                        {/* Ship-to + currency (all breakpoints — SubNav no longer duplicates on mobile) */}
+                        <ShipToPicker variant="compact" align="left" className="shrink-0 max-w-[min(42vw,9rem)] sm:max-w-none" />
+                        <div className="h-4 w-px bg-gray-200 dark:bg-gray-700 mx-0.5 shrink-0" />
+                        <CurrencyPicker variant="compact" align="right" className="shrink-0 max-w-[min(28vw,5.5rem)] sm:max-w-none" />
+                        <div className="h-4 w-px bg-gray-200 dark:bg-gray-700 mx-0.5 shrink-0" />
 
                         {/* Theme toggle */}
                         <button
