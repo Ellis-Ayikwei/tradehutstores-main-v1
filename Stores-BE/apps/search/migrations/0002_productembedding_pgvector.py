@@ -17,17 +17,19 @@ PostgreSQL: enable ``pgvector`` and convert ``image_embedding`` to ``vector(512)
 
 3. Run ``python manage.py migrate``.
 
-Non-PostgreSQL connections skip the ALTER; migration *state* still moves to
-``VectorField`` — use PostgreSQL for search/embeddings in dev/CI.
+Non-PostgreSQL connections skip the ALTER. If the ``pgvector`` Python
+package cannot be imported, this migration is a no-op (column stays JSON in
+DB and in migration state) until the environment can import
+``pgvector.django.VectorField``.
 """
 
 from django.db import migrations
 from django.db.utils import NotSupportedError, ProgrammingError
 
 try:
-    from pgvector.django import VectorField  # type: ignore
-except Exception:  # noqa: BLE001
-    VectorField = None  # type: ignore
+    from pgvector.django import VectorField  # type: ignore[import-untyped]
+except (ImportError, ModuleNotFoundError):
+    VectorField = None  # type: ignore[misc,assignment]
 
 
 def _upgrade(apps, schema_editor):
@@ -83,13 +85,17 @@ def _downgrade(apps, schema_editor):
         )
 
 
-class Migration(migrations.Migration):
+def _operations():
+    """
+    Only alter DB + migration state when ``pgvector`` is importable.
 
-    dependencies = [
-        ("search", "0001_initial"),
-    ]
-
-    operations = [
+    If the Python package is missing, keep JSONField (0001) in state and skip
+    raw SQL — otherwise we'd convert the column to ``vector`` while Django
+    still thinks the field is JSON (``HAS_PGVECTOR`` false in ``compat.py``).
+    """
+    if VectorField is None:
+        return []
+    return [
         migrations.SeparateDatabaseAndState(
             database_operations=[
                 migrations.RunPython(_upgrade, _downgrade),
@@ -103,3 +109,12 @@ class Migration(migrations.Migration):
             ],
         ),
     ]
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ("search", "0001_initial"),
+    ]
+
+    operations = _operations()
