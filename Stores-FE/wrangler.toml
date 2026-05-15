@@ -18,9 +18,9 @@ compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".vercel/output/static"
 
 [vars]
-# Public, non-secret values. Override per-environment in the Pages dashboard.
+# Public, non-secret values. Production builds use these; preview overrides below.
 # NEXT_PUBLIC_API_URL is read by lib/axiosInstance.tsx.
-NEXT_PUBLIC_API_URL = "https://api-staging.tradehut.com/tradehut/api/v1/"
+NEXT_PUBLIC_API_URL = "https://api.tradehut.com/tradehut/api/v1/"
 NEXT_PUBLIC_IMAGE_HOST = "https://images.tradehut.com"
 
 [env.preview.vars]
