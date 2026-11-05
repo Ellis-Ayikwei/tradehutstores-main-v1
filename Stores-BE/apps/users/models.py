@@ -70,6 +70,10 @@ class Profile(BaseModel):
 
 class Address(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    label = models.CharField(max_length=50, blank=True, null=True)
+    full_name = models.CharField(max_length=255, blank=True, null=True)
+    phone = models.CharField(max_length=32, blank=True, null=True)
+    is_default = models.BooleanField(default=False)
     address = models.CharField(max_length=255)
     address_line2 = models.CharField(max_length=255, blank=True, null=True)
     city = models.CharField(max_length=100)

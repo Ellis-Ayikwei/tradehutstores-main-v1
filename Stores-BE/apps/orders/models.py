@@ -35,12 +35,22 @@ class Order(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user', blank=True, null=True)
     total_amount = models.DecimalField(db_column='TotalAmount', max_digits=10, decimal_places=2)
     order_status = models.CharField(db_column='Order_status',  choices=ORDER_STATUS, max_length=10, blank=True, null=True)
-    address_id = models.IntegerField(db_column='AddressID', blank=True, null=True)
+    address_id = models.IntegerField(db_column='AddressID', blank=True, null=True)  # Legacy — superseded by `address`
+    address = models.ForeignKey(
+        'users.Address', on_delete=models.SET_NULL, blank=True, null=True, related_name='orders'
+    )
     pay_mode = models.CharField(db_column='Pay_Mode', choices=PAY_MODE, max_length=100)
-    phone = models.BigIntegerField()
+    phone = models.BigIntegerField(blank=True, null=True)
     estimated_delivery_date = models.DateField(db_column='EstimatedDeliveryDate', blank=True, null=True)
-    
-    
+
+    # Checkout pricing snapshot (base currency)
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    shipping_cost = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    tax_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    delivery_method = models.CharField(max_length=50, blank=True, null=True)
+    promo_code = models.CharField(max_length=64, blank=True, null=True)
+    promo_discount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+
     products = models.ManyToManyField(Product, through='OrderItem', blank=True)
     class Meta:
         managed = True
@@ -51,8 +61,11 @@ class Order(BaseModel):
 
 
 class OrderItem(BaseModel):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, blank=True, null=True)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, blank=True, null=True, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, blank=True, null=True)
+    variant = models.ForeignKey(
+        'products.ProductVariant', on_delete=models.SET_NULL, blank=True, null=True
+    )
     quantity = models.IntegerField()
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
