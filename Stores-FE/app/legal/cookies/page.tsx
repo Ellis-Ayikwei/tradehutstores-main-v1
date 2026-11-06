@@ -73,9 +73,6 @@ export default function CookiePolicyPage() {
               <h3 className="font-syne font-bold text-on-surface text-lg">
                 Table of Contents
               </h3>
-              <p className="text-xs text-on-surface-variant/60 font-body mt-1">
-                Last updated Oct 2023
-              </p>
             </div>
 
             <nav className="flex flex-col gap-1">
@@ -102,9 +99,6 @@ export default function CookiePolicyPage() {
 
             {/* Header */}
             <section>
-              <span className="inline-block font-mono text-primary text-sm uppercase tracking-widest mb-4">
-                Last Updated: Oct 24, 2023
-              </span>
 
               <h1 className="font-syne text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tighter text-on-surface mb-6 leading-[0.95]">
                 Cookie Policy
@@ -269,12 +263,9 @@ export default function CookiePolicyPage() {
                 handles your data and session information.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="bg-primary text-on-primary px-8 py-3 rounded-md font-bold hover:shadow-lg active:scale-95 transition-all">
-                  Contact Legal
-                </button>
-                <button className="bg-transparent border border-outline px-8 py-3 rounded-md font-bold hover:bg-surface-container-low active:scale-95 transition-all">
-                  Download PDF
-                </button>
+                <a href="tel:+233248138722" className="bg-primary text-on-primary px-8 py-3 rounded-md font-bold hover:shadow-lg active:scale-95 transition-all text-center">
+                  Call 024 813 8722
+                </a>
               </div>
             </footer>
 
@@ -311,7 +302,7 @@ export default function CookiePolicyPage() {
                 TradeHut
               </div>
               <p className="font-body text-xs text-on-surface-variant">
-                &copy; {new Date().getFullYear()} TradeHut Ltd. All rights reserved.
+                &copy; {new Date().getFullYear()} TradeHut. All rights reserved.
               </p>
             </div>
             <div className="flex flex-wrap justify-center gap-6">

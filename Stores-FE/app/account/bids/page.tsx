@@ -1,584 +1,264 @@
-"use client";
+'use client'
 
 /**
- * Buyer's Bids & Auctions dashboard — "My Bids"
- * Route: /account/bids
- *
- * Ported from: stitch_full_website_redesign_expansion/tradehut_bids_auctions/code.html
- *
- * Layout: Account / dashboard shell (see .claude/design-system/layouts.md)
- * Sidebar is intentionally inline in this file.
- * // TODO: extract to shared <AccountSidebar>
+ * My bids - /account/bids
+ * Data: GET /auctions/me/bidding/?my_status=winning|outbid|won|lost (contract A8).
+ * Layout: shared AccountShell via app/account/layout.tsx.
  */
 
-import { useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { AccountMobileHeader } from "@/components/account/AccountShell";
-import {
-  Gavel,
-  Zap,
-  BellRing,
-  Clock,
-  ArrowRight,
-} from "lucide-react";
+import { useEffect, useState } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import useSWR from 'swr'
+import useIsAuthenticated from 'react-auth-kit/hooks/useIsAuthenticated'
+import { AlertCircle, Gavel, ImageOff, LogIn } from 'lucide-react'
+import { AccountMobileHeader } from '@/components/account/AccountShell'
+import { MyStatusBadge } from '@/components/Auctions/AuctionStatusBadge'
+import Countdown from '@/components/Auctions/Countdown'
+import Pager from '@/components/Auctions/Pager'
+import { tryOpenAuthModalFromBridge } from '@/lib/authModalBridge'
+import { fetchMyBidding, formatMoney, isBiddable, type AuctionsApiError, type MyBidRow, type MyStatus, type Paginated } from '@/lib/auctionsApi'
+import { resolveMediaSrc } from '@/lib/mediaUrl'
 
-// ---------------------------------------------------------------------------
-// Types (from .claude/design-system/bid-rfq-spec.md)
-// ---------------------------------------------------------------------------
-type BidStatus = "winning" | "outbid" | "closing-soon" | "won" | "lost";
+const PAGE_SIZE = 20
 
-interface DemoBid {
-  id: string;
-  auctionId: string;
-  category: string;
-  title: string;
-  imageUrl: string;
-  imageAlt: string;
-  currentBid: number;
-  /** your last bid amount (outbid/lost) OR your max bid ceiling (winning) */
-  yourBid: number;
-  yourBidLabel: string; // "Your Max" | "Your Last" | "Starting"
-  currency: string;
-  status: BidStatus;
-  /** Human-readable countdown e.g. "04h 22m 11s" */
-  timeToClose: string;
-  /** Whether time is critically short (triggers amber/red accent) */
-  timePressure: "normal" | "amber" | "red";
-}
+const TABS: Array<{ value: MyStatus; label: string; empty: string; hint: string }> = [
+    { value: 'winning', label: 'Winning', empty: 'You are not winning any auctions', hint: 'Auctions where you are the highest bidder appear here.' },
+    { value: 'outbid', label: 'Outbid', empty: 'You have not been outbid', hint: 'Auctions where someone bid higher than you appear here.' },
+    { value: 'won', label: 'Won', empty: 'No won auctions yet', hint: 'Auctions you win will appear here, ready to pay.' },
+    { value: 'lost', label: 'Lost', empty: 'No lost auctions', hint: 'Finished auctions you did not win appear here.' },
+]
 
-interface ClosedAuction {
-  id: string;
-  auctionId: string;
-  title: string;
-  imageUrl: string;
-  imageAlt: string;
-  finalBid: number;
-  currency: string;
-  outcome: "won" | "lost";
-  /** Extra info e.g. "Shipment scheduled for Tomorrow" or "Closed at $3,450.00" */
-  outcomeNote: string;
-}
+const BTN_PRIMARY =
+    'inline-flex h-11 items-center justify-center rounded-full bg-primary-700 px-5 text-sm font-semibold text-white hover:bg-primary-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-primary-400 dark:ring-offset-gray-950'
+const BTN_SECONDARY =
+    'inline-flex h-11 items-center justify-center rounded-full border border-zinc-300 bg-white px-5 text-sm font-semibold text-zinc-900 hover:bg-zinc-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 focus-visible:ring-offset-2 ring-offset-white dark:focus-visible:ring-primary-400 dark:ring-offset-gray-950 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800'
 
-// ---------------------------------------------------------------------------
-// Demo data
-// TODO: fetch from /api/bids/?mine=true&status=... (replace inline data below)
-// ---------------------------------------------------------------------------
-const DEMO_ACTIVE_BIDS: DemoBid[] = [
-  {
-    id: "bid-001",
-    auctionId: "auction-1001",
-    category: "Chronograph Collection",
-    title: "Aura Limited Edition v.2",
-    imageUrl:
-      "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=600&q=80",
-    imageAlt: "High-end designer watch with silver casing and black leather strap",
-    currentBid: 2450,
-    yourBid: 3200,
-    yourBidLabel: "Your Max",
-    currency: "USD",
-    status: "winning",
-    timeToClose: "04h 22m 11s",
-    timePressure: "amber",
-  },
-  {
-    id: "bid-002",
-    auctionId: "auction-1002",
-    category: "Heritage Outerwear",
-    title: "Sienna Calfskin Rider",
-    imageUrl:
-      "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&q=80",
-    imageAlt: "Premium leather motorcycle jacket in cognac brown",
-    currentBid: 895,
-    yourBid: 850,
-    yourBidLabel: "Your Last",
-    currency: "USD",
-    status: "outbid",
-    timeToClose: "00h 14m 52s",
-    timePressure: "red",
-  },
-  {
-    id: "bid-003",
-    auctionId: "auction-1003",
-    category: "Performance Gear",
-    title: "Aero-V Velocity Core",
-    imageUrl:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80",
-    imageAlt: "Crimson red athletic sneaker with high-performance texture",
-    currentBid: 420,
-    yourBid: 380,
-    yourBidLabel: "Your Last",
-    currency: "USD",
-    status: "closing-soon",
-    timeToClose: "00h 02m 41s",
-    timePressure: "red",
-  },
-  {
-    id: "bid-004",
-    auctionId: "auction-1004",
-    category: "Tech / Mobile",
-    title: "Titanium Flux X1",
-    imageUrl:
-      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&q=80",
-    imageAlt: "High-end smartphone on a marble surface with atmospheric lighting",
-    currentBid: 1150,
-    yourBid: 900,
-    yourBidLabel: "Starting",
-    currency: "USD",
-    status: "winning",
-    timeToClose: "2d 08h 33m",
-    timePressure: "normal",
-  },
-];
-
-const DEMO_CLOSED: ClosedAuction[] = [
-  {
-    id: "closed-001",
-    auctionId: "auction-0901",
-    title: "Vintage Film Camera Series-04",
-    imageUrl:
-      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=600&q=80",
-    imageAlt: "Vintage 35mm film camera on rustic wooden surface",
-    finalBid: 1420,
-    currency: "USD",
-    outcome: "won",
-    outcomeNote:
-      "Your winning bid has been processed. Shipment is scheduled for Tomorrow.",
-  },
-  {
-    id: "closed-002",
-    auctionId: "auction-0902",
-    title: "Modular Synth Deck",
-    imageUrl:
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
-    imageAlt: "Electronic music modular synthesizer with patch cables",
-    finalBid: 3450,
-    currency: "USD",
-    outcome: "lost",
-    outcomeNote: "Sold to another bidder.",
-  },
-];
-
-// ---------------------------------------------------------------------------
-// Tab config
-// ---------------------------------------------------------------------------
-type TabValue = "all" | "winning" | "outbid" | "closing-soon";
-
-const STATUS_TABS: { label: string; value: TabValue }[] = [
-  { label: "All Active", value: "all" },
-  { label: "Winning", value: "winning" },
-  { label: "Outbid", value: "outbid" },
-  { label: "Closing Soon", value: "closing-soon" },
-];
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-function formatCurrency(amount: number, currency: string = "USD"): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-    minimumFractionDigits: 2,
-  }).format(amount);
-}
-
-// Resolve the time icon component based on pressure + status
-function TimeIcon({ pressure, isClosingSoon }: { pressure: DemoBid["timePressure"]; isClosingSoon: boolean }) {
-  if (pressure === "red" && isClosingSoon) return <Zap className="w-4 h-4" />;
-  if (pressure === "red") return <BellRing className="w-4 h-4" />;
-  return <Clock className="w-4 h-4" />;
-}
-
-// ---------------------------------------------------------------------------
-// Status pill
-// ---------------------------------------------------------------------------
-function BidStatusPill({ status }: { status: BidStatus }) {
-  const map: Record<BidStatus, { label: string; classes: string; showStar?: boolean; showWarn?: boolean }> = {
-    winning: {
-      label: "Winning",
-      classes: "bg-bid-green/10 text-bid-green",
-      showStar: true,
-    },
-    outbid: {
-      label: "Outbid",
-      classes: "bg-bid-red/10 text-bid-red",
-      showWarn: true,
-    },
-    "closing-soon": {
-      label: "Closing Soon",
-      classes: "bg-bid-red text-white",
-    },
-    won: {
-      label: "Auction Won",
-      classes: "bg-on-surface text-white",
-    },
-    lost: {
-      label: "Sold Elsewhere",
-      classes: "bg-outline-variant/30 text-on-surface-variant",
-    },
-  };
-  const cfg = map[status];
-  return (
-    <span
-      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${cfg.classes}`}
-    >
-      {cfg.showStar && <Gavel className="w-3 h-3" fill="currentColor" />}
-      {cfg.showWarn && <Zap className="w-3 h-3" />}
-      {cfg.label}
-    </span>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Active Bid Card
-// ---------------------------------------------------------------------------
-function BidCard({ bid }: { bid: DemoBid }) {
-  const isOutbidOrClosing =
-    bid.status === "outbid" || bid.status === "closing-soon";
-  const isClosingSoon = bid.status === "closing-soon";
-
-  const timeColor =
-    bid.timePressure === "red"
-      ? "text-bid-red"
-      : bid.timePressure === "amber"
-      ? "text-bid-amber"
-      : "text-on-surface-variant";
-
-  return (
-    <article
-      className={`bg-surface-container-lowest rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 p-6 flex flex-col md:flex-row gap-6 group overflow-hidden relative${
-        isClosingSoon ? " border-l-4 border-bid-red" : ""
-      }`}
-    >
-      {/* Status pill — top-right */}
-      <div className="absolute top-4 right-4 z-10">
-        <BidStatusPill status={bid.status} />
-      </div>
-
-      {/* Thumbnail */}
-      <div className="w-full md:w-40 h-40 rounded-xl overflow-hidden flex-shrink-0 bg-surface-container-low relative">
-        <Image
-          src={bid.imageUrl}
-          alt={bid.imageAlt}
-          fill
-          sizes="(max-width: 768px) 100vw, 160px"
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
-        />
-      </div>
-
-      {/* Body */}
-      <div className="flex flex-col justify-between flex-1 min-w-0">
-        <div>
-          <span className="text-[10px] font-bold text-primary tracking-widest uppercase">
-            {bid.category}
-          </span>
-          <h3 className="text-xl font-headline font-bold text-on-surface mt-1 truncate pr-20">
-            {bid.title}
-          </h3>
-
-          {/* Bid figures */}
-          <div className="flex items-center gap-4 mt-4">
-            <div>
-              <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter opacity-60">
-                Current Bid
-              </p>
-              <p
-                className={`text-2xl font-mono font-bold mt-0.5 ${
-                  isOutbidOrClosing ? "text-bid-red" : "text-on-surface"
-                }`}
-              >
-                {formatCurrency(bid.currentBid, bid.currency)}
-              </p>
-            </div>
-            <div className="w-px h-8 bg-outline-variant/20 flex-shrink-0" />
-            <div>
-              <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter opacity-60">
-                {bid.yourBidLabel}
-              </p>
-              <p className="text-lg font-mono font-medium text-on-surface-variant mt-0.5">
-                {formatCurrency(bid.yourBid, bid.currency)}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer row: countdown + action */}
-        <div className="flex items-center justify-between mt-6 pt-4 border-t border-outline-variant/10 gap-3 flex-wrap">
-          <div className={`flex items-center gap-2 ${timeColor}`}>
-            <TimeIcon pressure={bid.timePressure} isClosingSoon={isClosingSoon} />
-            <span className="font-mono text-sm font-bold">{bid.timeToClose}</span>
-          </div>
-          {isOutbidOrClosing ? (
-            <Link
-              href={`/auctions/${bid.auctionId}`}
-              className="bg-bid-green text-white font-bold text-[10px] uppercase tracking-widest px-6 py-2 rounded-lg hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-bid-green/20"
-            >
-              {isClosingSoon ? "Bid Now" : "Counter Bid"}
-            </Link>
-          ) : (
-            <Link
-              href={`/auctions/${bid.auctionId}`}
-              className="bg-surface-container-low text-on-surface font-bold text-[10px] uppercase tracking-widest px-4 py-2 rounded-lg hover:bg-surface-container-high active:scale-95 transition-all"
-            >
-              View Auction
-            </Link>
-          )}
-        </div>
-      </div>
-    </article>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Closed Auction Bento Section
-// ---------------------------------------------------------------------------
-function ClosedSection() {
-  const won = DEMO_CLOSED.filter((c) => c.outcome === "won");
-  const lost = DEMO_CLOSED.filter((c) => c.outcome === "lost");
-
-  return (
-    <div className="mt-12">
-      <h2 className="font-headline text-2xl font-bold text-on-surface mb-6">
-        Recently Closed
-      </h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Won — wide tile (col-span-2) */}
-        {won.map((item) => (
-          <div
-            key={item.id}
-            className="md:col-span-2 bg-surface-container-low rounded-2xl p-8 flex flex-col md:flex-row items-center gap-8 border border-outline-variant/5"
-          >
-            <div className="flex-1 order-2 md:order-1">
-              <BidStatusPill status="won" />
-              <h3 className="text-3xl font-headline font-black text-on-surface mt-4 leading-tight">
-                {item.title}
-              </h3>
-              <p className="text-on-surface-variant mt-2 text-sm font-body">
-                Your winning bid of{" "}
-                <span className="font-mono font-bold text-on-surface">
-                  {formatCurrency(item.finalBid, item.currency)}
-                </span>{" "}
-                has been processed. {item.outcomeNote}
-              </p>
-              <div className="flex flex-wrap gap-3 mt-8">
-                <Link
-                  href={`/account/orders`}
-                  className="bg-primary text-on-primary font-bold text-[10px] uppercase tracking-widest px-8 py-3 rounded-lg shadow-lg shadow-primary/20 hover:opacity-90 active:scale-95 transition-all"
-                >
-                  Track Shipping
-                </Link>
-                <Link
-                  href={`/auctions/${item.auctionId}`}
-                  className="bg-surface-container-lowest text-on-surface font-bold text-[10px] uppercase tracking-widest px-8 py-3 rounded-lg border border-outline-variant/20 hover:bg-surface-container active:scale-95 transition-all"
-                >
-                  View Invoice
-                </Link>
-              </div>
-            </div>
-            <div className="w-full md:w-64 h-64 rounded-2xl overflow-hidden order-1 md:order-2 shadow-card-hover flex-shrink-0 relative">
-              <Image
-                src={item.imageUrl}
-                alt={item.imageAlt}
-                fill
-                sizes="(max-width: 768px) 100vw, 256px"
-                className="object-cover"
-              />
-            </div>
-          </div>
-        ))}
-
-        {/* Lost — narrow tile */}
-        {lost.map((item) => (
-          <div
-            key={item.id}
-            className="bg-surface-container-low rounded-2xl p-8 flex flex-col justify-between border border-outline-variant/5"
-          >
-            <div>
-              <BidStatusPill status="lost" />
-              <h3 className="text-xl font-headline font-bold text-on-surface mt-4">
-                {item.title}
-              </h3>
-              <p className="text-xs text-on-surface-variant mt-1">
-                Closed at {formatCurrency(item.finalBid, item.currency)}
-              </p>
-            </div>
-            <div className="mt-8 flex justify-center">
-              <div className="w-32 h-32 rounded-xl overflow-hidden rotate-3 grayscale opacity-60 relative">
-                <Image
-                  src={item.imageUrl}
-                  alt={item.imageAlt}
-                  fill
-                  sizes="128px"
-                  className="object-cover"
-                />
-              </div>
-            </div>
-            <Link
-              href="/auctions"
-              className="w-full mt-6 py-3 border border-outline-variant/20 rounded-lg text-[10px] font-black uppercase tracking-widest text-on-surface-variant hover:bg-surface-container-lowest active:scale-95 transition-all text-center"
-            >
-              Find Similar
-            </Link>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Empty state
-// ---------------------------------------------------------------------------
-function EmptyState({ tab }: { tab: TabValue }) {
-  const map: Record<TabValue, { heading: string; body: string }> = {
-    all: {
-      heading: "No active bids",
-      body: "Browse live auctions to start bidding on items.",
-    },
-    winning: {
-      heading: "Not winning anything yet",
-      body: "Place a bid on a live auction to appear here.",
-    },
-    outbid: {
-      heading: "No outbid items",
-      body: "When someone beats your bid you'll see it here.",
-    },
-    "closing-soon": {
-      heading: "Nothing closing imminently",
-      body: "Items with under an hour remaining will appear here.",
-    },
-  };
-  const msg = map[tab];
-  return (
-    <div className="flex flex-col items-center justify-center py-24 text-center">
-      <Gavel className="w-16 h-16 text-outline/40 mb-6" strokeWidth={1} />
-      <h3 className="font-headline font-bold text-xl text-on-surface mb-2">
-        {msg.heading}
-      </h3>
-      <p className="text-sm text-on-surface-variant max-w-xs">{msg.body}</p>
-      <Link
-        href="/auctions"
-        className="mt-6 inline-flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-xl font-bold hover:opacity-90 active:scale-95 transition-all"
-      >
-        Browse Auctions
-        <ArrowRight className="w-4 h-4" />
-      </Link>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Page component (client — needs useState for active tab)
-// ---------------------------------------------------------------------------
 export default function MyBidsPage() {
-  const [activeTab, setActiveTab] = useState<TabValue>("all");
+    const isAuthenticated = useIsAuthenticated()
+    const [mounted, setMounted] = useState(false)
+    const [tab, setTab] = useState<MyStatus>('winning')
+    const [page, setPage] = useState(1)
 
-  // TODO: fetch from /api/bids/?mine=true&status=... (replace inline data below)
-  const filteredBids =
-    activeTab === "all"
-      ? DEMO_ACTIVE_BIDS
-      : DEMO_ACTIVE_BIDS.filter((b) => b.status === activeTab);
+    useEffect(() => setMounted(true), [])
 
-  const winningCount = DEMO_ACTIVE_BIDS.filter(
-    (b) => b.status === "winning"
-  ).length;
-  const outbidCount = DEMO_ACTIVE_BIDS.filter(
-    (b) => b.status === "outbid" || b.status === "closing-soon"
-  ).length;
+    const { data, error, isLoading, mutate } = useSWR<Paginated<MyBidRow>, AuctionsApiError>(
+        mounted && isAuthenticated ? ['my-bids', tab, page] : null,
+        () => fetchMyBidding({ my_status: tab, page, page_size: PAGE_SIZE }),
+        {
+            keepPreviousData: true,
+            refreshInterval: tab === 'winning' || tab === 'outbid' ? 10000 : 0,
+            refreshWhenHidden: false,
+            revalidateOnFocus: true,
+        }
+    )
 
-  return (
-    <>
-      <AccountMobileHeader title="Bids & Auctions" />
+    const current = TABS.find(t => t.value === tab) ?? TABS[0]
+    const rows = data?.results ?? []
 
-            <section className="flex-1 min-w-0">
+    return (
+        <div className="space-y-3">
+            <AccountMobileHeader title="Bids" />
+            <div className="flex items-center justify-between gap-3">
+                <h1 className="hidden font-syne text-2xl font-bold text-zinc-900 dark:text-zinc-100 lg:block">My bids</h1>
+                <Link href="/auctions" className="ml-auto text-sm font-semibold text-primary-700 hover:underline dark:text-primary-400">
+                    Browse auctions
+                </Link>
+            </div>
 
-              {/* Page header */}
-              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 md:mb-10">
-                <div>
-                  <h1 className="font-syne text-3xl md:text-4xl font-extrabold tracking-tight text-on-surface">
-                    Active Bids
-                  </h1>
-                  <p className="text-on-surface-variant mt-2 text-sm max-w-md font-medium">
-                    You are currently participating in{" "}
-                    {DEMO_ACTIVE_BIDS.length} auctions.
-                  </p>
-                </div>
-
-                {/* Summary badges */}
-                <div className="flex gap-3 flex-shrink-0 flex-wrap">
-                  <div className="bg-surface-container-low px-4 py-2 rounded-xl flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-bid-green flex-shrink-0" />
-                    <span className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">
-                      Winning: {winningCount}
-                    </span>
-                  </div>
-                  <div className="bg-surface-container-low px-4 py-2 rounded-xl flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-bid-red flex-shrink-0" />
-                    <span className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">
-                      Outbid: {outbidCount}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Status filter tab bar */}
-              <div className="sticky top-0 z-10 bg-surface/90 backdrop-blur -mx-4 px-4 md:-mx-6 md:px-6 lg:-mx-8 lg:px-8 pt-2 pb-px">
-              <div className="flex gap-2 overflow-x-auto no-scrollbar pb-3 mb-5">
-                {STATUS_TABS.map((tab) => {
-                  const isActive = activeTab === tab.value;
-                  const count =
-                    tab.value === "all"
-                      ? DEMO_ACTIVE_BIDS.length
-                      : DEMO_ACTIVE_BIDS.filter((b) => b.status === tab.value)
-                          .length;
-                  return (
-                    <button
-                      key={tab.value}
-                      onClick={() => setActiveTab(tab.value)}
-                      className={`
-                        inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold
-                        whitespace-nowrap transition-all duration-200 active:scale-95
-                        ${
-                          isActive
-                            ? "bg-primary text-on-primary"
-                            : "text-on-surface-variant hover:bg-surface-container"
-                        }
-                      `}
-                    >
-                      {tab.label}
-                      <span
-                        className={`
-                          inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-black
-                          ${
-                            isActive
-                              ? "bg-on-primary/20 text-on-primary"
-                              : "bg-surface-container text-on-surface-variant"
-                          }
-                        `}
-                      >
-                        {count}
-                      </span>
-                    </button>
-                  );
+            <div role="tablist" aria-label="Bid status" className="grid grid-cols-4 border-b border-zinc-200 dark:border-zinc-800 sm:flex sm:gap-2">
+                {TABS.map(t => {
+                    const active = t.value === tab
+                    return (
+                        <button
+                            key={t.value}
+                            type="button"
+                            role="tab"
+                            aria-selected={active}
+                            onClick={() => {
+                                setTab(t.value)
+                                setPage(1)
+                            }}
+                            className={`-mb-px min-h-[44px] whitespace-nowrap border-b-2 px-1 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 dark:focus-visible:ring-primary-400 sm:px-4 ${
+                                active
+                                    ? 'border-primary-700 text-primary-700 dark:border-primary-400 dark:text-primary-400'
+                                    : 'border-transparent text-zinc-700 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100'
+                            }`}
+                        >
+                            {t.label}
+                        </button>
+                    )
                 })}
-              </div>
-              </div>
+            </div>
 
-              {/* Bid grid or empty state */}
-              {filteredBids.length === 0 ? (
-                <EmptyState tab={activeTab} />
-              ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {filteredBids.map((bid) => (
-                    <BidCard key={bid.id} bid={bid} />
-                  ))}
+            {!mounted ? (
+                <RowsSkeleton />
+            ) : !isAuthenticated || error?.status === 401 ? (
+                <Box icon={<LogIn className="h-8 w-8 text-zinc-500 dark:text-zinc-400" aria-hidden="true" />} title="Sign in to see your bids" body="Your winning, outbid, won and lost auctions are listed here once you are signed in.">
+                    <button type="button" onClick={() => tryOpenAuthModalFromBridge('login')} className={BTN_PRIMARY}>
+                        Sign in
+                    </button>
+                </Box>
+            ) : error && !data ? (
+                error.status === 404 ? (
+                    <Box icon={<Gavel className="h-8 w-8 text-zinc-500 dark:text-zinc-400" aria-hidden="true" />} title="Bid Central is getting ready" body="Your bids will appear here once auctions are available.">
+                        <Link href="/products" className={BTN_PRIMARY}>
+                            Browse products
+                        </Link>
+                    </Box>
+                ) : (
+                    <Box
+                        icon={<AlertCircle className="h-8 w-8 text-red-700 dark:text-red-400" aria-hidden="true" />}
+                        title="We could not load your bids"
+                        body={error.isNetwork ? 'Check your connection and try again.' : 'Something went wrong on our side. Please try again.'}
+                        alert
+                    >
+                        <button type="button" onClick={() => void mutate()} className={BTN_PRIMARY}>
+                            Try again
+                        </button>
+                    </Box>
+                )
+            ) : isLoading && !data ? (
+                <RowsSkeleton />
+            ) : rows.length === 0 ? (
+                <Box icon={<Gavel className="h-8 w-8 text-zinc-500 dark:text-zinc-400" aria-hidden="true" />} title={current.empty} body={current.hint}>
+                    <Link href="/auctions" className={BTN_PRIMARY}>
+                        Browse live auctions
+                    </Link>
+                    <Link href="/products" className={BTN_SECONDARY}>
+                        Browse products
+                    </Link>
+                </Box>
+            ) : (
+                <>
+                    <ul className="divide-y divide-zinc-200 overflow-hidden rounded-lg border border-zinc-200 bg-white dark:divide-zinc-800 dark:border-zinc-800 dark:bg-zinc-900">
+                        {rows.map(row => (
+                            <BidRow key={row.id} row={row} onEnd={() => void mutate()} />
+                        ))}
+                    </ul>
+                    <Pager
+                        page={page}
+                        pageSize={PAGE_SIZE}
+                        count={data?.count ?? 0}
+                        onChange={p => {
+                            setPage(p)
+                            window.scrollTo({ top: 0, behavior: 'smooth' })
+                        }}
+                    />
+                </>
+            )}
+        </div>
+    )
+}
+
+function BidRow({ row, onEnd }: { row: MyBidRow; onEnd: () => void }) {
+    const src = resolveMediaSrc(row.image)
+    const href = `/auctions/${encodeURIComponent(row.id)}`
+    const live = isBiddable(row.display_status)
+    const currentBid = row.current_price ?? row.starting_price
+    const paymentStatus = (row.order_payment_status ?? '').toLowerCase()
+    const unpaid = row.my_status === 'won' && row.order_id !== null && paymentStatus === 'unpaid'
+
+    return (
+        <li className="p-2 sm:flex sm:items-center sm:gap-4 sm:p-3">
+            <div className="flex min-w-0 flex-1 gap-2 sm:gap-3">
+                <Link href={href} className="relative block h-16 w-16 shrink-0 overflow-hidden rounded-md bg-zinc-50 dark:bg-zinc-800 sm:h-20 sm:w-20" tabIndex={-1} aria-hidden="true">
+                    {src ? (
+                        <Image src={src} alt="" fill sizes="80px" className="object-contain p-1" />
+                    ) : (
+                        <span className="flex h-full w-full items-center justify-center text-zinc-400 dark:text-zinc-500">
+                            <ImageOff className="h-6 w-6" />
+                        </span>
+                    )}
+                </Link>
+                <div className="min-w-0 flex-1">
+                    <div className="flex items-start justify-between gap-2">
+                        <h2 className="min-w-0 text-sm font-normal leading-snug text-zinc-900 dark:text-zinc-100">
+                            <Link href={href} className="line-clamp-2 hover:text-primary-700 hover:underline dark:hover:text-primary-400">
+                                {row.title}
+                            </Link>
+                        </h2>
+                        <MyStatusBadge status={row.my_status} className="shrink-0" />
+                    </div>
+                    <dl className="mt-1 grid grid-cols-3 gap-2 text-xs leading-4">
+                        <div className="min-w-0">
+                            <dt className="text-zinc-600 dark:text-zinc-400">Your bid</dt>
+                            <dd className="truncate font-bold tabular-nums text-zinc-900 dark:text-zinc-100">{formatMoney(row.my_highest_bid, row.currency)}</dd>
+                        </div>
+                        <div className="min-w-0">
+                            <dt className="text-zinc-600 dark:text-zinc-400">{row.my_status === 'won' ? 'Final price' : 'Current bid'}</dt>
+                            <dd className="truncate font-bold tabular-nums text-zinc-900 dark:text-zinc-100">{formatMoney(currentBid, row.currency)}</dd>
+                        </div>
+                        <div className="min-w-0">
+                            <dt className="text-zinc-600 dark:text-zinc-400">Time left</dt>
+                            <dd className="text-xs">
+                                {live ? <Countdown to={row.ends_at} onEnd={onEnd} /> : <span className="font-semibold text-zinc-700 dark:text-zinc-300">{row.display_status === 'cancelled' ? 'Cancelled' : 'Ended'}</span>}
+                            </dd>
+                        </div>
+                    </dl>
                 </div>
-              )}
+            </div>
 
-              {/* Recently Closed bento section */}
-              {DEMO_CLOSED.length > 0 && <ClosedSection />}
-            </section>
-    </>
-  );
+            {row.my_status === 'won' && row.order_id ? (
+                <div className="mt-2 space-y-1 sm:mt-0 sm:w-44 sm:shrink-0">
+                    {unpaid ? (
+                        <>
+                            <Link href={`/checkout?order=${encodeURIComponent(row.order_id)}`} className={`${BTN_PRIMARY} w-full`}>
+                                Pay now
+                            </Link>
+                            {row.order_payment_due_at ? (
+                                <p className="text-center text-xs text-zinc-700 dark:text-zinc-300">
+                                    <Countdown to={row.order_payment_due_at} label="Pay within" endedLabel="Payment overdue" />
+                                </p>
+                            ) : null}
+                        </>
+                    ) : (
+                        <Link href={`/account/orders/${encodeURIComponent(row.order_id)}`} className={`${BTN_SECONDARY} w-full`}>
+                            View order
+                        </Link>
+                    )}
+                </div>
+            ) : null}
+        </li>
+    )
+}
+
+function Box({
+    icon,
+    title,
+    body,
+    alert = false,
+    children,
+}: {
+    icon: React.ReactNode
+    title: string
+    body: string
+    alert?: boolean
+    children?: React.ReactNode
+}) {
+    return (
+        <div role={alert ? 'alert' : undefined} className="flex flex-col items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-10 text-center dark:border-zinc-800 dark:bg-zinc-900">
+            {icon}
+            <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100">{title}</h2>
+            <p className="max-w-md text-sm text-zinc-700 dark:text-zinc-300">{body}</p>
+            {children ? <div className="mt-1 flex flex-wrap justify-center gap-2">{children}</div> : null}
+        </div>
+    )
+}
+
+function RowsSkeleton() {
+    return (
+        <ul aria-hidden="true" className="animate-pulse divide-y divide-zinc-200 overflow-hidden rounded-lg border border-zinc-200 bg-white dark:divide-zinc-800 dark:border-zinc-800 dark:bg-zinc-900">
+            {[0, 1, 2, 3].map(i => (
+                <li key={i} className="flex gap-2 p-2 sm:gap-3 sm:p-3">
+                    <div className="h-16 w-16 shrink-0 rounded-md bg-zinc-200 dark:bg-zinc-800 sm:h-20 sm:w-20" />
+                    <div className="min-w-0 flex-1 space-y-2">
+                        <div className="h-4 w-11/12 rounded bg-zinc-200 dark:bg-zinc-800" />
+                        <div className="h-3.5 w-2/3 rounded bg-zinc-200 dark:bg-zinc-800" />
+                        <div className="h-4 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
+                    </div>
+                </li>
+            ))}
+        </ul>
+    )
 }

@@ -1,391 +1,303 @@
-import Link from "next/link";
-import FaqAccordion from "./FaqAccordion";
-import MainLayout from "@/components/Layouts/MainLayout";
-import {
-  ShieldCheck,
-  Wallet,
-  Gavel,
-  RotateCcw,
-  Truck,
-  BadgeCheck,
-  ArrowRight,
-  ShoppingCart,
-  Lock,
-  ClipboardCheck,
-  CreditCard,
-  Shield,
-} from "lucide-react";
+/**
+ * Buyer protection: /buyer-protection
+ *
+ * Static, server-rendered policy page. It explains the problems a buyer can raise and how the dispute
+ * process works. It does not state refund percentages, time limits, insurance or escrow terms because
+ * those are not defined in the platform settings. Add them once the business confirms them.
+ */
 
-export const metadata = {
-  title: "Buyer Protection | TradeHut",
+import type { Metadata } from "next";
+import Link from "next/link";
+import type { LucideIcon } from "lucide-react";
+import {
+  ArrowRight,
+  Camera,
+  ChevronDown,
+  CreditCard,
+  FileSearch,
+  Flag,
+  Gavel,
+  MapPin,
+  MessageCircle,
+  PackageX,
+  Phone,
+  SearchX,
+  ShieldCheck,
+  Truck,
+} from "lucide-react";
+import MainLayout from "@/components/Layouts/MainLayout";
+
+export const metadata: Metadata = {
+  title: "Buyer Protection | TradeHut Stores",
   description:
-    "Every transaction on TradeHut is secured by a multi-signature escrow protocol. Trade with absolute certainty.",
+    "What you can raise if something goes wrong with an order on TradeHut, and how the dispute process works.",
 };
 
-// ─── Pillar data ──────────────────────────────────────────────────────────────
-
-interface Pillar {
-  icon: React.ReactNode;
-  iconBg: string;
-  iconText: string;
-  dotColor: string;
-  title: string;
-  description: string;
-  badges: string[];
-}
-
-const PILLARS: Pillar[] = [
+const COVERED: { icon: LucideIcon; title: string; text: string }[] = [
   {
-    icon: <BadgeCheck className="w-7 h-7" />,
-    iconBg: "bg-bid-green/10",
-    iconText: "text-bid-green",
-    dotColor: "bg-bid-green",
-    title: "Authenticity Guarantee",
-    description:
-      "Our proprietary verification engine cross-references serial numbers, chain history, and physical condition reports before any listing goes live.",
-    badges: ["AIS-7 COMPLIANT", "PHYSICAL ASSET TRACKING"],
+    icon: Truck,
+    title: "Item not received",
+    text: "Your order has not arrived and the seller cannot show it was delivered.",
   },
   {
-    icon: <Wallet className="w-7 h-7" />,
-    iconBg: "bg-request/10",
-    iconText: "text-request",
-    dotColor: "bg-request",
-    title: "Secure Payments",
-    description:
-      "Your capital is held in a bankruptcy-remote, insured escrow account. We support major fiat currencies with instant settlement.",
-    badges: ["256-BIT ENCRYPTION", "SOC2 TYPE II CERTIFIED"],
+    icon: SearchX,
+    title: "Not as described",
+    text: "The item is clearly different from the listing, such as the wrong model, size or condition.",
   },
   {
-    icon: <Gavel className="w-7 h-7" />,
-    iconBg: "bg-primary/10",
-    iconText: "text-primary",
-    dotColor: "bg-primary",
-    title: "Dispute Resolution",
-    description:
-      "If an asset doesn't match the description, our institutional-grade arbitration panel intervenes within 24 hours to ensure a fair resolution.",
-    badges: ["24H RESPONSE TIME", "FULL REFUND PROTECTION"],
+    icon: PackageX,
+    title: "Damaged or faulty",
+    text: "The item arrives broken, or does not work when used as intended.",
   },
   {
-    icon: <RotateCcw className="w-7 h-7" />,
-    iconBg: "bg-error/10",
-    iconText: "text-error",
-    dotColor: "bg-error",
-    title: "Money-Back Guarantee",
-    description:
-      "Not satisfied? We offer a no-questions-asked refund within the inspection window. Buyer protection starts the moment funds enter escrow.",
-    badges: ["5-DAY INSPECTION WINDOW", "ZERO BUYER RISK"],
-  },
-  {
-    icon: <Truck className="w-7 h-7" />,
-    iconBg: "bg-tertiary/10",
-    iconText: "text-tertiary",
-    dotColor: "bg-tertiary",
-    title: "Item-Not-Received Protection",
-    description:
-      "If your item never arrives, TradeHut initiates an immediate investigation and holds all seller funds until the matter is resolved in full.",
-    badges: ["REAL-TIME TRACKING", "CARRIER INTEGRATION"],
-  },
-  {
-    icon: <BadgeCheck className="w-7 h-7" />,
-    iconBg: "bg-secondary-container/40",
-    iconText: "text-on-secondary-container",
-    dotColor: "bg-on-secondary-container",
-    title: "Verified Sellers",
-    description:
-      "Every seller on TradeHut undergoes identity verification and compliance checks. Only approved accounts can list high-value assets.",
-    badges: ["ID VERIFIED", "COMPLIANCE SCREENED"],
+    icon: CreditCard,
+    title: "Incorrect charge",
+    text: "You were charged a different amount from the one you agreed to at checkout.",
   },
 ];
 
-// ─── How-it-works steps ───────────────────────────────────────────────────────
-
-interface Step {
-  stage: string;
-  icon: React.ReactNode;
-  iconBg: string;
-  iconText: string;
-  title: string;
-  description: string;
-}
-
-const STEPS: Step[] = [
+const STEPS: { icon: LucideIcon; title: string; text: string }[] = [
   {
-    stage: "01",
-    icon: <ShoppingCart className="w-10 h-10" />,
-    iconBg: "bg-surface-container-highest",
-    iconText: "text-primary",
-    title: "Commit Order",
-    description: "Buyer commits funds to the secure escrow vault.",
+    icon: CreditCard,
+    title: "Buy and pay through TradeHut",
+    text: "Complete payment in the TradeHut checkout. Do not pay a seller outside the platform.",
   },
   {
-    stage: "02",
-    icon: <Lock className="w-10 h-10" />,
-    iconBg: "bg-surface-container-highest",
-    iconText: "text-primary",
-    title: "Escrow Lock",
-    description: "Funds are cryptographically locked until verification.",
+    icon: Flag,
+    title: "Raise the problem",
+    text: "If something is wrong, open a dispute on the order from your account and describe what happened.",
   },
   {
-    stage: "03",
-    icon: <ClipboardCheck className="w-10 h-10" />,
-    iconBg: "bg-surface-container-highest",
-    iconText: "text-primary",
-    title: "Buyer Verify",
-    description: "Buyer receives asset and confirms technical specs.",
+    icon: Camera,
+    title: "Add evidence",
+    text: "Attach photos, documents or messages that show the problem.",
   },
   {
-    stage: "04",
-    icon: <CreditCard className="w-10 h-10" />,
-    iconBg: "bg-bid-green",
-    iconText: "text-white",
-    title: "Payout Release",
-    description: "Seller receives payment upon final confirmation.",
+    icon: FileSearch,
+    title: "Both sides are heard",
+    text: "The seller is asked to respond. If you cannot agree, TradeHut can review the evidence.",
+  },
+  {
+    icon: Gavel,
+    title: "You are told the outcome",
+    text: "You are notified of the decision, such as a refund, a replacement or no action.",
   },
 ];
 
-// ─── Trust-signal partners ────────────────────────────────────────────────────
-
-const TRUST_SIGNALS = [
-  { icon: <Shield className="text-primary w-5 h-5" />, label: "SECURE PAY" },
-  { icon: <ShieldCheck className="text-primary w-5 h-5" />, label: "LLOYDS INSURED" },
-  { icon: <Gavel className="text-primary w-5 h-5" />, label: "GLOBAL ARBITRATION" },
-  { icon: <Shield className="text-primary w-5 h-5" />, label: "PROTOCOL SAFE" },
+const TIPS: string[] = [
+  "Read the full listing and the seller's return policy before you buy.",
+  "Keep all conversations with the seller on TradeHut so they can be used as evidence.",
+  "Check the item soon after it arrives and raise any problem straight away.",
+  "Never share your password or one-time codes with anyone.",
 ];
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+const FAQS: { question: string; answer: string }[] = [
+  {
+    question: "Who decides the outcome of a dispute?",
+    answer:
+      "The seller is asked to respond first. If you and the seller cannot agree, TradeHut can review the evidence from both sides and decide the outcome.",
+  },
+  {
+    question: "Is there a time limit for raising a problem?",
+    answer:
+      "Raise it as soon as you notice it. Any time limits are set out in the Terms of Service. If you are unsure about your order, contact us.",
+  },
+  {
+    question: "What if I paid a seller outside TradeHut?",
+    answer:
+      "Dispute and refund help applies to orders paid through the TradeHut checkout. We cannot help with payments made outside the platform, so always pay through checkout.",
+  },
+  {
+    question: "How do I report a suspicious seller or listing?",
+    answer: "Use the reports page in your account to flag it, or contact us directly if it is urgent.",
+  },
+];
+
+const LINK_FOCUS =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-950";
 
 export default function BuyerProtectionPage() {
   return (
     <MainLayout>
-      <div className="min-h-screen bg-surface text-on-surface font-body">
-        <main className="pt-20 md:pt-24">
-          {/* ── Hero ── */}
-          <section className="relative overflow-hidden px-4 md:px-8 py-16 md:py-24 lg:py-32 bg-surface">
-            {/* Decorative blobs */}
-            <div className="pointer-events-none absolute -top-24 -right-24 w-72 h-72 md:w-96 md:h-96 bg-primary/5 blur-3xl rounded-full" />
-            <div className="pointer-events-none absolute -bottom-24 -left-24 w-72 h-72 md:w-96 md:h-96 bg-tertiary/5 blur-3xl rounded-full" />
-
-            <div className="relative z-10 max-w-screen-2xl mx-auto">
-              <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
-                {/* Eyebrow badge */}
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary-container text-on-secondary-container font-mono text-xs mb-8 tracking-wider uppercase">
-                  <ShieldCheck className="w-4 h-4" />
-                  Institutional Escrow Active
-                </div>
-
-                <h1 className="font-syne text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-on-surface mb-6 md:mb-8 leading-[1.1]">
-                  Trade with Absolute{" "}
-                  <br className="hidden sm:block" />
-                  <span className="text-primary-container">
-                    Mathematical Certainty.
-                  </span>
-                </h1>
-
-                <p className="text-base md:text-xl text-on-surface-variant max-w-2xl mb-10 md:mb-12 leading-relaxed">
-                  Every transaction on TradeHut is secured by a multi-signature
-                  escrow protocol. Funds are only released when you verify the
-                  asset meets the exact technical specifications.
-                </p>
-
-                <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-                  <Link
-                    href="/account/disputes"
-                    className="inline-flex items-center justify-center gap-3 px-8 py-4 primary-gradient text-white rounded-lg font-syne font-bold hover:shadow-lg active:scale-95 transition-all duration-200 min-h-[52px]"
-                  >
-                    Start Secure Trading
-                    <ArrowRight className="w-5 h-5" />
-                  </Link>
-                  <Link
-                    href="/help"
-                    className="inline-flex items-center justify-center px-8 py-4 rounded-lg font-syne font-bold text-on-surface hover:bg-surface-container-low transition-all duration-200 border border-outline-variant/25 min-h-[52px]"
-                  >
-                    View Security Specs
-                  </Link>
-                </div>
-              </div>
+      <main className="bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+        {/* Header */}
+        <section className="border-b border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900">
+          <div className="container mx-auto py-8 sm:py-12 lg:py-16">
+            <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary-700 dark:text-primary-300">
+              <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+              Buyer protection
+            </p>
+            <h1 className="mt-2 font-syne text-3xl font-extrabold leading-tight sm:text-4xl lg:text-5xl">
+              Shop with confidence
+            </h1>
+            <p className="mt-3 max-w-2xl text-base leading-relaxed text-gray-700 dark:text-gray-300">
+              If something goes wrong with an order you paid for through TradeHut, you can raise it and we will help
+              resolve it. This page explains what you can raise and how the process works.
+            </p>
+            <div className="mt-6 flex flex-col gap-2 sm:flex-row">
+              <Link
+                href="/account/disputes"
+                className={`inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-primary-700 px-5 text-sm font-bold text-white hover:bg-primary-800 ${LINK_FOCUS}`}
+              >
+                Open the dispute centre
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+              <Link
+                href="/returns"
+                className={`inline-flex min-h-[48px] items-center justify-center rounded-xl border border-gray-300 bg-white px-5 text-sm font-bold text-gray-900 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100 dark:hover:bg-gray-800 ${LINK_FOCUS}`}
+              >
+                How returns work
+              </Link>
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* ── Protection Pillars ── */}
-          <section className="px-4 md:px-8 py-16 md:py-24 bg-surface-container-low">
-            <div className="max-w-screen-2xl mx-auto">
-              {/* Section header */}
-              <div className="text-center mb-12 md:mb-16">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-3">
-                  Why TradeHut
-                </p>
-                <h2 className="font-syne text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-on-surface">
-                  Six Layers of Protection
-                </h2>
-              </div>
+        {/* What you can raise */}
+        <section className="container mx-auto py-10 sm:py-14" aria-labelledby="bp-covered">
+          <div className="mb-6 max-w-2xl">
+            <h2 id="bp-covered" className="font-syne text-2xl font-bold sm:text-3xl">
+              Problems you can raise
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+              Open a dispute if any of these happen on an order paid through TradeHut.
+            </p>
+          </div>
+          <ul className="grid grid-cols-1 gap-3 xs:grid-cols-2 lg:grid-cols-4">
+            {COVERED.map(({ icon: Icon, title, text }) => (
+              <li
+                key={title}
+                className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900"
+              >
+                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 text-primary-700 dark:bg-gray-800 dark:text-primary-300">
+                  <Icon className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <h3 className="mt-3 text-base font-bold">{title}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-gray-700 dark:text-gray-300">{text}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                {PILLARS.map((pillar) => (
-                  <div
-                    key={pillar.title}
-                    className="bg-surface-container-lowest p-8 rounded-2xl shadow-card hover:-translate-y-1 hover:shadow-card-hover transition-all duration-300"
-                  >
-                    <div
-                      className={`w-14 h-14 ${pillar.iconBg} ${pillar.iconText} flex items-center justify-center rounded-xl mb-6`}
-                    >
-                      {pillar.icon}
-                    </div>
-
-                    <h3 className="font-syne text-xl md:text-2xl font-bold mb-4 text-on-surface">
-                      {pillar.title}
-                    </h3>
-
-                    <p className="text-on-surface-variant leading-relaxed mb-6 text-sm md:text-base">
-                      {pillar.description}
-                    </p>
-
-                    <ul className="space-y-3">
-                      {pillar.badges.map((badge) => (
-                        <li
-                          key={badge}
-                          className="flex items-center gap-2 font-mono text-xs text-on-surface-variant"
-                        >
-                          <span
-                            className={`w-1.5 h-1.5 ${pillar.dotColor} rounded-full flex-shrink-0`}
-                          />
-                          {badge}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
+        {/* How it works */}
+        <section className="border-y border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900">
+          <div className="container mx-auto py-10 sm:py-14">
+            <div className="mb-6 max-w-2xl">
+              <h2 className="font-syne text-2xl font-bold sm:text-3xl">How it works</h2>
             </div>
-          </section>
-
-          {/* ── How It Works ── */}
-          <section className="px-4 md:px-8 py-16 md:py-24 bg-surface relative">
-            <div className="max-w-screen-2xl mx-auto">
-              <div className="text-center mb-12 md:mb-20">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-3">
-                  The Process
-                </p>
-                <h2 className="font-syne text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-on-surface mb-4">
-                  The Escrow Lifecycle
-                </h2>
-                <p className="text-on-surface-variant text-sm md:text-base">
-                  Four stages of institutional-grade security.
-                </p>
-              </div>
-
-              {/* Steps grid with connector line on desktop */}
-              <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-12">
-                {/* Connector line — desktop only */}
-                <div className="hidden lg:block absolute top-12 left-0 w-full h-[2px] bg-outline-variant/20 -z-0 pointer-events-none" />
-
-                {STEPS.map((step, idx) => (
-                  <div
-                    key={step.stage}
-                    className="relative z-10 flex flex-col items-center text-center"
-                  >
-                    <div
-                      className={`w-24 h-24 rounded-full ${step.iconBg} ${step.iconText} border-4 border-surface flex items-center justify-center mb-6 shadow-md`}
-                    >
-                      {step.icon}
-                    </div>
-
-                    <span
-                      className={`font-mono text-xs mb-2 font-bold uppercase tracking-wider ${
-                        idx === 3 ? "text-bid-green" : "text-primary"
-                      }`}
-                    >
-                      STAGE {step.stage}
+            <ol className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
+              {STEPS.map(({ icon: Icon, title, text }, i) => (
+                <li
+                  key={title}
+                  className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-950"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 text-primary-700 dark:bg-gray-800 dark:text-primary-300">
+                      <Icon className="h-5 w-5" aria-hidden="true" />
                     </span>
-
-                    <h4 className="font-syne font-bold text-lg mb-2 text-on-surface">
-                      {step.title}
-                    </h4>
-
-                    <p className="text-sm text-on-surface-variant leading-relaxed">
-                      {step.description}
-                    </p>
+                    <span className="font-mono text-xs font-bold text-gray-600 dark:text-gray-400">Step {i + 1}</span>
                   </div>
-                ))}
-              </div>
-            </div>
-          </section>
+                  <h3 className="mt-3 text-base font-bold leading-snug">{title}</h3>
+                  <p className="mt-1 text-sm leading-relaxed text-gray-700 dark:text-gray-300">{text}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
 
-          {/* ── Trust Signals ── */}
-          <section className="px-4 md:px-8 py-12 md:py-16 bg-surface-container-low/50">
-            <div className="max-w-screen-2xl mx-auto">
-              <p className="text-center text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-8 md:mb-12">
-                Trusted Partners &amp; Certifications
-              </p>
-              <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 lg:gap-24 opacity-60 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-500">
-                {TRUST_SIGNALS.map((signal) => (
-                  <div
-                    key={signal.label}
-                    className="flex items-center gap-2 font-syne font-extrabold text-lg md:text-2xl text-on-surface"
+        {/* Tips + FAQ */}
+        <section className="container mx-auto grid gap-10 py-10 sm:py-14 lg:grid-cols-2">
+          <div>
+            <h2 className="font-syne text-2xl font-bold sm:text-3xl">Tips for a safe purchase</h2>
+            <ul className="mt-4 space-y-3">
+              {TIPS.map((tip) => (
+                <li key={tip} className="flex gap-3 text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+                  <span
+                    className="mt-2 h-2 w-2 shrink-0 rounded-full bg-primary-700 dark:bg-primary-300"
+                    aria-hidden="true"
+                  />
+                  {tip}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="font-syne text-2xl font-bold sm:text-3xl">Questions</h2>
+            <div className="mt-4 divide-y divide-gray-200 overflow-hidden rounded-xl border border-gray-200 bg-white dark:divide-gray-700 dark:border-gray-700 dark:bg-gray-900">
+              {FAQS.map((f) => (
+                <details key={f.question} className="group">
+                  <summary
+                    className={`flex min-h-[56px] cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 text-left text-base font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 [&::-webkit-details-marker]:hidden ${LINK_FOCUS}`}
                   >
-                    {signal.icon}
-                    {signal.label}
-                  </div>
-                ))}
-              </div>
+                    <span>{f.question}</span>
+                    <ChevronDown
+                      className="h-5 w-5 shrink-0 text-primary-700 transition-transform group-open:rotate-180 dark:text-primary-300"
+                      aria-hidden="true"
+                    />
+                  </summary>
+                  <p className="px-4 pb-4 text-sm leading-relaxed text-gray-700 dark:text-gray-300">{f.answer}</p>
+                </details>
+              ))}
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* ── FAQ ── */}
-          <section className="px-4 md:px-8 py-16 md:py-24 bg-surface">
-            <div className="max-w-3xl mx-auto">
-              <div className="text-center mb-10 md:mb-12">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-3">
-                  Coverage Details
-                </p>
-                <h2 className="font-syne text-3xl md:text-4xl font-bold tracking-tight text-on-surface">
-                  Frequently Asked Questions
-                </h2>
-              </div>
-
-              {/* Client-side accordion */}
-              <FaqAccordion />
+        {/* Contact */}
+        <section className="border-t border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900">
+          <div className="container mx-auto py-8 sm:py-10">
+            <h2 className="font-syne text-xl font-bold sm:text-2xl">Talk to us</h2>
+            <ul className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
+              <li>
+                <a
+                  href="tel:+233248138722"
+                  className={`flex min-h-[48px] items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 text-sm font-bold hover:border-primary-300 dark:border-gray-700 dark:bg-gray-950 ${LINK_FOCUS}`}
+                >
+                  <Phone className="h-5 w-5 text-primary-700 dark:text-primary-300" aria-hidden="true" />
+                  <span className="font-mono">024 813 8722</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://wa.me/233248138722"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`flex min-h-[48px] items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 text-sm font-bold hover:border-primary-300 dark:border-gray-700 dark:bg-gray-950 ${LINK_FOCUS}`}
+                >
+                  <MessageCircle className="h-5 w-5 text-green-700 dark:text-green-300" aria-hidden="true" />
+                  Message us on WhatsApp
+                </a>
+              </li>
+              <li className="flex min-h-[48px] items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 text-sm font-bold dark:border-gray-700 dark:bg-gray-950">
+                <MapPin className="h-5 w-5 text-primary-700 dark:text-primary-300" aria-hidden="true" />
+                La Trade Fair, Accra, Ghana
+              </li>
+            </ul>
+            <div className="mt-4 flex flex-wrap gap-x-5">
+              <Link
+                href="/help"
+                className={`inline-flex min-h-[44px] items-center gap-1.5 rounded text-sm font-bold text-primary-700 hover:underline dark:text-primary-300 ${LINK_FOCUS}`}
+              >
+                Help centre
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+              <Link
+                href="/trust"
+                className={`inline-flex min-h-[44px] items-center gap-1.5 rounded text-sm font-bold text-primary-700 hover:underline dark:text-primary-300 ${LINK_FOCUS}`}
+              >
+                Trust &amp; safety
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+              <Link
+                href="/legal/terms"
+                className={`inline-flex min-h-[44px] items-center gap-1.5 rounded text-sm font-bold text-primary-700 hover:underline dark:text-primary-300 ${LINK_FOCUS}`}
+              >
+                Terms of service
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
             </div>
-          </section>
-
-          {/* ── Claim CTA ── */}
-          <section className="px-4 md:px-8 py-16 md:py-24">
-            <div className="max-w-screen-2xl mx-auto">
-              <div className="relative bg-inverse-surface text-inverse-on-surface p-10 md:p-16 lg:p-20 rounded-3xl overflow-hidden">
-                {/* Decorative gradient overlay on right half */}
-                <div className="absolute inset-0 pointer-events-none">
-                  <div className="absolute top-0 right-0 h-full w-full lg:w-1/3 bg-gradient-to-l from-primary/20 to-transparent" />
-                </div>
-
-                <div className="relative z-10 max-w-2xl">
-                  <h2 className="font-syne text-3xl md:text-4xl lg:text-5xl font-bold mb-6 md:mb-8 leading-tight">
-                    Ready for a higher standard of trading?
-                  </h2>
-                  <p className="text-base md:text-xl opacity-80 mb-8 md:mb-10 leading-relaxed">
-                    Join 5,000+ buyers who rely on TradeHut for high-value asset
-                    acquisition. Every purchase is backed by our full protection
-                    guarantee.
-                  </p>
-
-                  <div className="flex flex-col sm:flex-row flex-wrap gap-4">
-                    <Link
-                      href="/auth/register"
-                      className="inline-flex items-center justify-center px-8 py-4 primary-gradient text-white rounded-lg font-syne font-bold hover:shadow-lg active:scale-95 transition-all duration-200 min-h-[52px]"
-                    >
-                      Open Secure Account
-                    </Link>
-                    <Link
-                      href="/account/disputes"
-                      className="inline-flex items-center justify-center px-8 py-4 rounded-lg font-syne font-bold border border-inverse-on-surface/30 text-inverse-on-surface hover:bg-inverse-on-surface/10 active:scale-95 transition-all duration-200 min-h-[52px]"
-                    >
-                      File a Claim
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-        </main>
-      </div>
+          </div>
+        </section>
+      </main>
     </MainLayout>
   );
 }

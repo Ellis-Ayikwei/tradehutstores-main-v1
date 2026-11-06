@@ -30,16 +30,10 @@ module.exports = {
         },
         extend: {
             colors: {
-                // ════════════════════════════════════════════════════════════
-                // KINETIC TOKENS (Material 3 derived) — added for the Stitch
-                // redesign. See .claude/design-system/tokens.md.
-                // Use these for new pages; legacy tokens below stay until
-                // each legacy page is migrated.
-                // ════════════════════════════════════════════════════════════
-                background:                  '#fff8f6',
-                surface:                     '#fff8f6',
-                'surface-bright':            '#fff8f6',
-                'surface-dim':               '#efd5cb',
+                // ── Material-3 style tokens (legacy of the cancelled redesign) ──
+                // Still referenced by account/help/trust/legal/auth pages and
+                // others. Delete a key only when `rg` finds no class using it.
+                surface:                     '#fff8f6', // still used: bg-surface, text-surface, bg-surface/90
                 'surface-variant':           '#f8ddd3',
                 'surface-container-lowest':  '#ffffff',
                 'surface-container-low':     '#fff1ec',
@@ -48,35 +42,27 @@ module.exports = {
                 'surface-container-highest': '#f8ddd3',
                 'inverse-surface':           '#3d2d26',
                 'inverse-on-surface':        '#ffede7',
-                'surface-tint':              '#a43d00',
                 'on-background':             '#261813',
                 'on-surface':                '#261813',
                 'on-surface-variant':        '#5a4137',
                 outline:                     '#8e7165',
                 'outline-variant':           '#e2bfb2',
-                // primary kinetic family (orange) — note: extended below as
-                // an object form too, so `primary` works as both flat tokens
-                // and `primary-container`.
+                // primary family (orange). `primary` itself is the object form below.
                 'on-primary':                '#ffffff',
                 'primary-container':         '#f5620f',
                 'on-primary-container':      '#4e1900',
                 'primary-fixed':             '#ffdbcd',
                 'primary-fixed-dim':         '#ffb597',
                 'on-primary-fixed':          '#360f00',
-                'on-primary-fixed-variant':  '#7d2d00',
-                'inverse-primary':           '#ffb597',
-                // secondary kinetic family (auction / sustainability green)
-                // NOTE: 'secondary' itself stays as the legacy object below for
-                // back-compat. The flat Kinetic green is aliased as 'secondary-green'.
-                'secondary-green':           '#006c4b',  // Kinetic secondary token
+                // secondary family (green). 'secondary' itself stays as the
+                // legacy purple object below; the flat green is 'secondary-green'.
+                'secondary-green':           '#006c4b',
                 'on-secondary':              '#ffffff',
                 'secondary-container':       '#60f9bd',
                 'on-secondary-container':    '#00714f',
-                'secondary-fixed':           '#63fcc0',
                 'secondary-fixed-dim':       '#3fdfa5',
-                'on-secondary-fixed':        '#002114',
                 'on-secondary-fixed-variant':'#005138',
-                // tertiary kinetic family (RFQ blue)
+                // tertiary family (blue)
                 tertiary:                    '#0058ca',
                 'on-tertiary':               '#ffffff',
                 'tertiary-container':        '#558dff',
@@ -85,7 +71,7 @@ module.exports = {
                 'tertiary-fixed-dim':        '#b0c6ff',
                 'on-tertiary-fixed':         '#001945',
                 'on-tertiary-fixed-variant': '#00429b',
-                // error kinetic
+                // error family
                 error:                       '#ba1a1a',
                 'on-error':                  '#ffffff',
                 'error-container':           '#ffdad6',
@@ -199,17 +185,14 @@ module.exports = {
             },
 
             fontFamily: {
-                // Project fonts (UNCHANGED). Kinetic redesign reuses these:
-                //   font-display = Syne (Stitch headline aesthetic)
-                //   font-body    = DM Sans (Stitch body aesthetic)
-                //   font-mono    = JetBrains Mono (prices / IDs)
+                // Project fonts (UNCHANGED):
+                //   font-display = Syne, font-body = DM Sans, font-mono = JetBrains Mono
                 display: ['Syne', 'sans-serif'],
                 body:    ['DM Sans', 'sans-serif'],
                 mono:    ['JetBrains Mono', 'monospace'],
-                // Aliases so JSX written against Stitch class names still resolves
+                // Aliases still used by existing pages
                 syne:     ['Syne', 'sans-serif'],
                 headline: ['Syne', 'sans-serif'],
-                epilogue: ['Syne', 'sans-serif'],
                 // Legacy
                 nunito:  ['Nunito', 'sans-serif'],
             },
@@ -254,8 +237,7 @@ module.exports = {
                 // Glass
                 glass: '0 8px 32px 0 rgba(31, 38, 135, 0.20)',
 
-                // Card hover (LEGACY — overridden below with Kinetic tone)
-                // Kinetic card / card-hover uses the warm 38,24,19 base
+                // Card elevation (warm 38,24,19 base)
                 card:       '0 4px 20px 0 rgba(38,24,19,0.04), 0 1px 2px 0 rgba(38,24,19,0.02)',
                 'card-hover':'0 12px 32px 0 rgba(38,24,19,0.08)',
             },

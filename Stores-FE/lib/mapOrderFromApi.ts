@@ -1,7 +1,7 @@
 import type { ApiOrder, ApiOrderItem } from '@/lib/accountApi'
 
-const PLACEHOLDER_IMG =
-    'https://images.unsplash.com/photo-1560393464-5c69a73c5770?w=200&q=80'
+/** The orders API returns no product image; callers render an icon when this is empty. */
+const PLACEHOLDER_IMG = ''
 
 function num(v: string | number | null | undefined): number {
     if (v == null) return 0

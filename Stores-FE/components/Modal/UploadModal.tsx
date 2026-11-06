@@ -2,7 +2,6 @@
 
 /**
  * Reusable evidence upload modal.
- * Ported from: stitch_full_website_redesign_expansion/resolution_center_upload_modal/code.html
  *
  * Props:
  *   open      – controls visibility
@@ -13,7 +12,7 @@
  *   maxFiles  – maximum number of files (default 10)
  *   maxSize   – human-readable max-size label shown in the drop-zone (default "50 MB")
  *
- * Portal: renders into document.body via a fixed overlay.
+ * Renders a fixed overlay: a centred dialog on larger screens and a bottom sheet on mobile.
  * No new npm dependencies — uses vanilla React state + native File API.
  */
 
@@ -75,11 +74,14 @@ function FileTypeIcon({ file, className }: { file: File; className?: string }) {
 }
 
 function fileIconColorClass(file: File): string {
-  if (file.type.startsWith("image/")) return "text-secondary-green";
-  if (file.type === "application/pdf") return "text-tertiary";
-  if (file.type.startsWith("video/")) return "text-primary";
-  return "text-on-surface-variant";
+  if (file.type.startsWith("image/")) return "text-green-700";
+  if (file.type === "application/pdf") return "text-blue-700";
+  if (file.type.startsWith("video/")) return "text-primary-700";
+  return "text-gray-600";
 }
+
+const FOCUS =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2";
 
 // ---------------------------------------------------------------------------
 // Component
@@ -200,7 +202,7 @@ export default function UploadModal({
   return (
     /* ── Overlay ────────────────────────────────────────────────────────── */
     <div
-      className="fixed inset-0 z-modal bg-inverse-surface/60 backdrop-blur-sm flex items-center justify-center p-4"
+      className="fixed inset-0 z-modal bg-black/50 flex items-end sm:items-center justify-center sm:p-4"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -209,39 +211,39 @@ export default function UploadModal({
       aria-label={title}
     >
       {/* ── Modal card ───────────────────────────────────────────────────── */}
-      <div className="bg-surface-container-lowest rounded-3xl shadow-card w-full max-w-2xl overflow-hidden flex flex-col border border-outline-variant/20 max-h-[90vh]">
+      <div className="bg-white text-gray-900 rounded-t-2xl sm:rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col border border-gray-200 max-h-[92vh] sm:max-h-[90vh]">
 
         {/* Header */}
-        <div className="px-6 md:px-8 pt-6 md:pt-8 pb-5 border-b border-surface-container-low flex-shrink-0">
+        <div className="px-4 sm:px-6 pt-5 sm:pt-6 pb-4 border-b border-gray-200 flex-shrink-0">
           <div className="flex justify-between items-start gap-4">
             <div>
-              <h2 className="font-headline text-xl md:text-2xl font-extrabold text-on-surface tracking-tight">
+              <h2 className="font-syne text-xl md:text-2xl font-extrabold text-gray-900">
                 {title}
               </h2>
-              <p className="text-on-surface-variant text-sm mt-1 leading-relaxed">
+              <p className="text-gray-600 text-sm mt-1 leading-relaxed">
                 Provide clear, high-resolution documentation to support your
                 dispute claims.
               </p>
             </div>
             <button
               onClick={onClose}
-              className="w-9 h-9 rounded-full hover:bg-surface-container-low flex items-center justify-center transition-colors flex-shrink-0 active:scale-95"
+              className={`w-11 h-11 -mr-2 -mt-2 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors flex-shrink-0 ${FOCUS}`}
               aria-label="Close modal"
             >
-              <X className="w-5 h-5 text-on-surface-variant" />
+              <X className="w-5 h-5 text-gray-600" />
             </button>
           </div>
         </div>
 
         {/* Scrollable body */}
-        <div className="p-6 md:p-8 space-y-6 overflow-y-auto">
+        <div className="p-4 sm:p-6 space-y-5 overflow-y-auto">
 
           {/* Drop zone */}
           <div
-            className={`group cursor-pointer relative border-2 border-dashed rounded-2xl p-8 md:p-10 flex flex-col items-center justify-center text-center transition-all duration-200
+            className={`group cursor-pointer relative border-2 border-dashed rounded-xl p-6 sm:p-10 flex flex-col items-center justify-center text-center transition-colors duration-200
               ${dragging
-                ? "bg-primary/5 border-primary/50"
-                : "bg-surface-container-low border-outline-variant hover:bg-surface-container-highest hover:border-primary/40"
+                ? "bg-primary-50 border-primary-500"
+                : "bg-gray-50 border-gray-300 hover:bg-primary-50 hover:border-primary-400"
               }`}
             onClick={() => fileInputRef.current?.click()}
             onDragOver={handleDragOver}
@@ -249,21 +251,21 @@ export default function UploadModal({
             onDrop={handleDrop}
           >
             <div
-              className={`w-14 h-14 md:w-16 md:h-16 bg-surface-container-lowest rounded-2xl shadow-card flex items-center justify-center mb-4 transition-transform duration-200
-                ${dragging ? "scale-110" : "group-hover:scale-110"}`}
+              className={`w-14 h-14 bg-white border border-gray-200 rounded-xl flex items-center justify-center mb-4 transition-transform duration-200
+                ${dragging ? "scale-110" : "group-hover:scale-105"}`}
             >
-              <UploadCloud className="w-8 h-8 text-primary" />
+              <UploadCloud className="w-8 h-8 text-primary-700" />
             </div>
-            <p className="font-headline font-bold text-on-surface text-base md:text-lg">
-              {dragging ? "Drop files here" : "Click or drag to upload evidence"}
+            <p className="font-syne font-bold text-gray-900 text-base md:text-lg">
+              {dragging ? "Drop files here" : "Tap or drag to upload evidence"}
             </p>
-            <p className="text-on-surface-variant text-sm mt-1">
+            <p className="text-gray-600 text-sm mt-1">
               Supported: PDF, JPG, PNG, MP4
-              <span className="mx-1.5 text-outline">•</span>
+              <span className="mx-1.5 text-gray-400">•</span>
               Max {maxSize} per file
             </p>
             {entries.length >= maxFiles && (
-              <p className="text-error text-xs mt-2 font-bold">
+              <p className="text-red-700 text-xs mt-2 font-bold">
                 Maximum {maxFiles} files reached
               </p>
             )}
@@ -280,24 +282,24 @@ export default function UploadModal({
           {/* File list */}
           {entries.length > 0 && (
             <div className="space-y-3">
-              <h3 className="text-[10px] font-mono font-bold text-on-surface-variant uppercase tracking-widest">
+              <h3 className="text-xs font-mono font-bold text-gray-600 uppercase tracking-wider">
                 Uploaded Files ({entries.length})
               </h3>
 
               {entries.map((entry) => (
                 <div
                   key={entry.id}
-                  className="bg-surface-container-lowest rounded-xl p-4 flex flex-col gap-2 shadow-card hover:shadow-card-hover transition-all"
+                  className="bg-white border border-gray-200 rounded-xl p-3 sm:p-4 flex flex-col gap-2"
                 >
                   <div className="flex items-center gap-3">
                     {/* File type icon */}
                     <div
                       className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0
                         ${entry.file.type.startsWith("image/")
-                          ? "bg-secondary-container/30"
+                          ? "bg-green-50"
                           : entry.file.type === "application/pdf"
-                          ? "bg-tertiary-fixed"
-                          : "bg-surface-container"
+                          ? "bg-blue-50"
+                          : "bg-gray-100"
                         }`}
                     >
                       <FileTypeIcon
@@ -308,10 +310,10 @@ export default function UploadModal({
 
                     {/* Name + size */}
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-on-surface text-sm truncate">
+                      <p className="font-medium text-gray-900 text-sm truncate">
                         {entry.file.name}
                       </p>
-                      <p className="text-xs text-on-surface-variant font-mono">
+                      <p className="text-xs text-gray-600 font-mono">
                         {entry.done
                           ? `${formatBytes(entry.file.size)} • Uploaded`
                           : `Uploading ${entry.progress}%`}
@@ -319,13 +321,13 @@ export default function UploadModal({
                     </div>
 
                     {/* Status / remove */}
-                    <div className="flex items-center gap-2 flex-shrink-0">
+                    <div className="flex items-center gap-1 flex-shrink-0">
                       {entry.done ? (
                         <>
-                          <CheckCircle className="w-5 h-5 text-secondary-green" />
+                          <CheckCircle className="w-5 h-5 text-green-700" />
                           <button
                             onClick={() => removeEntry(entry.id)}
-                            className="text-outline hover:text-error transition-colors active:scale-95"
+                            className={`w-11 h-11 flex items-center justify-center rounded-full text-gray-500 hover:text-red-700 hover:bg-gray-100 transition-colors ${FOCUS}`}
                             aria-label="Remove file"
                           >
                             <Trash2 className="w-5 h-5" />
@@ -334,7 +336,7 @@ export default function UploadModal({
                       ) : (
                         <button
                           onClick={() => removeEntry(entry.id)}
-                          className="text-outline hover:text-error transition-colors active:scale-95"
+                          className={`w-11 h-11 flex items-center justify-center rounded-full text-gray-500 hover:text-red-700 hover:bg-gray-100 transition-colors ${FOCUS}`}
                           aria-label="Cancel upload"
                         >
                           <XCircle className="w-5 h-5" />
@@ -345,9 +347,9 @@ export default function UploadModal({
 
                   {/* Progress bar (hidden once done) */}
                   {!entry.done && (
-                    <div className="w-full h-1.5 bg-surface-container-low rounded-full overflow-hidden">
+                    <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-primary-container rounded-full transition-all duration-300"
+                        className="h-full bg-primary-700 rounded-full transition-all duration-300"
                         style={{ width: `${entry.progress}%` }}
                       />
                     </div>
@@ -359,17 +361,17 @@ export default function UploadModal({
         </div>
 
         {/* Footer */}
-        <div className="px-6 md:px-8 py-5 bg-surface-container-low/50 flex justify-end items-center gap-3 flex-shrink-0 border-t border-surface-container-low">
+        <div className="px-4 sm:px-6 py-4 bg-gray-50 flex flex-col-reverse sm:flex-row sm:justify-end sm:items-center gap-2 sm:gap-3 flex-shrink-0 border-t border-gray-200">
           <button
             onClick={onClose}
-            className="px-5 py-3 rounded-xl font-bold font-headline text-sm text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-95"
+            className={`min-h-[44px] px-5 rounded-xl font-bold text-sm text-gray-700 border border-gray-300 bg-white hover:bg-gray-100 transition-colors ${FOCUS}`}
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
             disabled={entries.length === 0}
-            className="bg-primary-container text-on-primary px-6 md:px-8 py-3 rounded-xl font-bold font-headline text-sm shadow-card hover:shadow-card-hover hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+            className={`min-h-[44px] bg-primary-700 text-white px-6 rounded-xl font-bold text-sm hover:bg-primary-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${FOCUS}`}
           >
             Submit Evidence
           </button>

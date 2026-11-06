@@ -2,10 +2,6 @@
 
 import Link from 'next/link'
 import { 
-    Facebook, 
-    Twitter, 
-    Instagram, 
-    Youtube,
     Mail,
     Phone,
     MapPin,
@@ -40,10 +36,10 @@ export default function Footer() {
     }
 
     const features = [
-        { icon: Truck, label: 'Free Shipping', desc: 'On orders over $50' },
-        { icon: Shield, label: 'Secure Payment', desc: '100% protected' },
-        { icon: HeadphonesIcon, label: '24/7 Support', desc: 'Dedicated support' },
-        { icon: CreditCard, label: 'Easy Returns', desc: '30-day return policy' },
+        { icon: Truck, label: 'Delivery', desc: 'Shipping options shown at checkout' },
+        { icon: Shield, label: 'Secure Payment', desc: 'Protected checkout' },
+        { icon: HeadphonesIcon, label: 'Customer Support', desc: 'Call or WhatsApp us' },
+        { icon: CreditCard, label: 'Returns', desc: 'See our returns policy' },
     ]
 
     return (
@@ -82,22 +78,6 @@ export default function Footer() {
                             Your one-stop destination for quality products at unbeatable prices. 
                             Shop with confidence and discover amazing deals every day.
                         </p>
-                        
-                        {/* Social Media Icons */}
-                        <div className="flex space-x-4">
-                            <a href="#" className="hover:text-primary-500 transition-colors">
-                                <Facebook className="h-5 w-5" />
-                            </a>
-                            <a href="#" className="hover:text-primary-500 transition-colors">
-                                <Twitter className="h-5 w-5" />
-                            </a>
-                            <a href="#" className="hover:text-primary-500 transition-colors">
-                                <Instagram className="h-5 w-5" />
-                            </a>
-                            <a href="#" className="hover:text-primary-500 transition-colors">
-                                <Youtube className="h-5 w-5" />
-                            </a>
-                        </div>
                     </div>
 
                     {/* Company Links */}
@@ -157,15 +137,16 @@ export default function Footer() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                         <div className="flex items-center space-x-2">
                             <Mail className="h-4 w-4 text-primary-500" />
-                            <span>support@eshop.com</span>
+                            <a href="mailto:support@tradehut.com" className="hover:text-primary-500">support@tradehut.com</a>
                         </div>
                         <div className="flex items-center space-x-2">
                             <Phone className="h-4 w-4 text-primary-500" />
-                            <span>+1 (555) 123-4567</span>
+                            <a href="tel:+233248138722" className="hover:text-primary-500">024 813 8722</a>
+                            <a href="https://wa.me/233248138722" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary-500">(WhatsApp)</a>
                         </div>
                         <div className="flex items-center space-x-2">
                             <MapPin className="h-4 w-4 text-primary-500" />
-                            <span>123 Commerce St, Business City, BC 12345</span>
+                            <span>La Trade Fair, Accra, Ghana</span>
                         </div>
                     </div>
                 </div>

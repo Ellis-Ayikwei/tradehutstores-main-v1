@@ -1,728 +1,219 @@
 "use client";
 
 /**
- * Reports & Suggestions — "/account/reports"
+ * Reports & suggestions — /account/reports
  *
- * Ported from:
- *   stitch_full_website_redesign_expansion/tradehut_reports_suggestions/code.html
- *
- * Layout: Account / dashboard shell (see .claude/design-system/layouts.md)
- * Sidebar is intentionally inline in this file.
- * // TODO: extract to shared <AccountSidebar>
- *
- * // TODO: POST /api/reports/    — wire ReportForm submission
- * // TODO: POST /api/suggestions/ — wire SuggestionForm submission
- * // TODO: GET  /api/reports/?mine=true — replace DEMO_SUBMISSIONS with real data
+ * There are no report/suggestion endpoints, and the previous form only
+ * pretended to submit. This version composes the message and sends it to the
+ * official WhatsApp number (the same channel support uses), so nothing is
+ * "submitted" that nobody receives. No submission history is shown because
+ * nothing is stored.
  */
 
-import { useState } from "react";
 import Link from "next/link";
+import { useState } from "react";
+import { Flag, Lightbulb, MessageCircle, Phone, Scale } from "lucide-react";
 import { AccountMobileHeader } from "@/components/account/AccountShell";
-import {
-  Gavel,
-  FileText,
-  Flag,
-  Paperclip,
-  CheckCircle,
-  Flag as FlagIcon,
-  Lightbulb,
-  List,
-  AlertTriangle,
-  RefreshCw,
-  FileText as DescriptionIcon,
-} from "lucide-react";
+import { SectionHeader } from "@/components/common/marketplace";
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-type ReportCategory = "Product" | "Seller" | "Listing" | "Payment" | "Other";
-type SuggestionCategory =
-  | "User Experience (UX)"
-  | "Bidding Mechanics"
-  | "Shipping & Logistics"
-  | "Seller Tools"
-  | "Other";
-type SubmissionStatus = "pending" | "in_review" | "resolved" | "rejected";
-type SubmissionType = "report" | "suggestion";
+const FOCUS =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
+const FIELD = `w-full rounded-lg border border-gray-300 bg-white px-3 text-base text-gray-900 placeholder:text-gray-500 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100 sm:text-sm ${FOCUS}`;
+const LABEL = "mb-1 block text-sm font-semibold text-gray-800 dark:text-gray-200";
 
-interface Submission {
-  id: string;
-  type: SubmissionType;
-  subject: string;
-  category: string;
-  status: SubmissionStatus;
-  lastUpdate: string;
-}
+type Kind = "report" | "suggestion";
 
-// ---------------------------------------------------------------------------
-// Demo data
-// TODO: replace with /api/reports/?mine=true and /api/suggestions/?mine=true
-// ---------------------------------------------------------------------------
-const DEMO_SUBMISSIONS: Submission[] = [
-  {
-    id: "rep-001",
-    type: "report",
-    subject: "Listing Inaccuracy: Solaris #4",
-    category: "Listing",
-    status: "in_review",
-    lastUpdate: "Apr 20, 2026",
-  },
-  {
-    id: "rep-002",
-    type: "report",
-    subject: "Seller Conduct: Artisan Collective",
-    category: "Seller",
-    status: "resolved",
-    lastUpdate: "Apr 12, 2026",
-  },
-  {
-    id: "sug-001",
-    type: "suggestion",
-    subject: "Augmented Reality Preview Feature",
-    category: "User Experience (UX)",
-    status: "in_review",
-    lastUpdate: "Apr 15, 2026",
-  },
-  {
-    id: "sug-002",
-    type: "suggestion",
-    subject: "Dark Mode Editorial View",
-    category: "User Experience (UX)",
-    status: "pending",
-    lastUpdate: "Apr 10, 2026",
-  },
-  {
-    id: "rep-003",
-    type: "report",
-    subject: "Payment not processed after 48h",
-    category: "Payment",
-    status: "pending",
-    lastUpdate: "Apr 22, 2026",
-  },
+const KINDS: { id: Kind; label: string; Icon: typeof Flag }[] = [
+  { id: "report", label: "Report an issue", Icon: Flag },
+  { id: "suggestion", label: "Suggestion", Icon: Lightbulb },
 ];
 
-// ---------------------------------------------------------------------------
-// Status pill
-// ---------------------------------------------------------------------------
-const STATUS_CONFIG: Record<
-  SubmissionStatus,
-  { label: string; classes: string }
-> = {
-  pending: {
-    label: "Pending",
-    classes: "bg-bid-amber/10 text-bid-amber",
-  },
-  in_review: {
-    label: "In Review",
-    classes: "bg-secondary-green/10 text-secondary-green",
-  },
-  resolved: {
-    label: "Resolved",
-    classes: "bg-surface-container text-on-surface-variant",
-  },
-  rejected: {
-    label: "Rejected",
-    classes: "bg-error-container text-error",
-  },
+const CATEGORIES: Record<Kind, string[]> = {
+  report: ["Product", "Seller", "Listing", "Payment", "Order or delivery", "Other"],
+  suggestion: ["Shopping experience", "Bidding", "Shipping", "Seller tools", "Other"],
 };
 
-function StatusPill({ status }: { status: SubmissionStatus }) {
-  const cfg = STATUS_CONFIG[status];
-  return (
-    <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest ${cfg.classes}`}
-    >
-      {cfg.label}
-    </span>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Tab definitions
-// ---------------------------------------------------------------------------
-type ActiveTab = "report" | "suggestion" | "submissions";
-
-const TABS: { id: ActiveTab; label: string; Icon: React.ElementType }[] = [
-  { id: "report", label: "Report an Issue", Icon: Flag },
-  { id: "suggestion", label: "Submit Suggestion", Icon: Lightbulb },
-  { id: "submissions", label: "My Submissions", Icon: List },
-];
-
-// ---------------------------------------------------------------------------
-// Report form
-// ---------------------------------------------------------------------------
-const REPORT_CATEGORIES: ReportCategory[] = [
-  "Product",
-  "Seller",
-  "Listing",
-  "Payment",
-  "Other",
-];
-
-function ReportForm() {
-  const [category, setCategory] = useState<ReportCategory>("Product");
+export default function ReportsPage() {
+  const [kind, setKind] = useState<Kind>("report");
+  const [category, setCategory] = useState(CATEGORIES.report[0]);
   const [subject, setSubject] = useState("");
-  const [description, setDescription] = useState("");
-  const [fileCount, setFileCount] = useState(0);
-  const [submitted, setSubmitted] = useState(false);
+  const [details, setDetails] = useState("");
+  const [touched, setTouched] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    // TODO: POST /api/reports/  { category, subject, description, files }
-    setSubmitted(true);
+  const subjectMissing = subject.trim() === "";
+  const detailsMissing = details.trim() === "";
+
+  function selectKind(next: Kind) {
+    setKind(next);
+    setCategory(CATEGORIES[next][0]);
   }
 
-  if (submitted) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 text-center gap-6">
-        <div className="w-16 h-16 rounded-full bg-secondary-green/10 flex items-center justify-center">
-          <CheckCircle className="w-8 h-8 text-secondary-green" />
-        </div>
-        <div>
-          <h3 className="font-syne font-bold text-xl text-on-surface mb-2">
-            Report Submitted
-          </h3>
-          <p className="text-sm text-on-surface-variant max-w-xs">
-            We have received your report and will review it within 2 business
-            days. You can track its status in My Submissions.
-          </p>
-        </div>
-        <button
-          onClick={() => {
-            setSubmitted(false);
-            setSubject("");
-            setDescription("");
-            setFileCount(0);
-          }}
-          className="text-sm font-bold text-primary hover:underline transition-all"
-        >
-          Submit another report
-        </button>
-      </div>
-    );
+  const whatsappHref = (() => {
+    const heading = kind === "report" ? "Issue report" : "Suggestion";
+    const text = [
+      `${heading} - ${category}`,
+      `Subject: ${subject.trim()}`,
+      "",
+      details.trim(),
+    ].join("\n");
+    return `https://wa.me/233248138722?text=${encodeURIComponent(text)}`;
+  })();
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setTouched(true);
+    if (subjectMissing || detailsMissing) return;
+    window.open(whatsappHref, "_blank", "noopener,noreferrer");
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6 max-w-2xl">
-      {/* Category */}
-      <div>
-        <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block mb-2 ml-1">
-          Category
-        </label>
-        <div className="flex flex-wrap gap-2">
-          {REPORT_CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              type="button"
-              onClick={() => setCategory(cat)}
-              className={`px-4 py-2 rounded-full text-xs font-bold transition-all active:scale-95 ${
-                category === cat
-                  ? "bg-primary text-on-primary"
-                  : "bg-surface-container-low text-on-surface-variant hover:bg-surface-container"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-      </div>
+    <>
+      <AccountMobileHeader title="Reports & suggestions" />
 
-      {/* Subject */}
-      <div>
-        <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block mb-2 ml-1">
-          Subject
-        </label>
-        <input
-          type="text"
-          required
-          value={subject}
-          onChange={(e) => setSubject(e.target.value)}
-          placeholder="Brief title for your report…"
-          className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary/20 placeholder:text-outline"
+      <div className="space-y-5">
+        <SectionHeader
+          as="h1"
+          title="Reports & suggestions"
+          subtitle="Tell us about a problem or an idea to improve TradeHut Stores."
+          className="mb-0 sm:mb-0"
         />
-      </div>
 
-      {/* Description */}
-      <div>
-        <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block mb-2 ml-1">
-          Description
-        </label>
-        <textarea
-          required
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Describe the issue in detail…"
-          rows={5}
-          className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary/20 resize-none placeholder:text-outline"
-        />
-      </div>
+        <div className="grid gap-5 lg:grid-cols-3">
+          <form
+            onSubmit={handleSubmit}
+            noValidate
+            className="space-y-4 rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900 sm:p-6 lg:col-span-2"
+          >
+            <fieldset>
+              <legend className={LABEL}>What would you like to send?</legend>
+              <div className="grid grid-cols-2 gap-2">
+                {KINDS.map(({ id, label, Icon }) => {
+                  const active = kind === id;
+                  return (
+                    <label
+                      key={id}
+                      className={`flex min-h-[44px] cursor-pointer items-center justify-center gap-2 rounded-lg border px-3 text-sm font-bold has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary ${
+                        active
+                          ? "border-primary-700 bg-primary-700 text-white"
+                          : "border-gray-300 bg-white text-gray-800 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="kind"
+                        value={id}
+                        checked={active}
+                        onChange={() => selectKind(id)}
+                        className="sr-only"
+                      />
+                      <Icon className="h-4 w-4" aria-hidden="true" />
+                      {label}
+                    </label>
+                  );
+                })}
+              </div>
+            </fieldset>
 
-      {/* Evidence uploads */}
-      <div>
-        <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block mb-2 ml-1">
-          Evidence (optional)
-        </label>
-        <label className="flex flex-col items-center justify-center gap-3 w-full h-32 bg-surface-container-low rounded-xl border-2 border-dashed border-outline-variant/40 cursor-pointer hover:border-primary/30 hover:bg-surface-container transition-all">
-          <Paperclip className="w-8 h-8 text-outline/60" />
-          <span className="text-xs text-on-surface-variant">
-            {fileCount > 0
-              ? `${fileCount} file${fileCount > 1 ? "s" : ""} selected`
-              : "Click to attach screenshots or documents"}
-          </span>
-          <input
-            type="file"
-            multiple
-            accept="image/*,.pdf"
-            className="sr-only"
-            onChange={(e) => setFileCount(e.target.files?.length ?? 0)}
-          />
-        </label>
-      </div>
-
-      <button
-        type="submit"
-        className="w-full bg-primary text-on-primary font-bold py-4 rounded-xl shadow-lg hover:shadow-primary/20 hover:-translate-y-0.5 transition-all active:scale-95"
-      >
-        Submit Report
-      </button>
-    </form>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Suggestion form
-// ---------------------------------------------------------------------------
-const SUGGESTION_CATEGORIES: SuggestionCategory[] = [
-  "User Experience (UX)",
-  "Bidding Mechanics",
-  "Shipping & Logistics",
-  "Seller Tools",
-  "Other",
-];
-
-const COMMUNITY_IDEAS = [
-  {
-    title: "Augmented Reality Preview",
-    status: "Under Consideration",
-    Icon: Lightbulb,
-  },
-  { title: "Dark Mode Editorial View", status: "Planned for Q2", Icon: Lightbulb },
-  {
-    title: "One-click re-order",
-    status: "In Development",
-    Icon: RefreshCw,
-  },
-];
-
-function SuggestionForm() {
-  const [category, setCategory] = useState<SuggestionCategory>(
-    "User Experience (UX)"
-  );
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    // TODO: POST /api/suggestions/  { category, title, description }
-    setSubmitted(true);
-  }
-
-  return (
-    <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
-      {/* Form column */}
-      <div className="flex-1 min-w-0">
-        {submitted ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center gap-6">
-            <div className="w-16 h-16 rounded-full bg-secondary-green/10 flex items-center justify-center">
-              <CheckCircle className="w-8 h-8 text-secondary-green" />
-            </div>
             <div>
-              <h3 className="font-syne font-bold text-xl text-on-surface mb-2">
-                Suggestion Sent
-              </h3>
-              <p className="text-sm text-on-surface-variant max-w-xs">
-                Thank you for helping us improve TradeHut. Your idea has been
-                logged and will be reviewed by our product team.
-              </p>
-            </div>
-            <button
-              onClick={() => {
-                setSubmitted(false);
-                setTitle("");
-                setDescription("");
-              }}
-              className="text-sm font-bold text-primary hover:underline transition-all"
-            >
-              Submit another idea
-            </button>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-6 max-w-2xl">
-            {/* Idea title */}
-            <div>
-              <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block mb-2 ml-1">
-                Idea Title
-              </label>
-              <input
-                type="text"
-                required
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Name your idea in a few words…"
-                className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary/20 placeholder:text-outline"
-              />
-            </div>
-
-            {/* Description */}
-            <div>
-              <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block mb-2 ml-1">
-                Description
-              </label>
-              <textarea
-                required
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Describe the improvement or feature you'd like to see…"
-                rows={5}
-                className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary/20 resize-none placeholder:text-outline"
-              />
-            </div>
-
-            {/* Category */}
-            <div>
-              <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block mb-2 ml-1">
+              <label htmlFor="report-category" className={LABEL}>
                 Category
               </label>
               <select
+                id="report-category"
                 value={category}
-                onChange={(e) =>
-                  setCategory(e.target.value as SuggestionCategory)
-                }
-                className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary/20 appearance-none"
+                onChange={(e) => setCategory(e.target.value)}
+                className={`${FIELD} min-h-[44px]`}
               >
-                {SUGGESTION_CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
+                {CATEGORIES[kind].map((c) => (
+                  <option key={c} value={c}>
+                    {c}
                   </option>
                 ))}
               </select>
             </div>
 
+            <div>
+              <label htmlFor="report-subject" className={LABEL}>
+                Subject
+              </label>
+              <input
+                id="report-subject"
+                type="text"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                maxLength={120}
+                aria-invalid={touched && subjectMissing}
+                aria-describedby={touched && subjectMissing ? "report-subject-error" : undefined}
+                placeholder="A short summary"
+                className={`${FIELD} min-h-[44px]`}
+              />
+              {touched && subjectMissing ? (
+                <p id="report-subject-error" role="alert" className="mt-1 text-sm font-semibold text-red-700 dark:text-red-400">
+                  Please add a subject.
+                </p>
+              ) : null}
+            </div>
+
+            <div>
+              <label htmlFor="report-details" className={LABEL}>
+                Details
+              </label>
+              <textarea
+                id="report-details"
+                rows={6}
+                value={details}
+                onChange={(e) => setDetails(e.target.value)}
+                maxLength={1000}
+                aria-invalid={touched && detailsMissing}
+                aria-describedby={touched && detailsMissing ? "report-details-error" : undefined}
+                placeholder={
+                  kind === "report"
+                    ? "What happened? Include the product, seller or order if you can."
+                    : "Describe your idea and how it would help."
+                }
+                className={`${FIELD} py-2`}
+              />
+              {touched && detailsMissing ? (
+                <p id="report-details-error" role="alert" className="mt-1 text-sm font-semibold text-red-700 dark:text-red-400">
+                  Please add some details.
+                </p>
+              ) : null}
+            </div>
+
             <button
               type="submit"
-              className="w-full bg-primary text-on-primary font-bold py-4 rounded-xl shadow-lg hover:shadow-primary/20 hover:-translate-y-0.5 transition-all active:scale-95"
+              className={`inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg bg-primary-700 px-5 text-sm font-bold text-white hover:bg-primary-800 sm:w-auto ${FOCUS}`}
             >
-              Submit Suggestion
+              <MessageCircle className="h-4 w-4" aria-hidden="true" />
+              Send on WhatsApp
             </button>
+            <p className="text-xs text-gray-600 dark:text-gray-400">
+              This opens WhatsApp with your message ready to send to TradeHut support. Nothing
+              is sent until you press send there.
+            </p>
           </form>
-        )}
-      </div>
 
-      {/* Community ideas sidebar */}
-      <aside className="w-full lg:w-80 flex-shrink-0">
-        <div className="bg-surface-container-low rounded-2xl p-6 ghost-border">
-          <h4 className="text-[10px] font-bold uppercase tracking-widest text-primary mb-5">
-            Top Community Ideas
-          </h4>
-          <div className="flex flex-col gap-4">
-            {COMMUNITY_IDEAS.map((idea) => (
-              <div key={idea.title} className="flex items-start gap-3">
-                <div className="w-9 h-9 rounded-xl bg-secondary-green/10 flex items-center justify-center flex-shrink-0">
-                  <idea.Icon className="w-4 h-4 text-secondary-green" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-on-surface">
-                    {idea.title}
-                  </p>
-                  <p className="text-[10px] text-on-surface-variant/70 mt-0.5">
-                    {idea.status}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
+          <aside className="space-y-3 self-start rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900 sm:p-6">
+            <h2 className="font-syne text-base font-bold text-gray-900 dark:text-gray-100">
+              Other ways to reach us
+            </h2>
+            <a
+              href="tel:+233248138722"
+              className={`flex min-h-[44px] items-center gap-3 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-gray-800 hover:bg-gray-50 dark:border-gray-800 dark:text-gray-100 dark:hover:bg-gray-800 ${FOCUS}`}
+            >
+              <Phone className="h-4 w-4 shrink-0" aria-hidden="true" />
+              Call 024 813 8722
+            </a>
+            <Link
+              href="/account/disputes"
+              className={`flex min-h-[44px] items-center gap-3 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-gray-800 hover:bg-gray-50 dark:border-gray-800 dark:text-gray-100 dark:hover:bg-gray-800 ${FOCUS}`}
+            >
+              <Scale className="h-4 w-4 shrink-0" aria-hidden="true" />
+              Open an order dispute
+            </Link>
+          </aside>
         </div>
-      </aside>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Submissions list
-// ---------------------------------------------------------------------------
-function SubmissionsList() {
-  const [filter, setFilter] = useState<SubmissionType | "all">("all");
-
-  const filtered =
-    filter === "all"
-      ? DEMO_SUBMISSIONS
-      : DEMO_SUBMISSIONS.filter((s) => s.type === filter);
-
-  return (
-    <div className="flex flex-col gap-6">
-      {/* Filter chips */}
-      <div className="flex gap-2 flex-wrap">
-        {(
-          [
-            { value: "all", label: "All" },
-            { value: "report", label: "Reports" },
-            { value: "suggestion", label: "Suggestions" },
-          ] as { value: SubmissionType | "all"; label: string }[]
-        ).map((opt) => (
-          <button
-            key={opt.value}
-            onClick={() => setFilter(opt.value)}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-all active:scale-95 ${
-              filter === opt.value
-                ? "bg-primary text-on-primary"
-                : "bg-surface-container-low text-on-surface-variant hover:bg-surface-container"
-            }`}
-          >
-            {opt.label}
-          </button>
-        ))}
       </div>
-
-      {/* Table shell — responsive card list on mobile */}
-      {filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
-          <FileText className="w-12 h-12 text-outline/40" />
-          <p className="text-sm text-on-surface-variant">No submissions found.</p>
-        </div>
-      ) : (
-        <>
-          {/* Desktop table header — hidden on mobile */}
-          <div className="hidden md:grid grid-cols-[1fr_auto_auto_auto] gap-4 px-4 pb-2 border-b border-outline-variant/20">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
-              Subject
-            </span>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant w-24 text-center">
-              Type
-            </span>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant w-28 text-center">
-              Status
-            </span>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant w-28 text-right">
-              Last Update
-            </span>
-          </div>
-
-          <div className="flex flex-col gap-3">
-            {filtered.map((submission) => (
-              <div
-                key={submission.id}
-                className="bg-surface-container-lowest rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 p-5 flex flex-col md:grid md:grid-cols-[1fr_auto_auto_auto] md:items-center gap-3 md:gap-4"
-              >
-                {/* Subject + category */}
-                <div className="flex items-start gap-3">
-                  <div
-                    className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                      submission.type === "report"
-                        ? "bg-error-container/50"
-                        : "bg-secondary-green/10"
-                    }`}
-                  >
-                    {submission.type === "report" ? (
-                      <FlagIcon className="w-4 h-4 text-error" />
-                    ) : (
-                      <Lightbulb className="w-4 h-4 text-secondary-green" />
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-on-surface">
-                      {submission.subject}
-                    </p>
-                    <p className="text-[10px] text-on-surface-variant mt-0.5">
-                      {submission.category}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Type badge */}
-                <div className="md:w-24 md:text-center">
-                  <span
-                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
-                      submission.type === "report"
-                        ? "bg-error-container/60 text-error"
-                        : "bg-secondary-green/10 text-secondary-green"
-                    }`}
-                  >
-                    {submission.type}
-                  </span>
-                </div>
-
-                {/* Status */}
-                <div className="md:w-28 md:text-center">
-                  <StatusPill status={submission.status} />
-                </div>
-
-                {/* Last update */}
-                <div className="md:w-28 md:text-right">
-                  <span className="text-xs text-on-surface-variant font-medium">
-                    {submission.lastUpdate}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Stats bar
-// ---------------------------------------------------------------------------
-const STATS = [
-  {
-    label: "Total Submissions",
-    value: `${DEMO_SUBMISSIONS.length.toString().padStart(3, "0")}`,
-    color: "text-primary",
-    bg: "bg-surface-container-low",
-    border: "",
-  },
-  {
-    label: "In Review",
-    value: `${DEMO_SUBMISSIONS.filter((s) => s.status === "in_review")
-      .length.toString()
-      .padStart(3, "0")}`,
-    color: "text-secondary-green",
-    bg: "bg-surface-container-low",
-    border: "",
-  },
-  {
-    label: "Resolved",
-    value: `${DEMO_SUBMISSIONS.filter((s) => s.status === "resolved")
-      .length.toString()
-      .padStart(3, "0")}`,
-    color: "text-on-surface",
-    bg: "bg-surface-container-low",
-    border: "",
-  },
-  {
-    label: "Pending",
-    value: `${DEMO_SUBMISSIONS.filter((s) => s.status === "pending")
-      .length.toString()
-      .padStart(3, "0")}`,
-    color: "text-bid-amber",
-    bg: "bg-bid-amber/5",
-    border: "border border-bid-amber/15",
-  },
-];
-
-// ---------------------------------------------------------------------------
-// Page component
-// ---------------------------------------------------------------------------
-export default function ReportsPage() {
-  const [activeTab, setActiveTab] = useState<ActiveTab>("report");
-
-  return (
-    <>
-      <AccountMobileHeader title="Reports & Suggestions" />
-
-      <section className="flex-1 min-w-0 text-on-surface font-body">
-
-              {/* Page header */}
-              <div className="relative mb-10 md:mb-12 overflow-hidden">
-                {/* Decorative glow */}
-                <div className="absolute -top-12 -left-12 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none -z-10" />
-                <h1 className="font-syne text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tighter text-on-surface mb-3">
-                  Reports &amp; Suggestions
-                </h1>
-                <p className="text-on-surface-variant text-sm md:text-base leading-relaxed max-w-2xl">
-                  Track your issue reports, submit new ones, and share ideas to
-                  help improve the TradeHut marketplace.
-                </p>
-              </div>
-
-              {/* Stats bar */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-                {STATS.map((stat) => (
-                  <div
-                    key={stat.label}
-                    className={`${stat.bg} ${stat.border} p-5 rounded-xl shadow-card`}
-                  >
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/60 block mb-2">
-                      {stat.label}
-                    </span>
-                    <div className={`font-mono text-3xl font-bold ${stat.color}`}>
-                      {stat.value}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Tab bar */}
-              <div className="sticky top-0 z-10 bg-surface/90 backdrop-blur -mx-4 px-4 md:-mx-6 md:px-6 lg:-mx-8 lg:px-8">
-              <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 mb-8 pt-2 border-b border-outline-variant/20">
-                {TABS.map((tab) => {
-                  const isActive = activeTab === tab.id;
-                  return (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`inline-flex items-center gap-2 px-4 py-3 text-sm font-bold whitespace-nowrap transition-all duration-200 active:scale-95 border-b-2 -mb-px ${
-                        isActive
-                          ? "border-primary text-primary"
-                          : "border-transparent text-on-surface-variant hover:text-on-surface hover:border-outline-variant/40"
-                      }`}
-                    >
-                      <tab.Icon className="w-4 h-4" />
-                      {tab.label}
-                    </button>
-                  );
-                })}
-              </div>
-              </div>
-
-              {/* Tab panels */}
-              <div className="min-h-[400px]">
-                {activeTab === "report" && <ReportForm />}
-                {activeTab === "suggestion" && <SuggestionForm />}
-                {activeTab === "submissions" && <SubmissionsList />}
-              </div>
-
-              {/* Support guidelines section */}
-              <div className="my-12 h-px w-full bg-gradient-to-r from-transparent via-on-surface-variant/10 to-transparent" />
-
-              <section className="mb-12">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  <div className="col-span-1">
-                    <h2 className="font-syne text-2xl md:text-3xl font-bold tracking-tight mb-3 text-on-surface">
-                      Support Guidelines
-                    </h2>
-                    <p className="text-sm text-on-surface-variant leading-relaxed">
-                      Our commitment to safety and transparency is built on direct
-                      user feedback.
-                    </p>
-                  </div>
-                  <div className="col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div className="p-6 rounded-2xl bg-surface-container-lowest shadow-card">
-                      <Gavel className="w-6 h-6 text-primary mb-3" />
-                      <h5 className="font-bold mb-2 text-on-surface">
-                        Fair Usage Policy
-                      </h5>
-                      <p className="text-xs text-on-surface-variant leading-relaxed">
-                        Understand how we evaluate reports and ensure unbiased
-                        mediation for all TradeHut members.
-                      </p>
-                    </div>
-                    <div className="p-6 rounded-2xl bg-surface-container-lowest shadow-card">
-                      <FileText className="w-6 h-6 text-primary mb-3" />
-                      <h5 className="font-bold mb-2 text-on-surface">
-                        Mediation Process
-                      </h5>
-                      <p className="text-xs text-on-surface-variant leading-relaxed">
-                        A step-by-step guide on what happens after you file a
-                        report and how we reach resolutions.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </section>
-      </section>
     </>
   );
 }

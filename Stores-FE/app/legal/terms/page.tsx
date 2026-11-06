@@ -31,9 +31,6 @@ export default function TermsOfServicePage() {
                 <h3 className="font-syne font-bold text-on-surface text-lg">
                   Table of Contents
                 </h3>
-                <p className="text-on-surface-variant/60 text-xs mt-1">
-                  Last updated Oct 2023
-                </p>
               </div>
 
               <nav className="flex flex-col gap-y-1 py-2">
@@ -236,12 +233,9 @@ export default function TermsOfServicePage() {
                 responsibilities on the TradeHut platform.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="bg-primary text-on-primary px-8 py-3 rounded-md font-bold hover:shadow-lg active:scale-95 transition-all">
-                  Contact Legal
-                </button>
-                <button className="bg-transparent border border-outline px-8 py-3 rounded-md font-bold hover:bg-surface-container-low active:scale-95 transition-all">
-                  Download PDF
-                </button>
+                <a href="tel:+233248138722" className="bg-primary text-on-primary px-8 py-3 rounded-md font-bold hover:shadow-lg active:scale-95 transition-all text-center">
+                  Call 024 813 8722
+                </a>
               </div>
             </footer>
 
@@ -278,7 +272,7 @@ export default function TermsOfServicePage() {
                 TradeHut
               </span>
               <p className="font-body text-xs uppercase tracking-widest text-on-surface/60">
-                &copy; {new Date().getFullYear()} TradeHut Ltd. All rights reserved.
+                &copy; {new Date().getFullYear()} TradeHut. All rights reserved.
               </p>
             </div>
             <div className="flex flex-wrap justify-center gap-6 font-body text-xs uppercase tracking-widest">

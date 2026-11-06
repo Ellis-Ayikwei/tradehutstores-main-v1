@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { Search, Camera, Clock, TrendingUp, X, ArrowRight, Tag } from 'lucide-react'
+import { Search, Camera, Clock, X, ArrowRight, Tag } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import ImageSearchModal from './ImageSearchModal'
 import {
@@ -24,44 +24,6 @@ interface Suggestion {
     type: 'trending' | 'recent' | 'category' | 'suggestion'
     label: string
     category?: string
-}
-
-// ─── Mock / local data ────────────────────────────────────────────────────────
-
-const TRENDING: Suggestion[] = [
-    { type: 'trending', label: 'iPhone 15 Pro Max', category: 'Electronics' },
-    { type: 'trending', label: 'Nike Air Force 1', category: 'Fashion' },
-    { type: 'trending', label: 'Air Fryer XL', category: 'Home & Garden' },
-    { type: 'trending', label: 'Wireless Earbuds', category: 'Electronics' },
-    { type: 'trending', label: 'Yoga Mat Premium', category: 'Sports' },
-]
-
-// Local fallback pool — used when the API is unreachable so the dropdown
-// never goes blank during dev.
-const POOL = [
-    { label: 'iPhone 15 Pro', category: 'Electronics' },
-    { label: 'iPhone 15 Pro Max case', category: 'Electronics' },
-    { label: 'Samsung Galaxy S24', category: 'Electronics' },
-    { label: 'Nike Air Max 270', category: 'Fashion' },
-    { label: 'Nike Running Shoes', category: 'Fashion' },
-    { label: 'Adidas Ultraboost', category: 'Fashion' },
-    { label: 'Air Fryer 5.5L', category: 'Home & Garden' },
-    { label: 'Wireless Noise Cancelling Headphones', category: 'Electronics' },
-    { label: 'Bluetooth Speaker Portable', category: 'Electronics' },
-    { label: 'Gaming Chair Ergonomic', category: 'Furniture' },
-    { label: 'MacBook Pro M3', category: 'Electronics' },
-    { label: 'Laptop Stand Adjustable', category: 'Electronics' },
-    { label: 'Women\'s Yoga Pants', category: 'Sports' },
-    { label: 'Protein Powder Whey', category: 'Health' },
-    { label: 'Smart Watch Fitness', category: 'Electronics' },
-]
-
-function getMockSuggestions(q: string): Suggestion[] {
-    if (!q.trim()) return []
-    return POOL
-        .filter(p => p.label.toLowerCase().includes(q.toLowerCase()))
-        .slice(0, 6)
-        .map(p => ({ type: 'suggestion' as const, ...p }))
 }
 
 function highlightMatch(text: string, query: string) {
@@ -171,17 +133,6 @@ function SearchDropdown({ query, recent, suggestions, hits, loading, onSelect, o
                         </div>
                     )}
 
-                    <div className="py-1.5">
-                        <p className="px-4 pt-1 pb-1.5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-600">Trending Now</p>
-                        {TRENDING.map((t, i) => (
-                            <button key={i} className={row} onClick={() => onSelect(t.label)}>
-                                <TrendingUp className="h-3.5 w-3.5 text-orange-400 shrink-0" />
-                                <span className="flex-1 text-sm text-gray-800 dark:text-gray-200 truncate">{t.label}</span>
-                                <span className="shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-orange-50 dark:bg-orange-900/30 text-orange-500">{t.category}</span>
-                            </button>
-                        ))}
-                    </div>
-
                     <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50">
                         <p className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-600 mb-2">Popular Categories</p>
                         <div className="flex flex-wrap gap-1.5">
@@ -226,7 +177,7 @@ export default function SearchBar({ variant = 'hero', className = '' }: SearchBa
         return () => document.removeEventListener('mousedown', handler)
     }, [])
 
-    // Debounced autocomplete — falls back to local POOL on failure / empty API.
+    // Debounced autocomplete — empty when the API returns nothing.
     useEffect(() => {
         const trimmed = query.trim()
         if (trimmed.length < 2) {
@@ -244,11 +195,10 @@ export default function SearchBar({ variant = 'hero', className = '' }: SearchBa
             }))
             const remoteHits = result.products ?? []
 
-            // Keep mock matches in the mix for dev environments where the API is
-            // empty / mocked; dedupe by lowercase label.
+            // Dedupe by lowercase label.
             const seen = new Set<string>()
             const merged: Suggestion[] = []
-            for (const s of [...remoteSuggestions, ...getMockSuggestions(trimmed)]) {
+            for (const s of remoteSuggestions) {
                 const key = s.label.toLowerCase()
                 if (seen.has(key)) continue
                 seen.add(key)

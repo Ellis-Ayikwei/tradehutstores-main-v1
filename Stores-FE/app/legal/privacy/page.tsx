@@ -44,9 +44,6 @@ export default function PrivacyPolicyPage() {
               <h3 className="font-syne font-bold text-on-surface text-lg">
                 Table of Contents
               </h3>
-              <p className="text-xs text-on-surface-variant/60 font-body mt-1">
-                Last updated Oct 2023
-              </p>
             </div>
 
             <nav className="flex flex-col gap-1">
@@ -86,11 +83,6 @@ export default function PrivacyPolicyPage() {
                 policy outlines how we handle your information with care and
                 honesty.
               </p>
-
-              <div className="mt-6 flex items-center gap-2 text-xs font-mono text-on-surface-variant/60">
-                <Clock className="w-4 h-4" />
-                LAST MODIFIED: 2023-10-24
-              </div>
             </section>
 
             {/* 1. Introduction */}
@@ -243,7 +235,7 @@ export default function PrivacyPolicyPage() {
                   },
                   {
                     title: 'Right to Erasure',
-                    body: 'The &ldquo;Right to be Forgotten&rdquo; applies to all non-transactional metadata after account closure.',
+                    body: 'The “Right to be Forgotten” applies to all non-transactional metadata after account closure.',
                   },
                 ].map(({ title, body }) => (
                   <div
@@ -311,24 +303,21 @@ export default function PrivacyPolicyPage() {
                     Questions about this Privacy Policy?
                   </p>
                   <p className="text-on-surface-variant text-sm mt-1">
-                    Our legal team responds within 24 business hours.
+                    Call or WhatsApp us on 024 813 8722.
                   </p>
                 </div>
-                <button className="shrink-0 bg-tertiary text-on-tertiary px-6 md:px-8 py-3 rounded-md font-bold hover:opacity-90 active:scale-95 transition-all flex items-center gap-2">
+                <a href="tel:+233248138722" className="shrink-0 bg-tertiary text-on-tertiary px-6 md:px-8 py-3 rounded-md font-bold hover:opacity-90 active:scale-95 transition-all flex items-center gap-2">
                   <Headphones className="w-4 h-4" />
-                  Open Privacy Ticket
-                </button>
+                  Call 024 813 8722
+                </a>
               </div>
             </section>
 
             {/* Download CTA */}
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <button className="bg-primary text-on-primary px-8 py-3 rounded-md font-bold hover:shadow-lg active:scale-95 transition-all">
-                Contact Legal
-              </button>
-              <button className="bg-transparent border border-outline px-8 py-3 rounded-md font-bold hover:bg-surface-container-low active:scale-95 transition-all">
-                Download PDF
-              </button>
+              <a href="tel:+233248138722" className="bg-primary text-on-primary px-8 py-3 rounded-md font-bold hover:shadow-lg active:scale-95 transition-all text-center">
+                Call 024 813 8722
+              </a>
             </div>
 
             {/* Cross-links */}
@@ -364,7 +353,7 @@ export default function PrivacyPolicyPage() {
                 TradeHut
               </div>
               <p className="font-body text-xs text-on-surface-variant">
-                &copy; {new Date().getFullYear()} TradeHut Ltd. All rights reserved.
+                &copy; {new Date().getFullYear()} TradeHut. All rights reserved.
               </p>
             </div>
             <div className="flex flex-wrap justify-center gap-6">

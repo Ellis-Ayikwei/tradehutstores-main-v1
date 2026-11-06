@@ -6,25 +6,28 @@ import {
     FileText,
     Scale,
     Heart,
+    Star,
     MapPin,
     CreditCard,
     MessageCircle,
     Bell,
     User,
+    BadgeCheck,
     Shield,
-    Store,
 } from 'lucide-react'
 
 export type AccountNavItem = {
     href: string
     label: string
     Icon: LucideIcon
-    /** If true, show a divider above this item */
+    /** If true, show a divider above this item (sidebar / drawer only) */
     sectionBreak?: boolean
 }
 
 /**
- * Primary account sidebar — single source for /account/* navigation.
+ * Primary account navigation — single source for /account/* links
+ * (sidebar, drawer and the section strip rendered by app/account/layout.tsx).
+ * Every href must be an existing route under app/account.
  */
 export const ACCOUNT_NAV_ITEMS: AccountNavItem[] = [
     { href: '/account', label: 'Overview', Icon: LayoutDashboard },
@@ -33,6 +36,7 @@ export const ACCOUNT_NAV_ITEMS: AccountNavItem[] = [
     { href: '/account/requests', label: 'My Requests', Icon: FileText },
     { href: '/account/disputes', label: 'Disputes', Icon: Scale },
     { href: '/account/wishlist', label: 'Wishlist', Icon: Heart },
+    { href: '/account/reviews', label: 'Reviews', Icon: Star },
     { href: '/account/addresses', label: 'Addresses', Icon: MapPin },
     { href: '/account/payment-methods', label: 'Payment Methods', Icon: CreditCard },
     {
@@ -43,6 +47,7 @@ export const ACCOUNT_NAV_ITEMS: AccountNavItem[] = [
     },
     { href: '/account/notifications', label: 'Notifications', Icon: Bell },
     { href: '/account/profile', label: 'Profile', Icon: User },
+    { href: '/account/verification', label: 'Verification', Icon: BadgeCheck },
     { href: '/account/security', label: 'Security', Icon: Shield },
 ]
 
@@ -51,11 +56,13 @@ export function isAccountNavActive(pathname: string, href: string): boolean {
     return pathname === href || pathname.startsWith(`${href}/`)
 }
 
-/** Compact mobile bottom bar (subset of account nav). */
+/**
+ * Mobile bottom bar: four destinations. AccountShell adds a fifth "More"
+ * button that opens the full navigation drawer.
+ */
 export const ACCOUNT_BOTTOM_NAV: { href: string; label: string; Icon: LucideIcon }[] = [
-    { href: '/', label: 'Home', Icon: Store },
-    { href: '/account/bids', label: 'Bids', Icon: Gavel },
+    { href: '/account', label: 'Account', Icon: LayoutDashboard },
     { href: '/account/orders', label: 'Orders', Icon: ShoppingBag },
-    { href: '/account/requests', label: 'RFQs', Icon: FileText },
-    { href: '/account', label: 'Profile', Icon: User },
+    { href: '/account/bids', label: 'Bids', Icon: Gavel },
+    { href: '/account/wishlist', label: 'Wishlist', Icon: Heart },
 ]

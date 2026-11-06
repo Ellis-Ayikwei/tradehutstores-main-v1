@@ -227,7 +227,6 @@ export default function AuthModal({ open, onClose, initialMode = 'auto' }: Props
         setError(null)
         try {
             const r = await authApi.verifyOtp(flowToken, joined)
-            console.log("the r", r)
             if (r.flow_token) setFlowToken(r.flow_token)
             const pair = tokensFromVerifyResponse(r)
             if (pair) {
@@ -251,7 +250,6 @@ export default function AuthModal({ open, onClose, initialMode = 'auto' }: Props
             }
             setStep('set-pass')
         } catch (e) {
-            console.log("the e", e)
             setError(renderErrorMessage(e))
             setCode(Array(6).fill(''))
             otpInputs.current[0]?.focus()
@@ -396,7 +394,7 @@ export default function AuthModal({ open, onClose, initialMode = 'auto' }: Props
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter' && identifier.trim()) handleIdentify()
                                     }}
-                                    placeholder="you@example.com or +233 …"
+                                    placeholder="Email or phone number"
                                     className="w-full pl-10 pr-3 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-400 text-sm"
                                 />
                             </div>

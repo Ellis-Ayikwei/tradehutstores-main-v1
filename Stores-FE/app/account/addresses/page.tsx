@@ -78,49 +78,6 @@ const EMPTY_FORM: AddressFormState = {
 };
 
 // ---------------------------------------------------------------------------
-// Demo data
-// TODO: fetch from /api/account/addresses/
-// ---------------------------------------------------------------------------
-const DEMO_ADDRESSES: Address[] = [
-  {
-    id: "addr-001",
-    label: "home",
-    recipient: "Alex Rivera",
-    street: "1288 Silicon Valley Blvd",
-    street2: "Suite 400, Floor 12",
-    city: "San Francisco",
-    region: "CA 94105",
-    country: "United States",
-    phone: "+1 (555) 012-3456",
-    isDefault: true,
-  },
-  {
-    id: "addr-002",
-    label: "work",
-    recipient: "Alex Rivera",
-    street: "420 Innovation Dr",
-    city: "Austin",
-    region: "TX 78701",
-    country: "United States",
-    phone: "+1 (555) 987-6543",
-    isDefault: false,
-  },
-  {
-    id: "addr-003",
-    label: "custom",
-    customLabel: "Studio",
-    recipient: "The Loft Studio",
-    street: "77 Art District Alley",
-    street2: "Studio 3B",
-    city: "Brooklyn",
-    region: "NY 11201",
-    country: "United States",
-    phone: "+1 (555) 234-5678",
-    isDefault: false,
-  },
-];
-
-// ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 function addressTypeIconComponent(label: AddressType): React.ElementType {
@@ -399,7 +356,7 @@ function AddressDrawer({
               type="tel"
               value={form.phone}
               onChange={(e) => onChange("phone", e.target.value)}
-              placeholder="+1 (555) 000-0000"
+              placeholder="Enter phone number"
               className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline/60 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
             />
           </div>
@@ -413,7 +370,7 @@ function AddressDrawer({
               type="text"
               value={form.country}
               onChange={(e) => onChange("country", e.target.value)}
-              placeholder="United States"
+              placeholder="Country"
               className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline/60 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
             />
           </div>
@@ -428,7 +385,7 @@ function AddressDrawer({
                 type="text"
                 value={form.region}
                 onChange={(e) => onChange("region", e.target.value)}
-                placeholder="California"
+                placeholder="Region"
                 className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline/60 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
               />
             </div>
@@ -440,7 +397,7 @@ function AddressDrawer({
                 type="text"
                 value={form.city}
                 onChange={(e) => onChange("city", e.target.value)}
-                placeholder="San Francisco"
+                placeholder="City"
                 className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline/60 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
               />
             </div>
@@ -455,7 +412,7 @@ function AddressDrawer({
               type="text"
               value={form.street}
               onChange={(e) => onChange("street", e.target.value)}
-              placeholder="123 Main Street"
+              placeholder="Street address"
               className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline/60 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
             />
           </div>
@@ -472,7 +429,7 @@ function AddressDrawer({
               type="text"
               value={form.street2}
               onChange={(e) => onChange("street2", e.target.value)}
-              placeholder="Suite 400, Floor 12"
+              placeholder="Apartment, suite, floor"
               className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline/60 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
             />
           </div>
@@ -490,7 +447,7 @@ function AddressDrawer({
                 type="text"
                 value={form.landmark}
                 onChange={(e) => onChange("landmark", e.target.value)}
-                placeholder="Near city hall"
+                placeholder="Nearby landmark"
                 className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline/60 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
               />
             </div>
@@ -502,7 +459,7 @@ function AddressDrawer({
                 type="text"
                 value={form.postalCode}
                 onChange={(e) => onChange("postalCode", e.target.value)}
-                placeholder="94105"
+                placeholder="Postal code"
                 className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline/60 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
               />
             </div>
@@ -590,7 +547,7 @@ function DeleteConfirmDialog({
 // Page component
 // ---------------------------------------------------------------------------
 export default function SavedAddressesPage() {
-  const [addresses, setAddresses] = useState<Address[]>(DEMO_ADDRESSES);
+  const [addresses, setAddresses] = useState<Address[]>([]);
   const [addressFormOpen, setAddressFormOpen] = useState(false);
   const [form, setForm] = useState<AddressFormState>(EMPTY_FORM);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
@@ -729,59 +686,6 @@ export default function SavedAddressesPage() {
 
                 {/* Add new placeholder tile */}
                 <AddNewTile onClick={openAddDrawer} />
-              </div>
-
-              {/* Info banner */}
-              <div className="mt-12 md:mt-16 p-8 md:p-10 bg-surface-container-low rounded-2xl relative overflow-hidden">
-                {/* Decorative map overlay — hidden on mobile to save space */}
-                <div className="hidden md:block absolute right-0 top-0 w-1/3 h-full opacity-10 pointer-events-none select-none">
-                  <svg
-                    viewBox="0 0 200 200"
-                    className="w-full h-full object-cover"
-                    aria-hidden="true"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    {/* Abstract globe / map lines */}
-                    <circle cx="100" cy="100" r="80" stroke="currentColor" strokeWidth="1" />
-                    <ellipse cx="100" cy="100" rx="40" ry="80" stroke="currentColor" strokeWidth="1" />
-                    <ellipse cx="100" cy="100" rx="80" ry="40" stroke="currentColor" strokeWidth="1" />
-                    <line x1="20" y1="100" x2="180" y2="100" stroke="currentColor" strokeWidth="1" />
-                    <line x1="100" y1="20" x2="100" y2="180" stroke="currentColor" strokeWidth="1" />
-                  </svg>
-                </div>
-
-                <div className="relative z-10 max-w-xl">
-                  <h4 className="font-headline font-bold text-xl md:text-2xl text-on-surface tracking-tight">
-                    Global Logistics Support
-                  </h4>
-                  <p className="mt-3 text-sm text-on-surface-variant leading-relaxed">
-                    TradeHut partners with premium freight services to ensure
-                    your high-value assets arrive safely. Default addresses are
-                    automatically synchronised with our Auction and RFQ engines
-                    for instant shipping estimates.
-                  </p>
-                  <div className="mt-6 flex flex-wrap gap-6 md:gap-8">
-                    <div className="flex flex-col gap-1">
-                      <span className="font-mono text-primary font-bold">100%</span>
-                      <span className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant opacity-60">
-                        Insured Shipping
-                      </span>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <span className="font-mono text-primary font-bold">24/7</span>
-                      <span className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant opacity-60">
-                        Asset Tracking
-                      </span>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <span className="font-mono text-primary font-bold">Priority</span>
-                      <span className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant opacity-60">
-                        Handling
-                      </span>
-                    </div>
-                  </div>
-                </div>
               </div>
             </section>
 

@@ -26,6 +26,7 @@ import {
   Calendar,
   ChevronDown,
   Headphones,
+  Package,
 } from "lucide-react";
 
 // ---------------------------------------------------------------------------
@@ -149,13 +150,17 @@ function OrderRow({ order }: { order: Order }) {
                 key={item.id}
                 className="w-9 h-9 rounded-lg border-2 border-surface-container-lowest overflow-hidden bg-surface-container-low flex-shrink-0 relative"
               >
-                <Image
-                  src={item.imageUrl}
-                  alt={item.imageAlt}
-                  fill
-                  sizes="36px"
-                  className="object-cover"
-                />
+                {item.imageUrl ? (
+                  <Image
+                    src={item.imageUrl}
+                    alt={item.imageAlt}
+                    fill
+                    sizes="36px"
+                    className="object-cover"
+                  />
+                ) : (
+                  <Package className="absolute inset-0 m-auto w-4 h-4 text-on-surface-variant" aria-label={item.imageAlt} />
+                )}
               </div>
             ))}
             {order.items.length > 3 && (
@@ -192,13 +197,17 @@ function OrderRow({ order }: { order: Order }) {
                   key={item.id}
                   className="w-12 h-12 rounded-xl border-2 border-surface-container-lowest overflow-hidden bg-surface-container-low relative"
                 >
-                  <Image
-                    src={item.imageUrl}
-                    alt={item.imageAlt}
-                    fill
-                    sizes="48px"
-                    className="object-cover"
-                  />
+                  {item.imageUrl ? (
+                    <Image
+                      src={item.imageUrl}
+                      alt={item.imageAlt}
+                      fill
+                      sizes="48px"
+                      className="object-cover"
+                    />
+                  ) : (
+                    <Package className="absolute inset-0 m-auto w-5 h-5 text-on-surface-variant" aria-label={item.imageAlt} />
+                  )}
                 </div>
               ))}
             </div>
@@ -334,8 +343,8 @@ export default function MyOrdersPage() {
                 </p>
               )}
 
-              {/* Filters bar — sticky so tabs are always reachable while scrolling */}
-              <div className="sticky top-0 z-10 bg-surface/90 dark:bg-gray-950/90 backdrop-blur pt-2 pb-4 -mx-4 px-4 md:-mx-0 md:px-0 mb-4">
+              {/* Filters bar — sticky at lg+ below the site header (matches the sidebar offset) */}
+              <div className="z-10 bg-white dark:bg-gray-900 pt-2 pb-3 -mx-4 px-4 md:-mx-0 md:px-0 mb-4 lg:sticky lg:top-40">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                 {/* Status tabs */}
                 <div className="flex items-center gap-1 bg-surface-container-low p-1.5 rounded-xl overflow-x-auto no-scrollbar flex-shrink-0">
@@ -453,45 +462,24 @@ export default function MyOrdersPage() {
               </div>
 
               {/* Contextual insight cards */}
-              <div className="mt-10 md:mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Procurement insights CTA */}
-                <div className="md:col-span-2 bg-gradient-to-br from-primary to-primary-container p-8 rounded-3xl relative overflow-hidden text-on-primary group">
-                  <div className="relative z-10">
-                    <h3 className="font-syne text-2xl font-bold mb-4">
-                      Procurement Insights
-                    </h3>
-                    <p className="text-on-primary/80 max-w-md mb-6 leading-relaxed text-sm">
-                      Your spending has increased by 14% compared to last quarter.
-                      You have 3 open RFQs requiring immediate attention to secure
-                      bulk discounts.
-                    </p>
-                    <Link
-                      href="/account/requests"
-                      className="inline-block bg-surface-container-lowest text-primary px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:scale-105 transition-transform active:scale-95"
-                    >
-                      Review Open RFQs
-                    </Link>
-                  </div>
-                  {/* Decorative icon */}
-                  <div className="absolute -right-8 -bottom-8 opacity-20 group-hover:scale-110 transition-transform duration-700 pointer-events-none">
-                    <ArrowRight className="w-[200px] h-[200px]" />
-                  </div>
-                </div>
-
+              <div className="mt-10 md:mt-12 grid grid-cols-1 gap-6">
                 {/* Support card */}
                 <div className="bg-surface-container-low p-8 rounded-3xl flex flex-col justify-between border border-primary/5">
                   <div>
                     <Headphones className="text-primary mb-4 w-6 h-6" />
                     <h4 className="font-syne font-bold text-lg mb-2">Need Help?</h4>
                     <p className="text-xs text-on-surface-variant/70 leading-relaxed mb-6">
-                      Our dedicated trade managers are available 24/7 to assist with
-                      order tracking or disputes.
+                      Call or WhatsApp us on 024 813 8722 for help with order
+                      tracking or disputes.
                     </p>
                   </div>
-                  <button className="text-primary font-bold text-[10px] uppercase tracking-[0.2em] flex items-center gap-2 group/btn hover:opacity-70 transition-opacity active:scale-95">
-                    Contact Support
+                  <a
+                    href="tel:+233248138722"
+                    className="min-h-[44px] text-primary font-bold text-[10px] uppercase tracking-[0.2em] flex items-center gap-2 group/btn hover:opacity-70 transition-opacity active:scale-95"
+                  >
+                    Call 024 813 8722
                     <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </button>
+                  </a>
                 </div>
               </div>
     </>

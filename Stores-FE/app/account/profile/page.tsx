@@ -1,592 +1,315 @@
 "use client";
 
 /**
- * Profile Settings page
- * Route: /account/profile
+ * Profile — /account/profile
  *
- * Ported from: stitch_full_website_redesign_expansion/tradehut_profile_settings/code.html
- *
- * Layout: Account / dashboard shell (see .claude/design-system/layouts.md)
- * Sidebar is intentionally inline in this file.
- * // TODO: extract to shared <AccountSidebar>
+ * Reads the signed-in user from the existing profile endpoint
+ * (GET users/{id}/profile/). No profile-update endpoint exists yet, so the
+ * details are shown read-only. Display currency is a real preference stored
+ * by CurrencyContext (localStorage).
  */
 
-import { useState, useRef } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { AccountMobileHeader } from "@/components/account/AccountShell";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
+  AlertCircle,
+  ArrowRight,
+  Globe,
+  Info,
+  LogIn,
   ShieldCheck,
-  Camera,
-  CheckCircle,
-  ChevronDown,
 } from "lucide-react";
+import { Badge, SectionHeader } from "@/components/common/marketplace";
+import { useCurrency } from "@/contexts/CurrencyContext";
+import { useUserAccountId } from "@/hooks/useUserAccountId";
+import { getUserProfile, type UserProfileResponse } from "@/lib/accountApi";
+import renderErrorMessage from "@/utils/renderErrorMessage";
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-interface ProfileFormState {
-  displayName: string;
-  username: string;
-  bio: string;
-  fullName: string;
-  email: string;
-  phone: string;
-  dob: string;
-  companyName: string;
-  taxId: string;
-  language: string;
-  timezone: string;
-  currency: string;
+const CARD =
+  "rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900";
+const FOCUS =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
+
+function formatDate(iso: string | null | undefined, withTime = false): string {
+  if (!iso) return "—";
+  try {
+    return new Intl.DateTimeFormat(undefined, {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      ...(withTime ? { hour: "2-digit", minute: "2-digit" } : {}),
+    }).format(new Date(iso));
+  } catch {
+    return iso;
+  }
 }
 
-// ---------------------------------------------------------------------------
-// Demo / placeholder state
-// TODO: PATCH /api/account/profile/ — replace stub with real RTK mutation
-// ---------------------------------------------------------------------------
-const INITIAL_PROFILE: ProfileFormState = {
-  displayName: "Alexander Thorne",
-  username: "alex_thorne",
-  bio: "Industrial collector and vintage enthusiast. Specialized in 20th-century machinery and maritime artifacts.",
-  fullName: "Alexander Julian Thorne",
-  email: "alex.thorne@example.com",
-  phone: "+1 (555) 012-3456",
-  dob: "1988-05-24",
-  companyName: "Thorne Heritage Collections",
-  taxId: "US-129384756",
-  language: "English (US)",
-  timezone: "(GMT-05:00) Eastern Time",
-  currency: "USD ($)",
-};
-
-// ---------------------------------------------------------------------------
-// Field label helper
-// ---------------------------------------------------------------------------
-function FieldLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <label className="block text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-2">
-      {children}
-    </label>
-  );
+function accountTypeLabel(userType: string | undefined): string {
+  if (userType === "super_admin") return "Admin";
+  if (userType === "admin") return "Staff";
+  return "Member";
 }
 
-// ---------------------------------------------------------------------------
-// Section card wrapper
-// ---------------------------------------------------------------------------
-function SectionCard({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
+function initialsOf(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "?";
+  return (parts[0][0] + (parts.length > 1 ? parts[parts.length - 1][0] : "")).toUpperCase();
+}
+
+function ProfileSkeleton() {
   return (
-    <div
-      className={`bg-surface-container-lowest p-6 md:p-8 rounded-2xl shadow-card border border-outline-variant/5 ${className}`}
-    >
-      {children}
+    <div className="space-y-5" aria-busy="true" aria-label="Loading your profile">
+      <div className="h-8 w-48 animate-pulse rounded bg-gray-200 dark:bg-gray-800" />
+      <div className={`${CARD} animate-pulse p-4 sm:p-6`}>
+        <div className="mb-6 flex items-center gap-4">
+          <div className="h-16 w-16 rounded-full bg-gray-200 dark:bg-gray-800" />
+          <div className="h-5 w-40 rounded bg-gray-200 dark:bg-gray-800" />
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="space-y-2">
+              <div className="h-3 w-20 rounded bg-gray-200 dark:bg-gray-800" />
+              <div className="h-5 w-3/4 rounded bg-gray-100 dark:bg-gray-800" />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
 
-// ---------------------------------------------------------------------------
-// Section meta (left column title + description)
-// ---------------------------------------------------------------------------
-function SectionMeta({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
+function Field({ label, value, mono = false }: { label: string; value: string; mono?: boolean }) {
   return (
-    <div className="space-y-2">
-      <h2 className="font-syne font-bold text-xl text-on-surface">{title}</h2>
-      <p className="font-body text-sm text-on-surface-variant leading-relaxed">
-        {description}
-      </p>
+    <div className="min-w-0">
+      <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+        {label}
+      </dt>
+      <dd
+        className={`mt-1 break-words text-sm text-gray-900 dark:text-gray-100 ${mono ? "font-mono" : ""}`}
+      >
+        {value || "—"}
+      </dd>
     </div>
   );
 }
 
-// ---------------------------------------------------------------------------
-// Primary save button (per-card)
-// ---------------------------------------------------------------------------
-function SaveButton({ label = "Save Changes" }: { label?: string }) {
+function CurrencyPreference() {
+  const { currency, setCurrency, enabledDisplayCurrencies, exchangeRates, baseCurrency } =
+    useCurrency();
+
+  const options = useMemo(() => {
+    const set = new Set<string>([baseCurrency, currency]);
+    const source =
+      enabledDisplayCurrencies && enabledDisplayCurrencies.length > 0
+        ? enabledDisplayCurrencies
+        : Object.keys(exchangeRates);
+    source.forEach((c) => set.add(c));
+    return Array.from(set).sort();
+  }, [baseCurrency, currency, enabledDisplayCurrencies, exchangeRates]);
+
   return (
-    <button
-      type="submit"
-      className="mt-6 px-8 py-3 bg-primary text-on-primary rounded-xl font-syne font-bold text-sm shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
-    >
-      {label}
-    </button>
+    <section className={`${CARD} p-4 sm:p-6`} aria-labelledby="pref-heading">
+      <div className="flex items-start gap-3">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-700 dark:bg-primary-900 dark:text-primary-200">
+          <Globe className="h-5 w-5" aria-hidden="true" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <h2 id="pref-heading" className="font-syne text-base font-bold text-gray-900 dark:text-gray-100 sm:text-lg">
+            Display currency
+          </h2>
+          <p className="mt-0.5 text-sm text-gray-600 dark:text-gray-400">
+            Prices across TradeHut are shown in this currency. Checkout totals are confirmed before you pay.
+          </p>
+          <label htmlFor="display-currency" className="sr-only">
+            Display currency
+          </label>
+          <select
+            id="display-currency"
+            value={currency}
+            onChange={(e) => setCurrency(e.target.value)}
+            className={`mt-3 min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 text-base text-gray-900 focus:border-primary-600 focus:ring-primary-600 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100 sm:max-w-xs`}
+          >
+            {options.map((c) => (
+              <option key={c} value={c}>
+                {c}
+                {c === baseCurrency ? " (store currency)" : ""}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+    </section>
   );
 }
 
-// ---------------------------------------------------------------------------
-// Page component
-// ---------------------------------------------------------------------------
 export default function ProfileSettingsPage() {
-  const [form, setForm] = useState<ProfileFormState>(INITIAL_PROFILE);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const userId = useUserAccountId();
+  const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
+  const [profile, setProfile] = useState<UserProfileResponse | null>(null);
 
-  function handleChange(
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!userId) {
+      setProfile(null);
+      setError(null);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    (async () => {
+      try {
+        const p = await getUserProfile(userId);
+        if (!cancelled) setProfile(p);
+      } catch (e: unknown) {
+        if (!cancelled) {
+          setProfile(null);
+          setError(renderErrorMessage(e));
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [userId, reloadKey]);
+
+  const retry = useCallback(() => setReloadKey((k) => k + 1), []);
+
+  if (!mounted || (userId && loading)) return <ProfileSkeleton />;
+
+  if (!userId) {
+    return (
+      <div className={`${CARD} flex flex-col items-center px-6 py-12 text-center`}>
+        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-50 text-primary-700 dark:bg-primary-900 dark:text-primary-200">
+          <LogIn className="h-7 w-7" aria-hidden="true" />
+        </span>
+        <h1 className="mt-4 font-syne text-xl font-bold text-gray-900 dark:text-gray-100">
+          Sign in to view your profile
+        </h1>
+        <Link
+          href="/auth/login"
+          className={`mt-5 inline-flex min-h-[44px] items-center rounded-lg bg-primary-700 px-6 text-sm font-bold text-white hover:bg-primary-800 ${FOCUS}`}
+        >
+          Sign in
+        </Link>
+      </div>
+    );
   }
 
-  function handleAvatarFile(file: File) {
-    if (!file.type.startsWith("image/")) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => setAvatarPreview(ev.target?.result as string);
-    reader.readAsDataURL(file);
-  }
-
-  function handleDrop(e: React.DragEvent<HTMLDivElement>) {
-    e.preventDefault();
-    setIsDragging(false);
-    const file = e.dataTransfer.files[0];
-    if (file) handleAvatarFile(file);
-  }
-
-  // TODO: PATCH /api/account/profile/ — wire real mutation here
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-  }
-
-  function handleGlobalSave() {
-    // TODO: PATCH /api/account/profile/ with full `form` state
-  }
-
-  const currentAvatar =
-    avatarPreview ||
-    "https://lh3.googleusercontent.com/aida-public/AB6AXuAAvL0_AYJxb0E2JLfGhWukt4WuQHQEA_SlMKpfQBZq6P2n-0ybb81NcU8MYQEwrYUb-B_Vwa_jWzlITH0fvtA3g9W2sNgbXRi_wnZoxpMTxITlhogQFNs3lDxJUu7yLxbkpyf_gz02VnHvj92tGfaUrunNUNq8shxAh_J7fDiznzg17Ov-yTTjHelLRfHIeg2m27TSPN7gxy0HuEYpBDmPLVngJ9zJTQOu3SSmV6FpDawcWEP3owoTa4JYPTV6P6EeLLLreRNG6yY";
+  const displayName = profile?.name?.trim() || profile?.username || "";
 
   return (
-    <>
-      <AccountMobileHeader title="Profile Settings" />
+    <div className="space-y-5">
+      <SectionHeader
+        as="h1"
+        title="Profile"
+        subtitle="Your TradeHut account details."
+        className="mb-0 sm:mb-0"
+      />
 
-        {/* Decorative background glows (pointer-events-none, behind content) */}
-        <div className="fixed bottom-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none" />
-        <div className="fixed top-20 left-0 lg:left-64 w-64 h-64 bg-secondary-green/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
+      {error ? (
+        <div
+          role="alert"
+          className="flex flex-col gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-red-900 dark:border-red-900 dark:bg-red-950 dark:text-red-200 sm:flex-row sm:items-center"
+        >
+          <AlertCircle className="h-5 w-5 shrink-0" aria-hidden="true" />
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-semibold">We could not load your profile.</p>
+            <p className="break-words text-xs opacity-80">{error}</p>
+          </div>
+          <button
+            type="button"
+            onClick={retry}
+            className={`min-h-[44px] shrink-0 rounded-lg border border-red-300 bg-white px-4 text-sm font-semibold text-red-800 hover:bg-red-100 dark:border-red-800 dark:bg-transparent dark:text-red-200 ${FOCUS}`}
+          >
+            Try again
+          </button>
+        </div>
+      ) : null}
 
-            <div className="flex-1 min-w-0 space-y-8 md:space-y-10 lg:space-y-12">
-
-              {/* Page title row */}
-              <div>
-                <h1 className="font-syne font-bold text-2xl md:text-3xl text-on-surface tracking-tight">
-                  Profile Settings
-                </h1>
-                <p className="text-sm text-on-surface-variant mt-1">
-                  Update your public presence, personal details, and account preferences.
-                </p>
-              </div>
-
-              {/* ============================================================
-               * SECTION 1: Public Profile
-               * ============================================================ */}
-              <section
-                className="grid grid-cols-1 md:grid-cols-3 gap-8"
-                aria-labelledby="section-public-profile"
+      {profile ? (
+        <section className={`${CARD} p-4 sm:p-6`} aria-labelledby="details-heading">
+          <div className="mb-6 flex items-center gap-4">
+            <span
+              aria-hidden="true"
+              className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-primary-700 font-syne text-xl font-bold text-white"
+            >
+              {initialsOf(displayName || profile.email)}
+            </span>
+            <div className="min-w-0">
+              <h2
+                id="details-heading"
+                className="truncate font-syne text-lg font-bold text-gray-900 dark:text-gray-100"
               >
-                <SectionMeta
-                  title="Public Profile"
-                  description="This information will be displayed publicly to other traders and auction participants."
-                />
-
-                <form
-                  className="md:col-span-2"
-                  onSubmit={handleSubmit}
-                  noValidate
-                >
-                  <SectionCard>
-                    {/* Avatar upload row */}
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8">
-                      {/* Avatar with camera overlay */}
-                      <div
-                        className={`relative group flex-shrink-0 ${
-                          isDragging ? "ring-4 ring-primary/40 rounded-2xl" : ""
-                        }`}
-                        onDragOver={(e) => {
-                          e.preventDefault();
-                          setIsDragging(true);
-                        }}
-                        onDragLeave={() => setIsDragging(false)}
-                        onDrop={handleDrop}
-                      >
-                        <div className="w-24 h-24 rounded-2xl overflow-hidden ring-4 ring-surface-container-low group-hover:scale-[1.02] transition-transform relative">
-                          <Image
-                            src={currentAvatar}
-                            alt="Profile photo"
-                            fill
-                            sizes="96px"
-                            className="object-cover"
-                          />
-                        </div>
-                        <button
-                          type="button"
-                          aria-label="Change profile photo"
-                          onClick={() => fileInputRef.current?.click()}
-                          className="absolute -bottom-2 -right-2 bg-primary text-on-primary p-2 rounded-xl shadow-lg hover:bg-primary-container transition-colors active:scale-95"
-                        >
-                          <Camera className="w-4 h-4" />
-                        </button>
-                      </div>
-
-                      {/* Upload instructions */}
-                      <div className="space-y-1.5">
-                        <h4 className="font-syne font-bold text-on-surface">
-                          Profile Photo
-                        </h4>
-                        <p className="text-xs text-on-surface-variant">
-                          JPG, GIF or PNG. Max size 2 MB.
-                          <br className="hidden sm:block" />
-                          Drop a file here or click the camera icon.
-                        </p>
-                        <div className="flex gap-4 mt-2">
-                          <button
-                            type="button"
-                            onClick={() => fileInputRef.current?.click()}
-                            className="text-xs font-bold text-primary hover:underline active:scale-95 transition-transform"
-                          >
-                            Upload New
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setAvatarPreview(null)}
-                            className="text-xs font-bold text-error/70 hover:underline active:scale-95 transition-transform"
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Hidden file input */}
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) handleAvatarFile(file);
-                        }}
-                      />
-                    </div>
-
-                    {/* Form grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      {/* Display Name */}
-                      <div>
-                        <FieldLabel>Display Name</FieldLabel>
-                        <input
-                          type="text"
-                          name="displayName"
-                          value={form.displayName}
-                          onChange={handleChange}
-                          className="form-input w-full bg-surface-container-low border-transparent focus:border-primary/20 focus:ring focus:ring-primary/10 rounded-xl px-4 py-3 font-body text-sm text-on-surface placeholder:text-on-surface-variant/50 transition"
-                        />
-                      </div>
-
-                      {/* Username */}
-                      <div>
-                        <FieldLabel>Username / Slug</FieldLabel>
-                        <div className="relative flex items-center">
-                          <span className="absolute left-4 text-on-surface-variant/40 font-mono text-sm select-none">
-                            @
-                          </span>
-                          <input
-                            type="text"
-                            name="username"
-                            value={form.username}
-                            onChange={handleChange}
-                            className="form-input w-full bg-surface-container-low border-transparent focus:border-primary/20 focus:ring focus:ring-primary/10 rounded-xl pl-8 pr-4 py-3 font-body text-sm text-on-surface placeholder:text-on-surface-variant/50 transition"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Bio */}
-                      <div className="sm:col-span-2">
-                        <FieldLabel>Bio</FieldLabel>
-                        <textarea
-                          name="bio"
-                          value={form.bio}
-                          onChange={handleChange}
-                          rows={3}
-                          placeholder="Tell the TradeHut community about yourself..."
-                          className="form-textarea w-full bg-surface-container-low border-transparent focus:border-primary/20 focus:ring focus:ring-primary/10 rounded-xl px-4 py-3 font-body text-sm text-on-surface placeholder:text-on-surface-variant/50 resize-none transition"
-                        />
-                      </div>
-                    </div>
-
-                    <SaveButton />
-                  </SectionCard>
-                </form>
-              </section>
-
-              {/* ============================================================
-               * SECTION 2: Personal Information
-               * ============================================================ */}
-              <section
-                className="grid grid-cols-1 md:grid-cols-3 gap-8"
-                aria-labelledby="section-personal-info"
-              >
-                <SectionMeta
-                  title="Personal Information"
-                  description="Private details used for shipping, billing, and identity management."
-                />
-
-                <form
-                  className="md:col-span-2"
-                  onSubmit={handleSubmit}
-                  noValidate
-                >
-                  <SectionCard>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      {/* Full Name */}
-                      <div>
-                        <FieldLabel>Full Name</FieldLabel>
-                        <input
-                          type="text"
-                          name="fullName"
-                          value={form.fullName}
-                          onChange={handleChange}
-                          className="form-input w-full bg-surface-container-low border-transparent focus:border-primary/20 focus:ring focus:ring-primary/10 rounded-xl px-4 py-3 font-body text-sm text-on-surface transition"
-                        />
-                      </div>
-
-                      {/* Email + Verified badge */}
-                      <div>
-                        <FieldLabel>Email Address</FieldLabel>
-                        <div className="relative">
-                          <input
-                            type="email"
-                            name="email"
-                            value={form.email}
-                            onChange={handleChange}
-                            className="form-input w-full bg-surface-container-low border-transparent focus:border-primary/20 focus:ring focus:ring-primary/10 rounded-xl px-4 py-3 pr-24 font-body text-sm text-on-surface transition"
-                          />
-                          <span className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 bg-secondary-green/10 text-secondary-green px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter whitespace-nowrap">
-                            <CheckCircle className="w-3 h-3 fill-current" />
-                            Verified
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Phone */}
-                      <div>
-                        <FieldLabel>Phone Number</FieldLabel>
-                        <input
-                          type="tel"
-                          name="phone"
-                          value={form.phone}
-                          onChange={handleChange}
-                          className="form-input w-full bg-surface-container-low border-transparent focus:border-primary/20 focus:ring focus:ring-primary/10 rounded-xl px-4 py-3 font-body text-sm text-on-surface transition"
-                        />
-                      </div>
-
-                      {/* Date of Birth */}
-                      <div>
-                        <FieldLabel>Date of Birth</FieldLabel>
-                        <input
-                          type="date"
-                          name="dob"
-                          value={form.dob}
-                          onChange={handleChange}
-                          className="form-input w-full bg-surface-container-low border-transparent focus:border-primary/20 focus:ring focus:ring-primary/10 rounded-xl px-4 py-3 font-body text-sm text-on-surface transition"
-                        />
-                      </div>
-                    </div>
-
-                    <SaveButton />
-                  </SectionCard>
-                </form>
-              </section>
-
-              {/* ============================================================
-               * SECTION 3: Account Verification
-               * ============================================================ */}
-              <section
-                className="grid grid-cols-1 md:grid-cols-3 gap-8"
-                aria-labelledby="section-verification"
-              >
-                <SectionMeta
-                  title="Account Verification"
-                  description="Maintain your trust status and manage institutional credentials."
-                />
-
-                <div className="md:col-span-2 space-y-6">
-                  {/* Identity verified badge card */}
-                  <div className="bg-surface-container-lowest rounded-2xl p-6 shadow-card border-l-4 border-secondary-green flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-secondary-green/10 text-secondary-green rounded-full flex items-center justify-center flex-shrink-0">
-                        <ShieldCheck className="w-6 h-6 fill-current" />
-                      </div>
-                      <div>
-                        <h4 className="font-syne font-bold text-on-surface">
-                          Identity Verified
-                        </h4>
-                        <p className="text-xs text-on-surface-variant font-body">
-                          Verified on October 12, 2023
-                        </p>
-                      </div>
-                    </div>
-                    <button className="px-4 py-2 text-xs font-bold border border-outline-variant/30 rounded-xl hover:bg-surface-container-low transition-colors font-syne whitespace-nowrap flex-shrink-0 active:scale-95">
-                      View Badge
-                    </button>
-                  </div>
-
-                  {/* Company information */}
-                  <form onSubmit={handleSubmit} noValidate>
-                    <SectionCard>
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
-                        <h4 className="font-syne font-bold text-on-surface">
-                          Company Information
-                        </h4>
-                        <span className="inline-flex items-center text-[10px] bg-tertiary-container/30 text-tertiary px-3 py-1 rounded-full font-bold uppercase tracking-tighter whitespace-nowrap self-start sm:self-auto">
-                          Institutional Partner
-                        </span>
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        {/* Company Name */}
-                        <div>
-                          <FieldLabel>Company Name</FieldLabel>
-                          <input
-                            type="text"
-                            name="companyName"
-                            value={form.companyName}
-                            onChange={handleChange}
-                            className="form-input w-full bg-surface-container-low border-transparent focus:border-primary/20 focus:ring focus:ring-primary/10 rounded-xl px-4 py-3 font-body text-sm text-on-surface transition"
-                          />
-                        </div>
-
-                        {/* Tax ID / VAT */}
-                        <div>
-                          <FieldLabel>Tax ID / VAT</FieldLabel>
-                          <input
-                            type="text"
-                            name="taxId"
-                            value={form.taxId}
-                            onChange={handleChange}
-                            className="form-input w-full bg-surface-container-low border-transparent focus:border-primary/20 focus:ring focus:ring-primary/10 rounded-xl px-4 py-3 font-mono text-sm text-on-surface transition"
-                          />
-                        </div>
-                      </div>
-
-                      <SaveButton />
-                    </SectionCard>
-                  </form>
-                </div>
-              </section>
-
-              {/* ============================================================
-               * SECTION 4: Preferences
-               * ============================================================ */}
-              <section
-                className="grid grid-cols-1 md:grid-cols-3 gap-8"
-                aria-labelledby="section-preferences"
-              >
-                <SectionMeta
-                  title="Preferences"
-                  description="Customize your localized trading experience and interface language."
-                />
-
-                <form
-                  className="md:col-span-2"
-                  onSubmit={handleSubmit}
-                  noValidate
-                >
-                  <SectionCard>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {/* Language */}
-                      <div>
-                        <FieldLabel>Language</FieldLabel>
-                        <div className="relative">
-                          <select
-                            name="language"
-                            value={form.language}
-                            onChange={handleChange}
-                            className="form-select w-full bg-surface-container-low border-transparent focus:border-primary/20 focus:ring focus:ring-primary/10 rounded-xl px-4 py-3 font-body text-sm text-on-surface appearance-none transition"
-                          >
-                            <option>English (US)</option>
-                            <option>German</option>
-                            <option>Japanese</option>
-                            <option>French</option>
-                          </select>
-                          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/60" />
-                        </div>
-                      </div>
-
-                      {/* Timezone */}
-                      <div>
-                        <FieldLabel>Timezone</FieldLabel>
-                        <div className="relative">
-                          <select
-                            name="timezone"
-                            value={form.timezone}
-                            onChange={handleChange}
-                            className="form-select w-full bg-surface-container-low border-transparent focus:border-primary/20 focus:ring focus:ring-primary/10 rounded-xl px-4 py-3 font-body text-sm text-on-surface appearance-none transition"
-                          >
-                            <option>(GMT-05:00) Eastern Time</option>
-                            <option>(GMT+00:00) UTC</option>
-                            <option>(GMT+01:00) CET</option>
-                          </select>
-                          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/60" />
-                        </div>
-                      </div>
-
-                      {/* Currency */}
-                      <div>
-                        <FieldLabel>Currency</FieldLabel>
-                        <div className="relative">
-                          <select
-                            name="currency"
-                            value={form.currency}
-                            onChange={handleChange}
-                            className="form-select w-full bg-surface-container-low border-transparent focus:border-primary/20 focus:ring focus:ring-primary/10 rounded-xl px-4 py-3 font-body text-sm text-on-surface appearance-none transition"
-                          >
-                            <option>USD ($)</option>
-                            <option>EUR (€)</option>
-                            <option>GBP (£)</option>
-                            <option>JPY (¥)</option>
-                          </select>
-                          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/60" />
-                        </div>
-                      </div>
-                    </div>
-
-                    <SaveButton />
-                  </SectionCard>
-                </form>
-              </section>
-
-              {/* ============================================================
-               * GLOBAL SAVE / DISCARD ROW
-               * ============================================================ */}
-              <div className="pt-10 flex items-center justify-end gap-6 border-t border-outline-variant/10">
-                <button
-                  type="button"
-                  onClick={() => setForm(INITIAL_PROFILE)}
-                  className="text-on-surface-variant font-syne font-bold text-sm hover:text-on-surface transition-colors active:scale-95"
-                >
-                  Discard Changes
-                </button>
-                <button
-                  type="button"
-                  onClick={handleGlobalSave}
-                  className="px-10 py-4 bg-primary text-on-primary rounded-xl font-syne font-bold text-sm shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
-                >
-                  Save All Changes
-                </button>
+                {displayName || "Your account"}
+              </h2>
+              <div className="mt-1 flex flex-wrap items-center gap-2">
+                <Badge variant="primary" size="md">
+                  {accountTypeLabel(profile.user_type)}
+                </Badge>
+                <Badge variant={profile.is_active ? "success" : "danger"} size="md">
+                  {profile.is_active ? "Active" : "Inactive"}
+                </Badge>
               </div>
             </div>
-    </>
+          </div>
+
+          <dl className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
+            <Field label="Full name" value={profile.name?.trim() || `${profile.first_name} ${profile.last_name}`.trim()} />
+            <Field label="Username" value={profile.username} mono />
+            <Field label="Email" value={profile.email} />
+            <Field label="Member since" value={formatDate(profile.date_joined)} />
+            <Field label="Last sign-in" value={formatDate(profile.last_login, true)} />
+          </dl>
+
+          <div className="mt-6 flex items-start gap-3 rounded-lg bg-gray-50 p-3 text-sm text-gray-700 dark:bg-gray-800 dark:text-gray-300">
+            <Info className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+            <p>
+              Editing profile details is not available yet. To change your name or email, contact{" "}
+              <Link href="/help" className={`font-semibold text-primary-700 underline underline-offset-2 dark:text-primary-300 ${FOCUS}`}>
+                support
+              </Link>
+              .
+            </p>
+          </div>
+        </section>
+      ) : null}
+
+      <CurrencyPreference />
+
+      <section className={`${CARD} divide-y divide-gray-100 dark:divide-gray-800`} aria-label="Related settings">
+        <Link
+          href="/account/verification"
+          className={`flex min-h-[64px] items-center gap-3 p-4 hover:bg-gray-50 dark:hover:bg-gray-800 ${FOCUS}`}
+        >
+          <ShieldCheck className="h-5 w-5 shrink-0 text-emerald-700 dark:text-emerald-300" aria-hidden="true" />
+          <span className="min-w-0 flex-1">
+            <span className="block text-sm font-bold text-gray-900 dark:text-gray-100">Trust &amp; verification</span>
+            <span className="block text-xs text-gray-600 dark:text-gray-400">What we check and why.</span>
+          </span>
+          <ArrowRight className="h-4 w-4 shrink-0 text-gray-400" aria-hidden="true" />
+        </Link>
+        <Link
+          href="/account/security"
+          className={`flex min-h-[64px] items-center gap-3 p-4 hover:bg-gray-50 dark:hover:bg-gray-800 ${FOCUS}`}
+        >
+          <ShieldCheck className="h-5 w-5 shrink-0 text-gray-700 dark:text-gray-200" aria-hidden="true" />
+          <span className="min-w-0 flex-1">
+            <span className="block text-sm font-bold text-gray-900 dark:text-gray-100">Security</span>
+            <span className="block text-xs text-gray-600 dark:text-gray-400">Password and sign-in protection.</span>
+          </span>
+          <ArrowRight className="h-4 w-4 shrink-0 text-gray-400" aria-hidden="true" />
+        </Link>
+      </section>
+    </div>
   );
 }

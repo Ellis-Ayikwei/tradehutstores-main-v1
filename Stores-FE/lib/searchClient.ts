@@ -8,8 +8,8 @@
  *   • Elasticsearch is down but the rest of Django is up.
  *   • The visual-search subsystem is disabled (returns 503).
  *
- * Components should treat the absence of a result as "fall back to local
- * mock data" rather than "show an error" — see `SearchBar.tsx` and
+ * Components should treat the absence of a result as "show
+ * an empty state" rather than "show an error" — see `SearchBar.tsx` and
  * `ImageSearchModal.tsx`.
  */
 

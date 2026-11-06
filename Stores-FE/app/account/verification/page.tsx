@@ -1,560 +1,200 @@
-"use client";
-
 /**
- * Verification Status page — "Trust & Verification"
- * Route: /account/verification
+ * Trust and verification — /account/verification
  *
- * Ported from:
- *   stitch_full_website_redesign_expansion/tradehut_verification_status/code.html
- *
- * Layout: Account / dashboard shell (see .claude/design-system/layouts.md)
- * Sidebar is intentionally inline in this file.
- * // TODO: extract to shared <AccountSidebar>
- *
- * Data: fully mocked.
- * // TODO: fetch /api/account/verification/ on mount, replace DEMO_VERIFICATION.
- * // TODO: POST /api/account/verification/{step}/ for document upload.
+ * Informational page. There is no verification-status API yet, so this page
+ * does not show per-user pass/fail states or upload forms; it explains what
+ * TradeHut will ask for and why. Wire real statuses here once the backend
+ * exposes them.
  */
 
-import { useState } from "react";
 import Link from "next/link";
-import { AccountMobileHeader } from "@/components/account/AccountShell";
 import {
-  FileText,
-  ShieldCheck,
   ArrowRight,
+  BadgeCheck,
+  Gavel,
+  Home,
+  IdCard,
+  Info,
+  Landmark,
   Mail,
   Smartphone,
-  IdCard,
-  Home,
   Store,
-  Landmark,
-  TrendingUp,
-  CheckCircle,
-  Circle,
-  Check,
-  Lock,
-  X,
-  BadgeCheck,
-  Sparkles,
+  type LucideIcon,
 } from "lucide-react";
+import { Badge, SectionHeader } from "@/components/common/marketplace";
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-type VerificationStatus = "complete" | "in_review" | "required" | "locked";
-type VerificationTier = "unverified" | "basic" | "verified" | "premium";
+const CARD =
+  "rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900";
+const FOCUS =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
 
-interface VerificationStep {
+type Audience = "all" | "sellers";
+
+interface VerificationItem {
   id: string;
-  /** Lucide icon component for this step */
-  IconComponent: React.ElementType;
+  Icon: LucideIcon;
   title: string;
-  subtitle: string;
-  status: VerificationStatus;
-  /** Shown in the pill badge */
-  statusLabel: string;
-  /** CTA button label — null means no CTA */
-  ctaLabel: string | null;
-  /** href for the CTA (upload flow, view doc, etc.) */
-  ctaHref: string | null;
+  body: string;
+  audience: Audience;
 }
 
-interface SecurityScoreItem {
-  /** Lucide component */
-  IconComponent: React.ElementType;
-  label: string;
-  points: number;
-  achieved: boolean;
-}
-
-interface BenefitItem {
-  label: string;
-  detail: string;
-  unlocked: boolean;
-}
-
-// ---------------------------------------------------------------------------
-// Demo data
-// TODO: fetch from /api/account/verification/ and replace below.
-// ---------------------------------------------------------------------------
-const DEMO_TIER: VerificationTier = "verified";
-
-const DEMO_STEPS: VerificationStep[] = [
+const ITEMS: VerificationItem[] = [
   {
     id: "email",
-    IconComponent: Mail,
-    title: "Email Verification",
-    subtitle: "Verified on Jan 12, 2024",
-    status: "complete",
-    statusLabel: "COMPLETE",
-    ctaLabel: null,
-    ctaHref: null,
+    Icon: Mail,
+    title: "Email address",
+    body: "Confirms you can receive order updates, receipts and security alerts.",
+    audience: "all",
   },
   {
     id: "phone",
-    IconComponent: Smartphone,
-    title: "Phone Verification",
-    subtitle: "Verified on Jan 13, 2024",
-    status: "complete",
-    statusLabel: "COMPLETE",
-    ctaLabel: null,
-    ctaHref: null,
+    Icon: Smartphone,
+    title: "Phone number",
+    body: "Used for delivery contact and to protect your account.",
+    audience: "all",
   },
   {
     id: "identity",
-    IconComponent: IdCard,
-    title: "Identity Verification",
-    subtitle: "Document processed, pending final check.",
-    status: "in_review",
-    statusLabel: "IN REVIEW",
-    ctaLabel: "View Document",
-    ctaHref: "#identity-details",
+    Icon: IdCard,
+    title: "Identity",
+    body: "A government-issued ID confirms you are who you say you are.",
+    audience: "all",
   },
   {
     id: "address",
-    IconComponent: Home,
-    title: "Address Proof",
-    subtitle: "Upload a recent utility bill or bank statement.",
-    status: "required",
-    statusLabel: "REQUIRED",
-    ctaLabel: "Upload Proof",
-    ctaHref: "#upload-address",
+    Icon: Home,
+    title: "Address proof",
+    body: "A recent utility bill or bank statement showing your name and address.",
+    audience: "all",
   },
   {
     id: "business",
-    IconComponent: Store,
-    title: "Business Registration",
-    subtitle: "For sellers only. Unlock after ID verification.",
-    status: "locked",
-    statusLabel: "LOCKED",
-    ctaLabel: null,
-    ctaHref: null,
+    Icon: Store,
+    title: "Business registration",
+    body: "Registration documents for your business. Needed to sell on TradeHut.",
+    audience: "sellers",
   },
   {
     id: "bank",
-    IconComponent: Landmark,
-    title: "Bank Verification",
-    subtitle: "Link and verify your bank account for withdrawals.",
-    status: "locked",
-    statusLabel: "LOCKED",
-    ctaLabel: null,
-    ctaHref: null,
+    Icon: Landmark,
+    title: "Payout account",
+    body: "The bank or mobile money account where your sales payouts are sent.",
+    audience: "sellers",
   },
 ];
 
-const DEMO_SCORE = 84;
-
-const DEMO_SCORE_ITEMS: SecurityScoreItem[] = [
-  { IconComponent: CheckCircle, label: "2FA Active (App)", points: 20, achieved: true },
-  { IconComponent: CheckCircle, label: "Biometric Login", points: 15, achieved: true },
+const BENEFITS: { Icon: LucideIcon; title: string; body: string; href: string; cta: string }[] = [
   {
-    IconComponent: Circle,
-    label: "Hardware Security Key",
-    points: 16,
-    achieved: false,
+    Icon: Gavel,
+    title: "Bid in auctions",
+    body: "Bidders must be verified before placing bids.",
+    href: "/auctions",
+    cta: "Browse auctions",
+  },
+  {
+    Icon: Store,
+    title: "Sell on TradeHut",
+    body: "Sellers complete business and payout checks before listing.",
+    href: "/sell",
+    cta: "Start selling",
   },
 ];
 
-const DEMO_BENEFITS: BenefitItem[] = [
-  {
-    label: "Standard Marketplace Access",
-    detail: "Buy and sell from vetted merchants.",
-    unlocked: true,
-  },
-  {
-    label: "Increased Withdrawal Limits",
-    detail: "Up to GHS 250,000 / day",
-    unlocked: true,
-  },
-  {
-    label: "High-Value Auction Entry",
-    detail: "Requires Business Verification.",
-    unlocked: false,
-  },
-  {
-    label: "Priority RFQ Settlement",
-    detail: "Unlock dedicated trade support.",
-    unlocked: false,
-  },
-];
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-const TIER_CONFIG: Record<
-  VerificationTier,
-  { label: string; IconComponent: React.ElementType; classes: string }
-> = {
-  unverified: {
-    label: "Unverified",
-    IconComponent: X,
-    classes: "bg-error-container text-on-error-container",
-  },
-  basic: {
-    label: "Basic Member",
-    IconComponent: ShieldCheck,
-    classes: "bg-surface-container text-on-surface-variant",
-  },
-  verified: {
-    label: "Tier 2: Verified Member",
-    IconComponent: BadgeCheck,
-    classes: "bg-surface-container-low text-secondary-green",
-  },
-  premium: {
-    label: "Tier 3: Business Pro",
-    IconComponent: Sparkles,
-    classes: "bg-primary-fixed text-on-primary-container",
-  },
-};
-
-const STATUS_CONFIG: Record<
-  VerificationStatus,
-  { pillClasses: string; borderClass: string; cardBg: string; dimmed: boolean }
-> = {
-  complete: {
-    pillClasses: "bg-secondary-container text-on-secondary-container",
-    borderClass: "border-secondary-green",
-    cardBg: "bg-surface-container-lowest",
-    dimmed: false,
-  },
-  in_review: {
-    pillClasses: "bg-primary-container text-on-primary",
-    borderClass: "border-primary",
-    cardBg: "bg-surface-container-lowest",
-    dimmed: false,
-  },
-  required: {
-    pillClasses: "bg-bid-amber/10 text-bid-amber",
-    borderClass: "border-bid-amber",
-    cardBg: "bg-surface-container-lowest",
-    dimmed: false,
-  },
-  locked: {
-    pillClasses: "bg-surface-container-highest text-on-surface-variant",
-    borderClass: "border-outline-variant",
-    cardBg: "bg-surface-container-low",
-    dimmed: true,
-  },
-};
-
-// Map status to icon colour for step card icons
-const STATUS_ICON_COLOR: Record<VerificationStatus, string> = {
-  complete: "text-secondary-green",
-  in_review: "text-primary",
-  required: "text-bid-amber",
-  locked: "text-on-surface-variant",
-};
-
-// ---------------------------------------------------------------------------
-// Sub-components
-// ---------------------------------------------------------------------------
-
-/** Verification step card — used in the top bento grid */
-function StepCard({ step }: { step: VerificationStep }) {
-  const cfg = STATUS_CONFIG[step.status];
-  const iconColor = STATUS_ICON_COLOR[step.status];
-
-  return (
-    <div
-      className={`
-        ${cfg.cardBg} p-6 rounded-xl shadow-card border-l-4 ${cfg.borderClass}
-        flex flex-col justify-between
-        ${cfg.dimmed ? "opacity-60 grayscale" : ""}
-      `}
-    >
-      <div className="flex justify-between items-start">
-        <step.IconComponent className={`w-8 h-8 ${iconColor}`} />
-        <span
-          className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full ${cfg.pillClasses}`}
-        >
-          {step.statusLabel}
-        </span>
-      </div>
-      <div className="mt-4">
-        <h3 className="font-bold text-base md:text-lg leading-tight">
-          {step.title}
-        </h3>
-        <p className="text-sm text-on-surface-variant mt-1 leading-snug">
-          {step.subtitle}
-        </p>
-        {step.ctaLabel && step.ctaHref && (
-          <Link
-            href={step.ctaHref}
-            className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline underline-offset-2 transition-colors active:scale-95"
-          >
-            {step.ctaLabel}
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/** Identity document panel — full-detail card for the in-review step */
-function IdentityDetailsPanel() {
-  const [hovered, setHovered] = useState(false);
-
-  return (
-    <div
-      id="identity-details"
-      className="bg-surface-container-lowest rounded-xl p-6 md:p-8 shadow-card space-y-6"
-    >
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <h3 className="font-headline text-xl md:text-2xl font-bold">
-          Identity Verification
-        </h3>
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-surface-container-low rounded-lg self-start sm:self-auto">
-          <div className="w-2 h-2 rounded-full bg-primary animate-pulse flex-shrink-0" />
-          <span className="text-xs font-bold uppercase tracking-wider text-primary">
-            Pending Review
-          </span>
-        </div>
-      </div>
-
-      <p className="text-on-surface-variant text-sm leading-relaxed">
-        We are currently verifying your government-issued ID. This process
-        typically takes 24–48 hours. Once verified, you will gain access to
-        high-frequency trading tools and elevated withdrawal limits.
-      </p>
-
-      {/* Document preview */}
-      <div
-        className="relative group cursor-pointer"
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-      >
-        {hovered && (
-          <div className="absolute inset-0 bg-primary/10 rounded-lg flex items-center justify-center z-10 transition-opacity">
-            <span className="bg-surface-container-lowest px-4 py-2 rounded-full font-bold text-sm shadow-card">
-              View Original
-            </span>
-          </div>
-        )}
-        <div className="aspect-video rounded-lg overflow-hidden bg-surface-container-low relative">
-          {/* Placeholder — replace with actual secure document preview */}
-          <div className="w-full h-full flex items-center justify-center bg-surface-container">
-            <IdCard className="w-20 h-20 text-outline/30" strokeWidth={0.75} />
-          </div>
-          {/* Document label bar */}
-          <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center bg-on-surface/60 backdrop-blur-sm p-3 rounded-lg text-surface-container-lowest">
-            <div className="flex items-center gap-2">
-              <FileText className="w-4 h-4" />
-              <span className="font-mono text-xs tracking-wider">
-                PASSPORT_SCAN_2024.PDF
-              </span>
-            </div>
-            <span className="text-[10px] font-bold uppercase tracking-widest">
-              Uploaded Jan 15
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Action buttons */}
-      {/* TODO: POST /api/account/verification/identity/ for re-upload */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <button className="flex-1 py-3 px-5 bg-surface-container-low rounded-lg font-bold text-sm hover:bg-surface-container-high transition-colors active:scale-95">
-          Replace Document
-        </button>
-        <button className="flex-1 py-3 px-5 bg-primary text-on-primary rounded-lg font-bold text-sm shadow-md hover:opacity-90 transition-opacity active:scale-95">
-          Submit Additional Info
-        </button>
-      </div>
-    </div>
-  );
-}
-
-/** Security score card */
-function SecurityScoreCard() {
-  const progressPct = DEMO_SCORE;
-
-  return (
-    <div className="bg-surface-container-lowest rounded-xl p-6 md:p-8 shadow-card relative overflow-hidden">
-      {/* Decorative orb */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-secondary-green/5 rounded-full -translate-y-16 translate-x-16 pointer-events-none" />
-
-      <h3 className="font-headline text-lg md:text-xl font-bold mb-6">
-        Security Score
-      </h3>
-
-      <div className="flex items-end gap-4 mb-6">
-        <span className="font-mono text-5xl md:text-6xl font-bold text-secondary-green leading-none">
-          {DEMO_SCORE}
-        </span>
-        <span className="text-on-surface-variant font-bold mb-1.5">/ 100</span>
-        <div className="ml-auto flex items-center gap-1 text-secondary-green">
-          <TrendingUp className="w-4 h-4" />
-          <span className="text-xs font-bold font-mono">+12 PTS</span>
-        </div>
-      </div>
-
-      {/* Progress bar */}
-      <div className="h-2 w-full bg-surface-container-low rounded-full overflow-hidden mb-6">
-        <div
-          className="h-full bg-secondary-green rounded-full transition-all duration-700"
-          style={{ width: `${progressPct}%` }}
-        />
-      </div>
-
-      {/* Score breakdown */}
-      <ul className="space-y-3">
-        {DEMO_SCORE_ITEMS.map((item) => (
-          <li
-            key={item.label}
-            className={`flex items-center justify-between text-sm ${
-              item.achieved ? "" : "text-on-surface-variant/50"
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              <item.IconComponent
-                className={`w-5 h-5 ${
-                  item.achieved ? "text-secondary-green" : "text-outline"
-                }`}
-              />
-              <span>{item.label}</span>
-            </div>
-            <span className="font-mono text-xs">+{item.points}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-/** Verification benefits card */
-function BenefitsCard() {
-  return (
-    <div className="bg-on-surface text-surface-container-lowest rounded-xl p-6 md:p-8 shadow-card">
-      <h3 className="font-headline text-lg md:text-xl font-bold mb-6">
-        Verification Benefits
-      </h3>
-
-      <ul className="space-y-4">
-        {DEMO_BENEFITS.map((benefit) => (
-          <li key={benefit.label} className={`flex items-start gap-4 ${benefit.unlocked ? "" : "opacity-40"}`}>
-            <div
-              className={`mt-1 w-5 h-5 rounded flex items-center justify-center flex-shrink-0 ${
-                benefit.unlocked
-                  ? "bg-secondary-green/20"
-                  : "bg-surface-container-lowest/10"
-              }`}
-            >
-              {benefit.unlocked ? (
-                <Check
-                  className="w-3 h-3 text-secondary-green"
-                />
-              ) : (
-                <Lock
-                  className="w-3 h-3 text-surface-container-lowest"
-                />
-              )}
-            </div>
-            <div>
-              <p className="font-bold text-sm leading-tight">{benefit.label}</p>
-              <p className="text-xs text-surface-variant/60 mt-0.5 font-mono leading-snug">
-                {benefit.detail}
-              </p>
-            </div>
-          </li>
-        ))}
-      </ul>
-
-      {/* Upgrade CTA */}
-      {/* TODO: wire to upgrade/business-pro flow */}
-      <button className="mt-8 w-full py-3 primary-gradient text-on-primary rounded-lg font-bold text-sm transition-transform active:scale-95 hover:opacity-90">
-        Upgrade to Business Pro
-      </button>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Page component
-// ---------------------------------------------------------------------------
 export default function VerificationPage() {
-  const tier = DEMO_TIER;
-  const tierCfg = TIER_CONFIG[tier];
-
   return (
-    <>
-      <AccountMobileHeader title="Trust & Verification" />
+    <div className="space-y-5">
+      <SectionHeader
+        as="h1"
+        title="Trust & verification"
+        subtitle="Verified members make TradeHut safer for buyers and sellers."
+        className="mb-0 sm:mb-0"
+      />
 
-      <section className="flex-1 min-w-0 space-y-10 text-on-surface font-body">
-              {/* ---- Page header ---- */}
-              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div>
-                  <span className="text-primary font-mono font-bold tracking-widest text-xs uppercase">
-                    Account Integrity
-                  </span>
-                  <h2 className="font-syne text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mt-1">
-                    Trust &amp; Verification
-                  </h2>
+      <div
+        role="status"
+        className="flex items-start gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4 text-blue-950 dark:border-blue-900 dark:bg-blue-950 dark:text-blue-100"
+      >
+        <Info className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
+        <div className="min-w-0">
+          <p className="text-sm font-semibold">Verification status is coming to your account</p>
+          <p className="mt-0.5 text-sm leading-relaxed opacity-90">
+            Document upload and live status are not available in your account yet. Below is what we
+            check and why. If you need to be verified now, contact support.
+          </p>
+          <Link
+            href="/help"
+            className={`mt-2 inline-flex min-h-[44px] items-center gap-1 rounded-lg text-sm font-bold underline underline-offset-2 ${FOCUS}`}
+          >
+            Contact support
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+        </div>
+      </div>
+
+      <section aria-labelledby="verif-checks-heading">
+        <h2 id="verif-checks-heading" className="mb-3 font-syne text-lg font-bold text-gray-900 dark:text-gray-100">
+          What we check
+        </h2>
+        <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {ITEMS.map(({ id, Icon, title, body, audience }) => (
+            <li key={id} className={`${CARD} flex gap-3 p-4`}>
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-700 dark:bg-primary-900 dark:text-primary-200">
+                <Icon className="h-5 w-5" aria-hidden="true" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100">{title}</h3>
+                  <Badge variant={audience === "sellers" ? "dark" : "neutral"}>
+                    {audience === "sellers" ? "Sellers" : "All members"}
+                  </Badge>
                 </div>
-                {/* Tier badge */}
-                <div
-                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full self-start md:self-auto flex-shrink-0 ${tierCfg.classes}`}
-                >
-                  <tierCfg.IconComponent className="w-5 h-5" />
-                  <span className="font-bold text-sm">{tierCfg.label}</span>
-                </div>
+                <p className="mt-1 text-sm leading-relaxed text-gray-600 dark:text-gray-400">{body}</p>
               </div>
-
-              {/* ---- Progress bento grid ---- */}
-              {/*
-               * Mobile: 1 column
-               * md: 2 columns
-               * lg: 3 columns
-               */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {DEMO_STEPS.map((step) => (
-                  <StepCard key={step.id} step={step} />
-                ))}
-              </div>
-
-              {/* ---- Two-column detail section ---- */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-
-                {/* Identity verification details panel (left, wider col) */}
-                <div className="lg:col-span-7">
-                  <IdentityDetailsPanel />
-                </div>
-
-                {/* Score + benefits (right, narrower col) */}
-                <div className="lg:col-span-5 space-y-6">
-                  <SecurityScoreCard />
-                  <BenefitsCard />
-                </div>
-              </div>
-
-              {/* ---- Footer context ---- */}
-              <footer className="pt-8 border-t border-outline-variant/10 flex flex-col sm:flex-row justify-between gap-4 items-center opacity-60">
-                <p className="text-xs font-medium">
-                  TradeHut Verification Engine v4.2.1
-                </p>
-                <div className="flex gap-6">
-                  <Link
-                    href="/privacy"
-                    className="text-xs font-bold hover:text-primary transition-colors"
-                  >
-                    Privacy Policy
-                  </Link>
-                  <Link
-                    href="/terms"
-                    className="text-xs font-bold hover:text-primary transition-colors"
-                  >
-                    Terms of Trust
-                  </Link>
-                  <Link
-                    href="/contact"
-                    className="text-xs font-bold hover:text-primary transition-colors"
-                  >
-                    Contact Compliance
-                  </Link>
-                </div>
-              </footer>
+            </li>
+          ))}
+        </ul>
       </section>
-    </>
+
+      <section aria-labelledby="verif-why-heading">
+        <h2 id="verif-why-heading" className="mb-3 font-syne text-lg font-bold text-gray-900 dark:text-gray-100">
+          Why it matters
+        </h2>
+        <ul className={`${CARD} divide-y divide-gray-100 dark:divide-gray-800`}>
+          {BENEFITS.map(({ Icon, title, body, href, cta }) => (
+            <li key={title}>
+              <Link
+                href={href}
+                className={`flex min-h-[64px] items-center gap-3 p-4 hover:bg-gray-50 dark:hover:bg-gray-800 ${FOCUS}`}
+              >
+                <BadgeCheck className="h-5 w-5 shrink-0 text-emerald-700 dark:text-emerald-300" aria-hidden="true" />
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-center gap-2 text-sm font-bold text-gray-900 dark:text-gray-100">
+                    <Icon className="h-4 w-4 shrink-0 text-gray-500" aria-hidden="true" />
+                    {title}
+                  </span>
+                  <span className="block text-xs text-gray-600 dark:text-gray-400">{body}</span>
+                </span>
+                <span className="hidden shrink-0 items-center gap-1 text-sm font-semibold text-primary-700 dark:text-primary-300 sm:inline-flex">
+                  {cta}
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <p className="text-xs text-gray-500 dark:text-gray-400">
+        Read how we handle your documents in our{" "}
+        <Link href="/legal/privacy" className={`font-semibold underline underline-offset-2 ${FOCUS}`}>
+          Privacy Policy
+        </Link>{" "}
+        and{" "}
+        <Link href="/legal/terms" className={`font-semibold underline underline-offset-2 ${FOCUS}`}>
+          Terms
+        </Link>
+        .
+      </p>
+    </div>
   );
 }

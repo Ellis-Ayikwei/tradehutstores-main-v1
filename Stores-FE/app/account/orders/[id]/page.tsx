@@ -108,62 +108,6 @@ const TIMELINE_STEPS: TimelineStep[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// Demo fallback when API has no match (offline/dev)
-// ---------------------------------------------------------------------------
-function getDemoOrder(id: string): OrderDetail {
-  return {
-    id,
-    reference: `#${id}`,
-    placedDate: "October 24, 2023",
-    status: "shipped",
-    timelineStep: 2, // 0=Placed, 1=Confirmed, 2=Shipped (active), 3=Delivered, 4=Reviewed
-    items: [
-      {
-        id: "item-1",
-        name: "Velocity Max G2 Runner",
-        variant: "Neon Orange / US 10.5",
-        qty: 1,
-        unitPrice: 189.0,
-        imageUrl:
-          "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80",
-        imageAlt: "Modern athletic sneaker in bright orange",
-        productSlug: "/products/velocity-max-g2-runner",
-      },
-      {
-        id: "item-2",
-        name: "Metric Chrono Minimalist",
-        variant: "Silver Mesh / 42mm",
-        qty: 1,
-        unitPrice: 345.0,
-        imageUrl:
-          "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80",
-        imageAlt: "Minimalist wrist watch with white face and silver mesh band",
-        productSlug: "/products/metric-chrono-minimalist",
-      },
-    ],
-    subtotal: 534.0,
-    shipping: 12.5,
-    tax: 42.72,
-    total: 589.22,
-    paymentMethod: "VISA ending in •••• 9284",
-    shippingAddress: {
-      name: "Jonathan Sterling",
-      line1: "4829 Westfield Boulevard",
-      line2: "Tech District, Suite 402",
-      city: "Palo Alto",
-      state: "CA",
-      zip: "94301",
-      country: "US",
-      phone: "+1 (555) 092-8472",
-    },
-    trackingNumber: "1Z999AA10123456784",
-    carrier: "UPS Ground",
-    estimatedDelivery: "Oct 28, 2023",
-    canReview: false,
-  };
-}
-
-// ---------------------------------------------------------------------------
 // Status pill
 // ---------------------------------------------------------------------------
 const STATUS_PILL: Record<
@@ -283,13 +227,17 @@ function LineItem({ item }: { item: OrderLineItem }) {
     <div className="flex gap-4 md:gap-6 group">
       {/* Thumbnail */}
       <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl bg-surface-container-low overflow-hidden flex-shrink-0 group-hover:scale-[1.02] transition-transform duration-500 relative">
-        <Image
-          src={item.imageUrl}
-          alt={item.imageAlt}
-          fill
-          sizes="(max-width: 768px) 96px, 128px"
-          className="object-cover"
-        />
+        {item.imageUrl ? (
+          <Image
+            src={item.imageUrl}
+            alt={item.imageAlt}
+            fill
+            sizes="(max-width: 768px) 96px, 128px"
+            className="object-cover"
+          />
+        ) : (
+          <Package className="absolute inset-0 m-auto w-8 h-8 text-on-surface-variant" aria-label={item.imageAlt} />
+        )}
       </div>
 
       {/* Info */}
@@ -347,7 +295,7 @@ export default function OrderDetailPage({
   useEffect(() => {
     let cancelled = false;
     if (!userId) {
-      setOrder(getDemoOrder(id));
+      setOrder(null);
       setFetchError(null);
       return;
     }
@@ -361,13 +309,13 @@ export default function OrderDetailPage({
         if (found) {
           setOrder(mapApiOrderToDetail(found, baseCurrency) as OrderDetail);
         } else {
-          setOrder(getDemoOrder(id));
-          setFetchError("Order not found in your account. Showing sample data.");
+          setOrder(null);
+          setFetchError("We could not find this order in your account.");
         }
       } catch (e) {
         if (!cancelled) {
           setFetchError(renderErrorMessage(e));
-          setOrder(getDemoOrder(id));
+          setOrder(null);
         }
       }
     })();
@@ -380,7 +328,24 @@ export default function OrderDetailPage({
     return (
       <>
         <AccountMobileHeader title="Order Details" />
-        <p className="text-on-surface-variant dark:text-gray-400 text-sm">Loading…</p>
+        {fetchError || !userId ? (
+          <div
+            role="alert"
+            className="rounded-xl border border-gray-200 bg-white px-4 py-8 text-center dark:border-gray-800 dark:bg-gray-900"
+          >
+            <p className="text-sm font-semibold text-on-surface dark:text-gray-100">
+              {fetchError ?? "Sign in to view this order."}
+            </p>
+            <Link
+              href="/account/orders"
+              className="mt-3 inline-flex min-h-[44px] items-center text-sm font-bold text-primary hover:underline"
+            >
+              Back to Order History
+            </Link>
+          </div>
+        ) : (
+          <p className="text-on-surface-variant dark:text-gray-400 text-sm">Loading…</p>
+        )}
       </>
     );
   }
@@ -640,15 +605,18 @@ export default function OrderDetailPage({
                       Need Help with This Order?
                     </h4>
                     <p className="text-xs text-on-surface-variant/70 leading-relaxed">
-                      Our dedicated trade managers are available 24/7 to assist
-                      with tracking, disputes, or returns.
+                      Call or WhatsApp us on 024 813 8722 for help with tracking,
+                      disputes, or returns.
                     </p>
                   </div>
                 </div>
-                <button className="flex-shrink-0 text-primary font-bold text-[10px] uppercase tracking-[0.2em] flex items-center gap-2 group/btn hover:opacity-70 transition-all active:scale-95 whitespace-nowrap">
-                  Contact Support
+                <a
+                  href="tel:+233248138722"
+                  className="flex-shrink-0 min-h-[44px] text-primary font-bold text-[10px] uppercase tracking-[0.2em] flex items-center gap-2 group/btn hover:opacity-70 transition-all active:scale-95 whitespace-nowrap"
+                >
+                  Call 024 813 8722
                   <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                </button>
+                </a>
               </div>
     </>
   );

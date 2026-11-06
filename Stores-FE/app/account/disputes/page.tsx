@@ -88,81 +88,13 @@ interface DemoOrder {
 }
 
 // ---------------------------------------------------------------------------
-// Demo data
+// Data (no backend endpoint wired yet; empty until connected)
 // TODO: replace with /api/disputes/?mine=true
 // ---------------------------------------------------------------------------
-const DEMO_DISPUTES: DemoDispute[] = [
-  {
-    id: "dsp-001",
-    reference: "TH-8829-QX",
-    orderRef: "ORD-4421",
-    itemTitle: "Vintage 1960s Leica M2 Camera",
-    status: "in_review",
-    reason: "Item Not as Described",
-    amount: "$4,250.00",
-    openedDate: "Oct 18, 2023",
-    expectedDecision: "Oct 24, 2023",
-  },
-  {
-    id: "dsp-002",
-    reference: "TH-7741-RK",
-    orderRef: "ORD-3891",
-    itemTitle: "Carbon Fibre Bicycle Frame — Pro Series",
-    status: "open",
-    reason: "Item Not Received",
-    amount: "$1,899.00",
-    openedDate: "Nov 2, 2023",
-  },
-  {
-    id: "dsp-003",
-    reference: "TH-6612-BN",
-    orderRef: "ORD-2201",
-    itemTitle: 'Sony A7R V Mirrorless Camera Kit (24–70mm)',
-    status: "resolved",
-    reason: "Damaged on Arrival",
-    amount: "$3,100.00",
-    openedDate: "Sep 5, 2023",
-    expectedDecision: "Sep 15, 2023",
-  },
-  {
-    id: "dsp-004",
-    reference: "TH-5509-ZL",
-    orderRef: "ORD-1100",
-    itemTitle: "Rolex Submariner Replica Watch",
-    status: "escalated",
-    reason: "Wrong Item Received",
-    amount: "$890.00",
-    openedDate: "Aug 22, 2023",
-  },
-];
+const DEMO_DISPUTES: DemoDispute[] = [];
 
 // TODO: replace with /api/orders/?eligible=dispute
-const DEMO_ORDERS: DemoOrder[] = [
-  {
-    id: "ord-4421",
-    reference: "ORD-4421",
-    title: "Vintage 1960s Leica M2 Camera",
-    seller: "LuxOptics Store",
-    amount: "$4,250.00",
-    date: "Oct 10, 2023",
-  },
-  {
-    id: "ord-3891",
-    reference: "ORD-3891",
-    title: "Carbon Fibre Bicycle Frame — Pro Series",
-    seller: "VeloTech Supplies",
-    amount: "$1,899.00",
-    date: "Oct 28, 2023",
-  },
-  {
-    id: "ord-7712",
-    reference: "ORD-7712",
-    title: "Handmade Ceramic Tea Set (8pc)",
-    seller: "ArtisanCraft Co.",
-    amount: "$320.00",
-    date: "Nov 5, 2023",
-  },
-];
+const DEMO_ORDERS: DemoOrder[] = [];
 
 const DISPUTE_REASONS: { value: DisputeReason; label: string; Icon: React.ElementType }[] =
   [
@@ -347,6 +279,11 @@ function Step1({
           dispute for.
         </p>
         <div className="space-y-3">
+          {DEMO_ORDERS.length === 0 && (
+            <p className="rounded-xl border border-gray-200 bg-white p-4 text-sm text-on-surface-variant">
+              No eligible orders found. Orders you can dispute will appear here.
+            </p>
+          )}
           {DEMO_ORDERS.map((order) => {
             const isSelected = selectedOrder === order.id;
             return (
@@ -755,7 +692,7 @@ function Step3({
         </h3>
         <p className="text-sm text-on-surface-variant">
           Please verify the details below before submitting. Once submitted, the
-          TradeHut mediation team will review your case within 48 hours.
+          TradeHut mediation team will review your case.
         </p>
       </div>
 

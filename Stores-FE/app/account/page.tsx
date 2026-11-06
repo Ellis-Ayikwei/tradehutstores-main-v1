@@ -1,25 +1,42 @@
 "use client";
 
 /**
- * Account Overview — landing page for /account
+ * Account overview — /account
  *
- * Ported from two Stitch sources (merged):
- *   - PRIMARY layout + KPI cards + activity feed + security panel:
- *       stitch_full_website_redesign_expansion/tradehut_account_overview/code.html
- *   - Greeting hero (avatar + name) + order-fulfillment shortcut grid
- *     + recommended products strip + wallet/credits stat:
- *       stitch_full_website_redesign_expansion/tradehut_account_central/code.html
- *
- * TODO: fetch from /api/account/summary to replace all mock data below.
- *
- * Layout: shared AccountShell via app/account/layout.tsx
+ * Data (all existing endpoints via lib/accountApi):
+ *   - profile:               GET users/{id}/profile/
+ *   - orders:                GET users/{id}/my_orders/
+ *   - unread notifications:  GET notifications/unread_count/
+ *   - wishlist count:        Redux wishlist slice
  */
 
 import Link from "next/link";
-import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { AccountMobileHeader } from "@/components/account/AccountShell";
+import {
+  AlertCircle,
+  ArrowRight,
+  Bell,
+  CreditCard,
+  FileText,
+  Gavel,
+  Heart,
+  LifeBuoy,
+  LogIn,
+  MapPin,
+  PackageCheck,
+  Pencil,
+  RotateCcw,
+  Scale,
+  ShieldCheck,
+  ShoppingBag,
+  Star,
+  Truck,
+  User,
+  Wallet,
+  type LucideIcon,
+} from "lucide-react";
+import { Badge, SectionHeader } from "@/components/common/marketplace";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useUserAccountId } from "@/hooks/useUserAccountId";
 import {
@@ -28,678 +45,402 @@ import {
   getNotificationUnreadCount,
   type UserProfileResponse,
 } from "@/lib/accountApi";
+import {
+  mapApiOrdersToListOrders,
+  type OrdersListOrder,
+  type OrdersListStatus,
+} from "@/lib/mapOrderFromApi";
+import renderErrorMessage from "@/utils/renderErrorMessage";
 import { getWishlist } from "@/store/wishListSlice";
 import type { AppDispatch, RootState } from "@/store";
-import {
-  ShoppingBag,
-  Gavel,
-  FileText,
-  Heart,
-  MapPin,
-  CreditCard,
-  Bell,
-  Shield,
-  Star,
-  ArrowRight,
-  Pencil,
-  Share2,
-  Truck,
-  PiggyBank,
-} from "lucide-react";
 
 // ---------------------------------------------------------------------------
-// Mock data — replace with API call
-// TODO: fetch from /api/account/summary
+// Shared look
 // ---------------------------------------------------------------------------
-const MOCK_USER = {
-  name: "Ellis Armahayikwei",
-  memberSince: "March 2022",
-  tier: "Platinum",
-  avatarUrl: "https://i.pravatar.cc/96?img=3",
-  avatarAlt: "Account avatar",
+const CARD =
+  "rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900";
+const FOCUS =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
+
+const STATUS_BADGE: Record<
+  OrdersListStatus,
+  { label: string; variant: "warning" | "info" | "success" | "neutral" | "danger" }
+> = {
+  processing: { label: "Processing", variant: "warning" },
+  shipped: { label: "Shipped", variant: "info" },
+  delivered: { label: "Delivered", variant: "success" },
+  returned: { label: "Returned", variant: "neutral" },
+  cancelled: { label: "Cancelled", variant: "danger" },
 };
 
-const MOCK_SNAPSHOT = {
-  activeOrders: 3,
-  openRFQs: 1,
-  activeBids: 2,
-  wishlistCount: 12,
-  unreadMessages: 4,
-  lifetimeSavings: 1240,
-  storeCredits: 4200,
-};
-
-type ActivityType = "order" | "bid" | "rfq" | "review";
-
-interface ActivityItem {
-  id: string;
-  type: ActivityType;
-  title: string;
-  detail: string;
-  timeLabel: string;
-  href: string;
-}
-
-const MOCK_ACTIVITY: ActivityItem[] = [
-  {
-    id: "act-1",
-    type: "order",
-    title: "Order #99284 shipped",
-    detail: "The logistics provider has updated the status to in-transit.",
-    timeLabel: "2h ago",
-    href: "/account/orders",
-  },
-  {
-    id: "act-2",
-    type: "bid",
-    title: "Outbid on Sony WH-1000XM5",
-    detail: "A new bid of $285.00 was placed by another buyer.",
-    timeLabel: "5h ago",
-    href: "/account/bids",
-  },
-  {
-    id: "act-3",
-    type: "rfq",
-    title: "New offer on RFQ #721",
-    detail: "Supplier ElectronicsHub submitted a bulk quote for 50 units.",
-    timeLabel: "Yesterday",
-    href: "/account/requests",
-  },
-  {
-    id: "act-4",
-    type: "review",
-    title: "Leave a review for Order #99201",
-    detail: "Share your experience with the seller to earn loyalty points.",
-    timeLabel: "2 days ago",
-    href: "/account/orders",
-  },
-];
-
-interface RecommendedProduct {
-  id: string;
-  title: string;
-  price: number;
-  badge?: string;
-  badgeColor?: "primary" | "tertiary";
-  rating?: number;
-  imageUrl: string;
-  imageAlt: string;
-  href: string;
-}
-
-const MOCK_PRODUCTS: RecommendedProduct[] = [
-  {
-    id: "prod-1",
-    title: "Heritage Leather Shell",
-    price: 1280,
-    badge: "Limited Edition",
-    badgeColor: "primary",
-    imageUrl:
-      "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&q=80",
-    imageAlt: "Heritage leather jacket",
-    href: "/product/heritage-leather-shell",
-  },
-  {
-    id: "prod-2",
-    title: "Low-Form Sneakers",
-    price: 450,
-    rating: 4.9,
-    imageUrl:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80",
-    imageAlt: "Minimalist sneakers",
-    href: "/product/low-form-sneakers",
-  },
-  {
-    id: "prod-3",
-    title: "Prism Dial Chrono",
-    price: 890,
-    badge: "Low Stock",
-    badgeColor: "primary",
-    imageUrl:
-      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80",
-    imageAlt: "Minimalist wrist watch",
-    href: "/product/prism-dial-chrono",
-  },
-  {
-    id: "prod-4",
-    title: "Studio Knit Layer",
-    price: 320,
-    badge: "Bestseller",
-    badgeColor: "tertiary",
-    imageUrl:
-      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=600&q=80",
-    imageAlt: "Wool knit sweater",
-    href: "/product/studio-knit-layer",
-  },
-];
-
-// ---------------------------------------------------------------------------
-// Activity icon + color by type
-// ---------------------------------------------------------------------------
-function activityConfig(type: ActivityType): {
-  IconComponent: React.ElementType;
-  bg: string;
-  fg: string;
-} {
-  switch (type) {
-    case "order":
-      return {
-        IconComponent: Truck,
-        bg: "bg-secondary-container/20",
-        fg: "text-secondary-green",
-      };
-    case "bid":
-      return {
-        IconComponent: Gavel,
-        bg: "bg-error-container/20",
-        fg: "text-error",
-      };
-    case "rfq":
-      return {
-        IconComponent: FileText,
-        bg: "bg-tertiary-container/20",
-        fg: "text-tertiary",
-      };
-    case "review":
-      return {
-        IconComponent: Star,
-        bg: "bg-primary-fixed/40",
-        fg: "text-primary-container",
-      };
+function memberSinceLabel(iso: string | undefined): string | null {
+  if (!iso) return null;
+  try {
+    return new Intl.DateTimeFormat(undefined, {
+      month: "long",
+      year: "numeric",
+    }).format(new Date(iso));
+  } catch {
+    return null;
   }
+}
+
+function accountTypeLabel(userType: string | undefined): string {
+  if (userType === "super_admin") return "Admin";
+  if (userType === "admin") return "Staff";
+  return "Member";
+}
+
+function initialsOf(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "?";
+  return (parts[0][0] + (parts.length > 1 ? parts[parts.length - 1][0] : "")).toUpperCase();
 }
 
 // ---------------------------------------------------------------------------
 // Sub-components
 // ---------------------------------------------------------------------------
-
-function memberSinceLabel(iso: string | undefined): string {
-  if (!iso) return MOCK_USER.memberSince;
-  try {
-    return new Intl.DateTimeFormat(undefined, { month: "long", year: "numeric" }).format(
-      new Date(iso)
-    );
-  } catch {
-    return MOCK_USER.memberSince;
-  }
+function OverviewSkeleton() {
+  return (
+    <div className="space-y-4" aria-busy="true" aria-label="Loading your account">
+      <div className={`${CARD} animate-pulse p-4 sm:p-6`}>
+        <div className="flex items-center gap-4">
+          <div className="h-16 w-16 rounded-full bg-gray-200 dark:bg-gray-800" />
+          <div className="flex-1 space-y-2">
+            <div className="h-5 w-1/2 rounded bg-gray-200 dark:bg-gray-800" />
+            <div className="h-3.5 w-1/3 rounded bg-gray-200 dark:bg-gray-800" />
+          </div>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className={`${CARD} h-24 animate-pulse bg-gray-100 dark:bg-gray-800`} />
+        ))}
+      </div>
+      <div className={`${CARD} animate-pulse space-y-3 p-4`}>
+        <div className="h-5 w-1/4 rounded bg-gray-200 dark:bg-gray-800" />
+        <div className="h-14 rounded bg-gray-100 dark:bg-gray-800" />
+        <div className="h-14 rounded bg-gray-100 dark:bg-gray-800" />
+      </div>
+    </div>
+  );
 }
 
-/** Greeting hero — from account_central */
-function GreetingHero({ profile }: { profile: UserProfileResponse | null }) {
-  const displayName = profile?.name?.trim() || MOCK_USER.name;
+function SignedOutState() {
+  return (
+    <div className={`${CARD} flex flex-col items-center px-6 py-12 text-center`}>
+      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-50 text-primary-700 dark:bg-primary-900 dark:text-primary-200">
+        <LogIn className="h-7 w-7" aria-hidden="true" />
+      </span>
+      <h1 className="mt-4 font-syne text-xl font-bold text-gray-900 dark:text-gray-100">
+        Sign in to see your account
+      </h1>
+      <p className="mt-1 max-w-sm text-sm text-gray-600 dark:text-gray-400">
+        Track orders, manage addresses, bids and requests in one place.
+      </p>
+      <Link
+        href="/auth/login"
+        className={`mt-5 inline-flex min-h-[44px] items-center justify-center rounded-lg bg-primary-700 px-6 text-sm font-bold text-white hover:bg-primary-800 ${FOCUS}`}
+      >
+        Sign in
+      </Link>
+    </div>
+  );
+}
+
+function ErrorBanner({ message, onRetry }: { message: string; onRetry: () => void }) {
+  return (
+    <div
+      role="alert"
+      className="flex flex-col gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-red-900 dark:border-red-900 dark:bg-red-950 dark:text-red-200 sm:flex-row sm:items-center"
+    >
+      <AlertCircle className="h-5 w-5 shrink-0" aria-hidden="true" />
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-semibold">We could not load some of your account details.</p>
+        <p className="break-words text-xs opacity-80">{message}</p>
+      </div>
+      <button
+        type="button"
+        onClick={onRetry}
+        className={`min-h-[44px] shrink-0 rounded-lg border border-red-300 bg-white px-4 text-sm font-semibold text-red-800 hover:bg-red-100 dark:border-red-800 dark:bg-transparent dark:text-red-200 ${FOCUS}`}
+      >
+        Try again
+      </button>
+    </div>
+  );
+}
+
+function GreetingCard({ profile }: { profile: UserProfileResponse | null }) {
+  const displayName =
+    profile?.name?.trim() || profile?.username || profile?.email || "there";
   const firstName = displayName.split(/\s+/)[0] || displayName;
-  const tier =
-    profile?.user_type === "super_admin"
-      ? "Admin"
-      : profile?.user_type === "admin"
-        ? "Staff"
-        : profile
-          ? "Member"
-          : MOCK_USER.tier;
   const since = memberSinceLabel(profile?.date_joined);
 
   return (
-    <div className="bg-surface-container-lowest dark:bg-gray-900 dark:border dark:border-gray-800 rounded-2xl shadow-card p-6 md:p-8 relative overflow-hidden">
-      {/* Decorative circle */}
-      <div className="absolute top-0 right-0 w-40 h-40 bg-primary/5 rounded-full -mr-20 -mt-20 pointer-events-none" />
-
-      <div className="relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-6">
-        {/* Avatar */}
-        <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-surface-container-low shadow-md flex-shrink-0 overflow-hidden relative">
-          <Image
-            src={MOCK_USER.avatarUrl}
-            alt={profile?.name ?? MOCK_USER.avatarAlt}
-            fill
-            sizes="96px"
-            className="object-cover"
-          />
-        </div>
-
-        {/* Identity */}
-        <div className="flex-1 text-center sm:text-left">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant dark:text-gray-400 mb-1">
-            Welcome back
-          </p>
-          <h1 className="font-syne text-2xl md:text-3xl font-extrabold tracking-tight text-on-surface dark:text-gray-50">
+    <div className={`${CARD} p-4 sm:p-6`}>
+      <div className="flex items-center gap-4">
+        <span
+          aria-hidden="true"
+          className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-primary-700 font-syne text-xl font-bold text-white sm:h-20 sm:w-20 sm:text-2xl"
+        >
+          {initialsOf(displayName)}
+        </span>
+        <div className="min-w-0 flex-1">
+          <h1 className="truncate font-syne text-xl font-bold text-gray-900 dark:text-gray-100 sm:text-2xl">
             Hi, {firstName}
           </h1>
-          <p className="text-sm text-on-surface-variant dark:text-gray-400 mt-1">
-            {tier} &middot; since {since}
-          </p>
-
-          {/* Quick actions */}
-          <div className="flex flex-wrap gap-2 mt-4 justify-center sm:justify-start">
-            <Link
-              href="/account/profile"
-              className="inline-flex items-center gap-1.5 px-4 py-2 bg-surface-container-high dark:bg-gray-800 rounded-xl text-sm font-medium hover:bg-surface-variant dark:hover:bg-gray-700 transition-colors active:scale-95"
-            >
-              <Pencil className="w-4 h-4" />
-              Edit Profile
-            </Link>
-            {/* TODO: route pending — sharing feature */}
-            <button className="inline-flex items-center gap-1.5 p-2 bg-primary-container text-on-primary rounded-xl hover:opacity-90 transition-opacity active:scale-95">
-              <Share2 className="w-5 h-5" />
-            </button>
+          <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+            <Badge variant="primary" size="md" icon={<User />}>
+              {accountTypeLabel(profile?.user_type)}
+            </Badge>
+            {since ? (
+              <span className="text-xs text-gray-600 dark:text-gray-400">Since {since}</span>
+            ) : null}
           </div>
+          {profile?.email ? (
+            <p className="mt-1 truncate text-xs text-gray-600 dark:text-gray-400">{profile.email}</p>
+          ) : null}
         </div>
-
-        {/* Live status pill — from account_overview */}
-        <div className="flex-shrink-0 hidden md:flex px-4 py-2 bg-surface-container-low dark:bg-gray-800 rounded-xl text-xs font-mono flex items-center gap-2 border border-outline-variant/10 dark:border-gray-700 self-start dark:text-gray-300">
-          <span className="w-2 h-2 rounded-full bg-secondary-green flex-shrink-0" />
-          LIVE NETWORK: ACTIVE
-        </div>
+        <Link
+          href="/account/profile"
+          className={`hidden min-h-[44px] shrink-0 items-center gap-1.5 rounded-lg border border-gray-300 px-4 text-sm font-semibold text-gray-800 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-100 dark:hover:bg-gray-800 sm:inline-flex ${FOCUS}`}
+        >
+          <Pencil className="h-4 w-4" aria-hidden="true" />
+          Edit profile
+        </Link>
       </div>
+      <Link
+        href="/account/profile"
+        className={`mt-4 flex min-h-[44px] items-center justify-center gap-1.5 rounded-lg border border-gray-300 text-sm font-semibold text-gray-800 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-100 dark:hover:bg-gray-800 sm:hidden ${FOCUS}`}
+      >
+        <Pencil className="h-4 w-4" aria-hidden="true" />
+        Edit profile
+      </Link>
     </div>
   );
 }
 
-/** Snapshot cards — 5-card KPI bar from account_overview spec */
-function SnapshotCards({
-  activeOrders,
-  wishlistCount,
-  unreadMessages,
+function StatTile({
+  Icon,
+  label,
+  value,
+  href,
 }: {
-  activeOrders: number;
-  wishlistCount: number;
-  unreadMessages: number;
+  Icon: LucideIcon;
+  label: string;
+  value: number | null;
+  href: string;
 }) {
-  const cards = [
-    {
-      IconComponent: ShoppingBag,
-      iconBg: "bg-surface-container-high dark:bg-gray-800",
-      iconFg: "text-primary-container dark:text-orange-400",
-      label: "Active Orders",
-      value: String(activeOrders),
-      badge: "+12%",
-      badgeClasses: "bg-secondary-container/60 text-secondary-green",
-      href: "/account/orders",
-    },
-    {
-      IconComponent: Gavel,
-      iconBg: "bg-secondary-container/30",
-      iconFg: "text-bid-green",
-      label: "Active Bids",
-      value: String(MOCK_SNAPSHOT.activeBids),
-      badge: "LIVE",
-      badgeClasses: "bg-primary-fixed text-primary",
-      href: "/account/bids",
-    },
-    {
-      IconComponent: FileText,
-      iconBg: "bg-tertiary-container/20",
-      iconFg: "text-tertiary",
-      label: "Open RFQs",
-      value: String(MOCK_SNAPSHOT.openRFQs),
-      badge: "PENDING",
-      badgeClasses: "bg-surface-container-high text-on-surface-variant",
-      href: "/account/requests",
-    },
-    {
-      IconComponent: Heart,
-      iconBg: "bg-error-container/30",
-      iconFg: "text-error",
-      label: "Wishlist",
-      value: String(wishlistCount),
-      badge: null,
-      badgeClasses: "",
-      href: "/account/wishlist",
-    },
-    {
-      IconComponent: Bell,
-      iconBg: "bg-tertiary-fixed/40",
-      iconFg: "text-tertiary",
-      label: "Messages",
-      value: String(unreadMessages),
-      badge: "UNREAD",
-      badgeClasses: "bg-tertiary-container/20 text-tertiary",
-      href: "/account/messages",
-    },
+  return (
+    <Link
+      href={href}
+      className={`${CARD} group flex min-h-[44px] items-center gap-3 p-3 transition-shadow hover:shadow-md sm:p-4 ${FOCUS}`}
+    >
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-700 dark:bg-primary-900 dark:text-primary-200">
+        <Icon className="h-5 w-5" aria-hidden="true" />
+      </span>
+      <span className="min-w-0">
+        <span className="block font-mono text-2xl font-bold leading-none text-gray-900 dark:text-gray-100">
+          {value === null ? "—" : value}
+        </span>
+        <span className="mt-1 block truncate text-xs font-medium text-gray-600 dark:text-gray-400">
+          {label}
+        </span>
+      </span>
+    </Link>
+  );
+}
+
+function OrderStatusStrip({ orders }: { orders: OrdersListOrder[] }) {
+  const counts = useMemo(() => {
+    const c: Record<OrdersListStatus, number> = {
+      processing: 0,
+      shipped: 0,
+      delivered: 0,
+      returned: 0,
+      cancelled: 0,
+    };
+    for (const o of orders) c[o.status] += 1;
+    return c;
+  }, [orders]);
+
+  const steps: { Icon: LucideIcon; label: string; count: number }[] = [
+    { Icon: ShoppingBag, label: "Processing", count: counts.processing },
+    { Icon: Truck, label: "Shipped", count: counts.shipped },
+    { Icon: PackageCheck, label: "Delivered", count: counts.delivered },
+    { Icon: RotateCcw, label: "Returns", count: counts.returned },
   ];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-      {cards.map((c) => (
-        <Link
-          key={c.label}
-          href={c.href}
-          className="bg-surface-container-lowest dark:bg-gray-900 dark:border dark:border-gray-800 p-5 rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 group flex flex-col gap-3"
+    <section className={`${CARD} p-4`} aria-labelledby="orders-status-heading">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <h2
+          id="orders-status-heading"
+          className="font-syne text-base font-bold text-gray-900 dark:text-gray-100 sm:text-lg"
         >
-          <div className="flex items-center justify-between">
-            <c.IconComponent
-              className={`${c.iconFg} ${c.iconBg} p-2 rounded-xl w-9 h-9`}
-            />
-            {c.badge && (
-              <span
-                className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${c.badgeClasses}`}
-              >
-                {c.badge}
-              </span>
-            )}
-          </div>
-          <div>
-            <p className="text-on-surface-variant dark:text-gray-400 text-xs font-medium">
-              {c.label}
-            </p>
-            <p className="font-mono text-3xl font-bold text-on-surface dark:text-gray-100 group-hover:text-primary-container dark:group-hover:text-orange-400 transition-colors">
-              {c.value}
-            </p>
-          </div>
-        </Link>
-      ))}
-    </div>
-  );
-}
-
-/** Activity feed — from account_overview */
-function ActivityFeed() {
-  return (
-    <section>
-      <div className="flex items-center justify-between mb-5">
-        <h2 className="font-syne text-2xl font-bold text-on-surface">
-          Recent Activity
+          My orders
         </h2>
         <Link
-          href="/account/activity"
-          className="text-primary text-sm font-bold flex items-center gap-1 hover:gap-2 transition-all"
+          href="/account/orders"
+          className={`inline-flex min-h-[44px] items-center gap-1 rounded-lg px-2 text-sm font-semibold text-primary-700 hover:text-primary-800 dark:text-primary-300 ${FOCUS}`}
         >
-          View All
-          <ArrowRight className="w-4 h-4" />
+          View all
+          <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </Link>
       </div>
+      <div className="grid grid-cols-4 gap-2">
+        {steps.map(({ Icon, label, count }) => (
+          <Link
+            key={label}
+            href="/account/orders"
+            className={`flex min-h-[44px] flex-col items-center gap-1 rounded-lg p-2 text-center hover:bg-gray-50 dark:hover:bg-gray-800 ${FOCUS}`}
+          >
+            <span className="relative">
+              <Icon className="h-6 w-6 text-gray-700 dark:text-gray-200" aria-hidden="true" />
+              {count > 0 ? (
+                <span className="absolute -right-3 -top-2 min-w-[18px] rounded-full bg-primary-700 px-1 text-center font-mono text-[10px] font-bold leading-[18px] text-white">
+                  {count}
+                </span>
+              ) : null}
+            </span>
+            <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{label}</span>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
 
-      <div className="bg-surface-container-low rounded-2xl overflow-hidden">
-        <div className="divide-y divide-outline-variant/10">
-          {MOCK_ACTIVITY.map((item) => {
-            const cfg = activityConfig(item.type);
+function RecentOrders({ orders }: { orders: OrdersListOrder[] }) {
+  const { formatDisplayPrice } = useCurrency();
+  const recent = orders.slice(0, 3);
+
+  return (
+    <section aria-labelledby="recent-orders-heading">
+      <SectionHeader title="Recent orders" href="/account/orders" actionLabel="View all" />
+      {recent.length === 0 ? (
+        <div className={`${CARD} flex flex-col items-center px-6 py-10 text-center`}>
+          <ShoppingBag className="h-10 w-10 text-gray-400" aria-hidden="true" />
+          <p className="mt-3 text-sm font-semibold text-gray-900 dark:text-gray-100">
+            You have not placed any orders yet
+          </p>
+          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+            Browse today&apos;s deals and your orders will appear here.
+          </p>
+          <Link
+            href="/deals"
+            className={`mt-4 inline-flex min-h-[44px] items-center rounded-lg bg-primary-700 px-5 text-sm font-bold text-white hover:bg-primary-800 ${FOCUS}`}
+          >
+            Shop deals
+          </Link>
+        </div>
+      ) : (
+        <ul className={`${CARD} divide-y divide-gray-100 dark:divide-gray-800`}>
+          {recent.map((o) => {
+            const badge = STATUS_BADGE[o.status];
+            const itemCount = o.items.reduce((n, i) => n + i.qty, 0);
             return (
-              <Link
-                key={item.id}
-                href={item.href}
-                className="p-5 flex items-center gap-4 hover:bg-surface-container-lowest transition-colors cursor-pointer group"
-              >
-                <div
-                  className={`w-12 h-12 rounded-xl ${cfg.bg} flex items-center justify-center ${cfg.fg} flex-shrink-0`}
+              <li key={o.id}>
+                <Link
+                  href={`/account/orders/${o.id}`}
+                  className={`flex min-h-[64px] items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-800 sm:p-4 ${FOCUS}`}
                 >
-                  <cfg.IconComponent className="w-5 h-5" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-bold text-on-surface group-hover:text-primary-container transition-colors truncate">
-                    {item.title}
-                  </p>
-                  <p className="text-sm text-on-surface-variant line-clamp-1">
-                    {item.detail}
-                  </p>
-                </div>
-                <p className="font-mono text-xs text-on-surface-variant flex-shrink-0">
-                  {item.timeLabel}
-                </p>
-              </Link>
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200">
+                    <ShoppingBag className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="flex flex-wrap items-center gap-2">
+                      <span className="font-mono text-sm font-bold text-gray-900 dark:text-gray-100">
+                        {o.reference}
+                      </span>
+                      <Badge variant={badge.variant}>{badge.label}</Badge>
+                    </span>
+                    <span className="mt-0.5 block truncate text-xs text-gray-600 dark:text-gray-400">
+                      {o.date} &middot; {itemCount} {itemCount === 1 ? "item" : "items"}
+                    </span>
+                  </span>
+                  <span className="shrink-0 font-mono text-sm font-bold text-gray-900 dark:text-gray-100">
+                    {formatDisplayPrice(o.total, o.currency)}
+                  </span>
+                </Link>
+              </li>
             );
           })}
-        </div>
+        </ul>
+      )}
+    </section>
+  );
+}
+
+const SHORTCUTS: { Icon: LucideIcon; label: string; href: string }[] = [
+  { Icon: ShoppingBag, label: "Orders", href: "/account/orders" },
+  { Icon: Gavel, label: "Bids", href: "/account/bids" },
+  { Icon: FileText, label: "Requests", href: "/account/requests" },
+  { Icon: Scale, label: "Disputes", href: "/account/disputes" },
+  { Icon: Star, label: "Reviews", href: "/account/reviews" },
+  { Icon: MapPin, label: "Addresses", href: "/account/addresses" },
+  { Icon: CreditCard, label: "Payments", href: "/account/payment-methods" },
+  { Icon: ShieldCheck, label: "Security", href: "/account/security" },
+  { Icon: ShieldCheck, label: "Verification", href: "/account/verification" },
+  { Icon: Bell, label: "Notifications", href: "/account/notifications" },
+];
+
+function QuickAccess() {
+  return (
+    <section>
+      <SectionHeader title="Quick access" />
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
+        {SHORTCUTS.map(({ Icon, label, href }) => (
+          <Link
+            key={label}
+            href={href}
+            className={`${CARD} flex min-h-[56px] items-center gap-3 px-3 py-2 text-sm font-semibold text-gray-900 hover:border-primary-300 hover:shadow-md dark:text-gray-100 ${FOCUS}`}
+          >
+            <Icon className="h-5 w-5 shrink-0 text-primary-700 dark:text-primary-300" aria-hidden="true" />
+            <span className="truncate">{label}</span>
+          </Link>
+        ))}
       </div>
     </section>
   );
 }
 
-/** Order fulfillment shortcut grid — from account_central */
-function OrderFulfillmentGrid() {
-  const steps = [
+function TrustPanel() {
+  const items: { Icon: LucideIcon; title: string; body: string; href: string }[] = [
     {
-      IconComponent: CreditCard,
-      label: "Unpaid",
-      count: 2,
-      // TODO: route pending — sub-filter for unpaid orders
-      href: "/account/orders",
+      Icon: ShieldCheck,
+      title: "Buyer protection",
+      body: "Get help if your order does not arrive or is not as described.",
+      href: "/buyer-protection",
     },
     {
-      IconComponent: ShoppingBag,
-      label: "To Ship",
-      count: 1,
-      href: "/account/orders",
+      Icon: Wallet,
+      title: "Secure payment",
+      body: "Payment is handled securely by Paystack at checkout. No cards are stored.",
+      href: "/account/payment-methods",
     },
     {
-      IconComponent: Truck,
-      label: "Shipped",
-      count: 4,
-      href: "/account/orders",
-    },
-    {
-      IconComponent: Star,
-      label: "To Review",
-      count: 0,
-      href: "/account/reviews",
+      Icon: LifeBuoy,
+      title: "Help centre",
+      body: "Questions about an order, return or your account.",
+      href: "/help",
     },
   ];
-
   return (
-    <section>
-      <div className="flex items-end justify-between mb-4 px-1">
-        <h3 className="font-headline text-lg font-bold text-on-surface">
-          Orders &amp; Fulfillment
-        </h3>
+    <section className={`${CARD} divide-y divide-gray-100 dark:divide-gray-800`} aria-label="Trust and support">
+      {items.map(({ Icon, title, body, href }) => (
         <Link
-          href="/account/orders"
-          className="text-xs font-bold text-primary uppercase tracking-wider hover:underline flex items-center gap-1"
+          key={title}
+          href={href}
+          className={`flex min-h-[64px] items-start gap-3 p-4 hover:bg-gray-50 dark:hover:bg-gray-800 ${FOCUS}`}
         >
-          Full History
-          <ArrowRight className="w-3 h-3 ml-1 align-middle inline" />
+          <Icon className="mt-0.5 h-5 w-5 shrink-0 text-emerald-700 dark:text-emerald-300" aria-hidden="true" />
+          <span className="min-w-0">
+            <span className="block text-sm font-bold text-gray-900 dark:text-gray-100">{title}</span>
+            <span className="block text-xs leading-relaxed text-gray-600 dark:text-gray-400">{body}</span>
+          </span>
         </Link>
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {steps.map((s) => (
-          <Link
-            key={s.label}
-            href={s.href}
-            className="bg-surface-container-lowest p-5 rounded-2xl shadow-card flex flex-col items-center gap-3 border border-transparent hover:border-primary/10 hover:shadow-card-hover transition-all"
-          >
-            <s.IconComponent className="text-primary w-8 h-8" />
-            <span className="text-sm font-medium text-on-surface">
-              {s.label}
-            </span>
-            <div className="px-2 py-0.5 bg-primary/10 text-primary-container rounded-full font-mono text-[10px] font-bold">
-              {s.count}
-            </div>
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/** Shortcut / navigation grid — full account section list */
-function ShortcutGrid() {
-  const shortcuts = [
-    { IconComponent: ShoppingBag, label: "Orders", href: "/account/orders" },
-    { IconComponent: Gavel, label: "Bids", href: "/account/bids" },
-    { IconComponent: FileText, label: "Requests", href: "/account/requests" },
-    { IconComponent: MapPin, label: "Addresses", href: "/account/addresses" },
-    { IconComponent: CreditCard, label: "Payment Methods", href: "/account/payment-methods" },
-    { IconComponent: Shield, label: "Security", href: "/account/security" },
-    { IconComponent: Bell, label: "Messages", href: "/account/messages" },
-    { IconComponent: Shield, label: "Verification", href: "/account/verification" },
-    { IconComponent: Gavel, label: "Disputes", href: "/account/disputes" },
-    { IconComponent: Star, label: "Reviews", href: "/account/reviews" },
-  ];
-
-  return (
-    <section>
-      <h3 className="font-headline text-lg font-bold text-on-surface mb-4 px-1">
-        Quick Access
-      </h3>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-        {shortcuts.map((s) => (
-          <Link
-            key={s.label}
-            href={s.href}
-            className="bg-surface-container-lowest rounded-2xl shadow-card p-4 flex flex-col items-center gap-2 hover:shadow-card-hover hover:bg-surface-container-low transition-all group active:scale-95"
-          >
-            <s.IconComponent className="w-6 h-6 text-on-surface-variant group-hover:text-primary-container transition-colors" />
-            <span className="text-xs font-bold text-on-surface text-center leading-tight">
-              {s.label}
-            </span>
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/** Security snapshot — from account_overview right rail */
-function SecuritySnapshot() {
-  return (
-    <section>
-      <h2 className="font-syne text-xl font-bold text-on-surface mb-4">
-        Security
-      </h2>
-      <div className="bg-surface-container-lowest p-6 rounded-2xl shadow-card border border-outline-variant/10">
-        <div className="flex items-center gap-4 mb-5">
-          <div className="w-12 h-12 rounded-full bg-secondary-green flex items-center justify-center text-on-secondary flex-shrink-0">
-            <Shield className="w-6 h-6 fill-current" />
-          </div>
-          <div>
-            <p className="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">
-              Status
-            </p>
-            <p className="text-xl font-syne font-bold text-secondary-green">
-              Strong
-            </p>
-          </div>
-        </div>
-
-        <div className="space-y-3 mb-5">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-on-surface-variant">2FA</span>
-            <span className="text-secondary-green font-bold">Enabled</span>
-          </div>
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-on-surface-variant">Last Login</span>
-            <span className="font-mono text-xs">Today, 08:42</span>
-          </div>
-        </div>
-
-        <Link
-          href="/account/security"
-          className="block w-full py-3 bg-surface-container text-center rounded-xl font-bold text-on-surface hover:bg-surface-container-high transition-colors text-sm"
-        >
-          Security Settings
-        </Link>
-      </div>
-    </section>
-  );
-}
-
-/** Wallet / credits promo card — from account_central */
-function WalletPromoCard() {
-  const { formatDisplayPrice } = useCurrency();
-  const creditsLabel = formatDisplayPrice(MOCK_SNAPSHOT.storeCredits);
-
-  return (
-    <section className="relative overflow-hidden bg-inverse-surface text-inverse-on-surface p-6 rounded-2xl min-h-[180px]">
-      {/* Decorative icon watermark */}
-      <div className="absolute -right-4 -bottom-4 opacity-10 pointer-events-none select-none">
-        <PiggyBank className="w-[120px] h-[120px]" />
-      </div>
-
-      <div className="relative z-10">
-        <p className="text-[10px] font-bold uppercase tracking-widest opacity-60 mb-1">
-          TradeHut Wallet
-        </p>
-        <h3 className="font-syne text-xl font-bold mb-1">
-          {creditsLabel} Credits
-        </h3>
-        <p className="text-sm opacity-70 mb-5">
-          Use credits at checkout for instant savings across the marketplace.
-        </p>
-        {/* TODO: route pending — wallet/credits page */}
-        <Link
-          href="/account/wallet"
-          className="inline-flex items-center gap-2 px-5 py-2 bg-inverse-on-surface text-on-surface rounded-xl font-bold text-sm hover:opacity-90 transition-opacity active:scale-95"
-        >
-          View Wallet
-          <ArrowRight className="w-4 h-4" />
-        </Link>
-      </div>
-    </section>
-  );
-}
-
-/** Recommended products strip — from account_central */
-function RecommendedStrip() {
-  const { formatDisplayPrice } = useCurrency();
-
-  return (
-    <section>
-      <div className="flex items-center gap-4 mb-6">
-        <h3 className="font-syne text-2xl font-extrabold italic text-on-surface whitespace-nowrap">
-          More to love
-        </h3>
-        <div className="h-px flex-1 bg-surface-container-high" />
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-        {MOCK_PRODUCTS.map((p) => (
-          <Link
-            key={p.id}
-            href={p.href}
-            className="group relative"
-          >
-            {/* Product image */}
-            <div className="aspect-[4/5] w-full overflow-hidden rounded-2xl bg-surface-container-low mb-3 relative">
-              <Image
-                src={p.imageUrl}
-                alt={p.imageAlt}
-                fill
-                sizes="(max-width: 768px) 50vw, 25vw"
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              {/* Wishlist button */}
-              <button
-                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-surface-container-lowest/80 backdrop-blur-md flex items-center justify-center shadow-card hover:bg-primary-container hover:text-on-primary transition-all active:scale-95"
-                onClick={(e) => {
-                  e.preventDefault();
-                  // TODO: dispatch wishlist toggle action
-                }}
-                aria-label="Add to wishlist"
-              >
-                <Heart className="w-4 h-4" />
-              </button>
-              {/* Quick View hover overlay */}
-              <div className="absolute bottom-0 left-0 p-3 w-full translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                <div className="w-full py-2 bg-primary text-on-primary rounded-xl text-xs font-bold uppercase tracking-widest text-center shadow-lg">
-                  Quick View
-                </div>
-              </div>
-            </div>
-
-            <h4 className="font-headline text-sm font-bold text-on-surface truncate">
-              {p.title}
-            </h4>
-            <div className="flex items-center justify-between mt-1">
-              <span className="font-mono text-base font-medium text-primary-container">
-                {formatDisplayPrice(p.price)}
-              </span>
-              {p.badge ? (
-                <span
-                  className={`text-[10px] uppercase tracking-tighter px-2 py-0.5 rounded font-bold ${
-                    p.badgeColor === "tertiary"
-                      ? "bg-tertiary-container/20 text-on-tertiary-container"
-                      : "bg-surface-container-highest text-on-surface-variant"
-                  }`}
-                >
-                  {p.badge}
-                </span>
-              ) : p.rating ? (
-                <div className="flex items-center gap-1">
-                  <Star className="w-3 h-3 text-secondary-green fill-current" />
-                  <span className="font-mono text-xs font-bold">{p.rating}</span>
-                </div>
-              ) : null}
-            </div>
-          </Link>
-        ))}
-      </div>
+      ))}
     </section>
   );
 }
@@ -710,10 +451,20 @@ function RecommendedStrip() {
 export default function AccountOverviewPage() {
   const dispatch = useDispatch<AppDispatch>();
   const userId = useUserAccountId();
+  const { baseCurrency } = useCurrency();
   const { wishlist } = useSelector((state: RootState) => state.wishlist);
+
+  const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
   const [profile, setProfile] = useState<UserProfileResponse | null>(null);
-  const [orderCount, setOrderCount] = useState<number | null>(null);
+  const [orders, setOrders] = useState<OrdersListOrder[] | null>(null);
   const [unreadNotifications, setUnreadNotifications] = useState<number | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     dispatch(getWishlist());
@@ -723,76 +474,74 @@ export default function AccountOverviewPage() {
     let cancelled = false;
     if (!userId) {
       setProfile(null);
-      setOrderCount(null);
+      setOrders(null);
       setUnreadNotifications(null);
+      setError(null);
+      setLoading(false);
       return;
     }
+    setLoading(true);
+    setError(null);
     (async () => {
       try {
-        const [p, orders, unread] = await Promise.all([
+        const [p, rawOrders, unread] = await Promise.all([
           getUserProfile(userId),
           getMyOrders(userId),
           getNotificationUnreadCount(),
         ]);
         if (cancelled) return;
         setProfile(p);
-        setOrderCount(orders.length);
+        setOrders(mapApiOrdersToListOrders(rawOrders, baseCurrency));
         setUnreadNotifications(unread);
-      } catch {
+      } catch (e: unknown) {
         if (!cancelled) {
           setProfile(null);
-          setOrderCount(null);
+          setOrders(null);
+          setError(renderErrorMessage(e));
         }
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, [userId]);
+  }, [userId, baseCurrency, reloadKey]);
 
-  const activeOrders = orderCount ?? MOCK_SNAPSHOT.activeOrders;
-  const wlCount = wishlist?.item_count ?? wishlist?.items?.length ?? MOCK_SNAPSHOT.wishlistCount;
-  const unread =
-    unreadNotifications !== null && unreadNotifications !== undefined
-      ? unreadNotifications
-      : MOCK_SNAPSHOT.unreadMessages;
+  const retry = useCallback(() => setReloadKey((k) => k + 1), []);
+
+  if (!mounted || (userId && loading)) return <OverviewSkeleton />;
+  if (!userId) return <SignedOutState />;
+
+  const wishlistCount = wishlist?.item_count ?? wishlist?.items?.length ?? 0;
+  const activeOrders = orders
+    ? orders.filter((o) => o.status === "processing" || o.status === "shipped").length
+    : null;
 
   return (
-    <>
-      <AccountMobileHeader title="My Account" />
+    <div className="space-y-5">
+      {error ? <ErrorBanner message={error} onRetry={retry} /> : null}
 
-      {/* Greeting hero — account_central */}
-      <GreetingHero profile={profile} />
+      <GreetingCard profile={profile} />
 
-      {/* KPI snapshot cards — account_overview */}
-      <SnapshotCards
-        activeOrders={activeOrders}
-        wishlistCount={wlCount}
-        unreadMessages={unread}
-      />
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <StatTile Icon={ShoppingBag} label="Active orders" value={activeOrders} href="/account/orders" />
+        <StatTile Icon={Heart} label="Wishlist" value={wishlistCount} href="/account/wishlist" />
+        <StatTile Icon={Bell} label="Unread alerts" value={unreadNotifications} href="/account/notifications" />
+        <StatTile Icon={Truck} label="Total orders" value={orders ? orders.length : null} href="/account/orders" />
+      </div>
 
-      {/* Two-column section: activity feed + right rail */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Activity feed (2/3 width on lg+) — account_overview */}
-        <div className="lg:col-span-2 space-y-8">
-          <ActivityFeed />
-
-          {/* Order fulfillment shortcuts — account_central */}
-          <OrderFulfillmentGrid />
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+        <div className="space-y-5 lg:col-span-2">
+          {orders ? <OrderStatusStrip orders={orders} /> : null}
+          {orders ? <RecentOrders orders={orders} /> : null}
         </div>
-
-        {/* Right rail — account_overview */}
-        <aside className="flex flex-col gap-6">
-          <SecuritySnapshot />
-          <WalletPromoCard />
+        <aside className="space-y-5">
+          <TrustPanel />
         </aside>
       </div>
 
-      {/* Quick-access shortcut grid */}
-      <ShortcutGrid />
-
-      {/* Recommended products — account_central */}
-      <RecommendedStrip />
-    </>
+      <QuickAccess />
+    </div>
   );
 }

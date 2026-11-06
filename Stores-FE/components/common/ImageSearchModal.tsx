@@ -563,7 +563,7 @@ export default function ImageSearchModal({ open, onClose }: ImageSearchModalProp
                                             value={urlInput}
                                             onChange={(e) => { setUrlInput(e.target.value); setUrlError('') }}
                                             onKeyDown={(e) => { if (e.key === 'Enter') loadFromUrl() }}
-                                            placeholder="https://example.com/product-image.jpg"
+                                            placeholder="Paste an image link"
                                             className="w-full pl-9 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-white dark:bg-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow"
                                         />
                                     </div>
