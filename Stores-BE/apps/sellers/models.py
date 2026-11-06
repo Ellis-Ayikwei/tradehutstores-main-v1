@@ -1,8 +1,19 @@
+import uuid
+from pathlib import PurePath
+
 from django.db import models
+from django.utils import timezone
 from django.utils.text import slugify
 from apps.core.models import BaseModel
+from .storage import private_document_storage
 from django.conf import settings
 from django.db.models import Sum
+
+
+# Path segments under /sellers/ that a store slug must never shadow.
+RESERVED_STORE_SLUGS = frozenset(
+    {"me", "list", "onboarding", "admin", "documents", "resubmit"}
+)
 
 
 class SellerProfile(BaseModel):
@@ -17,14 +28,39 @@ class SellerProfile(BaseModel):
         ("suspended", "Suspended"),
     ]
 
+    BUSINESS_TYPE_CHOICES = [
+        ("individual", "Individual"),
+        ("registered_business", "Registered business"),
+    ]
+
+    ID_TYPE_CHOICES = [
+        ("ghana_card", "Ghana Card"),
+        ("passport", "Passport"),
+        ("drivers_licence", "Driver's licence"),
+        ("voters_id", "Voter's ID"),
+    ]
+
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="seller_profile",
     )
 
+    business_type = models.CharField(
+        max_length=24, choices=BUSINESS_TYPE_CHOICES, default="individual"
+    )
+    # KYC identity. Never exposed by public serializers; masked (last 4) for the seller.
+    id_type = models.CharField(max_length=20, choices=ID_TYPE_CHOICES, blank=True)
+    id_number = models.CharField(max_length=64, blank=True)
+
     business_name = models.CharField(max_length=255)
     business_description = models.TextField(blank=True, null=True)
+    # What the seller sells: picked from the catalog; ``other_category`` is a short
+    # free-text fallback for a category that is not listed (staff-only, never public).
+    selling_categories = models.ManyToManyField(
+        "catalog.Category", blank=True, related_name="seller_profiles"
+    )
+    other_category = models.CharField(max_length=80, blank=True, default="")
     business_email = models.EmailField(blank=True, null=True)
     business_phone = models.CharField(max_length=20, blank=True, null=True)
     business_address = models.TextField(blank=True, null=True)
@@ -94,7 +130,8 @@ class SellerProfile(BaseModel):
             slug = base_slug
             counter = 1
             while (
-                SellerProfile.objects.filter(store_slug=slug)
+                slug in RESERVED_STORE_SLUGS
+                or SellerProfile.objects.filter(store_slug=slug)
                 .exclude(pk=self.pk)
                 .exists()
             ):
@@ -125,3 +162,51 @@ class SellerProfile(BaseModel):
             self.rating = round(avg_rating, 2)
 
         self.save()
+
+
+def seller_document_path(instance, filename):
+    """Unguessable storage key; the original file name is never part of the path."""
+    ext = PurePath(filename).suffix.lower()
+    return f"seller_documents/{instance.seller_id}/{uuid.uuid4().hex}{ext}"
+
+
+class SellerDocument(BaseModel):
+    """A KYC / business document uploaded by a seller and reviewed by staff."""
+
+    KIND_CHOICES = [
+        ("id_card", "ID card (front)"),
+        ("id_card_back", "ID card (back)"),
+        ("selfie_with_id", "Selfie holding ID"),
+        ("proof_of_address", "Proof of address"),
+        ("business_registration", "Business registration"),
+        ("other", "Other"),
+    ]
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("approved", "Approved"),
+        ("rejected", "Rejected"),
+        ("superseded", "Superseded by a newer upload"),
+    ]
+
+    seller = models.ForeignKey(
+        SellerProfile, on_delete=models.CASCADE, related_name="documents"
+    )
+    kind = models.CharField(max_length=24, choices=KIND_CHOICES)
+    file = models.FileField(
+        upload_to=seller_document_path,
+        storage=private_document_storage,
+        max_length=255,
+    )
+    status = models.CharField(
+        max_length=10, choices=STATUS_CHOICES, default="pending", db_index=True
+    )
+    note = models.CharField(max_length=500, blank=True)
+    created_on = models.DateTimeField(default=timezone.now, db_index=True)
+
+    class Meta:
+        db_table = "seller_documents"
+        ordering = ["-created_on"]
+        indexes = [models.Index(fields=["seller", "kind"])]
+
+    def __str__(self):
+        return f"{self.seller_id} {self.kind} ({self.status})"

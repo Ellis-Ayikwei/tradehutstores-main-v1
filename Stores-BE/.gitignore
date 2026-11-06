@@ -12,3 +12,5 @@ __pycache__/
 *.egg-info/
 .venv/
 venv/
+# KYC documents (local fallback storage; never commit)
+private_media/

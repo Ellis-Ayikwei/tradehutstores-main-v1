@@ -9,7 +9,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from apps.users.models import User
 from rest_framework import status, permissions
 from rest_framework.views import APIView
-from rest_framework import viewsets
+from rest_framework import serializers, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError, AccessToken
@@ -22,6 +22,7 @@ from rest_framework_simplejwt.exceptions import (
     AuthenticationFailed,
 )
 from django.core.cache import cache
+from django.db import transaction
 from django.utils import timezone
 from datetime import timezone as dt_timezone
 import logging
@@ -46,6 +47,19 @@ from .serializer import (
 class UserSerializer(UserBasicSerializer):
     class Meta(UserBasicSerializer.Meta):
         fields = UserBasicSerializer.Meta.fields
+
+    def validate_email(self, value):
+        # users.User.email is a case-sensitive unique, but login resolves with
+        # ``email__iexact``; a case-variant collision would make login raise
+        # MultipleObjectsReturned for the victim. Reject collisions (stored
+        # casing of existing users is never rewritten).
+        value = (value or "").strip()
+        clashes = User._base_manager.filter(email__iexact=value)
+        if self.instance is not None:
+            clashes = clashes.exclude(pk=self.instance.pk)
+        if clashes.exists():
+            raise serializers.ValidationError("An account with this email already exists.")
+        return value
 
 
 class UserAuthSerializer(UserBasicSerializer):
@@ -85,6 +99,43 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    # Fields a non-staff user must never change on themselves.
+    PRIVILEGED_FIELDS = ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")
+
+    def get_permissions(self):
+        if self.action in ("create", "destroy"):
+            return [permissions.IsAdminUser()]
+        return super().get_permissions()
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        user = self.request.user
+        return qs if user.is_staff else qs.filter(pk=user.pk)
+
+    def perform_update(self, serializer):
+        if not self.request.user.is_staff:
+            for field in self.PRIVILEGED_FIELDS:
+                serializer.validated_data.pop(field, None)
+
+        # A non-staff email change must drop email verification: the new address
+        # is unproven and auctions/seller onboarding trust ``email_verified``.
+        # Email stays the login identifier (USERNAME_FIELD), so the account keeps
+        # working; only the verified flag is reset. phone_verified is untouched.
+        email_changed = False
+        if not self.request.user.is_staff:
+            new_email = serializer.validated_data.get("email")
+            old_email = serializer.instance.email or ""
+            if new_email is not None and new_email.strip().lower() != old_email.strip().lower():
+                email_changed = True
+
+        with transaction.atomic():
+            user = serializer.save()
+            if email_changed:
+                verification, _ = UserVerification.objects.get_or_create(user=user)
+                verification.email_verified = False
+                verification.email_verified_at = None
+                verification.save(update_fields=["email_verified", "email_verified_at", "updated_at"])
+
     @action(detail=False, methods=["get"])
     def me(self, request):
         serializer = self.get_serializer(request.user)
@@ -95,7 +146,6 @@ class RegisterAPIView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        print("request.data", request.data)
 
         # Import custom exceptions early
         from apps.Authentication.serializer import (
@@ -299,10 +349,17 @@ class AdminLoginAPIView(APIView):
 
             user = serializer.validated_data["user"]
 
-            # Restrict this endpoint to admin users only
-            if getattr(user, "is_staff", None) != True:
+            # Restrict this endpoint to staff, or sellers whose account is not
+            # suspended (pending sellers may sign in to prepare listings).
+            seller = getattr(user, "seller_profile", None)
+            seller_allowed = (
+                seller is not None
+                and seller.is_active
+                and seller.verification_status != "suspended"
+            )
+            if getattr(user, "is_staff", None) != True and not seller_allowed:
                 return Response(
-                    {"detail": "Admins only: this endpoint is restricted."},
+                    {"detail": "Admins and sellers only: this endpoint is restricted."},
                     status=status.HTTP_403_FORBIDDEN,
                 )
 
@@ -602,7 +659,6 @@ class PasswordResetConfirmAPIView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request, uidb64, token):
-        print("request data", request.data)
         serializer = PasswordResetConfirmSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -991,7 +1047,6 @@ class VerifyOTPView(APIView):
 
     def post(self, request):
         serializer = VerifyOTPSerializer(data=request.data)
-        print("the otp data", request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -1123,7 +1178,6 @@ class VerifyOTPView(APIView):
                                     "is_active": True,
                                 },
                             )
-                            print("the new trusted device", new_trusted_device)
                             new_trusted_device.save()
                 except Exception:
                     # Do not fail login if trust persistence fails
@@ -1159,7 +1213,6 @@ class ResendOTPView(APIView):
     throttle_classes = [AnonRateThrottle]
 
     def post(self, request):
-        print("post hit", request.data)
         serializer = ResendOTPSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1174,7 +1227,6 @@ class ResendOTPView(APIView):
                 try:
                     user = User.objects.get(email__iexact=email)
                 except User.DoesNotExist:
-                    print("user not found")
                     return Response(
                         {
                             "message": "User not found with this email address.",
@@ -1186,7 +1238,6 @@ class ResendOTPView(APIView):
                 try:
                     user = User.objects.get(phone_number=phone_number)
                 except User.DoesNotExist:
-                    print("user not found")
                     return Response(
                         {
                             "message": "User not found with this phone number.",
@@ -1402,7 +1453,6 @@ class MFALoginView(APIView):
     throttle_classes = [AnonRateThrottle]
 
     def post(self, request):
-        print(request.data)
         serializer = MFALoginSerializer(data=request.data, context={"request": request})
 
         try:
@@ -1607,11 +1657,9 @@ class MFALoginView(APIView):
                     fp_hash = hashlib.sha256(
                         (salt + (device_fp or "")).encode()
                     ).hexdigest()
-                    print("the fp hash", fp_hash)
                     td = TrustedDevice.objects.filter(
                         user=user, device_id=device_id, is_active=True
                     ).first()
-                    print("the td", td)
                     now = timezone.now()
 
                     # Check if device exists and fingerprint matches
@@ -1753,7 +1801,6 @@ class VerifyMFALoginView(APIView):
     throttle_classes = [AnonRateThrottle]
 
     def post(self, request):
-        print(request.data)
         serializer = VerifyOTPSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1877,7 +1924,6 @@ class VerifyMFALoginView(APIView):
                                     "is_active": True,
                                 },
                             )
-                            print("the new trusted device", new_trusted_device)
                             new_trusted_device.save()
                 except Exception:
                     # Do not fail login if trust persistence fails
@@ -2554,7 +2600,6 @@ class RegisterProviderAPIView(APIView):
             "vat_number": "1234567890"
         }
         """
-        print("request data", request.data)
         try:
             from apps.Provider.serializer import ProviderRegistrationSerializer
 

@@ -234,13 +234,13 @@ class RegisterSerializer(serializers.ModelSerializer):
             # Handle case where a race condition might occur
             # (e.g., two users registering with the same email simultaneously)
             if "unique constraint" in str(e).lower() and "email" in str(e).lower():
-                print("email already exists")
+                logger.debug("email already exists")
                 raise EmailAlreadyExistsException()
             elif (
                 "unique constraint" in str(e).lower()
                 and "phone_number" in str(e).lower()
             ):
-                print("phone number already exists")
+                logger.debug("phone number already exists")
                 raise PhoneNumberAlreadyExistsException()
             raise serializers.ValidationError(
                 {"detail": "Registration failed due to database constraint."}

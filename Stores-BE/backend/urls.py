@@ -32,6 +32,8 @@ urlpatterns = [
                 path("auth/", include("apps.authentication.urls")),
                 # Seller endpoints
                 path("sellers/", include("apps.sellers.urls")),
+                # Bid Central (auctions)
+                path("auctions/", include("apps.auctions.urls")),
                 # Customer endpoints
                 path("customers/", include("apps.customers.urls")),
                 # User endpoints

@@ -31,6 +31,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
 from apps.products.models import Product
+from apps.products.visibility import visibility_q, visible_products
 
 from .compat import HAS_ELASTICSEARCH, HAS_PGVECTOR
 from .serializers import SearchProductSerializer
@@ -56,10 +57,11 @@ def _vector_enabled() -> bool:
     return getattr(settings, "SEARCH_ENABLE_EMBEDDINGS", False)
 
 
-def _base_queryset():
-    return Product.objects.select_related(
+def _base_queryset(user=None):
+    qs = Product.objects.select_related(
         "category", "sub_category", "brand", "default_variant"
     ).prefetch_related("variants")
+    return visible_products(qs, user)
 
 
 def _serialize(qs, request) -> List[dict]:
@@ -97,7 +99,7 @@ def search(request):
 
 
 def _search_orm(request, q: str, page: int):
-    qs = _base_queryset()
+    qs = _base_queryset(request.user)
 
     if q:
         qs = qs.filter(
@@ -286,7 +288,7 @@ def autocomplete(request):
 
 def _autocomplete_orm(request, q: str):
     qs = (
-        _base_queryset()
+        _base_queryset(request.user)
         .filter(
             Q(name__icontains=q)
             | Q(brand__name__icontains=q)
@@ -318,7 +320,8 @@ def _autocomplete_orm(request, q: str):
 
     # Top up the suggestion list with brand/category names — mimics ES completion.
     extra = (
-        Product.objects.filter(name__icontains=q)
+        visible_products(Product.objects.all(), request.user)
+        .filter(name__icontains=q)
         .values_list("name", flat=True)
         .distinct()[: MAX_AUTOCOMPLETE_SUGGESTIONS - len(suggestions)]
     )
@@ -540,6 +543,11 @@ def _query_vector_from_text(text: str):
     return vec
 
 
+def _only_visible_embeddings(qs, request):
+    condition = visibility_q(getattr(request, "user", None), "product__")
+    return qs if condition is None else qs.filter(condition)
+
+
 def _vector_search(
     query_vector,
     request,
@@ -564,6 +572,7 @@ def _vector_search(
             .annotate(distance=CosineDistance("image_embedding", query_vector))
             .order_by("distance")
         )
+        qs = _only_visible_embeddings(qs, request)
         if exclude_product_id:
             qs = qs.exclude(product_id=exclude_product_id)
 
@@ -593,6 +602,7 @@ def _vector_search(
     qs = ProductEmbedding.objects.exclude(image_embedding__isnull=True).select_related(
         "product", "product__category", "product__brand", "product__default_variant"
     )
+    qs = _only_visible_embeddings(qs, request)
     if exclude_product_id:
         qs = qs.exclude(product_id=exclude_product_id)
 

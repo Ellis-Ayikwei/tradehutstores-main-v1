@@ -1,4 +1,4 @@
-from rest_framework import viewsets, permissions
+from rest_framework import serializers, viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Prefetch, Q
@@ -23,29 +23,97 @@ from .serializers import (
     ProductKeyFeatureSerializer,
 )
 from apps.wishlist.models import Wishlist, WishlistItem, Favorite
+from .permissions import (
+    ParentProductOwnerOrStaff,
+    ProductOwnerOrStaff,
+    assert_can_attach,
+    writing_seller_profile,
+)
+from .visibility import visibility_q, visible_products
 
 
-class StaffWritePermission(permissions.BasePermission):
-    def has_permission(self, request, view):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        return request.user and request.user.is_staff
+class PublicVisibilityMixin:
+    """Child rows (variants, images, ...) follow their product's visibility."""
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        condition = visibility_q(self.request.user, "product__")
+        return qs if condition is None else qs.filter(condition)
+
+
+class OwnedChildWriteMixin:
+    """Create/update of rows under a product: the target product must be the caller's."""
+
+    permission_classes = [ParentProductOwnerOrStaff]
+
+    def _check_target(self, serializer):
+        user = self.request.user
+        data = serializer.validated_data
+        product = data.get("product", getattr(serializer.instance, "product", None))
+        if not user.is_staff:
+            assert_can_attach(user, product)
+            variant = data.get("product_variant")
+            if variant is not None and variant.product_id != product.pk:
+                raise serializers.ValidationError(
+                    {"product_variant": ["This variant belongs to a different product."]}
+                )
+
+    def perform_create(self, serializer):
+        self._check_target(serializer)
+        serializer.save()
+
+    def perform_update(self, serializer):
+        self._check_target(serializer)
+        serializer.save()
 
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    # permission_classes = [StaffWritePermission]
+    # Reads are public; writes need staff or the owning seller (object level).
+    permission_classes = [ProductOwnerOrStaff]
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        if user.is_staff:
+            # Staff may assign a seller explicitly; otherwise default to their own profile.
+            extra = {}
+            if "seller_profile" not in serializer.validated_data:
+                extra["seller_profile"] = getattr(user, "seller_profile", None)
+            serializer.save(**extra)
+            return
+        if serializer.validated_data.get("default_variant") is not None:
+            raise serializers.ValidationError(
+                {"default_variant": ["Create the product first, then add variants."]}
+            )
+        serializer.save(seller_profile=writing_seller_profile(user), seller=user)
+
+    def perform_update(self, serializer):
+        user = self.request.user
+        if user.is_staff:
+            serializer.save()
+            return
+        variant = serializer.validated_data.get("default_variant")
+        if variant is not None and variant.product_id != serializer.instance.pk:
+            raise serializers.ValidationError(
+                {"default_variant": ["This variant belongs to a different product."]}
+            )
+        # Ownership cannot be reassigned by sellers: the client value is ignored.
+        serializer.save(
+            seller_profile=serializer.instance.seller_profile,
+            seller=serializer.instance.seller,
+        )
 
     def get_queryset(self):
-        return Product.objects.select_related(
+        qs = Product.objects.select_related(
             "category", "sub_category", "brand", "default_variant"
         ).prefetch_related("variants")
+        return visible_products(qs, self.request.user)
 
     @action(detail=False, methods=["get"])
     def search(self, request):
         query = request.query_params.get("q", "")
-        qs = self.queryset
+        qs = self.get_queryset()
         if query:
             qs = qs.filter(
                 Q(name__icontains=query)
@@ -57,22 +125,22 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"])
     def featured(self, request):
-        qs = self.queryset.filter(is_product_of_the_month=True)
+        qs = self.get_queryset().filter(is_product_of_the_month=True)
         return Response(self.get_serializer(qs, many=True).data)
 
     @action(detail=False, methods=["get"])
     def new_arrivals(self, request):
-        qs = self.queryset.order_by("-created_at")[:10]
+        qs = self.get_queryset().order_by("-created_at")[:10]
         return Response(self.get_serializer(qs, many=True).data)
 
     @action(detail=False, methods=["get"])
     def discounted(self, request):
-        qs = self.queryset.filter(discount_percentage__gt=0)
+        qs = self.get_queryset().filter(discount_percentage__gt=0)
         return Response(self.get_serializer(qs, many=True).data)
 
     @action(detail=False, methods=["get"])
     def popular(self, request):
-        qs = self.queryset.order_by("-average_rating", "-total_reviews")[:10]
+        qs = self.get_queryset().order_by("-average_rating", "-total_reviews")[:10]
         return Response(self.get_serializer(qs, many=True).data)
 
     @action(detail=False, methods=["get"])
@@ -125,7 +193,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     def related(self, request, pk=None):
         product = self.get_object()
         qs = (
-            self.queryset.filter(category=product.category)
+            self.get_queryset().filter(category=product.category)
             .exclude(pk=product.pk)
             .order_by("-average_rating")[:10]
         )
@@ -149,10 +217,9 @@ class ProductViewSet(viewsets.ModelViewSet):
         return Response({"detail": "Added to favorites"})
 
 
-class ProductVariantViewSet(viewsets.ModelViewSet):
+class ProductVariantViewSet(OwnedChildWriteMixin, PublicVisibilityMixin, viewsets.ModelViewSet):
     queryset = ProductVariant.objects.select_related("product")
     serializer_class = ProductVariantSerializer
-    permission_classes = [StaffWritePermission]
 
     def get_serializer_class(self):
         if self.request.method in ("POST", "PUT", "PATCH"):
@@ -160,16 +227,14 @@ class ProductVariantViewSet(viewsets.ModelViewSet):
         return ProductVariantSerializer
 
 
-class ProductImageViewSet(viewsets.ModelViewSet):
+class ProductImageViewSet(OwnedChildWriteMixin, PublicVisibilityMixin, viewsets.ModelViewSet):
     queryset = ProductImage.objects.select_related("product", "product_variant")
     serializer_class = ProductImageSerializer
-    permission_classes = [StaffWritePermission]
 
 
-class InventoryViewSet(viewsets.ModelViewSet):
+class InventoryViewSet(OwnedChildWriteMixin, PublicVisibilityMixin, viewsets.ModelViewSet):
     queryset = Inventory.objects.select_related("product")
     serializer_class = InventorySerializer
-    permission_classes = [StaffWritePermission]
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -179,16 +244,14 @@ class InventoryViewSet(viewsets.ModelViewSet):
         return qs.order_by("-created_at")
 
 
-class ProductDiscountViewSet(viewsets.ModelViewSet):
+class ProductDiscountViewSet(OwnedChildWriteMixin, PublicVisibilityMixin, viewsets.ModelViewSet):
     queryset = ProductDiscount.objects.select_related("product")
     serializer_class = ProductDiscountSerializer
-    permission_classes = [StaffWritePermission]
 
 
-class ProductKeyFeatureViewSet(viewsets.ModelViewSet):
+class ProductKeyFeatureViewSet(OwnedChildWriteMixin, PublicVisibilityMixin, viewsets.ModelViewSet):
     queryset = ProductKeyFeature.objects.select_related("product")
     serializer_class = ProductKeyFeatureSerializer
-    permission_classes = [StaffWritePermission]
 
     def get_queryset(self):
         qs = super().get_queryset()

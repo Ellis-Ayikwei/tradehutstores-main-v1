@@ -2,11 +2,14 @@
 Custom email backend for Gmail SSL
 """
 
+import logging
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from django.core.mail.backends.base import BaseEmailBackend
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 
 class GmailSSLBackend(BaseEmailBackend):
@@ -50,13 +53,13 @@ class GmailSSLBackend(BaseEmailBackend):
                     num_sent += 1
 
                 except Exception as e:
-                    print(f"Failed to send email: {e}")
+                    logger.warning("Failed to send email: %s", e)
                     continue
 
             server.quit()
 
         except Exception as e:
-            print(f"SMTP connection failed: {e}")
+            logger.error("SMTP connection failed: %s", e)
             raise
 
         return num_sent

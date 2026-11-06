@@ -135,6 +135,7 @@ INSTALLED_APPS = [
     "apps.customers",
     "apps.sellers",
     "apps.wishlist",
+    "apps.auctions",
     # Search subsystem (full-text + visual). The app boots without ES /
     # pgvector / Celery / CLIP installed; toggling on real search is done via
     # the SEARCH_ENABLE_* env flags below.
@@ -216,10 +217,26 @@ if SEARCH_ENABLE_ES:
 CELERY_BROKER_URL = REDIS_URL
 CELERY_RESULT_BACKEND = REDIS_URL
 CELERY_TASK_ALWAYS_EAGER = _bool_env("CELERY_TASK_ALWAYS_EAGER", default=False)
+CELERY_TASK_DEFAULT_QUEUE = "default"  # the worker only consumes default,embeddings
 CELERY_TASK_ROUTES = {
     "apps.search.tasks.generate_product_embedding": {"queue": "embeddings"},
     "apps.search.tasks.index_product_task": {"queue": "default"},
     "apps.search.tasks.deindex_product_task": {"queue": "default"},
+    "apps.auctions.tasks.close_auction": {"queue": "default"},
+    "apps.auctions.tasks.sweep_auctions": {"queue": "default"},
+    "apps.auctions.tasks.settle_pending_orders": {"queue": "default"},
+}
+# Beat (run `celery -A backend beat`). The sweeper is the only path that closes
+# long auctions; per-auction close tasks are ETA-armed within 90s of ends_at.
+CELERY_BEAT_SCHEDULE = {
+    "auctions-sweep": {
+        "task": "apps.auctions.tasks.sweep_auctions",
+        "schedule": 30.0,
+    },
+    "auctions-settle-pending-orders": {
+        "task": "apps.auctions.tasks.settle_pending_orders",
+        "schedule": 60.0,
+    },
 }
 
 MIDDLEWARE = [
@@ -507,4 +524,4 @@ TRADEHUT_FX_CACHE_SECONDS = config("TRADEHUT_FX_CACHE_SECONDS", default=14400, c
 # Uncomment and configure for production SMS sending
 # TWILIO_ACCOUNT_SID = 'your-account-sid'
 # TWILIO_AUTH_TOKEN = 'your-auth-token'
-# TWILIO_PHONE_NUMBER = '+1234567890'
+# TWILIO_PHONE_NUMBER = 'your-twilio-sender-number'

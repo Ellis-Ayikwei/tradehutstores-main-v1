@@ -122,8 +122,8 @@ curl -X POST http://localhost:8000/api/sellers/become-seller/ \
     "business_name": "My Tech Store",
     "business_description": "Selling quality electronics",
     "business_email": "store@example.com",
-    "business_phone": "+1234567890",
-    "business_address": "123 Business St, City, Country",
+    "business_phone": "024 813 8722",
+    "business_address": "La Trade Fair, Accra, Ghana",
     "business_registration_number": "REG123456",
     "tax_id": "TAX789012"
   }'
@@ -176,7 +176,7 @@ curl -X PATCH http://localhost:8000/api/sellers/profile/ \
   -H "Content-Type: application/json" \
   -d '{
     "business_description": "Updated description",
-    "business_phone": "+9876543210",
+    "business_phone": "024 813 8722",
     "return_policy": "30-day return policy on all products",
     "shipping_policy": "Free shipping on orders over $50"
   }'

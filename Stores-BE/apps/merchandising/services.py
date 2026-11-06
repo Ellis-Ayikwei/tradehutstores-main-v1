@@ -9,6 +9,7 @@ from django.db.models.functions import Coalesce
 from django.utils import timezone
 
 from apps.products.models import Product
+from apps.products.visibility import public_products
 
 from .models import HomepageSection, PopulationRule
 
@@ -63,7 +64,10 @@ def _resolve_manual(section: HomepageSection, limit: int) -> list:
     if not products:
         return []
     ids = [p.pk for p in products]
-    by_id = {p.pk: p for p in _optimize(Product.objects.filter(pk__in=ids))}
+    by_id = {
+        p.pk: p
+        for p in _optimize(public_products(Product.objects.filter(pk__in=ids)))
+    }
     return [by_id[i] for i in ids if i in by_id]
 
 
@@ -132,7 +136,7 @@ def _sold_since_cutoff(qs, cutoff):
 
 
 def _apply_rule(rule: PopulationRule, limit: int) -> list:
-    qs = Product.objects.all()
+    qs = public_products(Product.objects.all())
     qs = _apply_common_filters(qs, rule)
     RT = PopulationRule.RuleType
 

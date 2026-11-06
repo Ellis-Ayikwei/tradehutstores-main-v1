@@ -32,6 +32,7 @@ def index_product_task(self, product_id):
         return
     try:
         from apps.products.models import Product
+        from apps.products.visibility import public_products
 
         from .documents import ProductDocument
 
@@ -41,6 +42,10 @@ def index_product_task(self, product_id):
             Product.objects.select_related("category", "sub_category", "brand")
             .get(pk=product_id)
         )
+        # The ES index is public: products of unverified/inactive sellers are removed.
+        if not public_products(Product.objects.filter(pk=product_id)).exists():
+            _delete_es_document(product_id)
+            return
         ProductDocument().update(product)
         logger.debug("ES indexed product %s", product_id)
     except Exception as exc:  # noqa: BLE001
@@ -51,19 +56,36 @@ def index_product_task(self, product_id):
             pass
 
 
+def _delete_es_document(product_id):
+    from .documents import ProductDocument
+
+    if ProductDocument is None:
+        return
+    try:
+        ProductDocument.get(id=product_id).delete()
+    except Exception as exc:  # noqa: BLE001 - not indexed is fine
+        logger.debug("ES deindex skipped for %s: %s", product_id, exc)
+
+
+@safe_shared_task(bind=True, max_retries=3, default_retry_delay=10)
+def reindex_seller_products_task(self, seller_profile_id):
+    """Re-sync every product of a seller (their verification/active state changed)."""
+    if not HAS_ELASTICSEARCH or not getattr(settings, "SEARCH_ENABLE_ES", False):
+        return
+    from apps.products.models import Product
+
+    for pid in Product.objects.filter(seller_profile_id=seller_profile_id).values_list(
+        "pk", flat=True
+    ):
+        index_product_task.delay(pid)
+
+
 @safe_shared_task(bind=True, max_retries=3, default_retry_delay=10)
 def deindex_product_task(self, product_id):
     """Remove a product document from Elasticsearch."""
     if not HAS_ELASTICSEARCH or not getattr(settings, "SEARCH_ENABLE_ES", False):
         return
-    try:
-        from .documents import ProductDocument
-
-        if ProductDocument is None:
-            return
-        ProductDocument.get(id=product_id).delete()
-    except Exception as exc:  # noqa: BLE001
-        logger.debug("ES deindex skipped for %s: %s", product_id, exc)
+    _delete_es_document(product_id)
 
 
 # ─── Embedding tasks ──────────────────────────────────────────────────────────
