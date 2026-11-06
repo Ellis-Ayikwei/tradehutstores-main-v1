@@ -33,3 +33,6 @@ env/
 
 # Exclude large binary caches accidentally committed Next/webpack
 **/cache/**/*.pack
+
+# IDE
+.idea/
