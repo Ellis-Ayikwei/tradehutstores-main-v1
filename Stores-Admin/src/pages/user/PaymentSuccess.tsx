@@ -331,7 +331,7 @@ const PaymentSuccess: React.FC = () => {
 
                             <div className="space-y-2">
                                 <a
-                                    href="tel:+447497603774"
+                                    href="tel:+233248138722"
                                     className="block bg-yellow-100 dark:bg-yellow-800/30 hover:bg-yellow-200 dark:hover:bg-yellow-700/40 text-yellow-900 dark:text-yellow-100 px-4 py-2 rounded-lg text-center transition-colors text-sm"
                                 >
                                     <IconPhone className="w-4 h-4 inline mr-2" />

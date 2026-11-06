@@ -153,29 +153,9 @@ const Register: React.FC = () => {
                                 <div className="bg-white/20 rounded-full p-2 mr-4">
                                     <FontAwesomeIcon icon={faChartLine} className="h-5 w-5 text-orange-400" />
                                 </div>
-                                <span className="text-white">24/7 support and monitoring</span>
+                                <span className="text-white">Support available when you need it</span>
                             </motion.div>
                         </div>
-
-                        {/* Testimonial */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.8 }}
-                            className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20"
-                        >
-                            <div className="flex items-start">
-                                <div className="flex-shrink-0">
-                                    <div className="w-10 h-10 bg-orange-500/30 rounded-full flex items-center justify-center">
-                                        <span className="text-white font-semibold">S</span>
-                                    </div>
-                                </div>
-                                <div className="ml-4">
-                                    <p className="text-white/90 text-sm italic mb-2">"Joining TradeHut transformed our logistics operations. Best decision we made for our business."</p>
-                                    <p className="text-white/70 text-xs">- Sarah Chen, Supply Chain Director</p>
-                                </div>
-                            </div>
-                        </motion.div>
                     </motion.div>
                 </div>
 

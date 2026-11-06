@@ -525,7 +525,7 @@ const RequestDetailsPanel: React.FC<RequestDetailsPanelProps> = ({ values, onEdi
                         <div className="h-10 w-10 rounded-full bg-purple-100 dark:bg-purple-900/20 flex items-center justify-center mx-auto mb-2">
                             <FontAwesomeIcon icon={faInfoCircle} className="text-purple-600 dark:text-purple-400" />
                         </div>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">24/7 Support</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">Support</p>
                     </div>
                 </div>
             </div>

@@ -21,6 +21,7 @@ import useSignIn from 'react-auth-kit/hooks/useSignIn';
 import { ThunkDispatch, AnyAction } from '@reduxjs/toolkit';
 import { useEffect } from 'react';
 import useIsAuthenticated from 'react-auth-kit/hooks/useIsAuthenticated';
+import { useUserAccess } from '../seller/hooks/useUserAccess';
 
 interface LoginFormValues {
     email: string;
@@ -43,13 +44,17 @@ const Login: React.FC = () => {
     const [loginAttempts, setLoginAttempts] = useState(0);
 
     const { loading, error, user } = useSelector((state: IRootState) => state.auth);
-    const from = new URLSearchParams(location.search).get('from') || '/admin/dashboard';
+    const explicitFrom = new URLSearchParams(location.search).get('from');
+    const { isResolving, isSeller, isStaff } = useUserAccess();
+    // Seller-only accounts (Sellers group, no staff signal) land on the seller dashboard; everyone else keeps the admin default.
+    const from = explicitFrom || (isSeller && !isStaff ? '/seller/overview' : '/admin/dashboard');
 
     useEffect(() => {
-        if (isAuthenticated) {
+        // Without an explicit `from`, wait for the profile so the right landing page is chosen (no wrong-page flash).
+        if (isAuthenticated && (explicitFrom || !isResolving)) {
             navigate(from);
         }
-    }, [isAuthenticated, navigate, from]);
+    }, [isAuthenticated, isResolving, explicitFrom, navigate, from]);
 
     const handleSubmit = async (values: LoginFormValues, { setSubmitting }: any) => {
         try {
@@ -70,8 +75,8 @@ const Login: React.FC = () => {
                 })
             ).unwrap();
 
-            // Navigate on successful login
-            navigate(from);
+            // Navigate on successful login (with no `from`, the effect above routes once the profile is known)
+            if (explicitFrom) navigate(explicitFrom);
         } catch (error) {
             console.error('Login error:', error);
         } finally {

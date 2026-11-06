@@ -7,47 +7,6 @@ import { ServiceRequest } from '../../store/slices/serviceRequestSice';
 import { usePayment } from '../../hooks/usePayment';
 import { useSelector } from 'react-redux';
 
-// Mock data for testing
-const mockServiceRequest: ServiceRequest = {
-    id: 'SR-12345',
-    request_type: 'biddable',
-    status: 'pending',
-    priority: 'normal',
-    contact_name: 'John Doe',
-    contact_phone: '+1234567890',
-    contact_email: 'john@example.com',
-    pickup_location: {
-        address: '123 Main St',
-        city: 'New York',
-        state: 'NY',
-        zip: '10001',
-    },
-    dropoff_location: {
-        address: '456 Park Ave',
-        city: 'New York',
-        state: 'NY',
-        zip: '10022',
-    },
-    preferred_pickup_date: '2024-04-15',
-    preferred_pickup_time: '09:00',
-    preferred_delivery_date: '2024-04-15',
-    preferred_delivery_time: '17:00',
-    is_flexible: true,
-    items_description: 'Moving household items',
-    total_weight: 500,
-    dimensions: {
-        length: 10,
-        width: 5,
-        height: 8,
-    },
-    requires_special_handling: false,
-    special_instructions: 'Handle with care',
-    base_price: 250.0,
-    final_price: 275.0,
-    insurance_required: true,
-    insurance_value: 5000,
-};
-
 const PaymentDetail: React.FC = () => {
     const { requestId } = useParams<{ requestId: string }>();
     const navigate = useNavigate();
@@ -64,10 +23,9 @@ const PaymentDetail: React.FC = () => {
         const fetchServiceRequest = async () => {
             try {
                 setLoading(true);
-                // Simulate API delay
-                await new Promise((resolve) => setTimeout(resolve, 1000));
-                setRequest(mockServiceRequest);
-                setError(null);
+                // No backend endpoint for this legacy flow yet: show an error state, never mock data.
+                setRequest(undefined);
+                setError('Payment details are not available.');
             } catch (err) {
                 console.error('Error fetching service request:', err);
                 setError('Failed to load service request');

@@ -22,15 +22,10 @@ const initialFormState: ContactForm = {
 };
 
 const contactInfo = {
-    phone: '+233 24 123 4567',
-    whatsapp: '+233 24 123 4567',
-    location: 'Accra Mall, Spintex Road, Accra, Ghana',
-    workingHours: 'Mon - Sat: 9:00 AM - 6:00 PM',
-    socialMedia: {
-        facebook: 'https://facebook.com/tradehutghana',
-        instagram: 'https://instagram.com/tradehutghana',
-        twitter: 'https://twitter.com/tradehutghana',
-    },
+    phoneDisplay: '024 813 8722',
+    phoneHref: 'tel:+233248138722',
+    whatsappHref: 'https://wa.me/233248138722',
+    location: 'La Trade Fair, Accra, Ghana',
 };
 
 const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
@@ -87,7 +82,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 {/* WhatsApp */}
                                 <a
-                                    href={`https://wa.me/${contactInfo.whatsapp.replace(/\D/g, '')}`}
+                                    href={contactInfo.whatsappHref}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="flex items-center p-4 bg-green-50 rounded-xl hover:bg-green-100 transition-colors"
@@ -104,7 +99,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                                 </a>
 
                                 {/* Phone */}
-                                <a href={`tel:${contactInfo.phone}`} className="flex items-center p-4 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors">
+                                <a href={contactInfo.phoneHref} className="flex items-center p-4 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors">
                                     <div className="w-12 h-12 flex items-center justify-center bg-blue-500 rounded-full text-white">
                                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path
@@ -117,7 +112,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                                     </div>
                                     <div className="ml-4">
                                         <h3 className="text-sm font-semibold text-gray-900">Phone</h3>
-                                        <p className="text-sm text-gray-600">Call us directly</p>
+                                        <p className="text-sm text-gray-600">{contactInfo.phoneDisplay}</p>
                                     </div>
                                 </a>
                             </div>
@@ -183,21 +178,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                             </div>
 
                             {/* Additional Info */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 pt-6 border-t">
-                                <div className="p-4 bg-gray-50 rounded-xl">
-                                    <div className="flex items-center">
-                                        <div className="w-12 h-12 flex items-center justify-center bg-gray-500 rounded-full text-white">
-                                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                        </div>
-                                        <div className="ml-4">
-                                            <h3 className="text-sm font-semibold text-gray-900">Working Hours</h3>
-                                            <p className="text-sm text-gray-600">{contactInfo.workingHours}</p>
-                                        </div>
-                                    </div>
-                                </div>
-
+                            <div className="grid grid-cols-1 gap-4 mt-6 pt-6 border-t">
                                 <div className="p-4 bg-gray-50 rounded-xl">
                                     <div className="flex items-center">
                                         <div className="w-12 h-12 flex items-center justify-center bg-gray-500 rounded-full text-white">

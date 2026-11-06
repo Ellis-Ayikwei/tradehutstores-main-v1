@@ -1,6 +1,6 @@
 /* Animate css */
 @import './assets/css/animate.css';
-/* Material Symbols Outlined — required by Kinetic icons (must precede @font-face / @tailwind). */
+/* Material Symbols Outlined: still used by pages not yet migrated to shadcn/lucide (see docs/ui-system.md). */
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 
 @font-face {
@@ -23,13 +23,85 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Kinetic shared utility recipes (used across Stitch screens). */
+/* shadcn/ui theme tokens (HSL channels, consumed via tailwind.config.cjs).
+   Primary is the TradeHut orange (#dc711a). `dark` follows the existing html.dark toggle. */
+@layer base {
+    :root {
+        --background: 0 0% 100%;
+        --foreground: 0 0% 15%;
+        --card: 0 0% 100%;
+        --card-foreground: 0 0% 15%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 0 0% 15%;
+        --primary: 27 79% 48%;
+        --primary-foreground: 0 0% 100%;
+        --muted: 0 0% 96%;
+        --muted-foreground: 0 0% 40%;
+        --accent: 27 80% 95%;
+        --accent-foreground: 24 70% 28%;
+        --destructive: 0 65% 51%;
+        --destructive-foreground: 0 0% 100%;
+        --border: 220 13% 91%;
+        --input: 220 13% 88%;
+        --ring: 27 79% 48%;
+
+        /* Solid "subtle" surfaces for icon chips, avatars, badges and tinted cards (no alpha backgrounds). */
+        --primary-hover: 27 79% 42%;
+        --destructive-hover: 0 65% 44%;
+        --primary-subtle: 27 80% 94%;
+        --primary-subtle-foreground: 24 75% 30%;
+        --success-subtle: 142 55% 92%;
+        --success-subtle-foreground: 142 70% 20%;
+        --warning-subtle: 40 92% 91%;
+        --warning-subtle-foreground: 30 85% 24%;
+        --info-subtle: 214 90% 93%;
+        --info-subtle-foreground: 217 75% 28%;
+        --destructive-subtle: 0 80% 94%;
+        --destructive-subtle-foreground: 0 65% 36%;
+    }
+
+    .dark {
+        --background: 233 60% 6%;
+        --foreground: 213 20% 90%;
+        --card: 218 45% 9%;
+        --card-foreground: 213 20% 90%;
+        --popover: 215 40% 13%;
+        --popover-foreground: 213 20% 90%;
+        --primary: 27 85% 54%;
+        --primary-foreground: 0 0% 100%;
+        --muted: 215 35% 15%;
+        --muted-foreground: 215 15% 65%;
+        --accent: 27 35% 20%;
+        --accent-foreground: 27 80% 90%;
+        --destructive: 0 62% 50%;
+        --destructive-foreground: 0 0% 100%;
+        --border: 214 45% 16%;
+        --input: 214 45% 18%;
+        --ring: 27 85% 54%;
+
+        --primary-hover: 27 85% 60%;
+        --destructive-hover: 0 62% 56%;
+        --primary-subtle: 27 40% 18%;
+        --primary-subtle-foreground: 27 85% 76%;
+        --success-subtle: 142 35% 14%;
+        --success-subtle-foreground: 142 60% 72%;
+        --warning-subtle: 38 45% 15%;
+        --warning-subtle-foreground: 38 90% 72%;
+        --info-subtle: 214 45% 17%;
+        --info-subtle-foreground: 214 90% 78%;
+        --destructive-subtle: 0 38% 17%;
+        --destructive-subtle-foreground: 0 85% 78%;
+    }
+
+    * {
+        @apply border-border;
+    }
+}
+
+/* Shared utility recipes still used by legacy admin layouts and pages. */
 @layer components {
-    .glass-nav        { background: rgba(255, 248, 246, 0.7); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
     .glass-header     { backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
     .primary-gradient { background: linear-gradient(135deg, #a43d00 0%, #f5620f 100%); }
-    .kinetic-gradient { background: linear-gradient(135deg, #a43d00 0%, #f5620f 100%); }
-    .ghost-border     { border: 1px solid rgba(226, 191, 178, 0.25); }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar     { scrollbar-width: none; -ms-overflow-style: none; }
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; display: inline-block; vertical-align: middle; }

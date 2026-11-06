@@ -52,16 +52,16 @@ export default function GuestCheckoutFlow({ isOpen, onClose, onBack, total }: Gu
         {
             title: 'Personal Information',
             fields: [
-                { name: 'firstName', label: 'First Name', type: 'text', placeholder: 'John', required: true },
-                { name: 'lastName', label: 'Last Name', type: 'text', placeholder: 'Doe', required: true },
-                { name: 'email', label: 'Email Address', type: 'email', placeholder: 'john@example.com', required: true },
-                { name: 'phone', label: 'Phone Number', type: 'tel', placeholder: '+1234567890', required: true },
+                { name: 'firstName', label: 'First Name', type: 'text', placeholder: 'First name', required: true },
+                { name: 'lastName', label: 'Last Name', type: 'text', placeholder: 'Last name', required: true },
+                { name: 'email', label: 'Email Address', type: 'email', placeholder: 'Your email address', required: true },
+                { name: 'phone', label: 'Phone Number', type: 'tel', placeholder: 'Your phone number', required: true },
             ],
         },
         {
             title: 'Shipping Information',
             fields: [
-                { name: 'address', label: 'Street Address', type: 'text', placeholder: '123 Main St', required: true },
+                { name: 'address', label: 'Street Address', type: 'text', placeholder: 'Street address', required: true },
                 { name: 'city', label: 'City', type: 'text', placeholder: 'New York', required: true },
                 { name: 'state', label: 'State/Province', type: 'text', placeholder: 'NY', required: true },
                 { name: 'zipCode', label: 'ZIP/Postal Code', type: 'text', placeholder: '10001', required: true },
@@ -80,10 +80,8 @@ export default function GuestCheckoutFlow({ isOpen, onClose, onBack, total }: Gu
     };
 
     const handleWhatsAppSupport = () => {
-        // Replace with your actual WhatsApp business number
-        const whatsappNumber = '+1234567890';
-        const message = encodeURIComponent(`Hi! I need help with my order #${Date.now().toString().slice(-6)}`);
-        window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+        const message = encodeURIComponent('Hi! I need help with my order.');
+        window.open(`https://wa.me/233248138722?text=${message}`, '_blank');
     };
 
     const isStepValid = () => {
@@ -185,7 +183,7 @@ export default function GuestCheckoutFlow({ isOpen, onClose, onBack, total }: Gu
                                         <FontAwesomeIcon icon={faHeadset} className="w-6 h-6 text-primary-500" />
                                         <div>
                                             <h5 className="font-medium text-gray-900 dark:text-white">Need Assistance?</h5>
-                                            <p className="text-sm text-gray-500 dark:text-gray-400">Our support team is available 24/7 via WhatsApp</p>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">Chat with our support team on WhatsApp</p>
                                         </div>
                                         <Button variant="outline" className="ml-auto" onClick={handleWhatsAppSupport}>
                                             <FontAwesomeIcon icon={faWhatsapp} className="mr-2" />

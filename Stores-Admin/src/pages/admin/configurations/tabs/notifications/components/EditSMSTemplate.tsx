@@ -148,18 +148,18 @@ const EditSMSTemplate: React.FC<EditSMSTemplateProps> = ({
 
   const getSampleValue = (variable: string) => {
     const sampleValues: Record<string, string> = {
-      customer_name: 'John Doe',
-      service_date: '2024-01-15',
-      booking_id: 'BK-2024-001',
-      driver_name: 'Mike Johnson',
-      eta: '2:30 PM',
-      tracking_url: 'https://track.tradehut.com/abc123',
+      customer_name: '[Customer name]',
+      service_date: '[Date]',
+      booking_id: '[Order ID]',
+      driver_name: '[Name]',
+      eta: '[Time]',
+      tracking_url: '[Tracking link]',
       company_name: 'TradeHut',
-      support_phone: '+1-555-123-4567',
-      service_type: 'Moving Service',
-      price: '$150.00',
-      location: 'New York, NY',
-      status: 'Confirmed'
+      support_phone: '024 813 8722',
+      service_type: '[Service]',
+      price: '[Amount]',
+      location: 'La Trade Fair, Accra, Ghana',
+      status: '[Status]'
     };
     return sampleValues[variable] || `[${variable}]`;
   };

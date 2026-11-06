@@ -1,19 +1,38 @@
 'use client';
 
 import { PropsWithChildren, Suspense, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { NavLink } from 'react-router-dom';
 import App from '../../App';
 import Portals from '../../components/Portals';
 import { IRootState } from '../../store';
-import { toggleSidebar } from '../../store/themeConfigSlice';
 import Footer from './Footer';
 import Header from './Header';
 import Sidebar from './Sidebar';
+import { LayoutGrid, LayoutDashboard, List, MessageCircle, Package, ReceiptText, Wallet } from 'lucide-react';
 import IconLoader from '../Icon/IconLoader';
+import { Toaster } from '@/components/shadcn/sonner';
+import { cn } from '@/lib/utils';
+import { useUserAccess } from '@/pages/seller/hooks/useUserAccess';
+
+const SELLER_NAV = [
+    { to: '/seller/overview', Icon: LayoutDashboard, label: 'Overview' },
+    { to: '/seller/listings', Icon: Package, label: 'Listings' },
+    { to: '/seller/orders', Icon: ReceiptText, label: 'Orders' },
+    { to: '/seller/payouts', Icon: Wallet, label: 'Payouts' },
+];
+
+const ADMIN_NAV = [
+    { to: '/admin/dashboard', Icon: LayoutGrid, label: 'Home' },
+    { to: '/admin/products/list', Icon: List, label: 'Products' },
+    { to: '/admin/orders/list', Icon: ReceiptText, label: 'Orders' },
+    { to: '/admin/notifications', Icon: MessageCircle, label: 'Messages' },
+];
 
 const DefaultLayout = ({ children }: PropsWithChildren) => {
     const themeConfig = useSelector((state: IRootState) => state.themeConfig);
-    const dispatch = useDispatch();
+    const { isSeller, isStaff } = useUserAccess();
+    const bottomNav = isSeller && !isStaff ? SELLER_NAV : ADMIN_NAV;
 
     const [showLoader, setShowLoader] = useState(true);
     const [showTopButton, setShowTopButton] = useState(false);
@@ -51,8 +70,8 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
         <App>
             {/* BEGIN MAIN CONTAINER */}
             <div className="relative">
-                {/* sidebar menu overlay */}
-                <div className={`${(!themeConfig.sidebar && 'hidden') || ''} fixed inset-0 bg-[black]/60 z-50 lg:hidden`} onClick={() => dispatch(toggleSidebar())}></div>
+                {/* Single app-wide toast mount (shadcn/sonner) */}
+                <Toaster />
                 {/* screen loader */}
                 {showLoader && (
                     <div className="screen_loader fixed inset-0 bg-[#fafafa] dark:bg-[#060818] z-[60] grid place-content-center animate__animated">
@@ -69,7 +88,7 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
                     )}
                 </div>
 
-                <div className={`${themeConfig.navbar} main-container text-black dark:text-white-dark min-h-screen bg-surface`}>
+                <div className={`${themeConfig.navbar} main-container text-black dark:text-white-dark min-h-screen bg-background`}>
                     {/* BEGIN SIDEBAR */}
                     <Sidebar />
                     {/* END SIDEBAR */}
@@ -92,33 +111,23 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
                     </div>
                 </div>
 
-                {/* ── Mobile bottom nav (Kinetic — hidden on md+) ─────────────────────
-                    Route list preserved exactly from the sidebar.
-                    Visual treatment: Kinetic warm surface + Material icons.
-                ──────────────────────────────────────────────────────────────────── */}
-                <nav className="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-2 md:hidden bg-surface/95 z-50 rounded-t-2xl border-t border-outline-variant/10 shadow-card-hover glass-header">
-                    {[
-                        { to: '/admin/dashboard', icon: 'grid_view',             label: 'Home'     },
-                        { to: '/admin/products/list', icon: 'format_list_bulleted', label: 'Products' },
-                        { to: '/admin/orders/list', icon: 'receipt_long',        label: 'Orders'   },
-                        { to: '/admin/notifications', icon: 'chat_bubble',       label: 'Messages' },
-                    ].map(({ to, icon, label }) => {
-                        const isActive = typeof window !== 'undefined' && window.location.pathname.startsWith(to);
-                        return (
-                            <a
-                                key={to}
-                                href={to}
-                                className={`flex flex-col items-center justify-center gap-0.5 px-3 py-1 rounded-xl text-[10px] font-bold transition-all duration-200 ${
-                                    isActive
-                                        ? 'bg-surface-container-low text-primary-container'
-                                        : 'text-on-surface opacity-50 hover:opacity-100'
-                                }`}
-                            >
-                                <span className="material-symbols-outlined text-xl">{icon}</span>
-                                <span>{label}</span>
-                            </a>
-                        );
-                    })}
+                {/* Mobile bottom nav (hidden on md+). Seller accounts get the seller shortcuts. */}
+                <nav aria-label="Quick navigation" className="fixed bottom-0 left-0 z-50 flex w-full items-center justify-around rounded-t-2xl border-t border-border bg-background px-4 py-2 shadow-lg md:hidden">
+                    {bottomNav.map(({ to, Icon, label }) => (
+                        <NavLink
+                            key={to}
+                            to={to}
+                            className={({ isActive }) =>
+                                cn(
+                                    'flex flex-col items-center justify-center gap-0.5 rounded-xl px-3 py-1 text-[10px] font-bold transition-colors',
+                                    isActive ? 'bg-accent text-primary' : 'text-muted-foreground hover:text-foreground'
+                                )
+                            }
+                        >
+                            <Icon className="h-5 w-5" aria-hidden="true" />
+                            <span>{label}</span>
+                        </NavLink>
+                    ))}
                 </nav>
             </div>
         </App>

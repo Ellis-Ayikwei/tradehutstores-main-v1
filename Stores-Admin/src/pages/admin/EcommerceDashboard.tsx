@@ -94,18 +94,6 @@ function KpiCard({ label, value, icon, iconColor, delta, deltaLabel, accent }: K
     );
 }
 
-// ─── Chart placeholder bar ───────────────────────────────────────────────────
-const CHART_BARS = [
-    { h: '60%', active: false },
-    { h: '45%', active: false },
-    { h: '80%', active: false },
-    { h: '95%', active: true  },
-    { h: '55%', active: false },
-    { h: '70%', active: false },
-    { h: '85%', active: false },
-];
-const CHART_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
 // ─── Main Component ───────────────────────────────────────────────────────────
 const EcommerceDashboard = () => {
     const dispatch = useDispatch();
@@ -143,12 +131,12 @@ const EcommerceDashboard = () => {
     }
 
     // ── Fallback values ────────────────────────────────────────────────────
-    const gmv            = stats?.total_revenue        ?? 42910;
-    const gmvGrowth      = stats?.revenue_growth       ?? 12.5;
-    const activeListings = stats?.total_products       ?? 184;
-    const pendingOrders  = stats?.pending_orders       ?? 23;
-    const unreadMessages = 12; // TODO: wire to API — no messages endpoint yet
-    const payoutBalance  = 12450.80; // TODO: wire to API — payout endpoint TBD
+    const gmv            = stats?.total_revenue        ?? 0;
+    const gmvGrowth      = stats?.revenue_growth       ?? null;
+    const activeListings = stats?.total_products       ?? 0;
+    const pendingOrders  = stats?.pending_orders       ?? 0;
+    const unreadMessages = 0; // TODO: wire to API — no messages endpoint yet
+    const payoutBalance  = 0; // TODO: wire to API — payout endpoint TBD
 
     return (
         <div className="p-6 md:p-8 space-y-8 max-w-7xl mx-auto pb-20 md:pb-12">
@@ -191,7 +179,7 @@ const EcommerceDashboard = () => {
                     value={pendingOrders.toString()}
                     icon="local_shipping"
                     iconColor="text-tertiary"
-                    deltaLabel={`Priority: ${stats?.low_stock_items ?? 4}`}
+                    deltaLabel={`Priority: ${stats?.low_stock_items ?? 0}`}
                 />
                 <KpiCard
                     label="Unread Messages"
@@ -229,22 +217,8 @@ const EcommerceDashboard = () => {
                             ))}
                         </div>
                     </div>
-                    {/* Mock bar chart — TODO: chart */}
-                    <div className="h-64 flex items-end justify-between gap-2 px-2">
-                        {CHART_BARS.map((bar, i) => (
-                            <div
-                                key={i}
-                                className={`w-full rounded-t-lg transition-all ${
-                                    bar.active
-                                        ? 'bg-primary-container shadow-lg'
-                                        : 'bg-surface-container-high hover:bg-primary-container/20'
-                                }`}
-                                style={{ height: bar.h }}
-                            />
-                        ))}
-                    </div>
-                    <div className="flex justify-between mt-4 text-[10px] uppercase tracking-widest text-on-surface-variant opacity-60 font-bold px-2">
-                        {CHART_LABELS.map((l) => <span key={l}>{l}</span>)}
+                    <div className="h-64 flex items-center justify-center rounded-lg bg-surface-container-low text-sm text-on-surface-variant">
+                        Sales data will appear here once you have orders.
                     </div>
                 </div>
 
@@ -262,7 +236,7 @@ const EcommerceDashboard = () => {
                         <div className="space-y-1">
                             {/* TODO: wire to API — payout balance */}
                             <span className="font-mono text-4xl font-bold">{formatDisplayPrice(payoutBalance)}</span>
-                            <p className="text-sm opacity-50">Next payout scheduled: Oct 24, 2023</p>
+                            
                         </div>
                     </div>
 
@@ -337,72 +311,11 @@ const EcommerceDashboard = () => {
                                     </tr>
                                 ))
                             ) : (
-                                /* Stitch static fallback rows — TODO: wire to API */
-                                <>
-                                    <tr className="hover:bg-surface-container-low/30 transition-colors">
-                                        <td className="px-6 py-4 font-mono text-sm text-on-surface">#TRH-8291</td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-md bg-surface-container overflow-hidden flex-shrink-0">
-                                                    <img
-                                                        loading="lazy"
-                                                        className="w-full h-full object-cover"
-                                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4UOpDCXPGz9cZzrE-LiRhgoLahA_bK3-588C5ErpnhaNGEbNh1IU3yv6IEhcbh9lQlY_cmbGP7qVQBO19n2a7e-1Y4efJYiu4sjRHiYmJsZsmhRqiFummMZ7BV595o3qnD-yDeKhli9RXwCM4dhnmHSt9fRDYjnTonSZ_xwakVvuipr0Pm6Mw-VIXsIfIx5KGh76FJEuzjX3FMsmCxYAjNfn-Pruc4UwMsjJcrZUmrqOKeVCZpDtC2NdNfCECftGF04fZoc25KmI"
-                                                        alt="Titanium Chronograph"
-                                                    />
-                                                </div>
-                                                <span className="font-medium text-sm text-on-surface">Titanium Chronograph</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-secondary-container text-on-secondary-container uppercase">Processing</span>
-                                        </td>
-                                        <td className="px-6 py-4 text-sm text-on-surface-variant">Oct 18, 2023</td>
-                                        <td className="px-6 py-4 font-mono font-bold text-on-surface">{formatDisplayPrice(599, 'USD')}</td>
-                                    </tr>
-                                    <tr className="hover:bg-surface-container-low/30 transition-colors">
-                                        <td className="px-6 py-4 font-mono text-sm text-on-surface">#TRH-8290</td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-md bg-surface-container overflow-hidden flex-shrink-0">
-                                                    <img
-                                                        loading="lazy"
-                                                        className="w-full h-full object-cover"
-                                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOsrZzV7aB30nx5fRNE7azc4Mn8LFqbe2-YSrTLyIsFi-OytD-4iyp8B1jI2uRd3rxFtwNcjxGjDnoy7fbHDfb1yMYyfmr5RF_o_W_aPtuR_B7F9UPfmlm-NLJx6y4G2vmDpct8BF0NFQAyVDxAb1fWsKT7jRRpU9zb76mE6HO98TO_1hHhOseXF3zZOGMjerTIG9gWZzga80Eg8Hl3wNI_uoJPWwXfkQbkTtaXgwEwjX4Af4em8U_uF_bOH0cHr_H851h_MioRgw"
-                                                        alt="Studio ANC Headphones"
-                                                    />
-                                                </div>
-                                                <span className="font-medium text-sm text-on-surface">Studio ANC Headphones</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-surface-container-highest text-on-surface-variant uppercase tracking-wider">Shipped</span>
-                                        </td>
-                                        <td className="px-6 py-4 text-sm text-on-surface-variant">Oct 17, 2023</td>
-                                        <td className="px-6 py-4 font-mono font-bold text-on-surface">{formatDisplayPrice(249.5, 'USD')}</td>
-                                    </tr>
-                                    <tr className="hover:bg-surface-container-low/30 transition-colors">
-                                        <td className="px-6 py-4 font-mono text-sm text-on-surface">#TRH-8288</td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-md bg-surface-container overflow-hidden flex-shrink-0">
-                                                    <img
-                                                        loading="lazy"
-                                                        className="w-full h-full object-cover"
-                                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjA_-2HMV3R22pyN2115fm_3PnAGQ_VkvjJV_2VpIg2Z_i0IOs39fP5vj2Qzw4WnZba-c1Y51Ci6UvTjAXHcJDvHZgYurXsY-80Hto4DNAAQE7tScoOgn3ksZECL2tDJ9zAV4IL4_mHEcEIXyc6yZL_oHQ6Rsbzlh9zMtccLbRDBUNQjycq45iOkUwaCg33h019gl7R91ciuAc6k-UcmaE_cn_YeYKcoQ8HRA-HcCmpseVom_MRsT7Q0ijHdb690ZYUFLL8-_HghY"
-                                                        alt="Velocity Sport Runner"
-                                                    />
-                                                </div>
-                                                <span className="font-medium text-sm text-on-surface">Velocity Sport Runner</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-error-container text-on-error-container uppercase">Refunded</span>
-                                        </td>
-                                        <td className="px-6 py-4 text-sm text-on-surface-variant">Oct 16, 2023</td>
-                                        <td className="px-6 py-4 font-mono font-bold text-on-surface">{formatDisplayPrice(120, 'USD')}</td>
-                                    </tr>
-                                </>
+                                <tr>
+                                    <td colSpan={5} className="px-6 py-8 text-center text-sm text-on-surface-variant">
+                                        No orders yet.
+                                    </td>
+                                </tr>
                             )}
                         </tbody>
                     </table>

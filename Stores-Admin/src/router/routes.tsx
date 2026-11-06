@@ -104,6 +104,17 @@ import MerchandisingHomepage from '../pages/admin/MerchandisingHomepage';
 import AdsManagement from '../pages/admin/AdsManagement';
 import PromosManagement from '../pages/admin/PromosManagement';
 
+// Seller dashboard pages (guarded by SellerRoute -> ProtectedRoute allowedGroups={['Sellers']})
+import { SellerRoute, SellerLandingRedirect } from '../pages/seller/SellerRoute';
+import SellerOverview from '../pages/seller/overview';
+import SellerListings from '../pages/seller/listings';
+import SellerOrders from '../pages/seller/orders';
+import SellerAuctions from '../pages/seller/auctions';
+import SellerRfq from '../pages/seller/rfq';
+import SellerPayouts from '../pages/seller/payouts';
+import SellerDisputes from '../pages/seller/disputes';
+import SellerSettings from '../pages/seller/settings';
+
 // Revenue Management Pages
 import RevenueOverview from '../pages/admin/RevenueManagement/RevenueOverview';
 import RevenueTransactions from '../pages/admin/RevenueManagement/RevenueTransactions';
@@ -140,12 +151,24 @@ const routes = [
     {
         path: '/',
         element: (
-            <ProtectedRoute allowedGroups={['Administrators', "Finance Officers", "Inventory Managers", "Support"]}>
-                <EcommerceDashboard />
-            </ProtectedRoute>
+            <SellerLandingRedirect>
+                <ProtectedRoute allowedGroups={['Administrators', "Finance Officers", "Inventory Managers", "Support"]}>
+                    <EcommerceDashboard />
+                </ProtectedRoute>
+            </SellerLandingRedirect>
         ),
         layout: 'admin',
     },
+    // Seller dashboard
+    { path: '/seller', element: <Navigate to="/seller/overview" replace />, layout: 'blank' },
+    { path: '/seller/overview', element: <SellerRoute><SellerOverview /></SellerRoute>, layout: 'admin' },
+    { path: '/seller/listings', element: <SellerRoute><SellerListings /></SellerRoute>, layout: 'admin' },
+    { path: '/seller/orders', element: <SellerRoute><SellerOrders /></SellerRoute>, layout: 'admin' },
+    { path: '/seller/auctions', element: <SellerRoute><SellerAuctions /></SellerRoute>, layout: 'admin' },
+    { path: '/seller/rfq', element: <SellerRoute><SellerRfq /></SellerRoute>, layout: 'admin' },
+    { path: '/seller/payouts', element: <SellerRoute><SellerPayouts /></SellerRoute>, layout: 'admin' },
+    { path: '/seller/disputes', element: <SellerRoute><SellerDisputes /></SellerRoute>, layout: 'admin' },
+    { path: '/seller/settings', element: <SellerRoute><SellerSettings /></SellerRoute>, layout: 'admin' },
     // Public routes (no authentication required)
 
     // Auth routes (redirect if already authenticated)
@@ -483,7 +506,13 @@ const routes = [
     // Admin routes
     {
         path: '/admin/dashboard',
-        element: <EcommerceDashboard />,
+        element: (
+            <SellerLandingRedirect>
+                <ProtectedRoute allowedGroups={['Administrators', 'Finance Officers', 'Inventory Managers', 'Support']}>
+                    <EcommerceDashboard />
+                </ProtectedRoute>
+            </SellerLandingRedirect>
+        ),
         layout: 'admin',
     },
 

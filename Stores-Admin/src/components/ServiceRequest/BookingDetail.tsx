@@ -2485,10 +2485,10 @@ const BookingDetail: React.FC = () => {
                                     <IconHelp className="mr-2" />
                                     Need Help?
                                 </h2>
-                                <p className="text-sm text-yellow-800 dark:text-yellow-200 mb-4">Our support team is available 24/7 to assist with any questions about your booking.</p>
+                                <p className="text-sm text-yellow-800 dark:text-yellow-200 mb-4">Our support team is here to assist with any questions about your booking.</p>
                                 <div className="space-y-2">
                                     <a
-                                        href="tel:+447497603774"
+                                        href="tel:+233248138722"
                                         className="block bg-yellow-100 dark:bg-yellow-800/30 hover:bg-yellow-200 dark:hover:bg-yellow-700/40 border border-yellow-300 dark:border-yellow-700 text-yellow-800 dark:text-yellow-200 px-4 py-2 rounded-md text-center transition-colors duration-200"
                                     >
                                         Call Support

@@ -135,81 +135,6 @@ function Stars({ rating }: { rating: number }) {
 const TABS = ['About', 'Listings', 'Orders', 'Reviews', 'Disputes', 'Admin Actions'] as const;
 type Tab = (typeof TABS)[number];
 
-// ─── Static fallback data (shown when API is not yet wired) ──────────────────
-
-const STUB_SELLER: SellerDetail = {
-    id: '1',
-    business_name: 'Modernist Curator',
-    business_description: 'Curating timeless pieces for the digital age — premium watches, audio gear, and precision industrial components.',
-    store_logo: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDAOZ1gor-z7NkUgANXX5rJrqAhnRPUdPvpaX4CCXRh7oNCetskqyVUBy2i6mT28yZfEoQAgeALGIybMkRVqJQ9kFdkVCL4-KZVI_xzEKEEPejFdjfaesDElrgfR0_MKmCCGqb2QuIEdvZa4jptvIcOhnbJSJn6TKb6LNE0BjgwxEd_ZQW6rZXYHPB4VlRx2IvD8QZgg8rABUXkGX8bGOi081obkzId3V8HyefDYezPDXX-bTxV8yGabK_FMneQkyWcOPyCL-6wwpI',
-    store_banner: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBxMC9uRKk_oSp8RX8iBgsz-VFfqzk0Q8R-sEJUf3EkTqG-6IxPho5CEg5035xyfteAvfW6ktdXaovgiwQxXPNJBWLSIEdGa3R6MksaGfauTSmeUel74jvmT1BtpnyMf20tMT-y9JnPCqs-47S2_TK0dpMHQrsWBsld07UUZ0vjXUU0RIU5Y2O7Bm_xpjlU0Mahaov8afjykX_rlD0u3vQ-j5cekTSzASk40XmzEeZUKF8mrsgt9BotJ9sA9jFoAc4JvBRRHRkLyWA',
-    verification_status: 'verified',
-    is_verified: true,
-    is_active: true,
-    is_accepting_orders: true,
-    total_sales: 62100,
-    total_orders: 4200,
-    rating: 4.9,
-    total_reviews: 1204,
-    response_rate: 98,
-    joined_date: '2021-03-15',
-    location: 'Stockholm, SE',
-    commission_rate: 8.5,
-    user: {
-        id: 'u1',
-        username: 'modernist_curator',
-        email: 'curator@tradehut.com',
-        first_name: 'Marcus',
-        last_name: 'Lindqvist',
-    },
-};
-
-const STUB_LISTINGS: Listing[] = [
-    {
-        id: 'l1',
-        name: 'Vanguard Titanium Chrono',
-        price: 1450,
-        is_auction: true,
-        bid_count: 3,
-        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCYwSky50sMYX3rPTkx3eGqdWJonlmua47X9xu-RXXfK6aaGEmE-4ZE0yYCEHckYFopfTRyYQo3ohdH1NGFacK680KxzFfaAXXegwwGbUsx-YcrN6nRqLxUtO-j8GEnmPLK1kWg6-sQWZlZOL7ssNduyp_YGBcvk9ka6jeVUnYGDznOsWGyVgqw5OEqdJv7HOMijNHOQxeHp3jXfJC1IkPKup67Wj3-gKmNCwcufcY97BC-ZIngfSsk1G7JSQIDTA5c2eLONy-zlkE',
-    },
-    {
-        id: 'l2',
-        name: 'Core RFQ Module X1',
-        price: null,
-        is_rfq: true,
-        badge: 'B2B',
-        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA5juzraIpFGwJsXXmu02uWIJAq7772Zkf6lX5y83uoS5ZrQl6BujXAvK1y4Bdqx8RjdFEG185Fn7ZMgl5kFlt6nHQ0q-P3u42ctSuG8qO8nOM2XqGsMbj_v8D5KHH0JjWJiM6SZp-ySZQsbvqeJDMLa1r7J5HeEOG9vo8qwA3M9soGutyoVrw9IkvN6nThwi05a5gBH0ZhFiB28MSna5vBl8gHW5-GWNVNJHQYJqU-kU0l91BfPMm7Kbz3C_SzD_1QUMxYGsXsPps',
-    },
-    {
-        id: 'l3',
-        name: 'Heritage Studio Monitor',
-        price: 320,
-        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDciGdQJsZIzWr0eACBjv1y3Iz8XocbgYb36GkUl2kaMixNAchIQAosOBsx3g1pg0UOORuNUs2-xFC4N0IY-2SjnGq6ieMagmK2WDAlKEX-o9lJ_x_HOJ5XD7EH8-ieYmYYczj3BZNiJGVX390z-kdpuzWrCR25dfBwLOUAtWeg7VBjfKB4aAbKJzs5tCzmSMWWbHRfBXrnMsPGKbbjI6YZSsNfQc50rNVD-xoXYppB7ai6hslyGO_J2n48LsKsWDi_FdSrh9bNwUE',
-    },
-];
-
-const STUB_ORDERS: Order[] = [
-    { id: 'o1', order_number: 'TRH-8291', customer_name: 'Alicia Monroe',   total_amount: 1450,  status: 'delivered',  created_at: '2024-10-18' },
-    { id: 'o2', order_number: 'TRH-8290', customer_name: 'Pieter Van Dijk', total_amount: 320,   status: 'shipped',    created_at: '2024-10-17' },
-    { id: 'o3', order_number: 'TRH-8278', customer_name: 'Yuki Tanaka',     total_amount: 2100,  status: 'processing', created_at: '2024-10-15' },
-    { id: 'o4', order_number: 'TRH-8260', customer_name: 'Fatima Al-Rashid',total_amount: 430,   status: 'cancelled',  created_at: '2024-10-12' },
-];
-
-const STUB_REVIEWS: Review[] = [
-    { id: 'r1', reviewer_name: 'Alicia Monroe',    rating: 5, comment: 'Absolutely incredible quality. Packed beautifully, arrived on time, and exactly as described. Will buy again.', created_at: '2024-10-18' },
-    { id: 'r2', reviewer_name: 'Pieter Van Dijk',  rating: 5, comment: 'Fast shipping, excellent communication throughout. The Heritage Monitor sounds phenomenal.', created_at: '2024-10-17' },
-    { id: 'r3', reviewer_name: 'Sebastien Moreau', rating: 4, comment: 'Great seller overall. Minor delay in dispatch but was kept informed. Product is perfect.', created_at: '2024-10-12' },
-];
-
-const STUB_ACTIVITY: ActivityEvent[] = [
-    { id: 'a1', icon: 'shopping_bag',  type: 'sale',    description: 'New order #TRH-8291 placed by Alicia Monroe — $1,450.00',           timestamp: '2024-10-18T14:22:00' },
-    { id: 'a2', icon: 'star',          type: 'review',  description: 'New 5-star review received from Alicia Monroe',                      timestamp: '2024-10-18T16:05:00' },
-    { id: 'a3', icon: 'local_shipping',type: 'sale',    description: 'Order #TRH-8290 marked as shipped',                                  timestamp: '2024-10-17T09:30:00' },
-    { id: 'a4', icon: 'warning',       type: 'dispute', description: 'Dispute opened on order #TRH-8260 by Fatima Al-Rashid',              timestamp: '2024-10-14T11:10:00' },
-    { id: 'a5', icon: 'verified_user', type: 'admin',   description: 'Identity verification approved by admin',                            timestamp: '2021-03-22T08:00:00' },
-];
-
 const ACTIVITY_TYPE_STYLES: Record<ActivityEvent['type'], string> = {
     sale:    'bg-bid-green/10 text-bid-green',
     review:  'bg-primary-container/10 text-primary-container',
@@ -367,16 +292,13 @@ const SellerProfile = () => {
         // TODO: fetch /api/admin/sellers/{id}/reviews/
         // TODO: fetch /api/admin/sellers/{id}/activity/
 
-        // Stub — replace with real API calls
-        const timer = setTimeout(() => {
-            setSeller(STUB_SELLER);
-            setListings(STUB_LISTINGS);
-            setOrders(STUB_ORDERS);
-            setReviews(STUB_REVIEWS);
-            setActivity(STUB_ACTIVITY);
-            setLoading(false);
-        }, 300);
-        return () => clearTimeout(timer);
+        // No API wired yet: show the empty/not-found state, never fake sellers (AGENTS.md section 1b).
+        setSeller(null);
+        setListings([]);
+        setOrders([]);
+        setReviews([]);
+        setActivity([]);
+        setLoading(false);
     }, [id]);
 
     // ── Action handlers ───────────────────────────────────────────────────────

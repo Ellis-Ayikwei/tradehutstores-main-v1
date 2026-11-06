@@ -1,535 +1,232 @@
-import {
-    IconAlertTriangle,
-    IconBan,
-    IconCheck,
-    IconEdit,
-    IconEye,
-    IconMail,
-    IconPlus,
-    IconSearch,
-    IconShoppingBag,
-    IconStar,
-    IconTrash,
-    IconUser,
-    IconUsers,
-    IconBuildingStore,
-} from '@tabler/icons-react';
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import IconLoader from '../../../components/Icon/IconLoader';
-import DraggableDataTable, { ColumnDefinition } from '../../../components/ui/DraggableDataTable';
-import FilterSelect from '../../../components/ui/FilterSelect';
-import axiosInstance from '../../../services/axiosInstance';
-import { useCurrency } from '../../../contexts/CurrencyContext';
+import { useCallback, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import useSWR from 'swr';
+import { ChevronRight, RefreshCw, Store } from 'lucide-react';
+import type { ColumnDef } from '@tanstack/react-table';
+import { Badge } from '@/components/shadcn/badge';
+import { Button } from '@/components/shadcn/button';
+import { Card } from '@/components/shadcn/card';
+import { DataTable } from '@/components/shadcn/data-table';
+import { EmptyState } from '@/components/shadcn/empty-state';
+import { PageHeader } from '@/components/shadcn/page-header';
+import { Tabs, TabsList, TabsTrigger } from '@/components/shadcn/tabs';
+import { cn } from '@/lib/utils';
+import { fetchAdminSellers, type AdminSellerError, type Paginated, type SellerListRow } from '@/services/adminSellersService';
+import { setPageTitle } from '@/store/themeConfigSlice';
+import { ReviewSheet, SELLERS_KEY } from './ReviewSheet';
+import { CategoryChips, MissingChip, STATUS_TABS, StatusBadge, businessTypeLabel, categoryNames, ownerName, rowDate } from './sellerUi';
 
-interface Seller {
-    id: string;
-    user: {
-        id: string;
-        username: string;
-        email: string;
-        first_name?: string;
-        last_name?: string;
-    };
-    business_name: string;
-    business_description?: string;
-    business_email?: string;
-    business_phone?: string;
-    business_address?: string;
-    verification_status: 'pending' | 'verified' | 'rejected' | 'suspended';
-    is_verified: boolean;
-    is_active: boolean;
-    is_accepting_orders: boolean;
-    total_sales: number;
-    total_orders: number;
-    rating: number;
-    total_reviews: number;
-    store_logo?: string;
-    store_banner?: string;
-    store_slug?: string;
-    created_at: string;
-    updated_at: string;
+const PAGE_SIZE = 25;
+const SWR_OPTIONS = { shouldRetryOnError: false, revalidateOnFocus: false, keepPreviousData: true } as const;
+
+function docsLabel(row: SellerListRow): string {
+    const count = row.documents_count ?? 0;
+    return `${count} uploaded`;
 }
 
-const SellerManagement: React.FC = () => {
-    const [sellers, setSellers] = useState<Seller[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [activeFilter, setActiveFilter] = useState('all');
-    const [selectedSeller, setSelectedSeller] = useState<Seller | null>(null);
-    const [showSuspendModal, setShowSuspendModal] = useState(false);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [suspensionReason, setSuspensionReason] = useState('');
-
-    // Fetch sellers from API
-    const fetchSellers = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-            const response = await axiosInstance.get('/sellers/admin/list/');
-            // Handle both array response and paginated response with results
-            const sellersData = Array.isArray(response.data) 
-                ? response.data 
-                : (response.data?.results || response.data?.data || []);
-            setSellers(sellersData);
-        } catch (err) {
-            setError('Failed to fetch sellers. Please try again later.');
-            console.error('Error fetching sellers:', err);
-            setSellers([]); // Ensure sellers is always an array
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchSellers();
-    }, []);
-
-    // Calculate seller counts
-    const getSellerCounts = () => {
-        // Ensure sellers is an array
-        const sellersArray = Array.isArray(sellers) ? sellers : [];
-        const counts = {
-            all: sellersArray.length,
-            verified: sellersArray.filter((s) => s.verification_status === 'verified' && s.is_active).length,
-            pending: sellersArray.filter((s) => s.verification_status === 'pending').length,
-            rejected: sellersArray.filter((s) => s.verification_status === 'rejected').length,
-            suspended: sellersArray.filter((s) => s.verification_status === 'suspended' || !s.is_active).length,
-        };
-        return counts;
-    };
-
-    const sellerCounts = getSellerCounts();
-
-    // Filter sellers based on active filter
-    const getFilteredSellers = () => {
-        // Ensure sellers is an array
-        const sellersArray = Array.isArray(sellers) ? sellers : [];
-        if (activeFilter === 'all') return sellersArray;
-        if (activeFilter === 'verified') {
-            return sellersArray.filter((seller) => seller.verification_status === 'verified' && seller.is_active);
-        }
-        if (activeFilter === 'suspended') {
-            return sellersArray.filter((seller) => seller.verification_status === 'suspended' || !seller.is_active);
-        }
-        return sellersArray.filter((seller) => seller.verification_status === activeFilter);
-    };
-
-    const handleFilterChange = (filter: string | number) => {
-        setActiveFilter(String(filter));
-    };
-
-    // Handle seller suspension/activation
-    const handleSuspend = async (seller: Seller) => {
-        setSelectedSeller(seller);
-        setShowSuspendModal(true);
-        setSuspensionReason('');
-    };
-
-    const handleConfirmSuspend = async () => {
-        if (selectedSeller) {
-            try {
-                const newStatus = selectedSeller.verification_status === 'suspended' || !selectedSeller.is_active
-                    ? 'verified'
-                    : 'suspended';
-                const isActive = selectedSeller.verification_status === 'suspended' || !selectedSeller.is_active;
-                
-                await axiosInstance.patch(`/sellers/admin/${selectedSeller.id}/`, {
-                    verification_status: newStatus,
-                    is_active: !isActive,
-                    verification_notes: suspensionReason,
-                });
-                await fetchSellers();
-                setShowSuspendModal(false);
-                setSuspensionReason('');
-                setSelectedSeller(null);
-            } catch (err) {
-                setError('Failed to update seller status. Please try again.');
-                console.error('Error updating seller status:', err);
-            }
-        }
-    };
-
-    // Handle seller deletion
-    const handleDelete = (seller: Seller) => {
-        setSelectedSeller(seller);
-        setShowDeleteModal(true);
-    };
-
-    const handleConfirmDelete = async () => {
-        if (selectedSeller) {
-            try {
-                await axiosInstance.delete(`/sellers/admin/${selectedSeller.id}/`);
-                await fetchSellers();
-                setShowDeleteModal(false);
-                setSelectedSeller(null);
-            } catch (err) {
-                setError('Failed to delete seller. Please try again.');
-                console.error('Error deleting seller:', err);
-            }
-        }
-    };
-
-    const { formatDisplayPrice: formatCurrency } = useCurrency();
-
-    const formatDate = (dateString: string): string => {
-        const date = new Date(dateString);
-        return new Intl.DateTimeFormat('en-GB', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric',
-        }).format(date);
-    };
-
-    const getStatusBadge = (status: string, isActive: boolean) => {
-        const statusConfig: Record<string, string> = {
-            verified: 'bg-green-100 text-green-800',
-            pending: 'bg-yellow-100 text-yellow-800',
-            rejected: 'bg-red-100 text-red-800',
-            suspended: 'bg-red-100 text-red-800',
-        };
-        const safeStatus = status || 'pending';
-        const displayStatus = !isActive ? 'suspended' : safeStatus;
-        return (
-            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${statusConfig[displayStatus] || statusConfig.pending}`}>
-                {displayStatus.toUpperCase().replace('_', ' ')}
-            </span>
-        );
-    };
-
-    const columns: ColumnDefinition[] = [
-        {
-            accessor: 'store_logo',
-            title: 'Logo',
-            render: (seller: Seller) => (
-                <div className="w-10 h-10 flex-shrink-0">
-                    {seller.store_logo ? (
-                        <img src={seller.store_logo} alt={seller.business_name || ''} className="w-full h-full object-cover rounded-full" />
-                    ) : (
-                        <div className="w-full h-full bg-gray-200 rounded-full flex items-center justify-center">
-                            <IconBuildingStore className="w-5 h-5 text-gray-400" />
-                        </div>
-                    )}
-                </div>
-            ),
-        },
-        {
-            accessor: 'business_name',
-            title: 'Business Name',
-            sortable: true,
-            render: (seller: Seller) => (
-                <div>
-                    <div className="font-semibold text-gray-900">
-                        {seller.business_name || 'N/A'}
-                    </div>
-                    <div className="text-sm text-gray-500">
-                        {seller.user?.email || seller.business_email || 'N/A'}
-                    </div>
-                </div>
-            ),
-        },
-        {
-            accessor: 'business_phone',
-            title: 'Phone',
-            sortable: true,
-            render: (seller: Seller) => (
-                <div className="text-sm text-gray-600">{seller.business_phone || 'N/A'}</div>
-            ),
-        },
-        {
-            accessor: 'total_orders',
-            title: 'Orders',
-            sortable: true,
-            render: (seller: Seller) => (
-                <div className="text-center">
-                    <span className="font-semibold text-gray-900">{seller.total_orders ?? 0}</span>
-                </div>
-            ),
-        },
-        {
-            accessor: 'total_sales',
-            title: 'Total Sales',
-            sortable: true,
-            render: (seller: Seller) => (
-                <div className="font-semibold text-gray-900">{formatCurrency(Number(seller.total_sales) || 0)}</div>
-            ),
-        },
-        {
-            accessor: 'rating',
-            title: 'Rating',
-            sortable: true,
-            render: (seller: Seller) => (
-                <div className="flex items-center gap-1">
-                    <IconStar className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                    <span className="text-gray-900 font-semibold">
-                        {seller.rating ? Number(seller.rating).toFixed(1) : '0.0'}
-                    </span>
-                    <span className="text-sm text-gray-500">
-                        ({seller.total_reviews || 0})
-                    </span>
-                </div>
-            ),
-        },
-        {
-            accessor: 'verification_status',
-            title: 'Status',
-            sortable: true,
-            render: (seller: Seller) => getStatusBadge(seller.verification_status, seller.is_active),
-        },
-        {
-            accessor: 'is_accepting_orders',
-            title: 'Orders',
-            sortable: true,
-            render: (seller: Seller) => (
-                <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                    seller.is_accepting_orders 
-                        ? 'bg-blue-100 text-blue-800' 
-                        : 'bg-gray-100 text-gray-800'
-                }`}>
-                    {seller.is_accepting_orders ? 'Accepting' : 'Not Accepting'}
-                </span>
-            ),
-        },
-        {
-            accessor: 'created_at',
-            title: 'Joined',
-            sortable: true,
-            render: (seller: Seller) => (
-                <div className="text-sm text-gray-600">{seller.created_at ? formatDate(seller.created_at) : 'N/A'}</div>
-            ),
-        },
-        {
-            accessor: 'actions',
-            title: 'Actions',
-            render: (seller: Seller) => (
-                <div className="flex gap-2">
-                    <Link
-                        to={`/admin/sellers/${seller.id}`}
-                        className="p-2 hover:bg-gray-100 rounded transition-colors"
-                        title="View Details"
-                    >
-                        <IconEye className="w-4 h-4 text-blue-600" />
-                    </Link>
-                    <button
-                        onClick={() => handleSuspend(seller)}
-                        className="p-2 hover:bg-gray-100 rounded transition-colors"
-                        title={seller.verification_status === 'suspended' || !seller.is_active ? 'Activate' : 'Suspend'}
-                    >
-                        {seller.verification_status === 'suspended' || !seller.is_active ? (
-                            <IconCheck className="w-4 h-4 text-green-600" />
-                        ) : (
-                            <IconBan className="w-4 h-4 text-orange-600" />
-                        )}
-                    </button>
-                    <button
-                        onClick={() => handleDelete(seller)}
-                        className="p-2 hover:bg-gray-100 rounded transition-colors"
-                        title="Delete Seller"
-                    >
-                        <IconTrash className="w-4 h-4 text-red-600" />
-                    </button>
-                </div>
-            ),
-        },
-    ];
-
-    const filterOptions = [
-        { value: 'all', label: `All Sellers (${sellerCounts.all})` },
-        { value: 'verified', label: `Verified (${sellerCounts.verified})` },
-        { value: 'pending', label: `Pending (${sellerCounts.pending})` },
-        { value: 'rejected', label: `Rejected (${sellerCounts.rejected})` },
-        { value: 'suspended', label: `Suspended (${sellerCounts.suspended})` },
-    ];
-
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <IconLoader className="w-10 h-10 animate-spin" />
-            </div>
-        );
-    }
-
-    // Calculate total revenue
-    const sellersArray = Array.isArray(sellers) ? sellers : [];
-    const totalRevenue = sellersArray.reduce((sum, seller) => sum + (Number(seller.total_sales) || 0), 0);
-    const averageRating = sellersArray.length > 0 
-        ? sellersArray.reduce((sum, seller) => sum + (Number(seller.rating) || 0), 0) / sellersArray.length 
-        : 0;
-
+function StoreCell({ row }: { row: SellerListRow }) {
     return (
-        <div className="space-y-6">
-            {/* Header */}
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Seller Management</h1>
-                    <p className="text-gray-600 mt-1">Manage seller accounts and verification</p>
-                </div>
-                <Link
-                    to="/admin/sellers/new"
-                    className="flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
-                >
-                    <IconPlus className="w-5 h-5" />
-                    Add New Seller
-                </Link>
-            </div>
-
-            {/* Error Message */}
-            {error && (
-                <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-start gap-3">
-                    <IconAlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                    <p>{error}</p>
-                </div>
-            )}
-
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">Total Sellers</p>
-                            <p className="text-2xl font-bold text-gray-900 mt-1">{sellerCounts.all}</p>
-                        </div>
-                        <IconUsers className="w-10 h-10 text-blue-500" />
-                    </div>
-                </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">Verified</p>
-                            <p className="text-2xl font-bold text-green-600 mt-1">{sellerCounts.verified}</p>
-                        </div>
-                        <IconCheck className="w-10 h-10 text-green-500" />
-                    </div>
-                </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">Total Revenue</p>
-                            <p className="text-2xl font-bold text-blue-600 mt-1">{formatCurrency(totalRevenue)}</p>
-                        </div>
-                        <IconShoppingBag className="w-10 h-10 text-blue-500" />
-                    </div>
-                </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">Avg. Rating</p>
-                            <p className="text-2xl font-bold text-purple-600 mt-1">{averageRating.toFixed(1)}</p>
-                        </div>
-                        <IconStar className="w-10 h-10 text-purple-500" />
-                    </div>
-                </div>
-            </div>
-
-            {/* Filters */}
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                <FilterSelect 
-                    options={filterOptions} 
-                    value={activeFilter} 
-                    onChange={handleFilterChange}
-                    placeholder="Filter by status"
-                />
-            </div>
-
-            {/* Sellers Table */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                <DraggableDataTable
-                    data={getFilteredSellers()}
-                    columns={columns}
-                    loading={loading}
-                    title="Sellers"
-                    quickCheckFields={['business_name', 'business_email', 'business_phone', 'user.email']}
-                />
-            </div>
-
-            {/* Suspend/Activate Modal */}
-            {showSuspendModal && selectedSeller && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className={`p-2 rounded-full ${selectedSeller.verification_status === 'suspended' || !selectedSeller.is_active ? 'bg-green-100' : 'bg-orange-100'}`}>
-                                {selectedSeller.verification_status === 'suspended' || !selectedSeller.is_active ? (
-                                    <IconCheck className="w-6 h-6 text-green-600" />
-                                ) : (
-                                    <IconBan className="w-6 h-6 text-orange-600" />
-                                )}
-                            </div>
-                            <h3 className="text-lg font-semibold text-gray-900">
-                                {selectedSeller.verification_status === 'suspended' || !selectedSeller.is_active ? 'Activate Seller' : 'Suspend Seller'}
-                            </h3>
-                        </div>
-                        <p className="text-gray-600 mb-4">
-                            {selectedSeller.verification_status === 'suspended' || !selectedSeller.is_active
-                                ? `Are you sure you want to activate ${selectedSeller.business_name}?`
-                                : `Are you sure you want to suspend ${selectedSeller.business_name}?`}
-                        </p>
-                        {selectedSeller.verification_status !== 'suspended' && selectedSeller.is_active && (
-                            <div className="mb-6">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Suspension Reason</label>
-                                <textarea
-                                    value={suspensionReason}
-                                    onChange={(e) => setSuspensionReason(e.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                    rows={3}
-                                    placeholder="Enter reason for suspension..."
-                                />
-                            </div>
-                        )}
-                        <div className="flex justify-end gap-3">
-                            <button
-                                onClick={() => setShowSuspendModal(false)}
-                                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleConfirmSuspend}
-                                className={`px-4 py-2 text-white rounded-lg transition-colors ${
-                                    selectedSeller.verification_status === 'suspended' || !selectedSeller.is_active
-                                        ? 'bg-green-600 hover:bg-green-700'
-                                        : 'bg-orange-600 hover:bg-orange-700'
-                                }`}
-                            >
-                                {selectedSeller.verification_status === 'suspended' || !selectedSeller.is_active ? 'Activate' : 'Suspend'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Delete Confirmation Modal */}
-            {showDeleteModal && selectedSeller && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 bg-red-100 rounded-full">
-                                <IconTrash className="w-6 h-6 text-red-600" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-gray-900">Delete Seller</h3>
-                        </div>
-                        <p className="text-gray-600 mb-6">
-                            Are you sure you want to delete <strong>{selectedSeller.business_name}</strong>? This action cannot be undone and will remove all seller data.
-                        </p>
-                        <div className="flex justify-end gap-3">
-                            <button
-                                onClick={() => setShowDeleteModal(false)}
-                                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleConfirmDelete}
-                                className="px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
-                            >
-                                Delete Seller
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+        <div className="min-w-0 space-y-1">
+            <p className="truncate font-semibold text-foreground">{row.business_name}</p>
+            {row.business_type ? (
+                <Badge variant="outline" className="font-medium">
+                    {businessTypeLabel(row.business_type)}
+                </Badge>
+            ) : null}
+            <CategoryChips names={categoryNames(row.selling_categories)} other={row.other_category} />
         </div>
     );
-};
+}
 
-export default SellerManagement;
+function OwnerCell({ row }: { row: SellerListRow }) {
+    return (
+        <div className="min-w-0">
+            <p className="truncate text-sm text-foreground">{ownerName(row.user) || '-'}</p>
+            {row.user?.email ? <p className="truncate text-xs text-muted-foreground">{row.user.email}</p> : null}
+        </div>
+    );
+}
 
+export default function SellerManagement() {
+    const dispatch = useDispatch();
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    useEffect(() => {
+        dispatch(setPageTitle('Seller applications'));
+    }, [dispatch]);
+
+    const tab = STATUS_TABS.find((t) => t.value === searchParams.get('status')) ?? STATUS_TABS[0];
+    const page = Math.max(1, Number(searchParams.get('page')) || 1);
+    const q = searchParams.get('q') ?? '';
+    const sellerId = searchParams.get('id');
+
+    const update = useCallback(
+        (patch: Record<string, string | null>, replace = true) => {
+            setSearchParams(
+                (prev) => {
+                    const next = new URLSearchParams(prev);
+                    for (const [key, value] of Object.entries(patch)) {
+                        if (value === null || value === '') next.delete(key);
+                        else next.set(key, value);
+                    }
+                    return next;
+                },
+                { replace }
+            );
+        },
+        [setSearchParams]
+    );
+
+    const { data, error, isLoading, isValidating, mutate } = useSWR<Paginated<SellerListRow>, AdminSellerError>(
+        [SELLERS_KEY, 'list', tab.status, q, page, PAGE_SIZE],
+        () => fetchAdminSellers({ status: tab.status, q, page, pageSize: PAGE_SIZE }),
+        SWR_OPTIONS
+    );
+
+    // Pending count for the tab badge; independent of the tab and search currently shown.
+    const { data: pendingData } = useSWR<Paginated<SellerListRow>, AdminSellerError>([SELLERS_KEY, 'count', 'pending'], () => fetchAdminSellers({ status: 'pending', pageSize: 1 }), SWR_OPTIONS);
+    const pendingCount = pendingData?.count;
+
+    const openSeller = useCallback((id: string | number) => update({ id: String(id) }, false), [update]);
+    const closeSeller = useCallback(() => update({ id: null }), [update]);
+
+    const emptyState = useMemo(() => {
+        if (q) return undefined;
+        if (tab.value === 'pending') return <EmptyState icon={Store} title="No pending applications" description="New seller applications waiting for review show up here." />;
+        if (tab.value === 'all') return <EmptyState icon={Store} title="No sellers yet" description="Sellers who apply online will appear here." />;
+        return <EmptyState icon={Store} title={`No ${tab.label.toLowerCase()} sellers`} description="Sellers with this status will appear here." />;
+    }, [q, tab]);
+
+    const columns = useMemo<ColumnDef<SellerListRow>[]>(
+        () => [
+            { id: 'store', header: 'Store', enableSorting: false, enableHiding: false, meta: { label: 'Store', cardTitle: true, className: 'max-w-[18rem]' }, cell: ({ row }) => <StoreCell row={row.original} /> },
+            { id: 'owner', header: 'Owner', enableSorting: false, meta: { label: 'Owner', className: 'max-w-[14rem]' }, cell: ({ row }) => <OwnerCell row={row.original} /> },
+            { id: 'status', header: 'Status', enableSorting: false, meta: { label: 'Status' }, cell: ({ row }) => <StatusBadge status={row.original.verification_status} /> },
+            {
+                id: 'documents',
+                header: 'Documents',
+                enableSorting: false,
+                meta: { label: 'Documents', className: 'max-w-[16rem]' },
+                cell: ({ row }) => (
+                    <div className="flex flex-col items-start gap-1">
+                        <span className="text-sm text-foreground">{docsLabel(row.original)}</span>
+                        <MissingChip kinds={row.original.missing_documents ?? []} />
+                    </div>
+                ),
+            },
+            { id: 'date', header: 'Updated', enableSorting: false, meta: { label: 'Updated' }, cell: ({ row }) => <span className="whitespace-nowrap text-sm text-muted-foreground">{rowDate(row.original) || '-'}</span> },
+            {
+                id: 'review',
+                header: () => <span className="sr-only">Review</span>,
+                enableSorting: false,
+                enableHiding: false,
+                meta: { className: 'w-24 text-right' },
+                cell: ({ row }) => (
+                    <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        aria-label={`Review ${row.original.business_name}`}
+                        onClick={(event) => {
+                            event.stopPropagation();
+                            openSeller(row.original.id);
+                        }}
+                    >
+                        Review
+                    </Button>
+                ),
+            },
+        ],
+        [openSeller]
+    );
+
+    const renderMobileCard = useCallback(
+        (row: SellerListRow) => {
+            const missing = row.missing_documents ?? [];
+            return (
+                <Card key={row.id} className="p-3">
+                    <button type="button" onClick={() => openSeller(row.id)} className="flex w-full items-start gap-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                        <div className="min-w-0 flex-1 space-y-1.5">
+                            <div className="flex items-start justify-between gap-2">
+                                <p className="min-w-0 truncate text-sm font-semibold text-foreground">{row.business_name}</p>
+                                <StatusBadge status={row.verification_status} className="shrink-0" />
+                            </div>
+                            <div className="flex flex-wrap items-center gap-1.5">
+                                {row.business_type ? (
+                                    <Badge variant="outline" className="font-medium">
+                                        {businessTypeLabel(row.business_type)}
+                                    </Badge>
+                                ) : null}
+                                <span className="truncate text-xs text-muted-foreground">{[ownerName(row.user), row.user?.email].filter(Boolean).join(' · ')}</span>
+                            </div>
+                            <CategoryChips names={categoryNames(row.selling_categories)} other={row.other_category} />
+                            <p className="text-xs text-muted-foreground">
+                                {docsLabel(row)}
+                                {rowDate(row) ? ` · ${rowDate(row)}` : ''}
+                            </p>
+                            {missing.length > 0 ? <MissingChip kinds={missing} /> : null}
+                        </div>
+                        <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+                    </button>
+                </Card>
+            );
+        },
+        [openSeller]
+    );
+
+    return (
+        <div className="space-y-3">
+            <PageHeader
+                title="Seller applications"
+                description="Review sellers who applied online. Their products stay hidden until you approve them."
+                className="pb-0"
+                actions={
+                    <Button type="button" variant="outline" size="sm" onClick={() => void mutate()} disabled={isValidating}>
+                        <RefreshCw className={cn(isValidating && 'animate-spin')} aria-hidden="true" />
+                        Refresh
+                    </Button>
+                }
+            />
+
+            <Tabs value={tab.value} onValueChange={(value) => update({ status: value === 'pending' ? null : value, page: null, id: null })}>
+                <div className="-mx-1 overflow-x-auto px-1 pb-1">
+                    <TabsList className="w-max">
+                        {STATUS_TABS.map((t) => (
+                            <TabsTrigger key={t.value} value={t.value} className="gap-1.5">
+                                {t.label}
+                                {t.value === 'pending' && pendingCount !== undefined ? (
+                                    <Badge variant="outline" className={cn('border-transparent px-1.5 py-0', pendingCount > 0 ? 'bg-warning-subtle text-warning-subtle-foreground' : 'bg-muted text-muted-foreground')}>
+                                        {pendingCount}
+                                    </Badge>
+                                ) : null}
+                            </TabsTrigger>
+                        ))}
+                    </TabsList>
+                </div>
+            </Tabs>
+
+            <DataTable
+                columns={columns}
+                data={data?.results ?? []}
+                total={data?.count ?? 0}
+                page={page}
+                pageSize={PAGE_SIZE}
+                onPageChange={(next) => update({ page: next <= 1 ? null : String(next) })}
+                search={q}
+                onSearchChange={(value) => update({ q: value.trim() || null, page: null })}
+                searchPlaceholder="Search store, owner or email"
+                isLoading={isLoading}
+                error={error}
+                onRetry={() => void mutate()}
+                emptyState={emptyState}
+                getRowId={(row) => String(row.id)}
+                onRowClick={(row) => openSeller(row.id)}
+                renderMobileCard={renderMobileCard}
+                enableColumnVisibility={false}
+            />
+
+            <ReviewSheet sellerId={sellerId} onClose={closeSeller} />
+        </div>
+    );
+}

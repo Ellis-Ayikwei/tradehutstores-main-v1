@@ -88,10 +88,6 @@ const Home: React.FC = () => {
                 <FontAwesomeIcon icon={faCheckCircle} className="text-green-300 mr-2" />
                 <span>Insured Moves</span>
               </div>
-              <div className="flex items-center bg-white bg-opacity-20 backdrop-blur-sm px-4 py-2 rounded-full">
-                <span className="text-yellow-300 mr-2 font-bold">★★★★★</span>
-                <span>4.8/5 Rating (15K+ Reviews)</span>
-              </div>
             </motion.div>
           </div>
         </div>

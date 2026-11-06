@@ -566,7 +566,7 @@ const UserDashboard: React.FC = () => {
                                     </Link>
                                     <button className="inline-flex items-center px-6 py-4 bg-white/5 backdrop-blur-sm border border-white/20 text-white font-medium rounded-xl hover:bg-white/10 transition-all duration-300">
                                         <FontAwesomeIcon icon={faHeadset} className="mr-2" />
-                                        24/7 Support
+                                        Support
                                     </button>
                                 </div>
                             </div>

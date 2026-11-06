@@ -101,8 +101,8 @@ export default function ForgotPassword() {
                         >
                             <div className="text-center">
                                 <p className="text-white/90 text-sm mb-2">Need immediate admin assistance?</p>
-                                <p className="text-blue-400 font-semibold">System Admin Support: 1-800-ADMIN-HELP</p>
-                                <p className="text-white/70 text-xs mt-1">Available 24/7 for administrative recovery</p>
+                                <a href="tel:+233248138722" className="text-blue-400 font-semibold">Support: 024 813 8722</a>
+                                
                             </div>
                         </motion.div>
                     </motion.div>

@@ -121,7 +121,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ className = '' }) =
       {/* Notification Bell Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 rounded-lg bg-white/60 backdrop-blur-sm border border-white/30 hover:bg-white/80 dark:bg-gray-800/60 dark:border-gray-600 dark:hover:bg-gray-700/80 transition-all duration-300"
+        className="relative p-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-700 transition-all duration-300"
       >
         <Bell className="w-5 h-5 text-gray-700 dark:text-gray-300" />
         
@@ -183,7 +183,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ className = '' }) =
                 {notifications.map((notification: Notification) => (
                   <div
                     key={notification.id}
-                    className={`p-4 border-l-4 ${getPriorityColor(notification.priority)} hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors`}
+                    className={`p-4 border-l-4 ${getPriorityColor(notification.priority)} hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors`}
                   >
                     <div className="flex items-start gap-3">
                       <div className="flex-shrink-0 mt-0.5">

@@ -9,24 +9,69 @@ module.exports = {
         extend: {
             colors: {
                 // ════════════════════════════════════════════════════════════
-                // KINETIC TOKENS (Material 3 derived) — added for the Stitch
-                // redesign. See .claude/design-system/tokens.md.
-                // Use these for new admin pages; legacy tokens below stay
-                // until each legacy page is migrated.
+                // shadcn/ui theme tokens (CSS variables defined in src/tailwind.css).
+                // Used by src/components/shadcn/*. Do not use in legacy pages.
                 // ════════════════════════════════════════════════════════════
-                background:                  '#fff8f6',
-                surface:                     '#fff8f6',
-                'surface-bright':            '#fff8f6',
-                'surface-dim':               '#efd5cb',
-                'surface-variant':           '#f8ddd3',
+                border:      'hsl(var(--border) / <alpha-value>)',
+                input:       'hsl(var(--input) / <alpha-value>)',
+                ring:        'hsl(var(--ring) / <alpha-value>)',
+                background:  'hsl(var(--background) / <alpha-value>)',
+                foreground:  'hsl(var(--foreground) / <alpha-value>)',
+                muted: {
+                    DEFAULT:    'hsl(var(--muted) / <alpha-value>)',
+                    foreground: 'hsl(var(--muted-foreground) / <alpha-value>)',
+                },
+                accent: {
+                    DEFAULT:    'hsl(var(--accent) / <alpha-value>)',
+                    foreground: 'hsl(var(--accent-foreground) / <alpha-value>)',
+                },
+                popover: {
+                    DEFAULT:    'hsl(var(--popover) / <alpha-value>)',
+                    foreground: 'hsl(var(--popover-foreground) / <alpha-value>)',
+                },
+                card: {
+                    DEFAULT:    'hsl(var(--card) / <alpha-value>)',
+                    foreground: 'hsl(var(--card-foreground) / <alpha-value>)',
+                },
+                destructive: {
+                    DEFAULT:    'hsl(var(--destructive) / <alpha-value>)',
+                    foreground: 'hsl(var(--destructive-foreground) / <alpha-value>)',
+                },
+                // Solid tinted surfaces (use instead of bg-primary/10 etc.). See docs/ui-system.md.
+                'primary-hover':     'hsl(var(--primary-hover) / <alpha-value>)',
+                'destructive-hover': 'hsl(var(--destructive-hover) / <alpha-value>)',
+                'primary-subtle': {
+                    DEFAULT:    'hsl(var(--primary-subtle) / <alpha-value>)',
+                    foreground: 'hsl(var(--primary-subtle-foreground) / <alpha-value>)',
+                },
+                'success-subtle': {
+                    DEFAULT:    'hsl(var(--success-subtle) / <alpha-value>)',
+                    foreground: 'hsl(var(--success-subtle-foreground) / <alpha-value>)',
+                },
+                'warning-subtle': {
+                    DEFAULT:    'hsl(var(--warning-subtle) / <alpha-value>)',
+                    foreground: 'hsl(var(--warning-subtle-foreground) / <alpha-value>)',
+                },
+                'info-subtle': {
+                    DEFAULT:    'hsl(var(--info-subtle) / <alpha-value>)',
+                    foreground: 'hsl(var(--info-subtle-foreground) / <alpha-value>)',
+                },
+                'destructive-subtle': {
+                    DEFAULT:    'hsl(var(--destructive-subtle) / <alpha-value>)',
+                    foreground: 'hsl(var(--destructive-subtle-foreground) / <alpha-value>)',
+                },
+
+                // ════════════════════════════════════════════════════════════
+                // Legacy warm-surface / bid tokens. Still referenced by pages that
+                // have not been migrated to shadcn yet (see docs/ui-system.md).
+                // Remove together with the last page that uses them.
+                // ════════════════════════════════════════════════════════════
+                surface:                    '#fff8f6',
                 'surface-container-lowest':  '#ffffff',
                 'surface-container-low':     '#fff1ec',
                 'surface-container':         '#ffe9e2',
                 'surface-container-high':    '#fee3d9',
                 'surface-container-highest': '#f8ddd3',
-                'inverse-surface':           '#3d2d26',
-                'inverse-on-surface':        '#ffede7',
-                'surface-tint':              '#a43d00',
                 'on-background':             '#261813',
                 'on-surface':                '#261813',
                 'on-surface-variant':        '#5a4137',
@@ -34,12 +79,7 @@ module.exports = {
                 'outline-variant':           '#e2bfb2',
                 'on-primary':                '#ffffff',
                 'primary-container':         '#f5620f',
-                'on-primary-container':      '#4e1900',
                 'primary-fixed':             '#ffdbcd',
-                'primary-fixed-dim':         '#ffb597',
-                'on-primary-fixed':          '#360f00',
-                'on-primary-fixed-variant':  '#7d2d00',
-                'inverse-primary':           '#ffb597',
                 // Kinetic secondary (bid-green family). Named 'k-secondary' to avoid
                 // collision with the legacy charcoal 'secondary' object below.
                 'k-secondary':               '#006c4b',
@@ -49,17 +89,9 @@ module.exports = {
                 'secondary-fixed':           '#63fcc0',
                 'secondary-fixed-dim':       '#3fdfa5',
                 'on-secondary-fixed':        '#002114',
-                'on-secondary-fixed-variant':'#005138',
                 tertiary:                    '#0058ca',
-                'on-tertiary':               '#ffffff',
-                'tertiary-container':        '#558dff',
-                'on-tertiary-container':     '#002761',
                 'tertiary-fixed':            '#d9e2ff',
-                'tertiary-fixed-dim':        '#b0c6ff',
-                'on-tertiary-fixed':         '#001945',
-                'on-tertiary-fixed-variant': '#00429b',
                 error:                       '#ba1a1a',
-                'on-error':                  '#ffffff',
                 'error-container':           '#ffdad6',
                 'on-error-container':        '#93000a',
                 bid: {
@@ -80,7 +112,10 @@ module.exports = {
                     700: '#a34311', // Dark
                     800: '#853614', // Very dark
                     900: '#6d2e15', // Darkest
-                    DEFAULT: '#dc711a',
+                    // DEFAULT resolves to the same brand orange (#dc711a) via the
+                    // shadcn CSS variable so `bg-primary/10` etc. keep working.
+                    DEFAULT: 'hsl(var(--primary) / <alpha-value>)',
+                    foreground: 'hsl(var(--primary-foreground) / <alpha-value>)',
                     light: '#fde6d4',
                     'dark-light': 'rgba(220, 113, 26, 0.15)',
                 },
@@ -264,5 +299,6 @@ module.exports = {
             strategy: 'class',
         }),
         require('@tailwindcss/typography'),
+        require('tailwindcss-animate'),
     ],
 };

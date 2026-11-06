@@ -307,7 +307,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, onClose, onSubmit, titl
 
                         {/* Footer Note */}
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }} className="text-center mt-6">
-                            <p className="text-xs text-gray-500 dark:text-gray-400">Average response time: Under 5 minutes • 📱 Available 24/7</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">We will get back to you as soon as possible</p>
                         </motion.div>
                     </div>
                 </motion.div>

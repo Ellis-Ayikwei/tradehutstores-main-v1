@@ -1099,14 +1099,14 @@ const ServiceRequestForm: React.FC = () => {
                             </div>
                             <div className="p-4 space-y-3">
                                 <button
-                                    onClick={() => window.open('tel:+447497603774')}
+                                    onClick={() => window.open('tel:+233248138722')}
                                     className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
                                 >
                                     <IconPhone size={20} />
                                     <span>Call Support</span>
                                 </button>
                                 <button
-                                    onClick={() => window.open('https://wa.me/447497603774')}
+                                    onClick={() => window.open('https://wa.me/233248138722')}
                                     className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
                                 >
                                     <IconBrandWhatsapp size={20} />

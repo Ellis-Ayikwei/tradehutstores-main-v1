@@ -304,9 +304,9 @@ const AdminSettings: React.FC = () => {
   const [systemSettings, setSystemSettings] = useState<SystemSettings>({
     general: {
       siteName: 'TradeHut',
-      siteDescription: 'The ultimate platform for van and moving services',
+      siteDescription: '',
       supportEmail: 'support@tradehut.com',
-      contact_phone: '+1-555-123-4567',
+      contact_phone: '024 813 8722',
       defaultLanguage: 'en',
       timezone: 'UTC',
       maintenanceMode: false,
@@ -319,7 +319,7 @@ const AdminSettings: React.FC = () => {
       smsNotifications: false,
       pushNotifications: false,
       emailServiceProvider: 'smtp',
-      smtpServer: 'smtp.example.com',
+      smtpServer: '',
       smtpPort: '587',
       smtpUsername: 'notifications@tradehut.com',
       smtpPassword: '',
@@ -616,7 +616,7 @@ const AdminSettings: React.FC = () => {
                       type="email"
                       value={systemSettings.general.supportEmail}
                       onChange={(value) => updateSettings('general', 'supportEmail', value)}
-                      placeholder="support@example.com"
+                      placeholder="Support email address"
                       required
                     />
                     
@@ -624,7 +624,7 @@ const AdminSettings: React.FC = () => {
                       label="Contact Phone"
                       value={systemSettings.general.contact_phone}
                       onChange={(value) => updateSettings('general', 'contact_phone', value)}
-                      placeholder="+1 (555) 123-4567"
+                      placeholder="Support phone number"
                     />
                   </div>
                 </Card>
@@ -743,7 +743,7 @@ const AdminSettings: React.FC = () => {
                         label="SMTP Server"
                         value={systemSettings.notifications.smtpServer}
                         onChange={(value) => updateSettings('notifications', 'smtpServer', value)}
-                        placeholder="smtp.example.com"
+                        placeholder="SMTP server host"
                       />
                       
                       <TextInput
@@ -757,7 +757,7 @@ const AdminSettings: React.FC = () => {
                         label="SMTP Username"
                         value={systemSettings.notifications.smtpUsername}
                         onChange={(value) => updateSettings('notifications', 'smtpUsername', value)}
-                        placeholder="username@example.com"
+                        placeholder="SMTP username"
                       />
                       
                       <TextInput
