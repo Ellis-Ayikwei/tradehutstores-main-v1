@@ -223,7 +223,7 @@ const CampaignsTab: React.FC<Props> = ({ onChange }) => {
                 <button
                     type="button"
                     onClick={openCreate}
-                    className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary/90 shadow"
+                    className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary-hover shadow"
                 >
                     <IconPlus size={16} /> New campaign
                 </button>
@@ -244,7 +244,7 @@ const CampaignsTab: React.FC<Props> = ({ onChange }) => {
                         <button
                             type="button"
                             onClick={openCreate}
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary/90"
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary-hover"
                         >
                             <IconPlus size={16} /> Create your first campaign
                         </button>
@@ -268,7 +268,7 @@ const CampaignsTab: React.FC<Props> = ({ onChange }) => {
                 <ModalShell
                     title={editingId ? 'Edit campaign' : 'New campaign'}
                     icon={
-                        <span className="p-2 rounded-lg bg-primary/10 text-primary">
+                        <span className="p-2 rounded-lg bg-primary-subtle text-primary">
                             <IconRocket size={18} />
                         </span>
                     }
@@ -466,7 +466,7 @@ const FilterChip: React.FC<{
         <span
             className={[
                 'inline-block px-1.5 rounded text-[10px] font-bold',
-                active ? 'bg-white/25 text-white' : 'bg-gray-100 dark:bg-gray-800 text-on-surface-variant',
+                active ? 'bg-gray-700 text-white' : 'bg-gray-100 dark:bg-gray-800 text-on-surface-variant',
             ].join(' ')}
         >
             {count}
@@ -498,12 +498,12 @@ const CampaignCard: React.FC<{
                     <div className="flex items-center gap-2 flex-wrap mb-1.5">
                         <StatusBadge status={row.status} />
                         {isUrgent && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300">
                                 <IconFlame size={10} /> URGENT
                             </span>
                         )}
                         {isHigh && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300">
                                 <IconBolt size={10} /> HIGH
                             </span>
                         )}

@@ -44,7 +44,7 @@ const JobItemsTab: React.FC<JobItemsTabProps> = ({ job }) => {
                     {(job.request?.moving_items || []).map((item, index) => (
                         <div
                             key={item.id || index}
-                            className="backdrop-blur-sm bg-slate-50/80 dark:bg-slate-900/30 rounded-2xl p-6 border border-slate-200/50 dark:border-slate-700/50"
+                            className=" bg-slate-50 dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-700"
                         >
                             <div className="flex items-start gap-4">
                                 <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center text-white font-bold">
@@ -53,11 +53,11 @@ const JobItemsTab: React.FC<JobItemsTabProps> = ({ job }) => {
 
                                 <div className="flex-1">
                                     <div className="flex items-center gap-3 mb-3">
-                                        <span className="px-3 py-1 bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 rounded-full text-sm font-bold">
+                                        <span className="px-3 py-1 bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 rounded-full text-sm font-bold">
                                             ITEM {index + 1}
                                         </span>
                                         {item.quantity && item.quantity > 1 && (
-                                            <span className="px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 rounded-full text-xs font-bold">
+                                            <span className="px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 rounded-full text-xs font-bold">
                                                 Qty: {item.quantity}
                                             </span>
                                         )}
@@ -103,12 +103,12 @@ const JobItemsTab: React.FC<JobItemsTabProps> = ({ job }) => {
                                         {(item.fragile || item.needs_disassembly) && (
                                             <div className="flex gap-2">
                                                 {item.fragile && (
-                                                    <span className="px-3 py-1 bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 text-xs rounded-full font-semibold">
+                                                    <span className="px-3 py-1 bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300 text-xs rounded-full font-semibold">
                                                         FRAGILE
                                                     </span>
                                                 )}
                                                 {item.needs_disassembly && (
-                                                    <span className="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 text-xs rounded-full font-semibold">
+                                                    <span className="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 text-xs rounded-full font-semibold">
                                                         DISASSEMBLY REQUIRED
                                                     </span>
                                                 )}
@@ -123,8 +123,8 @@ const JobItemsTab: React.FC<JobItemsTabProps> = ({ job }) => {
             ) : (
                 /* Journey type request - No moving items */
                 <div className="text-center py-16">
-                    <div className="backdrop-blur-xl bg-slate-50/80 dark:bg-slate-800/50 rounded-3xl p-12 border border-slate-200/50 dark:border-slate-700/30 max-w-md mx-auto">
-                        <div className="w-20 h-20 bg-slate-200/80 dark:bg-slate-700/80 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                    <div className=" bg-slate-50 dark:bg-slate-800 rounded-3xl p-12 border border-slate-200 dark:border-slate-700 max-w-md mx-auto">
+                        <div className="w-20 h-20 bg-slate-200 dark:bg-slate-700 rounded-3xl flex items-center justify-center mx-auto mb-6">
                             <Route className="w-10 h-10 text-slate-400 dark:text-slate-500" />
                         </div>
                         <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Journey Type Request</h3>

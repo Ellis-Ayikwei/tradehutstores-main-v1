@@ -35,7 +35,7 @@ const JobMetrics: React.FC<JobMetricsProps> = ({ job }) => {
             {/* Bottom Row - Key Metrics */}
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
                 {/* Total Weight */}
-                <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-3 border border-slate-200/50 dark:border-slate-600/50">
+                <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-3 border border-slate-200 dark:border-slate-600">
                     <div className="text-center">
                         <div className="text-lg font-bold text-black dark:text-white mb-1">
                             {(job.request?.moving_items || []).reduce((sum, item) => {
@@ -48,7 +48,7 @@ const JobMetrics: React.FC<JobMetricsProps> = ({ job }) => {
                 </div>
 
                 {/* Item Count */}
-                <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-3 border border-slate-200/50 dark:border-slate-600/50">
+                <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-3 border border-slate-200 dark:border-slate-600">
                     <div className="text-center">
                         <div className="text-lg font-bold text-black dark:text-white mb-1">{(job.request?.moving_items || []).length}</div>
                         <div className="text-xs text-slate-600 dark:text-slate-400 font-medium">Items</div>
@@ -56,7 +56,7 @@ const JobMetrics: React.FC<JobMetricsProps> = ({ job }) => {
                 </div>
 
                 {/* Distance */}
-                <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-3 border border-slate-200/50 dark:border-slate-600/50">
+                <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-3 border border-slate-200 dark:border-slate-600">
                     <div className="text-center">
                         <div className="text-lg font-bold text-black dark:text-white mb-1">{job.request?.estimated_distance || 0}</div>
                         <div className="text-xs text-slate-600 dark:text-slate-400 font-medium">Distance (km)</div>
@@ -64,7 +64,7 @@ const JobMetrics: React.FC<JobMetricsProps> = ({ job }) => {
                 </div>
 
                 {/* Base Price */}
-                <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-3 border border-slate-200/50 dark:border-slate-600/50">
+                <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-3 border border-slate-200 dark:border-slate-600">
                     <div className="text-center">
                         <div className="text-lg font-bold text-black dark:text-white mb-1">£ {job.request?.base_price || 0}</div>
                         <div className="text-xs text-slate-600 dark:text-slate-400 font-medium">Price (£)</div>
@@ -72,7 +72,7 @@ const JobMetrics: React.FC<JobMetricsProps> = ({ job }) => {
                 </div>
 
                 {/* Total Dimensions */}
-                <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-3 border border-slate-200/50 dark:border-slate-600/50">
+                <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-3 border border-slate-200 dark:border-slate-600">
                     <div className="text-center">
                         <div className="text-lg font-bold text-black dark:text-white mb-1">
                            {job.request?.volume || 0} Cubic Meters
@@ -82,7 +82,7 @@ const JobMetrics: React.FC<JobMetricsProps> = ({ job }) => {
                 </div>
 
                 {/* Insurance Value */}
-                <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-3 border border-slate-200/50 dark:border-slate-600/50">
+                <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-3 border border-slate-200 dark:border-slate-600">
                     <div className="text-center">
                         <div className="text-lg font-bold text-black dark:text-white mb-1">
                             £
@@ -100,7 +100,7 @@ const JobMetrics: React.FC<JobMetricsProps> = ({ job }) => {
             {/* Additional Metrics Row */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
                 {/* Fragile Items */}
-                <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-lg p-2 border border-slate-200/50 dark:border-slate-600/50">
+                <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-lg p-2 border border-slate-200 dark:border-slate-600">
                     <div className="text-center">
                         <div className="text-base font-bold text-black dark:text-white mb-1">{(job.request?.items || []).filter((item) => item.fragile).length}</div>
                         <div className="text-xs text-slate-600 dark:text-slate-400 font-medium">Fragile Items</div>
@@ -108,7 +108,7 @@ const JobMetrics: React.FC<JobMetricsProps> = ({ job }) => {
                 </div>
 
                 {/* Disassembly Required */}
-                <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-lg p-2 border border-slate-200/50 dark:border-slate-600/50">
+                <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-lg p-2 border border-slate-200 dark:border-slate-600">
                     <div className="text-center">
                         <div className="text-base font-bold text-black dark:text-white mb-1">{(job.request?.items || []).filter((item) => item.needs_disassembly).length}</div>
                         <div className="text-xs text-slate-600 dark:text-slate-400 font-medium">Disassembly</div>
@@ -116,7 +116,7 @@ const JobMetrics: React.FC<JobMetricsProps> = ({ job }) => {
                 </div>
 
                 {/* Insurance Required */}
-                <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-lg p-2 border border-slate-200/50 dark:border-slate-600/50">
+                <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-lg p-2 border border-slate-200 dark:border-slate-600">
                     <div className="text-center">
                         <div className="text-base font-bold text-black dark:text-white mb-1">{job.request?.insurance_required ? 'Yes' : 'No'}</div>
                         <div className="text-xs text-slate-600 dark:text-slate-400 font-medium">Insurance</div>
@@ -124,7 +124,7 @@ const JobMetrics: React.FC<JobMetricsProps> = ({ job }) => {
                 </div>
 
                 {/* Priority */}
-                <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-lg p-2 border border-slate-200/50 dark:border-slate-600/50">
+                <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-lg p-2 border border-slate-200 dark:border-slate-600">
                     <div className="text-center">
                         <div className="text-base font-bold text-black dark:text-white mb-1">{job.request?.service_level?.toUpperCase() || 'NORMAL'}</div>
                         <div className="text-xs text-slate-600 dark:text-slate-400 font-medium">Priority</div>

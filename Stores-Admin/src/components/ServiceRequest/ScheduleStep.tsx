@@ -635,7 +635,7 @@ const ScheduleStep: React.FC<ScheduleStepProps> = ({
                                             key={option.value}
                                             onClick={() => setFieldValue('service_speed', option.value)}
                                             className={`p-4 rounded-lg border cursor-pointer transition-all ${
-                                                values.service_speed === option.value ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-primary/50'
+                                                values.service_speed === option.value ? 'border-primary bg-primary-subtle' : 'border-gray-200 hover:border-primary-300'
                                             }`}
                                         >
                                             <div className="flex items-center gap-3 mb-2">

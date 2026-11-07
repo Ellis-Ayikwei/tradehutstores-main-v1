@@ -46,7 +46,7 @@ export default function Categories() {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent">
                             <div className="absolute bottom-0 p-4">
                                 <h3 className="text-xl font-bold text-white">{category.name}</h3>
-                                <p className="text-white/80">{category.productCount} Products</p>
+                                <p className="text-white">{category.productCount} Products</p>
                             </div>
                         </div>
                     </Link>

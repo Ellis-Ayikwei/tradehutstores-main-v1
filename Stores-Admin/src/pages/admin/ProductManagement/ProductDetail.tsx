@@ -294,9 +294,9 @@ const ProductDetail: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="mt-4 rounded-lg border border-blue-100 bg-blue-50/60 p-4">
+                    <div className="mt-4 rounded-lg border border-blue-100 bg-blue-50 p-4">
                         <h3 className="text-sm font-semibold text-blue-900">Quick flags</h3>
-                        <p className="mt-1 text-xs text-blue-800/90">
+                        <p className="mt-1 text-xs text-blue-800">
                             Same booleans as Django admin “Flags”; saved with PATCH.
                         </p>
                         <ul className="mt-4 space-y-3">
@@ -312,7 +312,7 @@ const ProductDetail: React.FC = () => {
                                     <span className="text-sm text-gray-800">{label}</span>
                                     <input
                                         type="checkbox"
-                                        className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 disabled:opacity-40"
+                                        className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
                                         checked={quickFlags[field]}
                                         disabled={savingQuick}
                                         onChange={(e) => patchQuick(field, e.target.checked)}

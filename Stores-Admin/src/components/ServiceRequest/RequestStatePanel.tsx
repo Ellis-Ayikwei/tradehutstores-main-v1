@@ -9,7 +9,7 @@ interface RequestStatePanelProps {
 const RequestStatePanel: React.FC<RequestStatePanelProps> = ({ values }) => {
     return (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
-            <div className="px-6 py-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900/30 dark:to-gray-800/30 border-b border-gray-200 dark:border-gray-700">
+            <div className="px-6 py-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 border-b border-gray-200 dark:border-gray-700">
                 <h3 className="font-medium text-gray-800 dark:text-gray-200 flex items-center">
                     <FontAwesomeIcon icon={faInfoCircle} className="mr-2 text-gray-600 dark:text-gray-400" />
                     Request State

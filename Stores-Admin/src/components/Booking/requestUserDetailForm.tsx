@@ -253,7 +253,7 @@ const BookingDetailsForm: React.FC<BookingDetailsFormProps> = ({ selectedPrice, 
             <div className="fixed top-4 right-4 z-50 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
                 <span>✨</span>
                 <span className="text-sm">{message}</span>
-                <button onClick={onDismiss} className="ml-2 text-white/80 hover:text-white">
+                <button onClick={onDismiss} className="ml-2 text-white hover:text-white">
                     ×
                 </button>
             </div>
@@ -916,7 +916,7 @@ const BookingDetailsForm: React.FC<BookingDetailsFormProps> = ({ selectedPrice, 
                 </div>
 
                 {/* Enhanced info banner */}
-                <div className="text-xs text-blue-600 bg-blue-50 dark:bg-blue-900/20 p-2 rounded flex items-center gap-2">
+                <div className="text-xs text-blue-600 bg-blue-50 dark:bg-blue-950 p-2 rounded flex items-center gap-2">
                     <span>🏘️</span>
                     <span>We found multiple addresses for your postcode - choose the one that matches your location</span>
                 </div>
@@ -1253,7 +1253,7 @@ const BookingDetailsForm: React.FC<BookingDetailsFormProps> = ({ selectedPrice, 
                                 </div>
 
                                 {/* Enhanced AddressAutocomplete option */}
-                                <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md">
+                                <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-950 rounded-md">
                                     <h6 className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">🌍 Search Any Address Worldwide</h6>
                                     <AddressAutocomplete
                                         name={`manual_address_${index}`}
@@ -1380,7 +1380,7 @@ const BookingDetailsForm: React.FC<BookingDetailsFormProps> = ({ selectedPrice, 
                                     </div>
                                 </div>
 
-                                <div className="text-xs text-blue-600 bg-blue-50 dark:bg-blue-900/20 p-2 rounded">
+                                <div className="text-xs text-blue-600 bg-blue-50 dark:bg-blue-950 p-2 rounded">
                                     💡 Tip: Your postcode ({stop.postcode}) is valid. Use the search above or complete your address details manually.
                                 </div>
                             </div>
@@ -1407,7 +1407,7 @@ const BookingDetailsForm: React.FC<BookingDetailsFormProps> = ({ selectedPrice, 
                                     {stop.county && <p>{stop.county}</p>}
                                 </div>
 
-                                <div className="text-xs text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 p-2 rounded">✓ Address confirmed and saved</div>
+                                <div className="text-xs text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950 p-2 rounded">✓ Address confirmed and saved</div>
                             </div>
                         )}
 
@@ -1416,7 +1416,7 @@ const BookingDetailsForm: React.FC<BookingDetailsFormProps> = ({ selectedPrice, 
                             !addressState.showManualEntry &&
                             !addressState.selectedAddress &&
                             (addressState.error.includes('No addresses found') || addressState.error.includes('Error loading addresses')) && (
-                                <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-md">
+                                <div className="bg-yellow-50 dark:bg-yellow-950 p-4 rounded-md">
                                     <p className="text-sm text-yellow-800 dark:text-yellow-200 mb-3">{addressState.error}</p>
                                     <button
                                         type="button"
@@ -1434,7 +1434,7 @@ const BookingDetailsForm: React.FC<BookingDetailsFormProps> = ({ selectedPrice, 
                             !addressState.selectedAddress &&
                             !addressState.error.includes('No addresses found') &&
                             !addressState.error.includes('Error loading addresses') && (
-                                <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-md">
+                                <div className="bg-red-50 dark:bg-red-950 p-3 rounded-md">
                                     <p className="text-sm text-red-600 dark:text-red-400">{addressState.error}</p>
                                 </div>
                             )}
@@ -1461,7 +1461,7 @@ const BookingDetailsForm: React.FC<BookingDetailsFormProps> = ({ selectedPrice, 
                                         <p className="text-blue-600 dark:text-blue-400 font-medium mt-1">📍 {addressState.selectedAddress.organisation_name}</p>
                                     )}
                                 </div>
-                                <div className="text-xs text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 p-2 rounded">✓ Address confirmed and saved</div>
+                                <div className="text-xs text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950 p-2 rounded">✓ Address confirmed and saved</div>
                             </div>
                         )}
                     </div>
@@ -1515,7 +1515,7 @@ const BookingDetailsForm: React.FC<BookingDetailsFormProps> = ({ selectedPrice, 
                         )}
 
                         {!stop.use_main_contact && (
-                            <div className="text-xs text-gray-500 dark:text-gray-400 bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-md">
+                            <div className="text-xs text-gray-500 dark:text-gray-400 bg-yellow-50 dark:bg-yellow-950 p-3 rounded-md">
                                 It is your responsibility to make this person aware that MoreVan and a driver will contact them during the course of the job. By clicking 'Book Now' you are authorising
                                 AnyVan to share essential booking information with this person and a driver.
                             </div>
@@ -1602,7 +1602,7 @@ const BookingDetailsForm: React.FC<BookingDetailsFormProps> = ({ selectedPrice, 
 
                     {/* Payment Error Display */}
                     {paymentError && (
-                        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+                        <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg p-4">
                             <div className="flex items-center">
                                 <div className="flex-shrink-0">
                                     <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">

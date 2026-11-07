@@ -72,15 +72,15 @@ const BookingDetail: React.FC = () => {
     const getStatusColor = (status: string) => {
         switch (status.toLowerCase()) {
             case 'confirmed':
-                return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
+                return 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-400';
             case 'cancelled':
-                return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
+                return 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400';
             case 'pending':
-                return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400';
+                return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-400';
             case 'completed':
-                return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
+                return 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-400';
             default:
-                return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+                return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-400';
         }
     };
 
@@ -94,7 +94,7 @@ const BookingDetail: React.FC = () => {
 
     if (error || !booking) {
         return (
-            <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg">
+            <div className="p-4 bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 rounded-lg">
                 <p>{error || 'Booking not found'}</p>
             </div>
         );
@@ -193,7 +193,7 @@ const BookingDetail: React.FC = () => {
                         onClick={() => handleStatusUpdate('confirmed')}
                         disabled={updating || booking.status === 'confirmed'}
                         className={`px-4 py-2 rounded-lg ${
-                            booking.status === 'confirmed' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' : 'bg-green-600 text-white hover:bg-green-700'
+                            booking.status === 'confirmed' ? 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-400' : 'bg-green-600 text-white hover:bg-green-700'
                         }`}
                     >
                         Confirm
@@ -202,7 +202,7 @@ const BookingDetail: React.FC = () => {
                         onClick={() => handleStatusUpdate('completed')}
                         disabled={updating || booking.status === 'completed'}
                         className={`px-4 py-2 rounded-lg ${
-                            booking.status === 'completed' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400' : 'bg-blue-600 text-white hover:bg-blue-700'
+                            booking.status === 'completed' ? 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-400' : 'bg-blue-600 text-white hover:bg-blue-700'
                         }`}
                     >
                         Mark as Completed
@@ -210,7 +210,7 @@ const BookingDetail: React.FC = () => {
                     <button
                         onClick={() => handleStatusUpdate('cancelled')}
                         disabled={updating || booking.status === 'cancelled'}
-                        className={`px-4 py-2 rounded-lg ${booking.status === 'cancelled' ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400' : 'bg-red-600 text-white hover:bg-red-700'}`}
+                        className={`px-4 py-2 rounded-lg ${booking.status === 'cancelled' ? 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400' : 'bg-red-600 text-white hover:bg-red-700'}`}
                     >
                         Cancel
                     </button>

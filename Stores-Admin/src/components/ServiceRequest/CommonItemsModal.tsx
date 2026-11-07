@@ -96,7 +96,7 @@ const CommonItemsModal: React.FC<CommonItemsModalProps> = ({ isOpen, onClose, on
                                                         dropoff_stop: null,
                                                     });
                                                 }}
-                                                className="flex items-center text-left p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                                                className="flex items-center text-left p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950"
                                             >
                                                 <div className={`w-8 h-8 rounded-full ${getItemIcon(category.name).color} flex items-center justify-center mr-3`}>
                                                     <FontAwesomeIcon icon={getItemIcon(category.name).icon} />

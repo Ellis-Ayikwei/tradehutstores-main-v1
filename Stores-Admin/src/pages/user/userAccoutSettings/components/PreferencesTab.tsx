@@ -129,7 +129,7 @@ const PreferencesTab: React.FC<PreferencesTabProps> = ({
             <button
                 onClick={handleSavePreferences}
                 disabled={savingPreferences}
-                className="px-4 py-2 bg-[#dc711a] text-white rounded-md hover:bg-[#dc711a]/90 disabled:opacity-70"
+                className="px-4 py-2 bg-[#dc711a] text-white rounded-md hover:bg-[#dc711a]/90 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
             >
                 {savingPreferences ? 'Saving...' : 'Save Preferences'}
             </button>

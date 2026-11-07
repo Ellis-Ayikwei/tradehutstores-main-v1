@@ -11,7 +11,7 @@ const PaymentCancel: React.FC = () => {
             <div className="max-w-4xl mx-auto px-4 py-8">
                 {/* Header */}
                 <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
-                    <div className="w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div className="w-20 h-20 bg-red-100 dark:bg-red-950 rounded-full flex items-center justify-center mx-auto mb-4">
                         <IconX className="w-12 h-12 text-red-600 dark:text-red-400" />
                     </div>
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Payment Cancelled</h1>
@@ -33,7 +33,7 @@ const PaymentCancel: React.FC = () => {
                                 What Happened?
                             </h2>
 
-                            <div className="bg-orange-50 dark:bg-orange-900/20 rounded-xl p-4 border border-orange-200 dark:border-orange-800">
+                            <div className="bg-orange-50 dark:bg-orange-950 rounded-xl p-4 border border-orange-200 dark:border-orange-800">
                                 <p className="text-orange-900 dark:text-orange-100 mb-3">Your booking payment was cancelled before completion. This could have happened because:</p>
                                 <ul className="text-orange-800 dark:text-orange-200 text-sm space-y-1">
                                     <li>• You clicked the back button during payment</li>
@@ -43,7 +43,7 @@ const PaymentCancel: React.FC = () => {
                                 </ul>
                             </div>
 
-                            <div className="mt-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+                            <div className="mt-4 bg-blue-50 dark:bg-blue-950 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
                                 <div className="flex items-start">
                                     <IconCreditCard className="w-5 h-5 text-blue-600 dark:text-blue-400 mr-3 mt-0.5" />
                                     <div>
@@ -63,7 +63,7 @@ const PaymentCancel: React.FC = () => {
                         >
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Your Booking Status</h2>
 
-                            <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4 border border-yellow-200 dark:border-yellow-800">
+                            <div className="bg-yellow-50 dark:bg-yellow-950 rounded-lg p-4 border border-yellow-200 dark:border-yellow-800">
                                 <div className="flex items-start">
                                     <div className="w-3 h-3 bg-yellow-500 rounded-full mr-3 mt-2"></div>
                                     <div>
@@ -100,7 +100,7 @@ const PaymentCancel: React.FC = () => {
                             </h2>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
+                                <div className="bg-purple-50 dark:bg-purple-950 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
                                     <h3 className="font-semibold text-purple-900 dark:text-purple-100 mb-2">Common Solutions</h3>
                                     <ul className="text-purple-800 dark:text-purple-200 text-sm space-y-1">
                                         <li>• Check your card details are correct</li>
@@ -111,7 +111,7 @@ const PaymentCancel: React.FC = () => {
                                     </ul>
                                 </div>
 
-                                <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
+                                <div className="bg-purple-50 dark:bg-purple-950 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
                                     <h3 className="font-semibold text-purple-900 dark:text-purple-100 mb-2">Security Features</h3>
                                     <ul className="text-purple-800 dark:text-purple-200 text-sm space-y-1">
                                         <li>• 3D Secure authentication may be required</li>
@@ -161,7 +161,7 @@ const PaymentCancel: React.FC = () => {
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.5 }}
-                            className="bg-green-50 dark:bg-green-900/20 rounded-2xl p-6 border border-green-200 dark:border-green-800"
+                            className="bg-green-50 dark:bg-green-950 rounded-2xl p-6 border border-green-200 dark:border-green-800"
                         >
                             <h3 className="text-lg font-bold text-green-900 dark:text-green-100 mb-4">Payment Security</h3>
 
@@ -197,7 +197,7 @@ const PaymentCancel: React.FC = () => {
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.6 }}
-                            className="bg-yellow-50 dark:bg-yellow-900/20 rounded-2xl p-6 border border-yellow-200 dark:border-yellow-800"
+                            className="bg-yellow-50 dark:bg-yellow-950 rounded-2xl p-6 border border-yellow-200 dark:border-yellow-800"
                         >
                             <h3 className="text-lg font-bold text-yellow-900 dark:text-yellow-100 mb-4">Need Help?</h3>
 
@@ -206,14 +206,14 @@ const PaymentCancel: React.FC = () => {
                             <div className="space-y-2">
                                 <a
                                     href="tel:+233248138722"
-                                    className="block bg-yellow-100 dark:bg-yellow-800/30 hover:bg-yellow-200 dark:hover:bg-yellow-700/40 text-yellow-900 dark:text-yellow-100 px-4 py-2 rounded-lg text-center transition-colors text-sm"
+                                    className="block bg-yellow-100 dark:bg-yellow-950 hover:bg-yellow-200 dark:hover:bg-yellow-900 text-yellow-900 dark:text-yellow-100 px-4 py-2 rounded-lg text-center transition-colors text-sm"
                                 >
                                     <IconPhone className="w-4 h-4 inline mr-2" />
                                     Call Support
                                 </a>
                                 <a
                                     href="mailto:support@tradehut.com"
-                                    className="block bg-yellow-100 dark:bg-yellow-800/30 hover:bg-yellow-200 dark:hover:bg-yellow-700/40 text-yellow-900 dark:text-yellow-100 px-4 py-2 rounded-lg text-center transition-colors text-sm"
+                                    className="block bg-yellow-100 dark:bg-yellow-950 hover:bg-yellow-200 dark:hover:bg-yellow-900 text-yellow-900 dark:text-yellow-100 px-4 py-2 rounded-lg text-center transition-colors text-sm"
                                 >
                                     <IconMail className="w-4 h-4 inline mr-2" />
                                     Email Support

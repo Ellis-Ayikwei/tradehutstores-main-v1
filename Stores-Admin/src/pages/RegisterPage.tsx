@@ -52,7 +52,7 @@ const RegisterPage: React.FC = () => {
                     <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">Create your account</h2>
                 </div>
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-                    {error && <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-md">{error}</div>}
+                    {error && <div className="bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 p-3 rounded-md">{error}</div>}
                     <div className="rounded-md shadow-sm -space-y-px">
                         <div className="grid grid-cols-2 gap-2">
                             <div>

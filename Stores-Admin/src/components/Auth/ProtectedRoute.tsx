@@ -58,13 +58,13 @@ const LoadingScreen: React.FC = () => (
 );
 
 const UnauthorizedScreen: React.FC<{ userType?: string }> = ({ userType }) => (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950 dark:to-red-950 flex items-center justify-center">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center max-w-md mx-auto px-6">
             <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2, type: 'spring' }}
-                className="inline-flex items-center justify-center w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full mb-6"
+                className="inline-flex items-center justify-center w-16 h-16 bg-red-100 dark:bg-red-950 rounded-full mb-6"
             >
                 <IconShield className="w-8 h-8 text-red-600 dark:text-red-400" />
             </motion.div>

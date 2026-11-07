@@ -79,7 +79,7 @@ const DriversTab: React.FC<DriversTabProps> = ({ provider, isAdmin = false }) =>
                 return {
                     color: 'bg-gradient-to-r from-green-500 to-emerald-500',
                     textColor: 'text-green-700',
-                    bgColor: 'bg-green-100 dark:bg-green-900/30',
+                    bgColor: 'bg-green-100 dark:bg-green-950',
                     icon: CheckCircle2,
                     label: 'Available'
                 };
@@ -87,7 +87,7 @@ const DriversTab: React.FC<DriversTabProps> = ({ provider, isAdmin = false }) =>
                 return {
                     color: 'bg-gradient-to-r from-blue-500 to-cyan-500',
                     textColor: 'text-blue-700',
-                    bgColor: 'bg-blue-100 dark:bg-blue-900/30',
+                    bgColor: 'bg-blue-100 dark:bg-blue-950',
                     icon: Briefcase,
                     label: 'On Job'
                 };
@@ -103,7 +103,7 @@ const DriversTab: React.FC<DriversTabProps> = ({ provider, isAdmin = false }) =>
                 return {
                     color: 'bg-gradient-to-r from-yellow-500 to-orange-500',
                     textColor: 'text-yellow-700',
-                    bgColor: 'bg-yellow-100 dark:bg-yellow-900/30',
+                    bgColor: 'bg-yellow-100 dark:bg-yellow-950',
                     icon: Clock,
                     label: 'On Break'
                 };
@@ -111,7 +111,7 @@ const DriversTab: React.FC<DriversTabProps> = ({ provider, isAdmin = false }) =>
                 return {
                     color: 'bg-gradient-to-r from-orange-500 to-red-500',
                     textColor: 'text-orange-700',
-                    bgColor: 'bg-orange-100 dark:bg-orange-900/30',
+                    bgColor: 'bg-orange-100 dark:bg-orange-950',
                     icon: UserX,
                     label: 'Unavailable'
                 };
@@ -119,7 +119,7 @@ const DriversTab: React.FC<DriversTabProps> = ({ provider, isAdmin = false }) =>
                 return {
                     color: 'bg-gradient-to-r from-red-500 to-pink-500',
                     textColor: 'text-red-700',
-                    bgColor: 'bg-red-100 dark:bg-red-900/30',
+                    bgColor: 'bg-red-100 dark:bg-red-950',
                     icon: XCircle,
                     label: 'Suspended'
                 };
@@ -145,13 +145,13 @@ const DriversTab: React.FC<DriversTabProps> = ({ provider, isAdmin = false }) =>
     const getDocumentStatusBadge = (isVerified: boolean) => {
         if (isVerified) {
             return {
-                class: 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400',
+                class: 'bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-400',
                 icon: CheckCircle2,
                 label: 'Verified'
             };
         }
         return {
-            class: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400',
+            class: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-400',
             icon: Clock,
             label: 'Pending'
         };
@@ -163,11 +163,11 @@ const DriversTab: React.FC<DriversTabProps> = ({ provider, isAdmin = false }) =>
         const daysUntilExpiry = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
         if (daysUntilExpiry < 0) {
-            return { status: 'expired', color: 'text-red-500', bgColor: 'bg-red-100 dark:bg-red-900/20' };
+            return { status: 'expired', color: 'text-red-500', bgColor: 'bg-red-100 dark:bg-red-950' };
         } else if (daysUntilExpiry <= 30) {
-            return { status: 'expiring', color: 'text-yellow-600', bgColor: 'bg-yellow-100 dark:bg-yellow-900/20' };
+            return { status: 'expiring', color: 'text-yellow-600', bgColor: 'bg-yellow-100 dark:bg-yellow-950' };
         }
-        return { status: 'valid', color: 'text-green-600', bgColor: 'bg-green-100 dark:bg-green-900/20' };
+        return { status: 'valid', color: 'text-green-600', bgColor: 'bg-green-100 dark:bg-green-950' };
     };
 
     const filteredDrivers = drivers?.filter(driver => {
@@ -212,7 +212,7 @@ const DriversTab: React.FC<DriversTabProps> = ({ provider, isAdmin = false }) =>
     if (swrError) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[400px] space-y-6">
-                <div className="w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center">
+                <div className="w-20 h-20 bg-red-100 dark:bg-red-950 rounded-full flex items-center justify-center">
                     <AlertCircle className="h-10 w-10 text-red-500" />
                 </div>
                 <div className="text-center">
@@ -247,7 +247,6 @@ const DriversTab: React.FC<DriversTabProps> = ({ provider, isAdmin = false }) =>
         <div className="space-y-8">
             {/* Enhanced Header */}
             <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 rounded-2xl p-8">
-                <div className="absolute inset-0 bg-black/10"></div>
                 <div className="relative flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
                     <div>
                         <h2 className="text-3xl font-bold text-white mb-2">Fleet Drivers</h2>
@@ -286,7 +285,7 @@ const DriversTab: React.FC<DriversTabProps> = ({ provider, isAdmin = false }) =>
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full pl-12 pr-4 py-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 
-                                 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent
+                                 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent
                                  text-gray-900 dark:text-white placeholder-gray-500 shadow-sm"
                     />
                 </div>
@@ -295,7 +294,7 @@ const DriversTab: React.FC<DriversTabProps> = ({ provider, isAdmin = false }) =>
                         value={filterStatus}
                         onChange={(e) => setFilterStatus(e.target.value)}
                         className="px-4 py-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 
-                                 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white
+                                 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300 text-gray-900 dark:text-white
                                  flex-1 lg:w-48"
                     >
                         <option value="all">All Status</option>
@@ -336,7 +335,7 @@ const DriversTab: React.FC<DriversTabProps> = ({ provider, isAdmin = false }) =>
                                 key={driver.id}
                                 onMouseEnter={() => setHoveredCard(driver.id)}
                                 onMouseLeave={() => setHoveredCard(null)}
-                                className="group relative bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200/50 dark:border-gray-700/50 
+                                className="group relative bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 
                                          overflow-hidden cursor-pointer transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-2"
                             >
                                 {/* Enhanced Header with Dynamic Gradient */}
@@ -387,7 +386,7 @@ const DriversTab: React.FC<DriversTabProps> = ({ provider, isAdmin = false }) =>
                                     <div className="space-y-3 mb-6">
                                         <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                                                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-950 rounded-lg flex items-center justify-center">
                                                     <CreditCard className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                                                 </div>
                                                 <div>
@@ -403,7 +402,7 @@ const DriversTab: React.FC<DriversTabProps> = ({ provider, isAdmin = false }) =>
                                         {driver.has_cpc && driver.cpc_expiry_date && (
                                             <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                                                    <div className="w-8 h-8 bg-green-100 dark:bg-green-950 rounded-lg flex items-center justify-center">
                                                         <Award className="w-4 h-4 text-green-600 dark:text-green-400" />
                                                     </div>
                                                     <div>
@@ -411,7 +410,7 @@ const DriversTab: React.FC<DriversTabProps> = ({ provider, isAdmin = false }) =>
                                                         <p className="text-xs text-gray-500 dark:text-gray-400">Professional Competence</p>
                                                     </div>
                                                 </div>
-                                                <div className="px-2 py-1 bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-lg text-xs font-medium">
+                                                <div className="px-2 py-1 bg-green-100 dark:bg-green-950 text-green-600 dark:text-green-400 rounded-lg text-xs font-medium">
                                                     {new Date(driver.cpc_expiry_date).toLocaleDateString()}
                                                 </div>
                                             </div>
@@ -455,8 +454,8 @@ const DriversTab: React.FC<DriversTabProps> = ({ provider, isAdmin = false }) =>
                                         <div className="flex items-center gap-2">
                                             <button
                                                 onClick={(e) => handleViewDriver(driver.id, e)}
-                                                className="p-2.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 
-                                                         rounded-xl hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-all duration-200 
+                                                className="p-2.5 bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 
+                                                         rounded-xl hover:bg-blue-200 dark:hover:bg-blue-900 transition-all duration-200 
                                                          transform hover:scale-110"
                                                 title="View Details"
                                             >
@@ -464,8 +463,8 @@ const DriversTab: React.FC<DriversTabProps> = ({ provider, isAdmin = false }) =>
                                             </button>
                                             {/* <button
                                                 onClick={(e) => handleEditDriver(driver.id, e)}
-                                                className="p-2.5 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 
-                                                         rounded-xl hover:bg-green-200 dark:hover:bg-green-900/50 transition-all duration-200
+                                                className="p-2.5 bg-green-100 dark:bg-green-950 text-green-600 dark:text-green-400 
+                                                         rounded-xl hover:bg-green-200 dark:hover:bg-green-900 transition-all duration-200
                                                          transform hover:scale-110"
                                                 title="Edit Driver"
                                             >
@@ -476,8 +475,8 @@ const DriversTab: React.FC<DriversTabProps> = ({ provider, isAdmin = false }) =>
                                                     e.stopPropagation();
                                                     window.open(`tel:${driver.phone_number}`);
                                                 }}
-                                                className="p-2.5 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 
-                                                         rounded-xl hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-all duration-200
+                                                className="p-2.5 bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400 
+                                                         rounded-xl hover:bg-purple-200 dark:hover:bg-purple-900 transition-all duration-200
                                                          transform hover:scale-110"
                                                 title="Call Driver"
                                             >
@@ -491,8 +490,8 @@ const DriversTab: React.FC<DriversTabProps> = ({ provider, isAdmin = false }) =>
                                                     e.stopPropagation();
                                                     window.open(`mailto:${driver.email}`);
                                                 }}
-                                                className="p-2.5 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 
-                                                         rounded-xl hover:bg-orange-200 dark:hover:bg-orange-900/50 transition-all duration-200
+                                                className="p-2.5 bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400 
+                                                         rounded-xl hover:bg-orange-200 dark:hover:bg-orange-900 transition-all duration-200
                                                          transform hover:scale-110"
                                                 title="Send Email"
                                             >
@@ -503,8 +502,8 @@ const DriversTab: React.FC<DriversTabProps> = ({ provider, isAdmin = false }) =>
                                                     e.stopPropagation();
                                                     setShowDeleteConfirm(driver.id);
                                                 }}
-                                                className="p-2.5 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 
-                                                         rounded-xl hover:bg-red-200 dark:hover:bg-red-900/50 transition-all duration-200
+                                                className="p-2.5 bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400 
+                                                         rounded-xl hover:bg-red-200 dark:hover:bg-red-900 transition-all duration-200
                                                          transform hover:scale-110"
                                                 title="Delete Driver"
                                             >
@@ -516,7 +515,7 @@ const DriversTab: React.FC<DriversTabProps> = ({ provider, isAdmin = false }) =>
                                
 
                                 {/* Hover Effect Overlay */}
-                                <div className={`absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none`}></div>
+                                <div className={`absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none`}></div>
                             </div>
                         );
                     })}

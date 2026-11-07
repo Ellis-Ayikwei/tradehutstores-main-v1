@@ -18,9 +18,9 @@ const JourneyStop: React.FC<JourneyStopProps> = ({ stop, index, provided, arrayH
             id={`location-${stop.id}`} // Add this ID for scroll targeting
             className={`
         border rounded-lg p-4 
-        ${stop.type === 'pickup' ? 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20' : ''}
-        ${stop.type === 'dropoff' ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20' : ''}
-        ${stop.type === 'stop' ? 'border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20' : ''}
+        ${stop.type === 'pickup' ? 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950' : ''}
+        ${stop.type === 'dropoff' ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950' : ''}
+        ${stop.type === 'stop' ? 'border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-950' : ''}
       `}
         >
             <div className="flex items-start">

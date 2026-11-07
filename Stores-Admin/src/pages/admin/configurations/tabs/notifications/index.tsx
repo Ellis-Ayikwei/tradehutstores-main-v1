@@ -81,9 +81,9 @@ const NotificationsConfig: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6">
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 rounded-xl p-6">
         <div className="flex items-center space-x-4">
-          <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+          <div className="p-3 bg-blue-100 dark:bg-blue-950 rounded-lg">
             <Bell className="w-6 h-6 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
@@ -101,7 +101,7 @@ const NotificationsConfig: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg border border-gray-100 dark:border-gray-700">
           <div className="flex items-center">
-            <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+            <div className="p-2 bg-green-100 dark:bg-green-950 rounded-lg">
               <CheckCircle className="text-green-600 dark:text-green-400 h-5 w-5" />
             </div>
             <div className="ml-3">
@@ -112,7 +112,7 @@ const NotificationsConfig: React.FC = () => {
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg border border-gray-100 dark:border-gray-700">
           <div className="flex items-center">
-            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+            <div className="p-2 bg-blue-100 dark:bg-blue-950 rounded-lg">
               <Globe className="text-blue-600 dark:text-blue-400 h-5 w-5" />
             </div>
             <div className="ml-3">
@@ -123,7 +123,7 @@ const NotificationsConfig: React.FC = () => {
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg border border-gray-100 dark:border-gray-700">
           <div className="flex items-center">
-            <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+            <div className="p-2 bg-purple-100 dark:bg-purple-950 rounded-lg">
               <Clock className="text-purple-600 dark:text-purple-400 h-5 w-5" />
             </div>
             <div className="ml-3">
@@ -134,7 +134,7 @@ const NotificationsConfig: React.FC = () => {
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg border border-gray-100 dark:border-gray-700">
           <div className="flex items-center">
-            <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
+            <div className="p-2 bg-orange-100 dark:bg-orange-950 rounded-lg">
               <AlertTriangle className="text-orange-600 dark:text-orange-400 h-5 w-5" />
             </div>
             <div className="ml-3">
@@ -167,7 +167,7 @@ const NotificationsConfig: React.FC = () => {
         </div>
 
         {/* Tab Description */}
-        <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700/50">
+        <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700">
           <div className="flex items-start space-x-3">
             {React.createElement(notificationTabs.find(tab => tab.key === activeTab)?.icon || Bell, {
               className: "w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5"

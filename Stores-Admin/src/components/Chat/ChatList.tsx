@@ -87,7 +87,7 @@ const ChatList: React.FC<ChatListProps> = ({
               onClick={() => onSelectChat(chat.id)}
               className={`cursor-pointer p-4 border-b dark:border-gray-700 ${
                 selectedChatId === chat.id 
-                  ? 'bg-blue-50 dark:bg-blue-900/20' 
+                  ? 'bg-blue-50 dark:bg-blue-950' 
                   : 'hover:bg-gray-50 dark:hover:bg-gray-750'
               }`}
             >

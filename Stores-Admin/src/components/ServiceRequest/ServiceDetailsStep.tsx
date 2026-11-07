@@ -181,7 +181,7 @@ const ServiceDetailsStep: React.FC<ServiceDetailsStepProps> = ({
 
                         {
                             <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden mb-6">
-                                <div className="px-6 py-4 bg-blue-50 dark:bg-blue-900/20 border-b border-gray-200 dark:border-gray-700">
+                                <div className="px-6 py-4 bg-blue-50 dark:bg-blue-950 border-b border-gray-200 dark:border-gray-700">
                                     <h3 className="font-medium text-gray-800 dark:text-gray-200 flex items-center">
                                         <FontAwesomeIcon icon={faCouch} className="mr-2 text-blue-600 dark:text-blue-400" />
                                         Items Inventory
@@ -319,7 +319,7 @@ const ServiceDetailsStep: React.FC<ServiceDetailsStepProps> = ({
                                                                                         <Field
                                                                                             type="checkbox"
                                                                                             name={`moving_items.${index}.fragile`}
-                                                                                            className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-600 mr-1.5"
+                                                                                            className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-600 mr-1.5"
                                                                                         />
                                                                                         Fragile
                                                                                     </label>
@@ -327,7 +327,7 @@ const ServiceDetailsStep: React.FC<ServiceDetailsStepProps> = ({
                                                                                         <Field
                                                                                             type="checkbox"
                                                                                             name={`moving_items.${index}.needs_disassembly`}
-                                                                                            className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-600 mr-1.5"
+                                                                                            className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-600 mr-1.5"
                                                                                         />
                                                                                         Needs Disassembly
                                                                                     </label>
@@ -448,7 +448,7 @@ const ServiceDetailsStep: React.FC<ServiceDetailsStepProps> = ({
                                                         <button
                                                             type="button"
                                                             onClick={() => setFieldValue('moving_items', [])}
-                                                            className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-md text-sm"
+                                                            className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950 rounded-md text-sm"
                                                         >
                                                             Clear All Items
                                                         </button>
@@ -456,7 +456,7 @@ const ServiceDetailsStep: React.FC<ServiceDetailsStepProps> = ({
                                                 </div>
 
                                                 {values.moving_items && values.moving_items.length > 0 && (
-                                                    <div className="mt-6 bg-blue-50 dark:bg-blue-900/10 p-4 rounded-lg border border-blue-100 dark:border-blue-800 flex items-start">
+                                                    <div className="mt-6 bg-blue-50 dark:bg-blue-950 p-4 rounded-lg border border-blue-100 dark:border-blue-800 flex items-start">
                                                         <FontAwesomeIcon icon={faInfoCircle} className="text-blue-500 dark:text-blue-400 mt-0.5 mr-3" />
                                                         <div>
                                                             <span className="block text-sm font-medium text-blue-700 dark:text-blue-300">Item Summary</span>

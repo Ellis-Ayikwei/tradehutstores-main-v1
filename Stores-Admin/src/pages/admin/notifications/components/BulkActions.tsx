@@ -21,7 +21,7 @@ const BulkActions: React.FC<BulkActionsProps> = ({
   if (selectedNotifications.length === 0) return null;
 
   return (
-    <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+    <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
@@ -41,7 +41,7 @@ const BulkActions: React.FC<BulkActionsProps> = ({
           <button
             onClick={handleBulkAction}
             disabled={!bulkAction || loading}
-            className="px-4 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm disabled:opacity-50"
+            className="px-4 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
           >
             Apply
           </button>

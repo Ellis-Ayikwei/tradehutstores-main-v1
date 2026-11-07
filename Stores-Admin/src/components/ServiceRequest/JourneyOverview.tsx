@@ -22,7 +22,7 @@ const JourneyOverview: React.FC<JourneyOverviewProps> = ({ journeyStops }) => {
             <h4 className="font-medium text-gray-900 dark:text-white mb-4">Journey Overview</h4>
 
             {/* Journey stats */}
-            <div className="mb-6 bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+            <div className="mb-6 bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
                 <div className="flex items-center justify-between">
                     <div>
                         <h4 className="font-medium text-gray-900 dark:text-white">Estimated Journey</h4>

@@ -312,7 +312,7 @@ export const JourneyPlanning: React.FC<JourneyPlanningProps> = ({ values, setFie
 
     return (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
-            <div className="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/30 dark:to-indigo-900/30 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-950 dark:to-indigo-950 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                 <h3 className="font-medium text-gray-800 dark:text-gray-200 flex items-center">
                     <FontAwesomeIcon icon={faRoute} className="mr-2 text-purple-600 dark:text-purple-400" />
                     Journey Planning
@@ -345,10 +345,10 @@ export const JourneyPlanning: React.FC<JourneyPlanningProps> = ({ values, setFie
                                                                 } rounded-lg ${
                                                                     expandedStopIndex === stopIndex
                                                                         ? stop.type === 'pickup'
-                                                                            ? 'bg-blue-50 dark:bg-blue-900/20'
+                                                                            ? 'bg-blue-50 dark:bg-blue-950'
                                                                             : stop.type === 'dropoff'
-                                                                            ? 'bg-green-50 dark:bg-green-900/20'
-                                                                            : 'bg-orange-50 dark:bg-orange-900/20'
+                                                                            ? 'bg-green-50 dark:bg-green-950'
+                                                                            : 'bg-orange-50 dark:bg-orange-950'
                                                                         : 'bg-white dark:bg-gray-800'
                                                                 }`}
                                                             >
@@ -369,14 +369,14 @@ export const JourneyPlanning: React.FC<JourneyPlanningProps> = ({ values, setFie
 
                                                                         {/* Show item count badge for pickup points */}
                                                                         {stop.items && stop.items.length > 0 && (
-                                                                            <div className="ml-3 px-2 py-0.5 bg-blue-100 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200 text-xs rounded-full">
+                                                                            <div className="ml-3 px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full">
                                                                                 {stop.items.length} {stop.items.length === 1 ? 'item' : 'items'}
                                                                             </div>
                                                                         )}
 
                                                                         {/* Show linked items count for dropoff points */}
                                                                         {stop.type === 'dropoff' && stop.linked_items && stop.linked_items.length > 0 && (
-                                                                            <div className="ml-3 px-2 py-0.5 bg-green-100 dark:bg-green-900/60 text-green-800 dark:text-green-200 text-xs rounded-full">
+                                                                            <div className="ml-3 px-2 py-0.5 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs rounded-full">
                                                                                 {stop.linked_items.length} {stop.linked_items.length === 1 ? 'item' : 'items'}
                                                                             </div>
                                                                         )}
@@ -527,7 +527,7 @@ export const JourneyPlanning: React.FC<JourneyPlanningProps> = ({ values, setFie
                                                                                 </Field>
 
                                                                                 {stop.service_type && (
-                                                                                    <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-start">
+                                                                                    <div className="p-3 bg-blue-50 dark:bg-blue-950 rounded-lg flex items-start">
                                                                                         <FontAwesomeIcon
                                                                                             icon={serviceTypes.find((t) => t.id === stop.service_type)?.icon || faInfoCircle}
                                                                                             className="text-blue-500 dark:text-blue-400 mt-0.5 mr-2"
@@ -665,7 +665,7 @@ export const JourneyPlanning: React.FC<JourneyPlanningProps> = ({ values, setFie
                                                                                                     <Field
                                                                                                         type="checkbox"
                                                                                                         name={`journey_stops.${stopIndex}.needs_disassembly`}
-                                                                                                        className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-600"
+                                                                                                        className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-600"
                                                                                                     />
                                                                                                     <span className="ml-2">Needs Disassembly</span>
                                                                                                 </label>
@@ -674,7 +674,7 @@ export const JourneyPlanning: React.FC<JourneyPlanningProps> = ({ values, setFie
                                                                                                     <Field
                                                                                                         type="checkbox"
                                                                                                         name={`journey_stops.${stopIndex}.is_fragile`}
-                                                                                                        className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-600"
+                                                                                                        className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-600"
                                                                                                     />
                                                                                                     <span className="ml-2">Fragile Items</span>
                                                                                                 </label>
@@ -682,7 +682,7 @@ export const JourneyPlanning: React.FC<JourneyPlanningProps> = ({ values, setFie
 
                                                                                             <div className="mt-4">
                                                                                                 {stop.needs_disassembly && (
-                                                                                                    <div className="flex items-start p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-sm">
+                                                                                                    <div className="flex items-start p-3 bg-blue-50 dark:bg-blue-950 rounded-lg text-sm">
                                                                                                         <FontAwesomeIcon icon={faInfoCircle} className="text-blue-500 dark:text-blue-400 mt-0.5 mr-3" />
                                                                                                         <p className="text-blue-600 dark:text-blue-300">
                                                                                                             Some items will need to be disassembled before transport. Our team can help with this.
@@ -707,7 +707,7 @@ export const JourneyPlanning: React.FC<JourneyPlanningProps> = ({ values, setFie
                                                                                     <button
                                                                                         type="button"
                                                                                         onClick={() => setShowCommonItems(stopIndex)}
-                                                                                        className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-md text-sm hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                                                                                        className="px-3 py-1.5 bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 rounded-md text-sm hover:bg-blue-100 dark:hover:bg-blue-950 transition-colors"
                                                                                     >
                                                                                         <FontAwesomeIcon icon={faPlus} className="mr-1" />
                                                                                         Add Common Items
@@ -804,7 +804,7 @@ export const JourneyPlanning: React.FC<JourneyPlanningProps> = ({ values, setFie
                                                                                                                 <Field
                                                                                                                     type="checkbox"
                                                                                                                     name={`journey_stops.${stopIndex}.items.${itemIndex}.fragile`}
-                                                                                                                    className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-600"
+                                                                                                                    className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-600"
                                                                                                                 />
                                                                                                                 <span className="ml-2">Fragile</span>
                                                                                                             </label>
@@ -813,7 +813,7 @@ export const JourneyPlanning: React.FC<JourneyPlanningProps> = ({ values, setFie
                                                                                                                 <Field
                                                                                                                     type="checkbox"
                                                                                                                     name={`journey_stops.${stopIndex}.items.${itemIndex}.needs_disassembly`}
-                                                                                                                    className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-600"
+                                                                                                                    className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-blue-600"
                                                                                                                 />
                                                                                                                 <span className="ml-2">Needs Disassembly</span>
                                                                                                             </label>
@@ -857,7 +857,7 @@ export const JourneyPlanning: React.FC<JourneyPlanningProps> = ({ values, setFie
                                                                                 </div>
 
                                                                                 {/* Select which items from pickup points should be dropped off here */}
-                                                                                <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                                                                                <div className="p-4 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
                                                                                     <div className="flex justify-between items-center mb-3">
                                                                                         <h5 className="text-sm font-medium text-gray-700 dark:text-gray-300">Select items from pickup points:</h5>
 
@@ -866,7 +866,7 @@ export const JourneyPlanning: React.FC<JourneyPlanningProps> = ({ values, setFie
                                                                                             <label className="flex items-center text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
                                                                                                 <input
                                                                                                     type="checkbox"
-                                                                                                    className="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-700"
+                                                                                                    className="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 dark:border-gray-600 dark:bg-gray-700"
                                                                                                     checked={getAvailableItemsForDropoff(stopIndex).every((item: any) =>
                                                                                                         (stop.linked_items || []).includes(item.id)
                                                                                                     )}
@@ -921,7 +921,7 @@ export const JourneyPlanning: React.FC<JourneyPlanningProps> = ({ values, setFie
                                                                                                                 <label className="flex items-center text-xs text-gray-600 dark:text-gray-400 cursor-pointer">
                                                                                                                     <input
                                                                                                                         type="checkbox"
-                                                                                                                        className="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-700"
+                                                                                                                        className="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 dark:border-gray-600 dark:bg-gray-700"
                                                                                                                         checked={availableItems.every((item: any) =>
                                                                                                                             (stop.linked_items || []).includes(item.id)
                                                                                                                         )}
@@ -1146,7 +1146,7 @@ export const JourneyPlanning: React.FC<JourneyPlanningProps> = ({ values, setFie
                                         <input
                                             type="checkbox"
                                             name="fragile"
-                                            className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                            className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
                                         />
                                         <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Fragile</span>
                                     </label>
@@ -1154,7 +1154,7 @@ export const JourneyPlanning: React.FC<JourneyPlanningProps> = ({ values, setFie
                                         <input
                                             type="checkbox"
                                             name="needs_disassembly"
-                                            className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                            className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
                                         />
                                         <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Needs Disassembly</span>
                                     </label>

@@ -69,7 +69,7 @@ const GuestPaymentModal: React.FC<GuestPaymentModalProps> = ({ isOpen, onClose, 
                     </div>
 
                     {error && (
-                        <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                        <div className="mb-6 p-4 bg-red-50 dark:bg-red-950 rounded-lg">
                             <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
                         </div>
                     )}
@@ -81,7 +81,7 @@ const GuestPaymentModal: React.FC<GuestPaymentModalProps> = ({ isOpen, onClose, 
                                 <button
                                     type="button"
                                     onClick={() => setPaymentMethod('card')}
-                                    className={`p-4 rounded-lg border ${paymentMethod === 'card' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-300 dark:border-gray-600'}`}
+                                    className={`p-4 rounded-lg border ${paymentMethod === 'card' ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' : 'border-gray-300 dark:border-gray-600'}`}
                                 >
                                     <div className="flex items-center justify-center space-x-2">
                                         <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -98,7 +98,7 @@ const GuestPaymentModal: React.FC<GuestPaymentModalProps> = ({ isOpen, onClose, 
                                 <button
                                     type="button"
                                     onClick={() => setPaymentMethod('paypal')}
-                                    className={`p-4 rounded-lg border ${paymentMethod === 'paypal' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-300 dark:border-gray-600'}`}
+                                    className={`p-4 rounded-lg border ${paymentMethod === 'paypal' ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' : 'border-gray-300 dark:border-gray-600'}`}
                                 >
                                     <div className="flex items-center justify-center space-x-2">
                                         <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

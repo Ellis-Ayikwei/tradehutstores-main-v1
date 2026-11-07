@@ -44,8 +44,8 @@ const JobTabs: React.FC<JobTabsProps> = ({ job, activeTab, setActiveTab, onSendM
     };
 
     return (
-        <div className="backdrop-blur-xl bg-white/70 dark:bg-slate-800/70 border border-white/20 dark:border-slate-700/30 overflow-hidden">
-            <div className="border-b border-slate-200/50 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-900/30">
+        <div className=" bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 overflow-hidden">
+            <div className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
                 <nav className="flex -mb-px overflow-x-auto">
                     {tabs.map((tab) => (
                         <button
@@ -53,8 +53,8 @@ const JobTabs: React.FC<JobTabsProps> = ({ job, activeTab, setActiveTab, onSendM
                             onClick={() => setActiveTab(tab.id)}
                             className={`px-6 py-4 text-lg font-semibold whitespace-nowrap transition-all duration-200 ${
                                 activeTab === tab.id
-                                    ? 'border-b-4 border-orange-500 text-orange-600 dark:text-orange-400 bg-white/50 dark:bg-slate-700/50'
-                                    : 'text-slate-600 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-white/30 dark:hover:bg-slate-700/30'
+                                    ? 'border-b-4 border-orange-500 text-orange-600 dark:text-orange-400 bg-white dark:bg-slate-700'
+                                    : 'text-slate-600 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-gray-600 dark:hover:bg-slate-700'
                             }`}
                         >
                             {tab.label}

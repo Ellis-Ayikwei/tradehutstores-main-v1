@@ -71,7 +71,7 @@ const NotificationModal: React.FC<NotificationModalProps> = ({
 
                                 {/* Selected Price Summary */}
                                 {selectedPrice && (
-                                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-6">
+                                    <div className="bg-blue-50 dark:bg-blue-950 rounded-lg p-4 mb-6">
                                         <h4 className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">Selected Price Option</h4>
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                                             <div>
@@ -126,7 +126,7 @@ const NotificationModal: React.FC<NotificationModalProps> = ({
                                 </div>
 
                                 {/* Warning */}
-                                <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-6">
+                                <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-6">
                                     <div className="flex items-start">
                                         <IconAlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5 mr-3 flex-shrink-0" />
                                         <div>
@@ -145,7 +145,7 @@ const NotificationModal: React.FC<NotificationModalProps> = ({
                                     <button
                                         onClick={onClose}
                                         disabled={saving}
-                                        className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors"
+                                        className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:bg-gray-100 disabled:text-gray-400 dark:disabled:bg-gray-800 dark:disabled:text-gray-500 disabled:cursor-not-allowed rounded-lg transition-colors"
                                     >
                                         Cancel
                                     </button>

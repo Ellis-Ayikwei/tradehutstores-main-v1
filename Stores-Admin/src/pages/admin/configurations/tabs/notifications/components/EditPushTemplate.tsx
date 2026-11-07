@@ -77,7 +77,7 @@ const EditPushTemplate: React.FC<EditPushTemplateProps> = ({ template, onClose, 
 
   return (
     <Dialog open={true} onClose={onClose} className="relative z-50">
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" aria-hidden="true" />
+      <div className="fixed inset-0 bg-black/50 " aria-hidden="true" />
       
       <div className="fixed inset-0 flex items-center justify-center p-4">
         <Dialog.Panel className="w-full max-w-4xl max-h-[90vh] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden">
@@ -227,7 +227,7 @@ const EditPushTemplate: React.FC<EditPushTemplateProps> = ({ template, onClose, 
 
                 <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                   <div className="flex items-center space-x-3 mb-4">
-                    <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                    <div className="p-2 bg-purple-100 dark:bg-purple-950 rounded-lg">
                       <Smartphone className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                     </div>
                     <div>
@@ -252,7 +252,7 @@ const EditPushTemplate: React.FC<EditPushTemplateProps> = ({ template, onClose, 
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+          <div className="flex items-center justify-between p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
             <div className="flex items-center space-x-2">
               {Object.keys(errors).length > 0 ? (
                 <AlertTriangle className="w-4 h-4 text-orange-500" />
@@ -276,7 +276,7 @@ const EditPushTemplate: React.FC<EditPushTemplateProps> = ({ template, onClose, 
               <button
                 onClick={handleSave}
                 disabled={Object.keys(errors).length > 0}
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
               >
                 <Save className="mr-2 h-4 w-4" />
                 {template?.id ? 'Update' : 'Create'} Template

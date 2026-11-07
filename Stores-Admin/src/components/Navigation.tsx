@@ -16,7 +16,7 @@ const Navigation: React.FC = () => {
     ];
 
     return (
-        <nav className="fixed w-full z-50 bg-white/95 backdrop-blur-sm shadow-sm">
+        <nav className="fixed w-full z-50 bg-white  shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-20">
                     {/* Logo */}
@@ -38,7 +38,7 @@ const Navigation: React.FC = () => {
                         ))}
                         <Link
                             to="/contact"
-                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 transition-colors"
+                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-hover transition-colors"
                         >
                             Get a Quote
                         </Link>
@@ -63,7 +63,7 @@ const Navigation: React.FC = () => {
                                     key={item.path}
                                     to={item.path}
                                     className={`block px-3 py-2 rounded-md text-base font-medium ${
-                                        location.pathname === item.path ? 'text-primary bg-primary/10' : 'text-gray-600 hover:text-primary hover:bg-gray-50'
+                                        location.pathname === item.path ? 'text-primary bg-primary-subtle' : 'text-gray-600 hover:text-primary hover:bg-gray-50'
                                     }`}
                                     onClick={() => setIsOpen(false)}
                                 >
@@ -72,7 +72,7 @@ const Navigation: React.FC = () => {
                             ))}
                             <Link
                                 to="/contact"
-                                className="block w-full text-center px-3 py-2 rounded-md text-base font-medium text-white bg-primary hover:bg-primary/90"
+                                className="block w-full text-center px-3 py-2 rounded-md text-base font-medium text-white bg-primary hover:bg-primary-hover"
                                 onClick={() => setIsOpen(false)}
                             >
                                 Get a Quote

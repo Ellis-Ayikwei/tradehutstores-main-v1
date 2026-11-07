@@ -294,7 +294,7 @@ const CreativesTab: React.FC<Props> = ({ onChange }) => {
                 <button
                     type="button"
                     onClick={openCreate}
-                    className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary/90 shadow"
+                    className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary-hover shadow"
                 >
                     <IconPlus size={16} /> New creative
                 </button>
@@ -313,7 +313,7 @@ const CreativesTab: React.FC<Props> = ({ onChange }) => {
                         <button
                             type="button"
                             onClick={openCreate}
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary/90"
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary-hover"
                         >
                             <IconPlus size={16} /> Create your first creative
                         </button>
@@ -399,7 +399,7 @@ const CreativesTab: React.FC<Props> = ({ onChange }) => {
                 <ModalShell
                     title={editingId ? 'Edit creative' : 'New creative'}
                     icon={
-                        <span className="p-2 rounded-lg bg-primary/10 text-primary">
+                        <span className="p-2 rounded-lg bg-primary-subtle text-primary">
                             <IconPhoto size={18} />
                         </span>
                     }
@@ -506,7 +506,7 @@ const CreativesTab: React.FC<Props> = ({ onChange }) => {
                             )}
 
                             {/* Copy */}
-                            <div className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 space-y-3 bg-gray-50/40 dark:bg-gray-800/30">
+                            <div className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 space-y-3 bg-gray-50 dark:bg-gray-800">
                                 <div className="flex items-center gap-2 mb-1">
                                     <IconSparkles size={14} className="text-primary" />
                                     <p className="text-xs font-bold uppercase tracking-wide text-on-surface-variant">
@@ -587,7 +587,7 @@ const CreativesTab: React.FC<Props> = ({ onChange }) => {
                             </div>
 
                             {/* Styling */}
-                            <div className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 space-y-4 bg-gray-50/40 dark:bg-gray-800/30">
+                            <div className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 space-y-4 bg-gray-50 dark:bg-gray-800">
                                 <p className="text-xs font-bold uppercase tracking-wide text-on-surface-variant">
                                     Styling
                                 </p>
@@ -616,7 +616,7 @@ const CreativesTab: React.FC<Props> = ({ onChange }) => {
                         </div>
 
                         {/* Right: live preview */}
-                        <div className="lg:sticky lg:top-0 lg:self-start p-6 bg-gray-50/60 dark:bg-gray-950/40 space-y-3">
+                        <div className="lg:sticky lg:top-0 lg:self-start p-6 bg-gray-50 dark:bg-gray-950 space-y-3">
                             <div className="flex items-center justify-between">
                                 <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">
                                     Live preview
@@ -673,7 +673,7 @@ const Chip: React.FC<{ tone?: 'default' | 'primary'; children: React.ReactNode }
         className={[
             'inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold',
             tone === 'primary'
-                ? 'bg-primary/10 text-primary'
+                ? 'bg-primary-subtle text-primary'
                 : 'bg-gray-100 dark:bg-gray-800 text-on-surface-variant',
         ].join(' ')}
     >
@@ -699,8 +699,8 @@ const DropZone: React.FC<{
                 className={[
                     'relative aspect-[16/6] rounded-xl border-2 border-dashed overflow-hidden cursor-pointer transition-all',
                     hover
-                        ? 'border-primary bg-primary/5'
-                        : 'border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:border-primary/60',
+                        ? 'border-primary bg-primary-subtle'
+                        : 'border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:border-primary-400',
                 ].join(' ')}
                 onClick={() => inputRef.current?.click()}
                 onDragOver={(e) => {
@@ -717,7 +717,7 @@ const DropZone: React.FC<{
                     <>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={preview} alt="preview" className="w-full h-full object-cover" />
-                        <div className="absolute bottom-2 right-2 px-2 py-1 rounded-md bg-black/70 text-white text-[10px] font-semibold opacity-0 hover:opacity-100 transition">
+                        <div className="absolute bottom-2 right-2 px-2 py-1 rounded-md bg-gray-900 text-white text-[10px] font-semibold opacity-0 hover:opacity-100 transition">
                             Click to replace
                         </div>
                     </>

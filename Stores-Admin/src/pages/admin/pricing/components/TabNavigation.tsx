@@ -39,7 +39,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange })
             
             <div className="mt-4">
                 {activeTab === 'config' ? (
-                    <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-3">
+                    <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-xl p-3">
                         <div className="flex items-start">
                             <Info className="text-blue-500 mt-1 mr-2 h-4 w-4" />
                             <div>
@@ -52,7 +52,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange })
                         </div>
                     </div>
                 ) : (
-                    <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-xl p-3">
+                    <div className="bg-purple-50 dark:bg-purple-950 border border-purple-200 dark:border-purple-800 rounded-xl p-3">
                         <div className="flex items-start">
                             <Info className="text-purple-500 mt-1 mr-2 h-4 w-4" />
                             <div>

@@ -17,7 +17,7 @@ const QuickQuoteButton: React.FC<QuickQuoteButtonProps> = ({ variant = 'primary'
     const variants = {
         primary: 'bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg',
         secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700',
-        outline: 'border-2 border-blue-600 text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-900/20',
+        outline: 'border-2 border-blue-600 text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-950',
     };
 
     const sizes = {

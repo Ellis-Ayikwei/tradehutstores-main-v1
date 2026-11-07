@@ -78,7 +78,7 @@ const PaymentDetail: React.FC = () => {
 
     if (error || !request) {
         return (
-            <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg">
+            <div className="p-4 bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 rounded-lg">
                 <p>{error || 'Service request not found'}</p>
             </div>
         );
@@ -138,7 +138,7 @@ const PaymentDetail: React.FC = () => {
                     <button
                         onClick={() => setPaymentMethod('card')}
                         className={`p-4 rounded-lg border-2 flex flex-col items-center ${
-                            paymentMethod === 'card' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700'
+                            paymentMethod === 'card' ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' : 'border-gray-200 dark:border-gray-700'
                         }`}
                     >
                         <FontAwesomeIcon icon={faCreditCard} className="text-2xl mb-2" />
@@ -147,7 +147,7 @@ const PaymentDetail: React.FC = () => {
                     <button
                         onClick={() => setPaymentMethod('bank')}
                         className={`p-4 rounded-lg border-2 flex flex-col items-center ${
-                            paymentMethod === 'bank' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700'
+                            paymentMethod === 'bank' ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' : 'border-gray-200 dark:border-gray-700'
                         }`}
                     >
                         <FontAwesomeIcon icon={faBank} className="text-2xl mb-2" />
@@ -156,7 +156,7 @@ const PaymentDetail: React.FC = () => {
                     <button
                         onClick={() => setPaymentMethod('cash')}
                         className={`p-4 rounded-lg border-2 flex flex-col items-center ${
-                            paymentMethod === 'cash' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700'
+                            paymentMethod === 'cash' ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' : 'border-gray-200 dark:border-gray-700'
                         }`}
                     >
                         <FontAwesomeIcon icon={faMoneyBillWave} className="text-2xl mb-2" />
@@ -203,7 +203,7 @@ const PaymentDetail: React.FC = () => {
                 <button
                     onClick={handlePayment}
                     disabled={processing}
-                    className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+                    className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
                 >
                     {processing ? (
                         <div className="flex items-center">

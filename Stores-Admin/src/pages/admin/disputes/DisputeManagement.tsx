@@ -302,7 +302,7 @@ const DisputeManagement: React.FC = () => {
               </div>
             </div>
             <div className="mt-4 flex items-center gap-2">
-              <button onClick={submitCreate} disabled={!canSubmitCreate || creating} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50">{creating ? 'Creating...' : 'Create'}</button>
+              <button onClick={submitCreate} disabled={!canSubmitCreate || creating} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500">{creating ? 'Creating...' : 'Create'}</button>
               <button onClick={() => setShowCreate(false)} className="px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg">Cancel</button>
             </div>
           </div>

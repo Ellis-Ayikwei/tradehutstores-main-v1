@@ -273,7 +273,7 @@ const JourneyPlanning: React.FC<JourneyPlanningProps> = ({ values, setFieldValue
                                                                 <label className="flex items-center text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
                                                                     <Field
                                                                         type="checkbox"
-                                                                        className="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-700"
+                                                                        className="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 dark:border-gray-600 dark:bg-gray-700"
                                                                         checked={getAvailableItemsForDropoff(index).every((item: any) => (stop.linked_items || []).includes(item.id))}
                                                                         onChange={(e: any) => {
                                                                             const availableItems = getAvailableItemsForDropoff(index);
@@ -309,7 +309,7 @@ const JourneyPlanning: React.FC<JourneyPlanningProps> = ({ values, setFieldValue
                                                                                     <label className="flex items-center text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
                                                                                         <Field
                                                                                             type="checkbox"
-                                                                                            className="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-700"
+                                                                                            className="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 dark:border-gray-600 dark:bg-gray-700"
                                                                                             checked={availableItemsFromPickup.every((item: any) => (stop.linked_items || []).includes(item.id))}
                                                                                             onChange={(e: any) => {
                                                                                                 const currentLinkedItems = stop.linked_items || [];
@@ -337,7 +337,7 @@ const JourneyPlanning: React.FC<JourneyPlanningProps> = ({ values, setFieldValue
                                                                                                 type="checkbox"
                                                                                                 name={`journey_stops.${index}.linked_items`}
                                                                                                 value={item.id}
-                                                                                                className="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-700"
+                                                                                                className="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 dark:border-gray-600 dark:bg-gray-700"
                                                                                             />
                                                                                             <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                                                                                                 {item.quantity || 1}x {item.name || 'Unnamed item'}

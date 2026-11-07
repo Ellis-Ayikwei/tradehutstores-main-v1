@@ -492,7 +492,7 @@ export const AddressesComponent: React.FC<AddressesComponentProps> = ({
                     <button
                       type="submit"
                       disabled={loading}
-                      className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md flex items-center disabled:opacity-50"
+                      className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md flex items-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
                     >
                       <Save className="w-4 h-4 mr-1" />
                       {loading ? 'Saving...' : 'Save'}
@@ -695,7 +695,7 @@ export const AddressesComponent: React.FC<AddressesComponentProps> = ({
                         <button
                           type="submit"
                           disabled={loading}
-                          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md flex items-center disabled:opacity-50"
+                          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md flex items-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
                         >
                           <Save className="w-4 h-4 mr-1" />
                           {loading ? 'Saving...' : 'Save'}
@@ -757,7 +757,7 @@ export const AddressesComponent: React.FC<AddressesComponentProps> = ({
                           <button
                             onClick={() => handleSetPrimary(address.id)}
                             disabled={loading}
-                            className="text-blue-600 hover:text-blue-800 text-sm font-medium disabled:opacity-50"
+                            className="text-blue-600 hover:text-blue-800 text-sm font-medium disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
                           >
                             Set Primary
                           </button>
@@ -766,7 +766,7 @@ export const AddressesComponent: React.FC<AddressesComponentProps> = ({
                           <button
                             onClick={() => handleVerifyAddress(address.id)}
                             disabled={loading}
-                            className="text-green-600 hover:text-green-800 text-sm font-medium disabled:opacity-50 flex items-center"
+                            className="text-green-600 hover:text-green-800 text-sm font-medium disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:text-gray-500 flex items-center"
                           >
                             <Check className="w-4 h-4 mr-1" />
                             Verify

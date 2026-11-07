@@ -91,7 +91,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
       >
         <div className="text-sm">{content}</div>
         {renderAttachments()}
-        <div className="flex items-center justify-end mt-1 text-xs opacity-70">
+        <div className="flex items-center justify-end mt-1 text-xs">
           <span>{formatDistanceToNow(new Date(timestamp), { addSuffix: false })}</span>
           {renderStatus()}
         </div>

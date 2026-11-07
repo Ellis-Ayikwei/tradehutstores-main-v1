@@ -175,7 +175,7 @@ const SystemConfig: React.FC = () => {
                         />
                     </Field>
                 </div>
-                <p className="text-xs text-on-surface-variant opacity-70">
+                <p className="text-xs text-on-surface-variant">
                     To change these without a restart, set them as environment variables on
                     Stores-BE. The values shown are the current admin-known mirror.
                 </p>
@@ -195,7 +195,7 @@ const SystemConfig: React.FC = () => {
                 />
 
                 {error && (
-                    <div className="bg-error-container/40 border border-error/30 text-on-error-container rounded-xl px-4 py-3 text-sm whitespace-pre-wrap">
+                    <div className="bg-error-container border border-error-container text-on-error-container rounded-xl px-4 py-3 text-sm whitespace-pre-wrap">
                         {error}
                     </div>
                 )}

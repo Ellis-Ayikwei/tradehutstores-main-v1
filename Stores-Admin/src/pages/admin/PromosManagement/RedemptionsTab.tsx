@@ -72,7 +72,7 @@ const RedemptionsTab: React.FC = () => {
             ) : (
                 <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden">
                     <table className="w-full text-sm">
-                        <thead className="bg-gray-50 dark:bg-gray-800/60">
+                        <thead className="bg-gray-50 dark:bg-gray-800">
                             <tr className="text-left text-[11px] font-semibold uppercase tracking-wide text-on-surface-variant">
                                 <th className="px-4 py-3">When</th>
                                 <th className="px-4 py-3">Code</th>
@@ -86,7 +86,7 @@ const RedemptionsTab: React.FC = () => {
                             {filtered.map((row) => (
                                 <tr
                                     key={row.id}
-                                    className="border-t border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/40"
+                                    className="border-t border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800"
                                 >
                                     <td className="px-4 py-3 text-xs text-on-surface-variant">
                                         {new Date(row.created_at).toLocaleString()}

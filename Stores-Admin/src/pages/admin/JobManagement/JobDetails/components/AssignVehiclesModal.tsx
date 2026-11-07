@@ -165,7 +165,7 @@ const AssignVehiclesModal: React.FC<AssignVehiclesModalProps> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
+          <div className="fixed inset-0 bg-black/60 " />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -179,7 +179,7 @@ const AssignVehiclesModal: React.FC<AssignVehiclesModalProps> = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-6xl transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-2xl ring-1 ring-white/10 transition-all">
+              <Dialog.Panel className="w-full max-w-6xl transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-2xl ring-1 ring-gray-200 transition-all">
                 <div className="relative">
                   {/* Header */}
                   <div className="px-6 pt-6">
@@ -199,7 +199,7 @@ const AssignVehiclesModal: React.FC<AssignVehiclesModalProps> = ({
                       </div>
                       <button 
                         onClick={onClose} 
-                        className="absolute right-0 p-2 rounded-lg text-gray-500 hover:text-gray-800 hover:bg-black/5 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/10 transition"
+                        className="absolute right-0 p-2 rounded-lg text-gray-500 hover:text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-800 transition"
                       >
                         <X className="w-5 h-5" />
                       </button>
@@ -218,7 +218,7 @@ const AssignVehiclesModal: React.FC<AssignVehiclesModalProps> = ({
                       </div>
 
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                        <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+                        <div className="p-3 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-700">
                           <div className="flex items-center gap-2 mb-1">
                             <Ruler className="w-4 h-4 text-blue-600" />
                             <span className="text-xs font-medium text-blue-800 dark:text-blue-200">Length</span>
@@ -227,7 +227,7 @@ const AssignVehiclesModal: React.FC<AssignVehiclesModalProps> = ({
                             {requestDimensions.total_length} {requestDimensions.unit}
                           </div>
                         </div>
-                        <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+                        <div className="p-3 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-700">
                           <div className="flex items-center gap-2 mb-1">
                             <Ruler className="w-4 h-4 text-blue-600" />
                             <span className="text-xs font-medium text-blue-800 dark:text-blue-200">Width</span>
@@ -236,7 +236,7 @@ const AssignVehiclesModal: React.FC<AssignVehiclesModalProps> = ({
                             {requestDimensions.total_width} {requestDimensions.unit}
                           </div>
                         </div>
-                        <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+                        <div className="p-3 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-700">
                           <div className="flex items-center gap-2 mb-1">
                             <Ruler className="w-4 h-4 text-blue-600" />
                             <span className="text-xs font-medium text-blue-800 dark:text-blue-200">Height</span>
@@ -245,7 +245,7 @@ const AssignVehiclesModal: React.FC<AssignVehiclesModalProps> = ({
                             {requestDimensions.total_height} {requestDimensions.unit}
                           </div>
                         </div>
-                        <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+                        <div className="p-3 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-700">
                           <div className="flex items-center gap-2 mb-1">
                             <Weight className="w-4 h-4 text-blue-600" />
                             <span className="text-xs font-medium text-blue-800 dark:text-blue-200">Weight</span>
@@ -256,7 +256,7 @@ const AssignVehiclesModal: React.FC<AssignVehiclesModalProps> = ({
                         </div>
                       </div>
 
-                      <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-700">
+                      <div className="p-3 bg-amber-50 dark:bg-amber-950 rounded-lg border border-amber-200 dark:border-amber-700">
                         <div className="flex items-start gap-2">
                           <Info className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5" />
                           <div>
@@ -278,7 +278,7 @@ const AssignVehiclesModal: React.FC<AssignVehiclesModalProps> = ({
                         <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
                           Vehicle Assignment
                         </h4>
-                        <span className="px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 text-xs font-medium rounded-full">
+                        <span className="px-2 py-1 bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300 text-xs font-medium rounded-full">
                           {requiredVehicles} Required
                         </span>
                       </div>
@@ -291,7 +291,7 @@ const AssignVehiclesModal: React.FC<AssignVehiclesModalProps> = ({
                         </div>
                       ) : !Array.isArray(availableVehicles) || availableVehicles.length === 0 ? (
                         <div className="text-center py-8">
-                          <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <div className="w-16 h-16 bg-orange-100 dark:bg-orange-950 rounded-full flex items-center justify-center mx-auto mb-4">
                             <AlertTriangle className="w-8 h-8 text-orange-600 dark:text-orange-400" />
                           </div>
                           <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
@@ -313,9 +313,9 @@ const AssignVehiclesModal: React.FC<AssignVehiclesModalProps> = ({
                                 key={vehicle.id}
                                 className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
                                   isSelected
-                                    ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                                    ? 'border-green-500 bg-green-50 dark:bg-green-950'
                                     : isDisabled
-                                    ? 'border-gray-200 dark:border-gray-700 opacity-50 cursor-not-allowed'
+                                    ? 'border-gray-200 dark:border-gray-700 bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed'
                                     : capacityFit.overallFit
                                     ? 'border-gray-200 dark:border-gray-700 hover:border-green-300 dark:hover:border-green-600'
                                     : 'border-red-200 dark:border-red-700 hover:border-red-300 dark:hover:border-red-600'
@@ -395,8 +395,8 @@ const AssignVehiclesModal: React.FC<AssignVehiclesModalProps> = ({
                                 {/* Overall Fit Status */}
                                 <div className={`mt-2 p-2 rounded text-xs text-center font-medium ${
                                   capacityFit.overallFit 
-                                    ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                                    : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                                    ? 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300'
+                                    : 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300'
                                 }`}>
                                   {capacityFit.overallFit ? '✓ Suitable for this request' : '⚠ Insufficient capacity'}
                                 </div>
@@ -407,7 +407,7 @@ const AssignVehiclesModal: React.FC<AssignVehiclesModalProps> = ({
                       )}
 
                       {/* Selection Status */}
-                      <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+                      <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -441,7 +441,7 @@ const AssignVehiclesModal: React.FC<AssignVehiclesModalProps> = ({
 
                     {/* Error Display */}
                     {error && (
-                      <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg">
+                      <div className="mb-4 p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-700 rounded-lg">
                         <div className="flex items-center gap-2">
                           <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
                           <span className="text-sm text-red-800 dark:text-red-200">{error}</span>
@@ -454,7 +454,7 @@ const AssignVehiclesModal: React.FC<AssignVehiclesModalProps> = ({
                   <div className="px-6 pb-6 flex items-center justify-end gap-3">
                     <button
                       onClick={onClose}
-                      className="px-4 py-2 text-sm rounded-lg border border-gray-300/80 dark:border-gray-700/80 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/10 transition"
+                      className="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                     >
                       Cancel
                     </button>
@@ -462,7 +462,7 @@ const AssignVehiclesModal: React.FC<AssignVehiclesModalProps> = ({
                       onClick={handleAssignVehicles}
                       disabled={!canAssignVehicles || loading}
                       className={`px-4 py-2 text-sm rounded-lg text-white bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-md shadow-green-600/20 flex items-center gap-2 transition ${
-                        !canAssignVehicles || loading ? 'opacity-60 cursor-not-allowed' : ''
+                        !canAssignVehicles || loading ? 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed' : ''
                       }`}
                     >
                       {loading ? (

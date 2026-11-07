@@ -346,7 +346,7 @@ const Invoices = () => {
     return (
         <div>
             <div className="panel flex items-center overflow-x-auto whitespace-nowrap p-3 text-primary">
-                <div className="rounded-full bg-primary p-1.5 text-white ring-2 ring-primary/30 ltr:mr-3 rtl:ml-3">
+                <div className="rounded-full bg-primary p-1.5 text-white ring-2 ring-primary-200 ltr:mr-3 rtl:ml-3">
                     <IconBell />
                 </div>
                 <span className="ltr:mr-3 rtl:ml-3">Documentation: </span>
@@ -504,7 +504,7 @@ const Invoices = () => {
                             </button>
                         </Tippy>
                     </div>
-                    <div className={` gap-1 disabled:opacity-50 disabled:cursor-not-allowed disabled ${selectedRecords.length > 0 ? '!flex' : 'hidden'}`}>
+                    <div className={` gap-1 disabled:bg-gray-100 disabled:text-gray-400 dark:disabled:bg-gray-800 dark:disabled:text-gray-500 disabled:cursor-not-allowed disabled ${selectedRecords.length > 0 ? '!flex' : 'hidden'}`}>
                         <div>
                             <Tippy content="Delete">
                                 <button

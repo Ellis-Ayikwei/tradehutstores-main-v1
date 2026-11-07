@@ -34,7 +34,7 @@ export default function Profile() {
                         </Link>
                     ))}
 
-                    <button className="w-full flex items-center space-x-3 px-4 py-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors">
+                    <button className="w-full flex items-center space-x-3 px-4 py-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg transition-colors">
                         <FontAwesomeIcon icon={faSignOut} className="w-5 h-5" />
                         <span>Logout</span>
                     </button>

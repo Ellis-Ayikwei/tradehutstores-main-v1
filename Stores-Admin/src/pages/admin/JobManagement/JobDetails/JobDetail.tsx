@@ -194,19 +194,19 @@ const JobDetail: React.FC = () => {
             case 'draft':
                 return 'bg-gradient-to-r from-gray-50 to-slate-50 text-gray-700 border border-gray-200 dark:from-gray-800 dark:to-slate-800 dark:text-gray-300 dark:border-gray-600';
             case 'pending':
-                return 'bg-gradient-to-r from-amber-50 to-yellow-50 text-amber-700 border border-amber-200 dark:from-amber-900/20 dark:to-yellow-900/20 dark:text-amber-300 dark:border-amber-700';
+                return 'bg-gradient-to-r from-amber-50 to-yellow-50 text-amber-700 border border-amber-200 dark:from-amber-950 dark:to-yellow-950 dark:text-amber-300 dark:border-amber-700';
             case 'bidding':
-                return 'bg-gradient-to-r from-purple-50 to-violet-50 text-purple-700 border border-purple-200 dark:from-purple-900/20 dark:to-violet-900/20 dark:text-purple-300 dark:border-purple-700';
+                return 'bg-gradient-to-r from-purple-50 to-violet-50 text-purple-700 border border-purple-200 dark:from-purple-950 dark:to-violet-950 dark:text-purple-300 dark:border-purple-700';
             case 'accepted':
-                return 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border border-blue-200 dark:from-blue-900/20 dark:to-indigo-900/20 dark:text-blue-300 dark:border-blue-700';
+                return 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border border-blue-200 dark:from-blue-950 dark:to-indigo-950 dark:text-blue-300 dark:border-blue-700';
             case 'assigned':
-                return 'bg-gradient-to-r from-cyan-50 to-sky-50 text-cyan-700 border border-cyan-200 dark:from-cyan-900/20 dark:to-sky-900/20 dark:text-cyan-300 dark:border-cyan-700';
+                return 'bg-gradient-to-r from-cyan-50 to-sky-50 text-cyan-700 border border-cyan-200 dark:from-cyan-950 dark:to-sky-950 dark:text-cyan-300 dark:border-cyan-700';
             case 'in_transit':
-                return 'bg-gradient-to-r from-orange-50 to-amber-50 text-orange-700 border border-orange-200 dark:from-orange-900/20 dark:to-amber-900/20 dark:text-orange-300 dark:border-orange-700';
+                return 'bg-gradient-to-r from-orange-50 to-amber-50 text-orange-700 border border-orange-200 dark:from-orange-950 dark:to-amber-950 dark:text-orange-300 dark:border-orange-700';
             case 'completed':
-                return 'bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 border border-emerald-200 dark:from-emerald-900/20 dark:to-green-900/20 dark:text-emerald-300 dark:border-emerald-700';
+                return 'bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 border border-emerald-200 dark:from-emerald-950 dark:to-green-950 dark:text-emerald-300 dark:border-emerald-700';
             case 'cancelled':
-                return 'bg-gradient-to-r from-red-50 to-rose-50 text-red-700 border border-red-200 dark:from-red-900/20 dark:to-rose-900/20 dark:text-red-300 dark:border-red-700';
+                return 'bg-gradient-to-r from-red-50 to-rose-50 text-red-700 border border-red-200 dark:from-red-950 dark:to-rose-950 dark:text-red-300 dark:border-red-700';
             default:
                 return 'bg-gradient-to-r from-gray-50 to-slate-50 text-gray-700 border border-gray-200 dark:from-gray-800 dark:to-slate-800 dark:text-gray-300 dark:border-gray-600';
         }
@@ -414,9 +414,9 @@ const JobDetail: React.FC = () => {
     if (isLoading) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 dark:from-slate-900 dark:via-blue-900 dark:to-slate-800">
-                <div className="fixed inset-0 bg-gradient-to-br from-blue-600/5 to-orange-600/5 pointer-events-none"></div>
+                <div className="fixed inset-0 bg-gradient-to-br from-blue-50 to-orange-50 pointer-events-none"></div>
                 <div className="flex items-center justify-center min-h-screen relative">
-                    <div className="backdrop-blur-xl bg-white/70 dark:bg-slate-800/70 rounded-3xl p-12 border border-white/20 dark:border-slate-700/30">
+                    <div className=" bg-white dark:bg-slate-800 rounded-3xl p-12 border border-gray-200 dark:border-slate-700">
                         <div className="animate-spin rounded-full h-16 w-16 border-4 border-orange-200 border-t-orange-500 mx-auto mb-4"></div>
                         <p className="text-slate-700 dark:text-slate-300 font-medium text-lg">Loading job details...</p>
                     </div>
@@ -428,9 +428,9 @@ const JobDetail: React.FC = () => {
     if (error) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 dark:from-slate-900 dark:via-blue-900 dark:to-slate-800">
-                <div className="fixed inset-0 bg-gradient-to-br from-blue-600/5 to-orange-600/5 pointer-events-none"></div>
+                <div className="fixed inset-0 bg-gradient-to-br from-blue-50 to-orange-50 pointer-events-none"></div>
                 <div className="flex items-center justify-center min-h-screen relative">
-                    <div className="backdrop-blur-xl bg-red-50/80 dark:bg-red-900/30 rounded-3xl p-12 border-2 border-red-200/50 dark:border-red-700/50">
+                    <div className=" bg-red-50 dark:bg-red-950 rounded-3xl p-12 border-2 border-red-200 dark:border-red-800">
                         <div className="text-red-600 dark:text-red-400 text-xl font-semibold text-center justify-center">
                             Failed to load job details
                             <div className="flex flex-row mx-auto mt-2 gap-4 justify-center">
@@ -447,9 +447,9 @@ const JobDetail: React.FC = () => {
     if (!job || !job.request) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 dark:from-slate-900 dark:via-blue-900 dark:to-slate-800">
-                <div className="fixed inset-0 bg-gradient-to-br from-blue-600/5 to-orange-600/5 pointer-events-none"></div>
+                <div className="fixed inset-0 bg-gradient-to-br from-blue-50 to-orange-50 pointer-events-none"></div>
                 <div className="flex items-center justify-center min-h-screen relative">
-                    <div className="backdrop-blur-xl bg-white/70 dark:bg-slate-800/70 rounded-3xl p-12 border border-white/20 dark:border-slate-700/30">
+                    <div className=" bg-white dark:bg-slate-800 rounded-3xl p-12 border border-gray-200 dark:border-slate-700">
                         <div className="text-slate-600 dark:text-slate-400 text-xl font-semibold text-center">Job not found</div>
                     </div>
                 </div>
@@ -488,7 +488,7 @@ const JobDetail: React.FC = () => {
 
                             {/* Enhanced Bidding section - Show for auction jobs or when bid is accepted */}
                             {(isBiddable ||  (job as any)?.accepted_bid) && (
-                                <div className="backdrop-blur-xl mt-10 bg-white/70 dark:bg-slate-800/70 border border-white/20 dark:border-slate-700/30">
+                                <div className=" mt-10 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
                                     <AdminJobBidding
                                         job={job}
                                         onBidUpdate={() => {

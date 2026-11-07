@@ -175,7 +175,7 @@ const EmailNotifications: React.FC = () => {
               <div key={provider.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-3">
-                    <div className={`p-2 rounded-lg ${provider.isActive ? 'bg-green-100 dark:bg-green-900/30' : 'bg-gray-100 dark:bg-gray-700'}`}>
+                    <div className={`p-2 rounded-lg ${provider.isActive ? 'bg-green-100 dark:bg-green-950' : 'bg-gray-100 dark:bg-gray-700'}`}>
                       <Mail className={`w-5 h-5 ${provider.isActive ? 'text-green-600 dark:text-green-400' : 'text-gray-400'}`} />
                     </div>
                     <div>
@@ -198,7 +198,7 @@ const EmailNotifications: React.FC = () => {
                     <span className="text-sm text-gray-600 dark:text-gray-400">Status</span>
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                       provider.isActive 
-                        ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                        ? 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-400'
                         : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400'
                     }`}>
                       {provider.isActive ? 'Active' : 'Inactive'}
@@ -219,7 +219,7 @@ const EmailNotifications: React.FC = () => {
                     <span className="text-sm text-gray-600 dark:text-gray-400">Supported Regions</span>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {provider.supportedRegions.map((region) => (
-                        <span key={region} className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 rounded-full text-xs">
+                        <span key={region} className="px-2 py-1 bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-400 rounded-full text-xs">
                           {region}
                         </span>
                       ))}
@@ -231,7 +231,7 @@ const EmailNotifications: React.FC = () => {
                   <button
                     onClick={() => handleTestProvider(provider.id)}
                     disabled={isTesting}
-                    className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-sm"
+                    className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-sm"
                   >
                     {isTesting ? (
                       <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
@@ -291,7 +291,7 @@ const EmailNotifications: React.FC = () => {
                     <span className="text-sm text-gray-600 dark:text-gray-400">Status</span>
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                       template.isActive 
-                        ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                        ? 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-400'
                         : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400'
                     }`}>
                       {template.isActive ? 'Active' : 'Inactive'}

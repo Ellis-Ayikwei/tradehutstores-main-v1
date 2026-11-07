@@ -73,7 +73,7 @@ const HowItWorks: React.FC = () => {
                                         <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${steps[index + 1].color} flex items-center justify-center shadow-lg`}>
                                             <IconArrowRight className="text-2xl text-white" />
                                         </div>
-                                        <div className="absolute inset-0 rounded-full animate-pulse bg-white/20"></div>
+                                        <div className="absolute inset-0 rounded-full animate-pulse bg-gray-700"></div>
                                     </div>
                                 </div>
                             )}
@@ -84,7 +84,7 @@ const HowItWorks: React.FC = () => {
                 <div className="text-center mt-12">
                     <Link
                         to="/how-it-works"
-                        className="inline-flex items-center bg-secondary hover:bg-secondary/90 text-white px-8 py-4 rounded-xl font-medium transition-all duration-300 hover:shadow-lg hover:scale-105"
+                        className="inline-flex items-center bg-secondary hover:bg-secondary-600 text-white px-8 py-4 rounded-xl font-medium transition-all duration-300 hover:shadow-lg hover:scale-105"
                     >
                         Learn More About Our Process
                         <IconArrowRight className="ml-2 w-5 h-5" />

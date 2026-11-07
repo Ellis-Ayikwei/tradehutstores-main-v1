@@ -284,7 +284,7 @@ const LocationsStep: React.FC<LocationsStepProps> = ({ values, handleChange, han
         <div className="mx-auto px-2 ">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg  p-2 sm:p-2">
                 {isInstant && (
-                    <div className="mb-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 border border-blue-100 dark:border-blue-800">
+                    <div className="mb-8 bg-blue-50 dark:bg-blue-950 rounded-lg p-6 border border-blue-100 dark:border-blue-800">
                         <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-300 mb-4 flex items-center">
                             <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
                             Your Move
@@ -360,7 +360,7 @@ const LocationsStep: React.FC<LocationsStepProps> = ({ values, handleChange, han
                         <>
                             {/* Validation reminder for journey stops */}
                             {values.journey_stops && values.journey_stops.length > 0 && (
-                                <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800">
+                                <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-100 dark:border-blue-800">
                                     <div className="flex items-start">
                                         <FontAwesomeIcon icon={faInfoCircle} className="text-blue-600 dark:text-blue-400 mt-0.5 mr-2 flex-shrink-0" />
                                         <div>

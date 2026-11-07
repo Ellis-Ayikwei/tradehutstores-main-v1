@@ -137,7 +137,7 @@ const ServicesTab: React.FC<ServicesTabProps> = ({ provider, onProviderUpdate })
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-green-100 dark:bg-green-900/20 rounded-lg">
+          <div className="p-2 bg-green-100 dark:bg-green-950 rounded-lg">
             <Truck className="w-6 h-6 text-green-600 dark:text-green-400" />
           </div>
           <div>
@@ -162,7 +162,7 @@ const ServicesTab: React.FC<ServicesTabProps> = ({ provider, onProviderUpdate })
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
               >
                 <Save className="w-4 h-4 mr-2" />
                 {saving ? 'Saving...' : 'Save Changes'}
@@ -211,7 +211,7 @@ const ServicesTab: React.FC<ServicesTabProps> = ({ provider, onProviderUpdate })
         ) : availableCategories.length > 0 ? (
           <div className="space-y-4">
             {/* Header showing current selection */}
-            <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg">
               <div className="flex items-center gap-2">
                 <Tag className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 <span className="font-medium text-blue-900 dark:text-blue-100">
@@ -222,7 +222,7 @@ const ServicesTab: React.FC<ServicesTabProps> = ({ provider, onProviderUpdate })
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handleSelectAll}
-                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 text-blue-800 dark:text-blue-300 text-sm font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-100 hover:bg-blue-200 dark:bg-blue-950 dark:hover:bg-blue-900 text-blue-800 dark:text-blue-300 text-sm font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
                   >
                     Select All
                   </button>
@@ -243,7 +243,7 @@ const ServicesTab: React.FC<ServicesTabProps> = ({ provider, onProviderUpdate })
                   {/* Category Header */}
                   <div className="bg-gray-50 dark:bg-gray-700 px-4 py-3 border-b border-gray-200 dark:border-gray-600">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                      <div className="p-2 bg-blue-100 dark:bg-blue-950 rounded-lg">
                         <Tag className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                       </div>
                       <div>
@@ -268,9 +268,9 @@ const ServicesTab: React.FC<ServicesTabProps> = ({ provider, onProviderUpdate })
                               key={service.id}
                               className={`p-3 border rounded-lg transition-colors ${
                                 isSelected
-                                  ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                                  ? 'border-green-500 bg-green-50 dark:bg-green-950'
                                   : isCurrentlyAssigned && !editing
-                                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-950'
                                   : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
                               } ${editing ? 'cursor-pointer' : 'cursor-default'}`}
                               onClick={() => editing && handleServiceToggle(service.id)}
@@ -278,9 +278,9 @@ const ServicesTab: React.FC<ServicesTabProps> = ({ provider, onProviderUpdate })
                               <div className="flex items-center gap-3">
                                 <div className={`p-1.5 rounded-lg ${
                                   isSelected 
-                                    ? 'bg-green-100 dark:bg-green-900/30' 
+                                    ? 'bg-green-100 dark:bg-green-950' 
                                     : isCurrentlyAssigned && !editing
-                                    ? 'bg-blue-100 dark:bg-blue-900/30'
+                                    ? 'bg-blue-100 dark:bg-blue-950'
                                     : 'bg-gray-100 dark:bg-gray-700'
                                 }`}>
                                   <Truck className={`w-3 h-3 ${
@@ -348,7 +348,7 @@ const ServicesTab: React.FC<ServicesTabProps> = ({ provider, onProviderUpdate })
         )}
 
         {selectedServices.length > 0 && (
-          <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+          <div className="mt-4 p-3 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg">
             <p className="text-sm text-green-700 dark:text-green-300">
               <strong>{selectedServices.length}</strong> services selected
             </p>
@@ -428,7 +428,7 @@ const ServicesTab: React.FC<ServicesTabProps> = ({ provider, onProviderUpdate })
                   </h5>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     {categoryServices.map((service) => (
-                      <div key={service.id} className="flex items-center gap-2 p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                      <div key={service.id} className="flex items-center gap-2 p-2 bg-green-50 dark:bg-green-950 rounded-lg">
                         <Truck className="w-3 h-3 text-green-600 dark:text-green-400" />
                         <span className="text-sm font-medium text-green-900 dark:text-green-100">{service.name}</span>
                       </div>

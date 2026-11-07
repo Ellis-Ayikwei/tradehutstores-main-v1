@@ -231,8 +231,8 @@ const RequestLocationsTab: React.FC<RequestLocationsTabProps> = ({
     const LocationCard: React.FC<{ location: Location; type: 'pickup' | 'dropoff' }> = ({ location, type }) => {
         const typeColor = type === 'pickup' ? 'green' : 'blue';
         const typeBg = type === 'pickup' 
-            ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' 
-            : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800';
+            ? 'bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800' 
+            : 'bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800';
         
         return (
             <div className={`bg-white dark:bg-gray-800 border-2 rounded-lg p-5 transition-all duration-200 hover:shadow-lg ${typeBg}`}>
@@ -240,16 +240,16 @@ const RequestLocationsTab: React.FC<RequestLocationsTabProps> = ({
                     <div className="flex items-center gap-3">
                         <div className={`p-2 rounded-lg ${
                             type === 'pickup' 
-                                ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300' 
-                                : 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300'
+                                ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300' 
+                                : 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
                         }`}>
                             <IconMapPin className="w-5 h-5" />
                         </div>
                         <div>
                             <span className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide ${
                                 type === 'pickup' 
-                                    ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' 
-                                    : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
+                                    ? 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-400' 
+                                    : 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-400'
                             }`}>
                                 {type === 'pickup' ? 'Pickup Location' : 'Dropoff Location'}
                             </span>
@@ -259,14 +259,14 @@ const RequestLocationsTab: React.FC<RequestLocationsTabProps> = ({
                         <div className="flex items-center space-x-1">
                             <button
                                 onClick={() => handleEditLocation(location, type)}
-                                className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all duration-200 hover:scale-110"
+                                className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 dark:hover:bg-blue-950 rounded-lg transition-all duration-200 hover:scale-110"
                                 title="Edit location"
                             >
                                 <IconEdit className="w-4 h-4" />
                             </button>
                             <button
                                 onClick={() => handleDeleteLocation(location.id, type)}
-                                className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-all duration-200 hover:scale-110"
+                                className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg transition-all duration-200 hover:scale-110"
                                 title="Delete location"
                             >
                                 <IconTrash className="w-4 h-4" />
@@ -293,7 +293,7 @@ const RequestLocationsTab: React.FC<RequestLocationsTabProps> = ({
 
                     {/* Coordinates - Verified Badge */}
                     {location.coordinates && (
-                        <div className="flex items-center gap-2 px-3 py-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                        <div className="flex items-center gap-2 px-3 py-2 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg">
                             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                             <span className="text-xs font-medium text-green-700 dark:text-green-400">
                                 Verified Location
@@ -335,7 +335,7 @@ const RequestLocationsTab: React.FC<RequestLocationsTabProps> = ({
                     {location.access_instructions && (
                         <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
                             <div className="flex items-start gap-2">
-                                <div className="p-1.5 rounded bg-amber-100 dark:bg-amber-900/30 mt-0.5">
+                                <div className="p-1.5 rounded bg-amber-100 dark:bg-amber-950 mt-0.5">
                                     <IconMapPin className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                                 </div>
                                 <div className="flex-1">
@@ -576,15 +576,15 @@ const RequestLocationsTab: React.FC<RequestLocationsTabProps> = ({
                         {/* Modal Header */}
                         <div className={`px-6 py-4 border-b ${
                             locationType === 'pickup' 
-                                ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' 
-                                : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
+                                ? 'bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800' 
+                                : 'bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800'
                         }`}>
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <div className={`p-2 rounded-lg ${
                                         locationType === 'pickup'
-                                            ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300'
-                                            : 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300'
+                                            ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300'
+                                            : 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
                                     }`}>
                                         <IconMapPin className="w-5 h-5" />
                                     </div>
@@ -622,7 +622,7 @@ const RequestLocationsTab: React.FC<RequestLocationsTabProps> = ({
                         <div className="flex-1 overflow-y-auto p-6">
                             <div className="space-y-6">
                                 {/* Address Search Section */}
-                                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
                                     <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
                                         <IconMapPin className="w-4 h-4" />
                                         Address *
@@ -783,7 +783,7 @@ const RequestLocationsTab: React.FC<RequestLocationsTabProps> = ({
                         </div>
 
                         {/* Modal Footer */}
-                        <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 flex items-center justify-end space-x-3">
+                        <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center justify-end space-x-3">
                             <button
                                 onClick={() => {
                                     setShowAddLocation(false);

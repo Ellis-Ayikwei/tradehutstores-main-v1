@@ -107,7 +107,7 @@ const SearchOpsPage: React.FC = () => {
                 <button
                     onClick={refresh}
                     disabled={loading}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-on-primary text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-on-primary text-sm font-semibold hover:brightness-95 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:text-gray-500 transition"
                 >
                     <IconRefresh size={16} className={loading ? 'animate-spin' : ''} />
                     Refresh
@@ -151,7 +151,7 @@ const SearchOpsPage: React.FC = () => {
                     <button
                         onClick={runText}
                         disabled={textBusy || !textQuery.trim()}
-                        className="px-4 py-2 rounded-lg bg-primary text-on-primary text-sm font-semibold hover:opacity-90 disabled:opacity-50"
+                        className="px-4 py-2 rounded-lg bg-primary text-on-primary text-sm font-semibold hover:brightness-95 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
                     >
                         {textBusy ? 'Searching…' : 'Search'}
                     </button>
@@ -170,7 +170,7 @@ const SearchOpsPage: React.FC = () => {
             <section className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-5">
                 <h2 className="font-semibold text-on-surface dark:text-white mb-3">Live image search</h2>
                 {!embedEnabled && (
-                    <div className="mb-3 px-3 py-2 rounded-lg bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-300 text-sm flex items-center gap-2">
+                    <div className="mb-3 px-3 py-2 rounded-lg bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-300 text-sm flex items-center gap-2">
                         <IconAlertTriangle size={16} />
                         Visual search is disabled. Set <code className="font-mono">SEARCH_ENABLE_EMBEDDINGS=true</code>
                         and run <code className="font-mono">manage.py build_embeddings</code> to enable.
@@ -181,7 +181,7 @@ const SearchOpsPage: React.FC = () => {
                     <button
                         onClick={() => fileRef.current?.click()}
                         disabled={!embedEnabled || imageBusy}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 text-sm font-semibold disabled:opacity-50 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 text-sm font-semibold disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                     >
                         <IconUpload size={16} />
                         {imageBusy ? 'Searching…' : 'Pick an image'}
@@ -277,7 +277,7 @@ const ResultsTable: React.FC<{ results: AdminSearchHit[] }> = ({ results }) => {
                 </thead>
                 <tbody>
                     {results.map((hit, i) => (
-                        <tr key={hit.id} className="border-b border-gray-100 dark:border-gray-800/60">
+                        <tr key={hit.id} className="border-b border-gray-100 dark:border-gray-800">
                             <td className="py-2 pr-4 text-xs text-gray-400">{i + 1}</td>
                             <td className="py-2 pr-4">
                                 <div className="flex items-center gap-3 min-w-0">

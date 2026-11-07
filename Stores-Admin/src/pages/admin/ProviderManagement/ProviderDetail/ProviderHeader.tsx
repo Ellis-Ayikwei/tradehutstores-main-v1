@@ -49,14 +49,13 @@ export const ProviderHeader: React.FC<ProviderHeaderProps> = ({ provider, onActi
             {/* Banner Section */}
             <div className="relative h-48 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600">
                 {/* Banner Pattern Overlay */}
-                <div className="absolute inset-0 bg-black/10"></div>
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]"></div>
 
                 {/* Back Button */}
                 <div className="absolute top-4 left-4">
                     <Link
                         to="/admin/providers"
-                        className="flex items-center justify-center w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all duration-200"
+                        className="flex items-center justify-center w-10 h-10 bg-indigo-700  rounded-full text-white hover:bg-indigo-600 transition-all duration-200"
                     >
                         <ArrowLeft className="w-4 h-4" />
                     </Link>
@@ -66,14 +65,14 @@ export const ProviderHeader: React.FC<ProviderHeaderProps> = ({ provider, onActi
                 <div className="absolute top-4 right-4 flex gap-2">
                     {/* <Link
                         to={`/admin/providers/${provider.id}/edit`}
-                        className="flex items-center justify-center w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all duration-200"
+                        className="flex items-center justify-center w-10 h-10 bg-indigo-700  rounded-full text-white hover:bg-indigo-600 transition-all duration-200"
                         title="Edit Provider"
                     >
                         <Edit className="w-4 h-4" />
                     </Link> */}
                     {provider.user.account_status === 'active' && (
                         <button
-                            className="flex items-center justify-center w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all duration-200"
+                            className="flex items-center justify-center w-10 h-10 bg-indigo-700  rounded-full text-white hover:bg-indigo-600 transition-all duration-200"
                             onClick={onSuspend}
                             title="Suspend Provider"
                         >
@@ -82,7 +81,7 @@ export const ProviderHeader: React.FC<ProviderHeaderProps> = ({ provider, onActi
                         </button>
                     )}
                     <button
-                        className="flex items-center justify-center w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all duration-200"
+                        className="flex items-center justify-center w-10 h-10 bg-indigo-700  rounded-full text-white hover:bg-indigo-600 transition-all duration-200"
                         onClick={onDelete}
                         title="Delete Provider"
                     >
@@ -159,16 +158,16 @@ export const ProviderHeader: React.FC<ProviderHeaderProps> = ({ provider, onActi
 
                             {/* Contact Info */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                                     <Mail className="w-4 h-4 text-blue-500 flex-shrink-0" />
                                     <span className="truncate">{provider.user.email}</span>
                                 </div>
-                                <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                                     <Phone className="w-4 h-4 text-green-500 flex-shrink-0" />
                                     <span>{provider.user.phone_number}</span>
                                 </div>
                                 {provider.website && (
-                                    <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                    <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                                         <Globe className="w-4 h-4 text-purple-500 flex-shrink-0" />
                                         <a href={provider.website} target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 truncate">
                                             {provider.website}
@@ -176,7 +175,7 @@ export const ProviderHeader: React.FC<ProviderHeaderProps> = ({ provider, onActi
                                     </div>
                                 )}
                                 {provider.base_location && (
-                                    <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                    <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                                         <MapPin className="w-4 h-4 text-red-500 flex-shrink-0" />
                                         <span className="truncate">
                                             {(() => {

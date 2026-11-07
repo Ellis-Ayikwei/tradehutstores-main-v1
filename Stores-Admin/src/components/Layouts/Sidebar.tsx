@@ -307,7 +307,7 @@ const Sidebar = () => {
                     type="button"
                     onClick={handleLogout}
                     disabled={isLoggingOut}
-                    className="group flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-destructive-subtle hover:text-destructive-subtle-foreground disabled:opacity-50"
+                    className="group flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-destructive-subtle hover:text-destructive-subtle-foreground disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
                 >
                     <LogOut className="h-4 w-4 shrink-0" aria-hidden="true" />
                     <span>{isLoggingOut ? 'Signing out...' : 'Logout'}</span>

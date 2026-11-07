@@ -136,7 +136,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, onClose, onSubmit, titl
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+                className="fixed inset-0 bg-black bg-opacity-60  z-50 flex items-center justify-center p-4"
                 onClick={handleBackdropClick}
             >
                 <motion.div
@@ -147,15 +147,15 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, onClose, onSubmit, titl
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Decorative Elements */}
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-400/20 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
-                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-green-400/20 to-transparent rounded-full translate-y-12 -translate-x-12"></div>
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-100 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
+                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-green-100 to-transparent rounded-full translate-y-12 -translate-x-12"></div>
 
                     {/* Header */}
                     <div className="relative overflow-hidden">
                         <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 px-8 py-6 relative">
                             <button
                                 onClick={onClose}
-                                className="absolute top-4 right-4 text-white/80 hover:text-white transition-colors bg-white/10 rounded-full w-8 h-8 flex items-center justify-center hover:bg-white/20"
+                                className="absolute top-4 right-4 text-white hover:text-white transition-colors bg-indigo-800 rounded-full w-8 h-8 flex items-center justify-center hover:bg-indigo-700"
                             >
                                 <X size={16} />
                             </button>
@@ -165,7 +165,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, onClose, onSubmit, titl
                                     initial={{ scale: 0 }}
                                     animate={{ scale: 1 }}
                                     transition={{ delay: 0.2, type: 'spring' }}
-                                    className="bg-white/15 backdrop-blur-sm rounded-2xl p-4 inline-block mb-4"
+                                    className="bg-indigo-800  rounded-2xl p-4 inline-block mb-4"
                                 >
                                     <Truck size={32} className="text-white" />
                                 </motion.div>
@@ -285,8 +285,8 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, onClose, onSubmit, titl
                                 transition={{ delay: 1.0 }}
                                 onClick={(e) => handleSubmit(e)}
                                 disabled={isSubmitting}
-                                className={`w-full bg-gradient-to-r from-secondary-400 to-secondary-700 hover:from-secondary/80 hover:to-secondary/80 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 flex items-center justify-center space-x-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 ${
-                                    isSubmitting ? 'opacity-50 cursor-not-allowed transform-none' : ''
+                                className={`w-full bg-gradient-to-r from-secondary-400 to-secondary-700 hover:from-secondary-600 hover:to-secondary-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 flex items-center justify-center space-x-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 ${
+                                    isSubmitting ? 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed transform-none' : ''
                                 }`}
                                 whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
                                 whileTap={{ scale: isSubmitting ? 1 : 0.98 }}

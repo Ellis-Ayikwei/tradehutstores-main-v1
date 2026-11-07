@@ -301,7 +301,7 @@ export function DataTable<TData>({
                                                             className="-ml-1 inline-flex items-center gap-1 rounded px-1 py-1 uppercase tracking-wide hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                                         >
                                                             {flexRender(header.column.columnDef.header, header.getContext())}
-                                                            {direction === 'ascending' ? <ArrowUp className="h-3.5 w-3.5" /> : direction === 'descending' ? <ArrowDown className="h-3.5 w-3.5" /> : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
+                                                            {direction === 'ascending' ? <ArrowUp className="h-3.5 w-3.5" /> : direction === 'descending' ? <ArrowDown className="h-3.5 w-3.5" /> : <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground" />}
                                                         </button>
                                                     ) : (
                                                         flexRender(header.column.columnDef.header, header.getContext())

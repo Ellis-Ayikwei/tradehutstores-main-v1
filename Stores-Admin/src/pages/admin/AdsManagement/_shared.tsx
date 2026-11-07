@@ -120,7 +120,7 @@ export const ColorSwatchPicker: React.FC<{
                             className={[
                                 'relative h-8 w-8 rounded-full border-2 transition shrink-0',
                                 selected
-                                    ? 'border-primary ring-2 ring-primary/30 scale-110'
+                                    ? 'border-primary ring-2 ring-primary-200 scale-110'
                                     : 'border-gray-200 dark:border-gray-700 hover:border-gray-400 hover:scale-105',
                                 isNone ? 'bg-white dark:bg-gray-800' : '',
                             ].join(' ')}
@@ -215,7 +215,7 @@ export const LiveDot: React.FC<{ on?: boolean; label?: string }> = ({ on = true,
     <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold">
         <span className="relative flex h-2 w-2">
             {on && (
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300" />
             )}
             <span
                 className={`relative inline-flex rounded-full h-2 w-2 ${
@@ -282,7 +282,7 @@ export const LivePreview: React.FC<PreviewProps> = ({ creative, variant = 'banne
                     {creative.cta_label && (
                         <span
                             className="px-2.5 py-0.5 rounded-full text-[11px] font-bold border whitespace-nowrap"
-                            style={{ borderColor: `${accent}55`, backgroundColor: 'rgba(255,255,255,0.22)' }}
+                            style={{ borderColor: accent, backgroundColor: '#ffffff', color: '#111827' }}
                         >
                             {creative.cta_label}
                         </span>
@@ -319,7 +319,7 @@ export const LivePreview: React.FC<PreviewProps> = ({ creative, variant = 'banne
                     )}
                     <h2 className="text-2xl font-bold leading-tight">{creative.headline || '(headline)'}</h2>
                     {creative.subheadline && (
-                        <p className="mt-2 text-sm opacity-80">{creative.subheadline}</p>
+                        <p className="mt-2 text-sm">{creative.subheadline}</p>
                     )}
                     {creative.cta_label && (
                         <button
@@ -366,7 +366,7 @@ export const LivePreview: React.FC<PreviewProps> = ({ creative, variant = 'banne
                     {creative.headline || '(headline)'}
                 </h3>
                 {creative.subheadline && (
-                    <p className="mt-1 text-xs sm:text-sm opacity-90 max-w-md line-clamp-2">
+                    <p className="mt-1 text-xs sm:text-sm max-w-md line-clamp-2">
                         {creative.subheadline}
                     </p>
                 )}
@@ -399,7 +399,7 @@ export const ModalShell: React.FC<{
         width === 'xl' ? 'max-w-5xl' : width === 'lg' ? 'max-w-3xl' : 'max-w-xl';
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 "
             onClick={onClose}
         >
             <div
@@ -421,7 +421,7 @@ export const ModalShell: React.FC<{
                     </button>
                 </div>
                 <div className="flex-1 overflow-y-auto">{children}</div>
-                <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-gray-200 dark:border-gray-800 shrink-0 bg-gray-50/50 dark:bg-gray-800/30">
+                <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-gray-200 dark:border-gray-800 shrink-0 bg-gray-50 dark:bg-gray-800">
                     <button
                         type="button"
                         onClick={onClose}
@@ -433,7 +433,7 @@ export const ModalShell: React.FC<{
                         type="button"
                         onClick={onSave}
                         disabled={saving}
-                        className="inline-flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary/90 disabled:opacity-60 shadow"
+                        className="inline-flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary-hover disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500 shadow"
                     >
                         {saving ? 'Saving…' : saveLabel}
                     </button>
@@ -451,8 +451,8 @@ export const EmptyState: React.FC<{
     body: string;
     action?: React.ReactNode;
 }> = ({ icon, title, body, action }) => (
-    <div className="text-center py-16 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-700 bg-white/40 dark:bg-gray-900/40">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 text-primary mb-3">
+    <div className="text-center py-16 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-subtle text-primary mb-3">
             {icon}
         </div>
         <h3 className="font-bold text-on-surface dark:text-white">{title}</h3>

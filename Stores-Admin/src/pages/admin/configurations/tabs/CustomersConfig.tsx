@@ -206,7 +206,7 @@ const CustomersConfig: React.FC = () => {
                 </Field>
 
                 {error && (
-                    <div className="bg-error-container/40 border border-error/30 text-on-error-container rounded-xl px-4 py-3 text-sm whitespace-pre-wrap">
+                    <div className="bg-error-container border border-error-container text-on-error-container rounded-xl px-4 py-3 text-sm whitespace-pre-wrap">
                         {error}
                     </div>
                 )}

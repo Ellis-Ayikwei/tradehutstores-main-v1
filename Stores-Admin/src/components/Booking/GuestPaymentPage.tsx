@@ -208,7 +208,7 @@ const GuestPaymentPage: React.FC<GuestPaymentPageProps> = ({ selectedPrice, book
                             whileTap={{ scale: 0.98 }}
                             type="submit"
                             disabled={isProcessing}
-                            className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
                         >
                             {isProcessing ? 'Processing...' : 'Complete Payment'}
                         </motion.button>

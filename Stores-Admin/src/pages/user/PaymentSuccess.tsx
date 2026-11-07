@@ -92,7 +92,7 @@ const PaymentSuccess: React.FC = () => {
         return (
             <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-slate-900 flex items-center justify-center p-4">
                 <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 text-center max-w-md w-full">
-                    <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div className="w-16 h-16 bg-green-100 dark:bg-green-950 rounded-full flex items-center justify-center mx-auto mb-4">
                         <IconLoader className="w-8 h-8 text-green-600 dark:text-green-400 animate-spin" />
                     </div>
                     <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Verifying Payment</h2>
@@ -106,7 +106,7 @@ const PaymentSuccess: React.FC = () => {
         return (
             <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-50 dark:from-gray-900 dark:to-slate-900 flex items-center justify-center p-4">
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 text-center max-w-md w-full">
-                    <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div className="w-16 h-16 bg-red-100 dark:bg-red-950 rounded-full flex items-center justify-center mx-auto mb-4">
                         <IconAlertTriangle className="w-8 h-8 text-red-600 dark:text-red-400" />
                     </div>
                     <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Payment Verification Failed</h2>
@@ -129,7 +129,7 @@ const PaymentSuccess: React.FC = () => {
             <div className="max-w-4xl mx-auto px-4 py-8">
                 {/* Success Header */}
                 <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
-                    <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div className="w-20 h-20 bg-green-100 dark:bg-green-950 rounded-full flex items-center justify-center mx-auto mb-4">
                         <IconCircleCheck className="w-12 h-12 text-green-600 dark:text-green-400" />
                     </div>
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Payment Successful!</h1>
@@ -151,7 +151,7 @@ const PaymentSuccess: React.FC = () => {
                                 Payment Summary
                             </h2>
 
-                            <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-4 border border-green-200 dark:border-green-800">
+                            <div className="bg-green-50 dark:bg-green-950 rounded-xl p-4 border border-green-200 dark:border-green-800">
                                 <div className="flex justify-between items-center mb-2">
                                     <span className="text-gray-700 dark:text-gray-300">Amount Paid</span>
                                     <span className="text-2xl font-bold text-green-600 dark:text-green-400">{sessionStatus && formatAmount(sessionStatus.amount_total, sessionStatus.currency)}</span>
@@ -229,7 +229,7 @@ const PaymentSuccess: React.FC = () => {
 
                                 {/* Schedule Information */}
                                 {bookingData.pickupDate && (
-                                    <div className="mt-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+                                    <div className="mt-4 bg-blue-50 dark:bg-blue-950 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
                                         <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2 flex items-center">
                                             <IconCalendar className="w-4 h-4 mr-2" />
                                             Schedule
@@ -265,7 +265,7 @@ const PaymentSuccess: React.FC = () => {
                                 Email Confirmation
                             </h2>
 
-                            <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
+                            <div className="bg-purple-50 dark:bg-purple-950 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
                                 <div className="flex items-center">
                                     {emailSent ? <IconCircleCheck className="w-5 h-5 text-green-600 mr-3" /> : <IconLoader className="w-5 h-5 text-purple-600 mr-3 animate-spin" />}
                                     <div>
@@ -323,7 +323,7 @@ const PaymentSuccess: React.FC = () => {
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.5 }}
-                            className="bg-yellow-50 dark:bg-yellow-900/20 rounded-2xl p-6 border border-yellow-200 dark:border-yellow-800"
+                            className="bg-yellow-50 dark:bg-yellow-950 rounded-2xl p-6 border border-yellow-200 dark:border-yellow-800"
                         >
                             <h3 className="text-lg font-bold text-yellow-900 dark:text-yellow-100 mb-4">Need Help?</h3>
 
@@ -332,14 +332,14 @@ const PaymentSuccess: React.FC = () => {
                             <div className="space-y-2">
                                 <a
                                     href="tel:+233248138722"
-                                    className="block bg-yellow-100 dark:bg-yellow-800/30 hover:bg-yellow-200 dark:hover:bg-yellow-700/40 text-yellow-900 dark:text-yellow-100 px-4 py-2 rounded-lg text-center transition-colors text-sm"
+                                    className="block bg-yellow-100 dark:bg-yellow-950 hover:bg-yellow-200 dark:hover:bg-yellow-900 text-yellow-900 dark:text-yellow-100 px-4 py-2 rounded-lg text-center transition-colors text-sm"
                                 >
                                     <IconPhone className="w-4 h-4 inline mr-2" />
                                     Call Support
                                 </a>
                                 <a
                                     href="mailto:support@tradehut.com"
-                                    className="block bg-yellow-100 dark:bg-yellow-800/30 hover:bg-yellow-200 dark:hover:bg-yellow-700/40 text-yellow-900 dark:text-yellow-100 px-4 py-2 rounded-lg text-center transition-colors text-sm"
+                                    className="block bg-yellow-100 dark:bg-yellow-950 hover:bg-yellow-200 dark:hover:bg-yellow-900 text-yellow-900 dark:text-yellow-100 px-4 py-2 rounded-lg text-center transition-colors text-sm"
                                 >
                                     <IconMail className="w-4 h-4 inline mr-2" />
                                     Email Support
@@ -358,7 +358,7 @@ const PaymentSuccess: React.FC = () => {
 
                             <div className="space-y-3 text-sm">
                                 <div className="flex items-start">
-                                    <div className="w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mr-3 mt-0.5">
+                                    <div className="w-6 h-6 bg-blue-100 dark:bg-blue-950 rounded-full flex items-center justify-center mr-3 mt-0.5">
                                         <span className="text-blue-600 dark:text-blue-400 font-bold text-xs">1</span>
                                     </div>
                                     <div>
@@ -368,7 +368,7 @@ const PaymentSuccess: React.FC = () => {
                                 </div>
 
                                 <div className="flex items-start">
-                                    <div className="w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mr-3 mt-0.5">
+                                    <div className="w-6 h-6 bg-blue-100 dark:bg-blue-950 rounded-full flex items-center justify-center mr-3 mt-0.5">
                                         <span className="text-blue-600 dark:text-blue-400 font-bold text-xs">2</span>
                                     </div>
                                     <div>
@@ -378,7 +378,7 @@ const PaymentSuccess: React.FC = () => {
                                 </div>
 
                                 <div className="flex items-start">
-                                    <div className="w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mr-3 mt-0.5">
+                                    <div className="w-6 h-6 bg-blue-100 dark:bg-blue-950 rounded-full flex items-center justify-center mr-3 mt-0.5">
                                         <span className="text-blue-600 dark:text-blue-400 font-bold text-xs">3</span>
                                     </div>
                                     <div>

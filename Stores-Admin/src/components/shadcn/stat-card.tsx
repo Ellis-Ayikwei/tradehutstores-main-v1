@@ -42,7 +42,7 @@ export function StatCard({ label, value, icon: Icon, trend, hint, isLoading, cla
                     ) : null}
                 </div>
                 {Icon ? (
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent text-primary">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-subtle text-primary-subtle-foreground">
                         <Icon className="h-5 w-5" aria-hidden="true" />
                     </div>
                 ) : null}

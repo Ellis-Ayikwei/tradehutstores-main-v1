@@ -46,10 +46,10 @@ const BookingOperationsTab: React.FC<BookingOperationsTabProps> = ({
                     <div className="flex items-center justify-between mb-6">
                         <div>
                             <h2 className="text-2xl font-bold text-white mb-2">Operations Control</h2>
-                            <p className="text-white/90">Manage booking operations and driver coordination</p>
+                            <p className="text-white">Manage booking operations and driver coordination</p>
                         </div>
                         <div className="flex items-center space-x-2">
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white/20 text-white border border-white/30">
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-purple-700 text-white border border-gray-200">
                                 Active
                             </span>
                         </div>
@@ -57,37 +57,37 @@ const BookingOperationsTab: React.FC<BookingOperationsTabProps> = ({
 
                     {/* Operations Stats */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                        <div className="bg-purple-800  rounded-xl p-4 border border-gray-200">
                             <div className="flex items-center">
-                                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center mr-3">
+                                <div className="w-10 h-10 rounded-xl bg-purple-700 flex items-center justify-center mr-3">
                                     <IconTruck className="text-white w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-white/80">Driver Status</p>
+                                    <p className="text-xs text-white">Driver Status</p>
                                     <p className="font-semibold text-white text-sm">{booking.driver ? 'Assigned' : 'Pending'}</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                        <div className="bg-purple-800  rounded-xl p-4 border border-gray-200">
                             <div className="flex items-center">
-                                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center mr-3">
+                                <div className="w-10 h-10 rounded-xl bg-purple-700 flex items-center justify-center mr-3">
                                     <IconClock className="text-white w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-white/80">ETA</p>
+                                    <p className="text-xs text-white">ETA</p>
                                     <p className="font-semibold text-white text-sm">{booking.estimated_completion_time ? new Date(booking.estimated_completion_time).toLocaleString() : 'Calculating...'}</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                        <div className="bg-gray-800  rounded-xl p-4 border border-gray-200">
                             <div className="flex items-center">
-                                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center mr-3">
+                                <div className="w-10 h-10 rounded-xl bg-gray-700 flex items-center justify-center mr-3">
                                     <IconMapPin className="text-white w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-white/80">Progress</p>
+                                    <p className="text-xs text-white">Progress</p>
                                     <p className="font-semibold text-white text-sm">
                                         {booking.status === 'completed' ? '100%' : booking.status === 'in_progress' ? '60%' : booking.status === 'confirmed' ? '25%' : '10%'}
                                     </p>
@@ -95,13 +95,13 @@ const BookingOperationsTab: React.FC<BookingOperationsTabProps> = ({
                             </div>
                         </div>
 
-                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                        <div className="bg-gray-800  rounded-xl p-4 border border-gray-200">
                             <div className="flex items-center">
-                                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center mr-3">
+                                <div className="w-10 h-10 rounded-xl bg-gray-700 flex items-center justify-center mr-3">
                                     <IconBell className="text-white w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-white/80">Notifications</p>
+                                    <p className="text-xs text-white">Notifications</p>
                                     <p className="font-semibold text-white text-sm">3 Active</p>
                                 </div>
                             </div>
@@ -110,19 +110,19 @@ const BookingOperationsTab: React.FC<BookingOperationsTabProps> = ({
 
                     {/* Operations Action Buttons */}
                     <div className="flex flex-wrap gap-3">
-                        <button className="px-4 py-2 bg-white/20 backdrop-blur-sm border border-white/30 text-white rounded-xl hover:bg-white/30 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2">
+                        <button className="px-4 py-2 bg-gray-700  border border-gray-200 text-white rounded-xl hover:bg-gray-600 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2">
                             <IconTruck className="w-4 h-4" />
                             Track Vehicle
                         </button>
-                        <button className="px-4 py-2 bg-white/20 backdrop-blur-sm border border-white/30 text-white rounded-xl hover:bg-white/30 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2">
+                        <button className="px-4 py-2 bg-gray-700  border border-gray-200 text-white rounded-xl hover:bg-gray-600 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2">
                             <IconPhone className="w-4 h-4" />
                             Contact Driver
                         </button>
-                        <button className="px-4 py-2 bg-white/20 backdrop-blur-sm border border-white/30 text-white rounded-xl hover:bg-white/30 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2">
+                        <button className="px-4 py-2 bg-gray-700  border border-gray-200 text-white rounded-xl hover:bg-gray-600 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2">
                             <IconMessage className="w-4 h-4" />
                             Send Update
                         </button>
-                        <button className="px-4 py-2 bg-white/20 backdrop-blur-sm border border-white/30 text-white rounded-xl hover:bg-white/30 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2">
+                        <button className="px-4 py-2 bg-gray-700  border border-gray-200 text-white rounded-xl hover:bg-gray-600 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2">
                             <IconFlag className="w-4 h-4" />
                             Escalate
                         </button>
@@ -229,7 +229,7 @@ const BookingOperationsTab: React.FC<BookingOperationsTabProps> = ({
                     <div className="p-6">
                         <div className="space-y-4">
                             {/* Mock GPS Tracking */}
-                            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                            <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg p-4">
                                 <div className="flex items-center justify-between mb-3">
                                     <div className="flex items-center gap-2">
                                         <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
@@ -310,7 +310,7 @@ const BookingOperationsTab: React.FC<BookingOperationsTabProps> = ({
                         {/* Mock timeline events */}
                         <div className="relative pl-6">
                             <div className="absolute left-0 top-2 w-3 h-3 bg-green-500 rounded-full"></div>
-                            <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3">
+                            <div className="bg-green-50 dark:bg-green-950 rounded-lg p-3">
                                 <div className="flex justify-between items-start mb-1">
                                     <span className="font-medium text-green-800 dark:text-green-200 text-sm">Booking Confirmed</span>
                                     <span className="text-green-600 dark:text-green-400 text-xs">2 hours ago</span>
@@ -321,7 +321,7 @@ const BookingOperationsTab: React.FC<BookingOperationsTabProps> = ({
 
                         <div className="relative pl-6">
                             <div className="absolute left-0 top-2 w-3 h-3 bg-blue-500 rounded-full"></div>
-                            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
+                            <div className="bg-blue-50 dark:bg-blue-950 rounded-lg p-3">
                                 <div className="flex justify-between items-start mb-1">
                                     <span className="font-medium text-blue-800 dark:text-blue-200 text-sm">Driver Notified</span>
                                     <span className="text-blue-600 dark:text-blue-400 text-xs">1.5 hours ago</span>
@@ -332,7 +332,7 @@ const BookingOperationsTab: React.FC<BookingOperationsTabProps> = ({
 
                         <div className="relative pl-6">
                             <div className="absolute left-0 top-2 w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></div>
-                            <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-3">
+                            <div className="bg-yellow-50 dark:bg-yellow-950 rounded-lg p-3">
                                 <div className="flex justify-between items-start mb-1">
                                     <span className="font-medium text-yellow-800 dark:text-yellow-200 text-sm">En Route to Pickup</span>
                                     <span className="text-yellow-600 dark:text-yellow-400 text-xs">15 min ago</span>
@@ -396,7 +396,7 @@ const BookingOperationsTab: React.FC<BookingOperationsTabProps> = ({
 
                         {/* Existing notes */}
                         <div className="space-y-3">
-                            <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-4 bg-blue-50 dark:bg-blue-900/20">
+                            <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-4 bg-blue-50 dark:bg-blue-950">
                                 <div className="flex justify-between items-start mb-2">
                                     <span className="font-medium text-blue-900 dark:text-blue-200 text-sm">Admin Override Applied</span>
                                     <span className="text-blue-600 dark:text-blue-400 text-xs">2 hours ago</span>

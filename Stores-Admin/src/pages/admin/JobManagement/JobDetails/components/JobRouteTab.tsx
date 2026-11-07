@@ -19,7 +19,7 @@ const JobRouteTab: React.FC<JobRouteTabProps> = ({ job }) => {
                     job.request.all_locations.map((location, index) => (
                         <div
                             key={location.id || index}
-                            className="backdrop-blur-sm bg-slate-50/80 dark:bg-slate-900/30 rounded-2xl p-6 border border-slate-200/50 dark:border-slate-700/50"
+                            className=" bg-slate-50 dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-700"
                         >
                             <div className="flex items-start gap-4">
                                 <div
@@ -35,8 +35,8 @@ const JobRouteTab: React.FC<JobRouteTabProps> = ({ job }) => {
                                         <span
                                             className={`px-3 py-1 rounded-full text-sm font-bold ${
                                                 location.type === 'pickup'
-                                                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-                                                    : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                                                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
+                                                    : 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300'
                                             }`}
                                         >
                                             {location.type === 'pickup' ? 'PICKUP' : 'DELIVERY'}
@@ -66,8 +66,8 @@ const JobRouteTab: React.FC<JobRouteTabProps> = ({ job }) => {
                     ))
                 ) : (
                     <div className="text-center py-12">
-                        <div className="backdrop-blur-xl bg-slate-50/80 dark:bg-slate-800/50 rounded-3xl p-8 border border-slate-200/50 dark:border-slate-700/30 max-w-md mx-auto">
-                            <div className="w-16 h-16 bg-slate-200/80 dark:bg-slate-700/80 rounded-3xl flex items-center justify-center mx-auto mb-4">
+                        <div className=" bg-slate-50 dark:bg-slate-800 rounded-3xl p-8 border border-slate-200 dark:border-slate-700 max-w-md mx-auto">
+                            <div className="w-16 h-16 bg-slate-200 dark:bg-slate-700 rounded-3xl flex items-center justify-center mx-auto mb-4">
                                 <Map className="w-8 h-8 text-slate-400 dark:text-slate-500" />
                             </div>
                             <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No Route Information</h3>

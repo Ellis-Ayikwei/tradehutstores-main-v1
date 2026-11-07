@@ -128,11 +128,11 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({ document, isOpen, onClo
 
                     {/* Document Details */}
                     <div className="grid grid-cols-2 gap-4 mb-6">
-                        <div className="bg-gray-50 dark:bg-slate-700/30 p-3 rounded-lg">
+                        <div className="bg-gray-50 dark:bg-slate-700 p-3 rounded-lg">
                             <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Issue Date</p>
                             <p className="font-medium dark:text-white">{dayjs(document.issue_date).format('MMMM D, YYYY')}</p>
                         </div>
-                        <div className="bg-gray-50 dark:bg-slate-700/30 p-3 rounded-lg">
+                        <div className="bg-gray-50 dark:bg-slate-700 p-3 rounded-lg">
                             <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Expiry Date</p>
                             <p className="font-medium dark:text-white">{document.expiry_date ? dayjs(document.expiry_date).format('MMMM D, YYYY') : 'No Expiry Date'}</p>
                         </div>
@@ -144,10 +144,10 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({ document, isOpen, onClo
                         <span
                             className={`px-3 py-1 text-sm rounded-full ${
                                 document.status === 'Valid'
-                                    ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                                    ? 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-400'
                                     : document.status === 'Expired'
-                                    ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
-                                    : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
+                                    ? 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400'
+                                    : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-400'
                             }`}
                         >
                             {document.status}
@@ -155,21 +155,21 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({ document, isOpen, onClo
                     </div>
 
                     {/* Verification Details */}
-                    <div className="bg-gray-50 dark:bg-slate-700/30 p-4 rounded-lg mb-4">
+                    <div className="bg-gray-50 dark:bg-slate-700 p-4 rounded-lg mb-4">
                         <div className="flex items-center justify-between mb-2">
                             <h4 className="font-medium dark:text-white">Verification Details</h4>
                             {!document.is_verified && (
                                 <div className="space-x-3 flex">
                                     <button
                                         onClick={() => onVerify && onVerify(document)}
-                                        className="px-3 py-1 btn-success text-white dark:bg-green-900/30 dark:text-green-400 rounded-md text-sm flex items-center gap-1"
+                                        className="px-3 py-1 btn-success text-white dark:bg-green-950 dark:text-green-400 rounded-md text-sm flex items-center gap-1"
                                     >
                                         <IconCircleCheck className="w-4 h-4" />
                                         Verify Document
                                     </button>
                                     <button
                                         onClick={() => onReject && onReject(document)}
-                                        className="px-3 py-1 btn-danger text-white dark:bg-green-900/30 dark:text-red-400 rounded-md text-sm flex items-center gap-1"
+                                        className="px-3 py-1 btn-danger text-white dark:bg-green-950 dark:text-red-400 rounded-md text-sm flex items-center gap-1"
                                     >
                                         <IconCircleCheck className="w-4 h-4" />
                                         Reject Document

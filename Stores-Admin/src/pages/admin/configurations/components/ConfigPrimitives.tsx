@@ -9,15 +9,15 @@ export const ConfigSection: React.FC<{
     actions?: ReactNode;
 }> = ({ icon, title, description, children, actions }) => (
     <section className="bg-surface-container-lowest rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden">
-        <header className="p-6 border-b border-outline-variant/10 flex items-start justify-between gap-4">
+        <header className="p-6 border-b border-border flex items-start justify-between gap-4">
             <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary-container/10 text-primary-container flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-primary-subtle text-primary-container flex items-center justify-center flex-shrink-0">
                     <span className="material-symbols-outlined text-xl">{icon}</span>
                 </div>
                 <div>
                     <h3 className="font-headline font-bold text-lg text-on-surface">{title}</h3>
                     {description && (
-                        <p className="text-sm text-on-surface-variant opacity-80 mt-0.5">
+                        <p className="text-sm text-on-surface-variant mt-0.5">
                             {description}
                         </p>
                     )}
@@ -48,7 +48,7 @@ export const Field: React.FC<{
             </span>
         </label>
         {children}
-        {hint && <p className="mt-1.5 text-xs text-on-surface-variant opacity-70">{hint}</p>}
+        {hint && <p className="mt-1.5 text-xs text-on-surface-variant">{hint}</p>}
     </div>
 );
 
@@ -58,10 +58,10 @@ export const TextField: React.FC<
 > = ({ invalid, className = '', ...rest }) => (
     <input
         {...rest}
-        className={`w-full bg-surface-container-low border rounded-xl px-4 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none transition-colors ${
+        className={`w-full bg-surface-container-low border rounded-xl px-4 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none transition-colors ${
             invalid
                 ? 'border-error focus:border-error'
-                : 'border-outline-variant/20 focus:border-primary-container'
+                : 'border-border focus:border-primary-container'
         } ${className}`}
     />
 );
@@ -74,7 +74,7 @@ export const TextArea: React.FC<React.TextareaHTMLAttributes<HTMLTextAreaElement
     <textarea
         rows={rows}
         {...rest}
-        className={`w-full bg-surface-container-low border border-outline-variant/20 rounded-xl px-4 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary-container transition-colors resize-y ${className}`}
+        className={`w-full bg-surface-container-low border border-border rounded-xl px-4 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary-container transition-colors resize-y ${className}`}
     />
 );
 
@@ -85,7 +85,7 @@ export const SelectField: React.FC<React.SelectHTMLAttributes<HTMLSelectElement>
 }) => (
     <select
         {...rest}
-        className={`w-full bg-surface-container-low border border-outline-variant/20 rounded-xl px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:border-primary-container transition-colors ${className}`}
+        className={`w-full bg-surface-container-low border border-border rounded-xl px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:border-primary-container transition-colors ${className}`}
     >
         {children}
     </select>
@@ -103,7 +103,7 @@ export const Toggle: React.FC<{
         <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-on-surface">{label}</p>
             {description && (
-                <p className="text-xs text-on-surface-variant opacity-70 mt-0.5">{description}</p>
+                <p className="text-xs text-on-surface-variant mt-0.5">{description}</p>
             )}
         </div>
         <button
@@ -115,7 +115,7 @@ export const Toggle: React.FC<{
             onClick={() => !disabled && onChange(!checked)}
             className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors active:scale-95 ${
                 disabled
-                    ? 'opacity-50 cursor-not-allowed bg-surface-container'
+                    ? 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed bg-surface-container'
                     : checked
                     ? 'bg-primary-container'
                     : 'bg-surface-container-high'
@@ -139,8 +139,8 @@ export const ActionBar: React.FC<{
     resetLabel?: string;
     note?: ReactNode;
 }> = ({ onSave, onReset, saving, saveLabel = 'Save changes', resetLabel = 'Reset', note }) => (
-    <div className="sticky bottom-0 -mx-6 -mb-6 px-6 py-4 mt-2 bg-surface-container-lowest/95 backdrop-blur-sm border-t border-outline-variant/15 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        {note && <div className="text-xs text-on-surface-variant opacity-80">{note}</div>}
+    <div className="sticky bottom-0 -mx-6 -mb-6 px-6 py-4 mt-2 bg-surface-container-lowest  border-t border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        {note && <div className="text-xs text-on-surface-variant">{note}</div>}
         <div className="flex items-center gap-2 ml-auto">
             {onReset && (
                 <button
@@ -156,7 +156,7 @@ export const ActionBar: React.FC<{
                     type="button"
                     onClick={onSave}
                     disabled={saving}
-                    className="px-6 py-2 rounded-xl text-sm font-bold bg-primary-container text-on-primary hover:bg-primary transition-colors active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
+                    className="px-6 py-2 rounded-xl text-sm font-bold bg-primary-container text-on-primary hover:bg-primary transition-colors active:scale-95 disabled:bg-gray-100 disabled:text-gray-400 dark:disabled:bg-gray-800 dark:disabled:text-gray-500 disabled:cursor-not-allowed inline-flex items-center gap-2"
                 >
                     {saving && (
                         <span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -174,10 +174,10 @@ export const Pill: React.FC<{
     children: ReactNode;
 }> = ({ tone = 'neutral', children }) => {
     const tones: Record<string, string> = {
-        green: 'bg-bid-green/10 text-bid-green',
-        amber: 'bg-bid-amber/10 text-bid-amber',
-        red: 'bg-bid-red/10 text-bid-red',
-        blue: 'bg-tertiary/10 text-tertiary',
+        green: 'bg-success-subtle text-bid-green',
+        amber: 'bg-warning-subtle text-bid-amber',
+        red: 'bg-destructive-subtle text-bid-red',
+        blue: 'bg-info-subtle text-tertiary',
         neutral: 'bg-surface-container text-on-surface-variant',
     };
     return (
@@ -196,12 +196,12 @@ export const PendingPlaceholder: React.FC<{
     description: string;
     cta?: { label: string; href?: string; onClick?: () => void };
 }> = ({ icon, title, description, cta }) => (
-    <div className="bg-surface-container-low rounded-2xl border border-dashed border-outline-variant/30 p-10 text-center">
-        <div className="w-14 h-14 mx-auto rounded-2xl bg-primary-container/10 text-primary-container flex items-center justify-center mb-4">
+    <div className="bg-surface-container-low rounded-2xl border border-dashed border-border p-10 text-center">
+        <div className="w-14 h-14 mx-auto rounded-2xl bg-primary-subtle text-primary-container flex items-center justify-center mb-4">
             <span className="material-symbols-outlined text-3xl">{icon}</span>
         </div>
         <h4 className="font-headline font-bold text-lg text-on-surface mb-1">{title}</h4>
-        <p className="text-sm text-on-surface-variant opacity-80 max-w-md mx-auto">{description}</p>
+        <p className="text-sm text-on-surface-variant max-w-md mx-auto">{description}</p>
         {cta && (
             <a
                 href={cta.href}

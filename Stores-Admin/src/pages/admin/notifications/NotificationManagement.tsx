@@ -473,7 +473,7 @@ const NotificationManagement: React.FC = () => {
             <button
               onClick={markAllAsRead}
               disabled={loading}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center disabled:opacity-50"
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
             >
               <Check className="w-4 h-4 mr-2" />
               Mark All Read
@@ -482,7 +482,7 @@ const NotificationManagement: React.FC = () => {
             <button
               onClick={clearRead}
               disabled={loading}
-              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center disabled:opacity-50"
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
             >
               <Trash2 className="w-4 h-4 mr-2" />
               Clear Read

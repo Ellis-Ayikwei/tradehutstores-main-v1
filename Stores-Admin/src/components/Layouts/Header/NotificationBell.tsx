@@ -93,15 +93,15 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ className = '' }) =
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'urgent':
-        return 'border-l-red-500 bg-red-50';
+        return 'border-l-red-500 bg-red-50 dark:bg-red-950';
       case 'high':
-        return 'border-l-orange-500 bg-orange-50';
+        return 'border-l-orange-500 bg-orange-50 dark:bg-orange-950';
       case 'normal':
-        return 'border-l-blue-500 bg-blue-50';
+        return 'border-l-blue-500 bg-blue-50 dark:bg-blue-950';
       case 'low':
-        return 'border-l-green-500 bg-green-50';
+        return 'border-l-green-500 bg-green-50 dark:bg-green-950';
       default:
-        return 'border-l-gray-500 bg-gray-50';
+        return 'border-l-gray-500 bg-gray-50 dark:bg-gray-800';
     }
   };
 
@@ -121,20 +121,20 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ className = '' }) =
       {/* Notification Bell Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-700 transition-all duration-300"
+        className="relative p-2 rounded-lg bg-background border border-border hover:bg-muted transition-all duration-300"
       >
         <Bell className="w-5 h-5 text-gray-700 dark:text-gray-300" />
         
         {/* Unread Count Badge */}
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium">
+          <span className="absolute -top-1.5 -right-1.5 min-w-5 h-5 px-1 bg-destructive text-destructive-foreground text-xs rounded-full flex items-center justify-center font-medium ring-2 ring-background">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
         
         {/* Urgent Indicator */}
         {urgentCount > 0 && (
-          <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+          <div className="absolute -top-1 -right-1 w-3 h-3 bg-destructive rounded-full ring-2 ring-background"></div>
         )}
       </button>
 
@@ -183,7 +183,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ className = '' }) =
                 {notifications.map((notification: Notification) => (
                   <div
                     key={notification.id}
-                    className={`p-4 border-l-4 ${getPriorityColor(notification.priority)} hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors`}
+                    className={`p-4 border-l-4 ${getPriorityColor(notification.priority)} hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors`}
                   >
                     <div className="flex items-start gap-3">
                       <div className="flex-shrink-0 mt-0.5">
@@ -205,7 +205,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ className = '' }) =
                             <button
                               onClick={() => markAsRead(notification.id)}
                               disabled={markingAsRead === notification.id}
-                              className="flex-shrink-0 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 disabled:opacity-50"
+                              className="flex-shrink-0 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 disabled:text-gray-300 disabled:cursor-not-allowed"
                               title="Mark as read"
                             >
                               <Check className="w-4 h-4" />

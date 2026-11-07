@@ -260,7 +260,7 @@ const CodesTab: React.FC<Props> = ({ onChange }) => {
                 <button
                     type="button"
                     onClick={openCreate}
-                    className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary/90 shadow"
+                    className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary-hover shadow"
                 >
                     <IconPlus size={16} /> New code
                 </button>
@@ -279,7 +279,7 @@ const CodesTab: React.FC<Props> = ({ onChange }) => {
                         <button
                             type="button"
                             onClick={openCreate}
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary/90"
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary-hover"
                         >
                             <IconPlus size={16} /> Create your first code
                         </button>
@@ -288,7 +288,7 @@ const CodesTab: React.FC<Props> = ({ onChange }) => {
             ) : (
                 <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden">
                     <table className="w-full text-sm">
-                        <thead className="bg-gray-50 dark:bg-gray-800/60">
+                        <thead className="bg-gray-50 dark:bg-gray-800">
                             <tr className="text-left text-[11px] font-semibold uppercase tracking-wide text-on-surface-variant">
                                 <th className="px-4 py-3">Code</th>
                                 <th className="px-4 py-3">Discount</th>
@@ -303,7 +303,7 @@ const CodesTab: React.FC<Props> = ({ onChange }) => {
                             {rows.map((row) => (
                                 <tr
                                     key={row.id}
-                                    className="border-t border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/40"
+                                    className="border-t border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800"
                                 >
                                     <td className="px-4 py-3 align-top">
                                         <button
@@ -412,7 +412,7 @@ const CodesTab: React.FC<Props> = ({ onChange }) => {
                 <ModalShell
                     title={editingId ? 'Edit promo code' : 'New promo code'}
                     icon={
-                        <span className="p-2 rounded-lg bg-primary/10 text-primary">
+                        <span className="p-2 rounded-lg bg-primary-subtle text-primary">
                             <IconTicket size={18} />
                         </span>
                     }
@@ -501,7 +501,7 @@ const CodesTab: React.FC<Props> = ({ onChange }) => {
                         </Field>
 
                         {/* Discount rule */}
-                        <div className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 space-y-3 bg-gray-50/40 dark:bg-gray-800/30">
+                        <div className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 space-y-3 bg-gray-50 dark:bg-gray-800">
                             <div className="flex items-center gap-2">
                                 <IconSparkles size={14} className="text-primary" />
                                 <p className="text-xs font-bold uppercase tracking-wide text-on-surface-variant">
@@ -651,7 +651,7 @@ const CodesTab: React.FC<Props> = ({ onChange }) => {
                         </div>
 
                         {/* Eligibility */}
-                        <div className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 space-y-3 bg-gray-50/40 dark:bg-gray-800/30">
+                        <div className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 space-y-3 bg-gray-50 dark:bg-gray-800">
                             <p className="text-xs font-bold uppercase tracking-wide text-on-surface-variant">
                                 Eligibility
                             </p>
@@ -751,7 +751,7 @@ const CodesTab: React.FC<Props> = ({ onChange }) => {
                         </div>
 
                         {/* Limits + schedule */}
-                        <div className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 space-y-3 bg-gray-50/40 dark:bg-gray-800/30">
+                        <div className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 space-y-3 bg-gray-50 dark:bg-gray-800">
                             <p className="text-xs font-bold uppercase tracking-wide text-on-surface-variant">
                                 Limits & schedule
                             </p>
@@ -832,7 +832,7 @@ const CodesTab: React.FC<Props> = ({ onChange }) => {
                         </div>
 
                         {/* Auto apply */}
-                        <div className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 space-y-3 bg-gray-50/40 dark:bg-gray-800/30">
+                        <div className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 space-y-3 bg-gray-50 dark:bg-gray-800">
                             <label className="flex items-center gap-2 text-sm font-bold">
                                 <input
                                     type="checkbox"
@@ -872,7 +872,7 @@ const CodesTab: React.FC<Props> = ({ onChange }) => {
                 <ModalShell
                     title={`Bulk-generate from "${bulkFor.code}"`}
                     icon={
-                        <span className="p-2 rounded-lg bg-primary/10 text-primary">
+                        <span className="p-2 rounded-lg bg-primary-subtle text-primary">
                             <IconWand size={18} />
                         </span>
                     }
@@ -956,7 +956,7 @@ const FilterChip: React.FC<{
         <span
             className={[
                 'inline-block px-1.5 rounded text-[10px] font-bold',
-                active ? 'bg-white/25 text-white' : 'bg-gray-100 dark:bg-gray-800 text-on-surface-variant',
+                active ? 'bg-gray-700 text-white' : 'bg-gray-100 dark:bg-gray-800 text-on-surface-variant',
             ].join(' ')}
         >
             {count}

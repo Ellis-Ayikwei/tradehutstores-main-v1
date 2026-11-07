@@ -487,7 +487,7 @@ const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({ isOpen, onClo
                                 </label>
                                 <div
                                     className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer
-                                              ${dragActive ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-300 hover:border-blue-500 dark:border-slate-600'}`}
+                                              ${dragActive ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' : 'border-gray-300 hover:border-blue-500 dark:border-slate-600'}`}
                                     onDragEnter={handleDrag}
                                     onDragOver={handleDrag}
                                     onDragLeave={handleDrag}
@@ -511,7 +511,7 @@ const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({ isOpen, onClo
 
                                             {/* PDF icon for PDF files */}
                                             {isPdfFile(files[activeTab]!) && (
-                                                <div className="mb-3 relative bg-red-50 p-4 rounded-md border border-red-100 dark:bg-red-900/10 dark:border-red-900/20">
+                                                <div className="mb-3 relative bg-red-50 p-4 rounded-md border border-red-100 dark:bg-red-950 dark:border-red-950">
                                                     <div className="flex items-center justify-center">
                                                         <IconFile className="w-12 h-12 text-red-500" />
                                                     </div>
@@ -521,7 +521,7 @@ const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({ isOpen, onClo
 
                                             {/* Generic file icon for other files */}
                                             {!isImageFile(files[activeTab]!) && !isPdfFile(files[activeTab]!) && (
-                                                <div className="mb-3 relative bg-gray-50 p-4 rounded-md border border-gray-100 dark:bg-gray-900/10 dark:border-gray-900/20">
+                                                <div className="mb-3 relative bg-gray-50 p-4 rounded-md border border-gray-100 dark:bg-gray-900 dark:border-gray-900">
                                                     <div className="flex items-center justify-center">
                                                         <IconFile className="w-12 h-12 text-gray-500" />
                                                     </div>
@@ -546,7 +546,7 @@ const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({ isOpen, onClo
                                                         handlePreview(activeTab);
                                                     }}
                                                     className="flex items-center px-3 py-1.5 bg-blue-50 text-blue-600 rounded-md
-                                                              hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/30"
+                                                              hover:bg-blue-100 dark:bg-blue-950 dark:text-blue-400 dark:hover:bg-blue-950"
                                                 >
                                                     <IconEye className="w-4 h-4 mr-1" />
                                                     View
@@ -558,7 +558,7 @@ const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({ isOpen, onClo
                                                         handleDownload(activeTab);
                                                     }}
                                                     className="flex items-center px-3 py-1.5 bg-green-50 text-green-600 rounded-md
-                                                              hover:bg-green-100 dark:bg-green-900/20 dark:text-green-400 dark:hover:bg-green-900/30"
+                                                              hover:bg-green-100 dark:bg-green-950 dark:text-green-400 dark:hover:bg-green-950"
                                                 >
                                                     <IconDownload className="w-4 h-4 mr-1" />
                                                     Download
@@ -570,7 +570,7 @@ const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({ isOpen, onClo
                                                         removeFile(activeTab);
                                                     }}
                                                     className="flex items-center px-3 py-1.5 bg-red-50 text-red-600 rounded-md
-                                                              hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30"
+                                                              hover:bg-red-100 dark:bg-red-950 dark:text-red-400 dark:hover:bg-red-950"
                                                 >
                                                     <IconTrash className="w-4 h-4 mr-1" />
                                                     Delete
@@ -606,7 +606,7 @@ const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({ isOpen, onClo
                     )}
 
                     {/* Error Message */}
-                    {uploadError && <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-md">{uploadError}</div>}
+                    {uploadError && <div className="mb-4 p-3 bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 rounded-md">{uploadError}</div>}
 
                     {/* Submit Buttons */}
                     <div className="flex justify-end gap-3 mt-6">

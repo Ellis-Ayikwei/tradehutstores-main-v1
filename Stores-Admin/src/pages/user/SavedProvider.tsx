@@ -117,8 +117,8 @@ const ProviderCardSkeleton: React.FC<{ viewMode: ViewMode }> = ({ viewMode }) =>
                 </div>
 
                 <div className="mt-4 flex gap-2">
-                    <div className="h-6 w-16 bg-blue-100 dark:bg-blue-900/30 rounded-full"></div>
-                    <div className="h-6 w-20 bg-blue-100 dark:bg-blue-900/30 rounded-full"></div>
+                    <div className="h-6 w-16 bg-blue-100 dark:bg-blue-950 rounded-full"></div>
+                    <div className="h-6 w-20 bg-blue-100 dark:bg-blue-950 rounded-full"></div>
                 </div>
 
                 <div className="mt-4 space-y-3">
@@ -137,12 +137,12 @@ const ProviderCardSkeleton: React.FC<{ viewMode: ViewMode }> = ({ viewMode }) =>
                 </div>
 
                 <div className="mt-5 flex gap-2">
-                    <div className="h-9 w-16 bg-green-200 dark:bg-green-900/30 rounded"></div>
-                    <div className="h-9 w-24 bg-purple-200 dark:bg-purple-900/30 rounded"></div>
+                    <div className="h-9 w-16 bg-green-200 dark:bg-green-950 rounded"></div>
+                    <div className="h-9 w-24 bg-purple-200 dark:bg-purple-950 rounded"></div>
                     <div className="h-9 w-28 ml-auto bg-gray-200 dark:bg-gray-700 rounded"></div>
                 </div>
 
-                <div className="mt-3 h-12 bg-blue-200 dark:bg-blue-900/30 rounded"></div>
+                <div className="mt-3 h-12 bg-blue-200 dark:bg-blue-950 rounded"></div>
             </div>
         </div>
     ) : (
@@ -159,8 +159,8 @@ const ProviderCardSkeleton: React.FC<{ viewMode: ViewMode }> = ({ viewMode }) =>
                     <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700"></div>
                 </div>
                 <div className="mt-4 flex gap-2">
-                    <div className="h-6 w-20 bg-blue-100 dark:bg-blue-900/30 rounded-full"></div>
-                    <div className="h-6 w-24 bg-blue-100 dark:bg-blue-900/30 rounded-full"></div>
+                    <div className="h-6 w-20 bg-blue-100 dark:bg-blue-950 rounded-full"></div>
+                    <div className="h-6 w-24 bg-blue-100 dark:bg-blue-950 rounded-full"></div>
                 </div>
                 <div className="mt-4 grid grid-cols-2 gap-4">
                     <div className="flex items-center">
@@ -175,7 +175,7 @@ const ProviderCardSkeleton: React.FC<{ viewMode: ViewMode }> = ({ viewMode }) =>
             </div>
             <div className="p-4 flex-shrink-0 flex flex-col justify-between border-l border-gray-200 dark:border-gray-700">
                 <div className="h-6 w-20 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                <div className="h-10 w-32 bg-blue-200 dark:bg-blue-900/30 rounded"></div>
+                <div className="h-10 w-32 bg-blue-200 dark:bg-blue-950 rounded"></div>
             </div>
         </div>
     );
@@ -184,7 +184,7 @@ const ProviderCardSkeleton: React.FC<{ viewMode: ViewMode }> = ({ viewMode }) =>
 // Error state component
 const ErrorState: React.FC<{ message: string; onRetry: () => void }> = ({ message, onRetry }) => (
     <div className="text-center p-8 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 text-red-500 dark:text-red-400 mb-4">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 dark:bg-red-950 text-red-500 dark:text-red-400 mb-4">
             <IconAlertTriangle className="text-2xl" />
         </div>
         <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-2">Unable to load providers</h3>
@@ -203,13 +203,10 @@ const ErrorState: React.FC<{ message: string; onRetry: () => void }> = ({ messag
 const EmptyState: React.FC = () => (
     <div className="text-center py-16 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 relative overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-blue-50 to-transparent dark:from-blue-900/10 dark:to-transparent opacity-50"></div>
-            <div className="absolute -top-10 -right-10 w-40 h-40 bg-yellow-200 dark:bg-yellow-500/10 rounded-full opacity-20"></div>
-            <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-green-200 dark:bg-green-500/10 rounded-full opacity-20"></div>
         </div>
 
         <div className="relative z-10">
-            <div className="bg-blue-100 dark:bg-blue-900/30 w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-4">
+            <div className="bg-blue-100 dark:bg-blue-950 w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-4">
                 <IconBookmark className="text-blue-500 dark:text-blue-400 text-3xl" />
             </div>
 
@@ -271,13 +268,13 @@ const ProviderDetailCard: React.FC<{
     const renderSimpleBadges = () => (
         <div className="flex flex-wrap gap-1 mt-2">
             {provider.verified && (
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300">
                     <IconShieldCheck className="w-3 h-3 mr-1" />
                     Verified
                 </span>
             )}
             {provider.carbonNeutral && (
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300">
                     <IconLeaf className="w-3 h-3 mr-1" />
                     Eco-Friendly
                 </span>
@@ -341,7 +338,7 @@ const ProviderDetailCard: React.FC<{
                             </div>
                         </div>
 
-                        <button onClick={() => onRemove(provider.id.toString())} className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-full" title="Remove from saved providers">
+                        <button onClick={() => onRemove(provider.id.toString())} className="p-1.5 hover:bg-red-50 dark:hover:bg-red-950 rounded-full" title="Remove from saved providers">
                             <IconX className="w-4 h-4 text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400" />
                         </button>
                     </div>
@@ -349,7 +346,7 @@ const ProviderDetailCard: React.FC<{
                     {/* Service Types */}
                     <div className="flex flex-wrap gap-2 mt-3">
                         {provider.serviceTypes?.slice(0, 2).map((service, idx) => (
-                            <span key={idx} className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full text-xs font-medium">
+                            <span key={idx} className="px-2 py-1 bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 rounded-full text-xs font-medium">
                                 {service}
                             </span>
                         ))}
@@ -458,7 +455,7 @@ const ProviderDetailCard: React.FC<{
                 {/* Service Type Badges */}
                 <div className="flex flex-wrap gap-2 mb-3">
                     {provider.serviceTypes?.slice(0, 2).map((service, idx) => (
-                        <span key={idx} className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full text-xs font-medium">
+                        <span key={idx} className="px-2 py-1 bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 rounded-full text-xs font-medium">
                             {service}
                         </span>
                     ))}

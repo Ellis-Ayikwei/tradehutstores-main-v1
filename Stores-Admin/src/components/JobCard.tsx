@@ -22,14 +22,14 @@ const JobCard: React.FC<JobCardProps> = ({ job, onClick }) => {
                     <div>
                         <div className="flex items-center">
                             <span className="text-lg font-semibold text-gray-900 dark:text-white">{job.request.tracking_number}</span>
-                            {isUrgent && <span className="ml-2 px-2 py-1 text-xs font-medium bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300 rounded-full">Urgent</span>}
+                            {isUrgent && <span className="ml-2 px-2 py-1 text-xs font-medium bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-300 rounded-full">Urgent</span>}
                             <span
                                 className={`ml-2 px-2 py-1 text-xs font-medium rounded-full ${
                                     job.request.request_type === 'instant'
-                                        ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300'
+                                        ? 'bg-green-100 dark:bg-green-950 text-green-800 dark:text-green-300'
                                         : job.request.request_type === 'auction'
-                                        ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300'
-                                        : 'bg-purple-100 dark:bg-purple-900/20 text-purple-800 dark:text-purple-300'
+                                        ? 'bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300'
+                                        : 'bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300'
                                 }`}
                             >
                                 {job.request.request_type.charAt(0).toUpperCase() + job.request.request_type.slice(1)}

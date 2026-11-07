@@ -423,7 +423,7 @@ const Index = () => {
                                 <Dropdown
                                     offset={[0, 1]}
                                     placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
-                                    button={<IconHorizontalDots className="text-black/70 dark:text-white/70 hover:!text-primary" />}
+                                    button={<IconHorizontalDots className="text-gray-700 dark:text-gray-200 hover:!text-primary" />}
                                 >
                                     <ul>
                                         <li>
@@ -439,13 +439,13 @@ const Index = () => {
                                 </Dropdown>
                             </div>
                         </div>
-                        <p className="text-lg dark:text-white-light/90">
+                        <p className="text-lg dark:text-white-light">
                             Total Profit <span className="text-primary ml-2">$10,840</span>
                         </p>
                         <div className="relative">
                             <div className="bg-white dark:bg-black rounded-lg overflow-hidden">
                                 {loading ? (
-                                    <div className="min-h-[325px] grid place-content-center bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] ">
+                                    <div className="min-h-[325px] grid place-content-center bg-white-light dark:bg-gray-900 ">
                                         <span className="animate-spin border-2 border-black dark:border-white !border-l-transparent  rounded-full w-5 h-5 inline-flex"></span>
                                     </div>
                                 ) : (
@@ -462,7 +462,7 @@ const Index = () => {
                         <div>
                             <div className="bg-white dark:bg-black rounded-lg overflow-hidden">
                                 {loading ? (
-                                    <div className="min-h-[325px] grid place-content-center bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] ">
+                                    <div className="min-h-[325px] grid place-content-center bg-white-light dark:bg-gray-900 ">
                                         <span className="animate-spin border-2 border-black dark:border-white !border-l-transparent  rounded-full w-5 h-5 inline-flex"></span>
                                     </div>
                                 ) : (
@@ -489,7 +489,7 @@ const Index = () => {
                         <div>
                             <div className="bg-white dark:bg-black rounded-lg overflow-hidden">
                                 {loading ? (
-                                    <div className="min-h-[325px] grid place-content-center bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] ">
+                                    <div className="min-h-[325px] grid place-content-center bg-white-light dark:bg-gray-900 ">
                                         <span className="animate-spin border-2 border-black dark:border-white !border-l-transparent  rounded-full w-5 h-5 inline-flex"></span>
                                     </div>
                                 ) : (
@@ -504,7 +504,7 @@ const Index = () => {
                             <div className="dropdown">
                                 <Dropdown
                                     placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
-                                    button={<IconHorizontalDots className="w-5 h-5 text-black/70 dark:text-white/70 hover:!text-primary" />}
+                                    button={<IconHorizontalDots className="w-5 h-5 text-gray-700 dark:text-gray-200 hover:!text-primary" />}
                                 >
                                     <ul>
                                         <li>
@@ -587,7 +587,7 @@ const Index = () => {
                         <div className="bg-transparent rounded-lg overflow-hidden">
                             {/* loader */}
                             {loading ? (
-                                <div className="min-h-[325px] grid place-content-center bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] ">
+                                <div className="min-h-[325px] grid place-content-center bg-white-light dark:bg-gray-900 ">
                                     <span className="animate-spin border-2 border-black dark:border-white !border-l-transparent  rounded-full w-5 h-5 inline-flex"></span>
                                 </div>
                             ) : (
@@ -717,7 +717,7 @@ const Index = () => {
                                 </div>
                             </div>
                         </PerfectScrollbar>
-                        <div className="border-t border-white-light dark:border-white/10">
+                        <div className="border-t border-white-light dark:border-gray-700">
                             <Link to="/" className=" font-semibold group hover:text-primary p-4 flex items-center justify-center group">
                                 View All
                                 <IconArrowLeft className="rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition duration-300 ltr:ml-1 rtl:mr-1" />
@@ -728,7 +728,7 @@ const Index = () => {
                         <div className="flex items-center justify-between dark:text-white-light mb-5">
                             <h5 className="font-semibold text-lg">Transactions</h5>
                             <div className="dropdown">
-                                <Dropdown placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`} button={<IconHorizontalDots className="text-black/70 dark:text-white/70 hover:!text-primary" />}>
+                                <Dropdown placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`} button={<IconHorizontalDots className="text-gray-700 dark:text-gray-200 hover:!text-primary" />}>
                                     <ul>
                                         <li>
                                             <button type="button">View Report</button>
@@ -808,11 +808,11 @@ const Index = () => {
                     <div className="panel h-full p-0 border-0 overflow-hidden">
                         <div className="p-6 bg-gradient-to-r from-[#4361ee] to-[#160f6b] min-h-[190px]">
                             <div className="flex justify-between items-center mb-6">
-                                <div className="bg-black/50 rounded-full p-1 ltr:pr-3 rtl:pl-3 flex items-center text-white font-semibold">
-                                    <img className="w-8 h-8 rounded-full border-2 border-white/50 block object-cover ltr:mr-1 rtl:ml-1" src="/assets/images/profile-34.jpeg" alt="avatar" />
+                                <div className="bg-gray-900 rounded-full p-1 ltr:pr-3 rtl:pl-3 flex items-center text-white font-semibold">
+                                    <img className="w-8 h-8 rounded-full border-2 border-gray-400 block object-cover ltr:mr-1 rtl:ml-1" src="/assets/images/profile-34.jpeg" alt="avatar" />
                                     Alan Green
                                 </div>
-                                <button type="button" className="ltr:ml-auto rtl:mr-auto flex items-center justify-between w-9 h-9 bg-black text-white rounded-md hover:opacity-80">
+                                <button type="button" className="ltr:ml-auto rtl:mr-auto flex items-center justify-between w-9 h-9 bg-black text-white rounded-md hover:brightness-95">
                                     <IconPlus className="w-6 h-6 m-auto" />
                                 </button>
                             </div>
@@ -888,7 +888,7 @@ const Index = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr className="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
+                                    <tr className="text-white-dark hover:text-black dark:hover:text-white-light group">
                                         <td className="min-w-[150px] text-black dark:text-white">
                                             <div className="flex items-center">
                                                 <img className="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="/assets/images/profile-6.jpeg" alt="avatar" />
@@ -904,7 +904,7 @@ const Index = () => {
                                             <span className="badge bg-success shadow-md dark:group-hover:bg-transparent">Paid</span>
                                         </td>
                                     </tr>
-                                    <tr className="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
+                                    <tr className="text-white-dark hover:text-black dark:hover:text-white-light group">
                                         <td className="text-black dark:text-white">
                                             <div className="flex items-center">
                                                 <img className="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="/assets/images/profile-7.jpeg" alt="avatar" />
@@ -920,7 +920,7 @@ const Index = () => {
                                             <span className="badge bg-secondary shadow-md dark:group-hover:bg-transparent">Shipped</span>
                                         </td>
                                     </tr>
-                                    <tr className="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
+                                    <tr className="text-white-dark hover:text-black dark:hover:text-white-light group">
                                         <td className="text-black dark:text-white">
                                             <div className="flex items-center">
                                                 <img className="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="/assets/images/profile-8.jpeg" alt="avatar" />
@@ -936,7 +936,7 @@ const Index = () => {
                                             <span className="badge bg-success shadow-md dark:group-hover:bg-transparent">Paid</span>
                                         </td>
                                     </tr>
-                                    <tr className="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
+                                    <tr className="text-white-dark hover:text-black dark:hover:text-white-light group">
                                         <td className="text-black dark:text-white">
                                             <div className="flex items-center">
                                                 <img className="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="/assets/images/profile-9.jpeg" alt="avatar" />
@@ -952,7 +952,7 @@ const Index = () => {
                                             <span className="badge bg-secondary shadow-md dark:group-hover:bg-transparent">Shipped</span>
                                         </td>
                                     </tr>
-                                    <tr className="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
+                                    <tr className="text-white-dark hover:text-black dark:hover:text-white-light group">
                                         <td className="text-black dark:text-white">
                                             <div className="flex items-center">
                                                 <img className="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="/assets/images/profile-10.jpeg" alt="avatar" />
@@ -989,7 +989,7 @@ const Index = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr className="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
+                                    <tr className="text-white-dark hover:text-black dark:hover:text-white-light group">
                                         <td className="min-w-[150px] text-black dark:text-white">
                                             <div className="flex">
                                                 <img className="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="/assets/images/product-headphones.jpg" alt="avatar" />
@@ -1009,7 +1009,7 @@ const Index = () => {
                                             </Link>
                                         </td>
                                     </tr>
-                                    <tr className="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
+                                    <tr className="text-white-dark hover:text-black dark:hover:text-white-light group">
                                         <td className="text-black dark:text-white">
                                             <div className="flex">
                                                 <img className="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="/assets/images/product-shoes.jpg" alt="avatar" />
@@ -1028,7 +1028,7 @@ const Index = () => {
                                             </Link>
                                         </td>
                                     </tr>
-                                    <tr className="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
+                                    <tr className="text-white-dark hover:text-black dark:hover:text-white-light group">
                                         <td className="text-black dark:text-white">
                                             <div className="flex">
                                                 <img className="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="/assets/images/product-watch.jpg" alt="avatar" />
@@ -1047,7 +1047,7 @@ const Index = () => {
                                             </Link>
                                         </td>
                                     </tr>
-                                    <tr className="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
+                                    <tr className="text-white-dark hover:text-black dark:hover:text-white-light group">
                                         <td className="text-black dark:text-white">
                                             <div className="flex">
                                                 <img className="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="/assets/images/product-laptop.jpg" alt="avatar" />
@@ -1066,7 +1066,7 @@ const Index = () => {
                                             </Link>
                                         </td>
                                     </tr>
-                                    <tr className="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
+                                    <tr className="text-white-dark hover:text-black dark:hover:text-white-light group">
                                         <td className="text-black dark:text-white">
                                             <div className="flex">
                                                 <img className="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="/assets/images/product-camera.jpg" alt="avatar" />

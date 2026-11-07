@@ -112,18 +112,18 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ profile, onRefresh }) => 
 
   const getActivityBadgeColor = (type: string) => {
     if (type.includes('login') || type.includes('verify') || type.includes('enable')) {
-      return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+      return 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-400';
     }
     if (type.includes('logout') || type.includes('delete') || type.includes('cancel') || type.includes('disable')) {
-      return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
+      return 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400';
     }
     if (type.includes('update') || type.includes('modify') || type.includes('change')) {
-      return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
+      return 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-400';
     }
     if (type.includes('create') || type.includes('register') || type.includes('upload')) {
-      return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
+      return 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-400';
     }
-    return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400';
+    return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-400';
   };
 
   const renderActivityDetails = (details: any) => {
@@ -279,10 +279,10 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({ profile, onRefresh }) => 
             {activities.map((activity: UserActivityItem) => {
               const IconComponent = getActivityIcon(activity.activity_type);
               return (
-                <div key={activity.id} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                <div key={activity.id} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                   <div className="flex items-start space-x-4">
                     <div className="flex-shrink-0">
-                      <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-950 flex items-center justify-center">
                         <IconComponent className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                       </div>
                     </div>

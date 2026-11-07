@@ -38,11 +38,11 @@ const ManageUsersModal: React.FC<ManageUsersModalProps> = ({
     if (!isOpen || !user) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50  flex items-center justify-center z-50 p-4">
             <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200 dark:border-gray-700">
                 <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                        <div className="p-2 bg-blue-100 dark:bg-blue-950 rounded-lg">
                             <IconUsers className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                         </div>
                         <div>
@@ -60,10 +60,10 @@ const ManageUsersModal: React.FC<ManageUsersModalProps> = ({
                         <div className="flex items-center gap-3">
                             <div className={`p-2 rounded-lg ${
                                 user.user_type === 'admin'
-                                    ? 'bg-emerald-100 dark:bg-emerald-900/30'
+                                    ? 'bg-emerald-100 dark:bg-emerald-950'
                                     : user.user_type === 'provider'
-                                    ? 'bg-purple-100 dark:bg-purple-900/30'
-                                    : 'bg-blue-100 dark:bg-blue-900/30'
+                                    ? 'bg-purple-100 dark:bg-purple-950'
+                                    : 'bg-blue-100 dark:bg-blue-950'
                             }`}>
                                 {user.user_type === 'admin' ? (
                                     <IconUserShield className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
@@ -136,7 +136,7 @@ const ManageUsersModal: React.FC<ManageUsersModalProps> = ({
                             </label>
                             <div className="flex flex-wrap gap-2">
                                 {user.groups.map((group: any) => (
-                                    <span key={group.id} className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-sm rounded-full">
+                                    <span key={group.id} className="px-3 py-1 bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 text-sm rounded-full">
                                         {group.name}
                                     </span>
                                 ))}
@@ -155,7 +155,7 @@ const ManageUsersModal: React.FC<ManageUsersModalProps> = ({
                     <button
                         onClick={onSave}
                         disabled={loading}
-                        className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
                     >
                         {loading ? 'Processing...' : 'Update User Groups'}
                     </button>

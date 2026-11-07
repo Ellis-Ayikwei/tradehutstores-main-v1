@@ -113,14 +113,14 @@ const AssignProviderModal: React.FC<AssignProviderModalProps> = ({ isOpen, onClo
                                     key={provider.id}
                                     className={`p-4 border rounded-xl cursor-pointer transition-colors ${
                                         selectedProvider === provider.id
-                                            ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20'
+                                            ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950'
                                             : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
                                     }`}
                                     onClick={() => setSelectedProvider(provider.id)}
                                 >
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
-                                            <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                                            <div className="p-2 bg-emerald-100 dark:bg-emerald-950 rounded-lg">
                                                 <IconTruck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                                             </div>
                                             <div>

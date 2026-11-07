@@ -63,7 +63,7 @@ const RequestDetailsPanel: React.FC<RequestDetailsPanelProps> = ({ values, onEdi
                                 e.stopPropagation();
                                 onEditStep(stepNumber);
                             }}
-                            className="mr-2 p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded"
+                            className="mr-2 p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950 rounded"
                         >
                             <FontAwesomeIcon icon={faEdit} />
                         </button>
@@ -89,7 +89,7 @@ const RequestDetailsPanel: React.FC<RequestDetailsPanelProps> = ({ values, onEdi
 
     return (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
-            <div className="px-6 py-4 bg-green-50 dark:bg-green-900/20 border-b border-gray-200 dark:border-gray-700">
+            <div className="px-6 py-4 bg-green-50 dark:bg-green-950 border-b border-gray-200 dark:border-gray-700">
                 <h3 className="font-medium text-gray-800 dark:text-gray-200 flex items-center">
                     <IconClipboardCheck className="mr-2 text-green-600 dark:text-green-400" size={20} />
                     Review Your Request
@@ -199,10 +199,10 @@ const RequestDetailsPanel: React.FC<RequestDetailsPanelProps> = ({ values, onEdi
                                 key={`summary-${stop.id || idx}`}
                                 className={`p-3 rounded-lg border ${
                                     stop.type === 'pickup'
-                                        ? 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20'
+                                        ? 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950'
                                         : stop.type === 'dropoff'
-                                        ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20'
-                                        : 'border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-900/20'
+                                        ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950'
+                                        : 'border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950'
                                 }`}
                             >
                                 <div className="flex items-center">
@@ -399,11 +399,11 @@ const RequestDetailsPanel: React.FC<RequestDetailsPanelProps> = ({ values, onEdi
                             )}
                                     </div>
                                     <div className="flex space-x-2">
-                                        <button onClick={() => onEditStep(3)} className="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded">
+                                        <button onClick={() => onEditStep(3)} className="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950 rounded">
                                             <FontAwesomeIcon icon={faEdit} />
                                         </button>
                                         {onRemoveItem && (
-                                            <button onClick={() => onRemoveItem(item.id)} className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded">
+                                            <button onClick={() => onRemoveItem(item.id)} className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950 rounded">
                                                 <FontAwesomeIcon icon={faTrash} />
                                             </button>
                                         )}
@@ -510,19 +510,19 @@ const RequestDetailsPanel: React.FC<RequestDetailsPanelProps> = ({ values, onEdi
             <div className="p-4 bg-gray-50 dark:bg-gray-750 border-t border-gray-200 dark:border-gray-700">
                 <div className="grid grid-cols-3 gap-4">
                     <div className="text-center">
-                        <div className="h-10 w-10 rounded-full bg-green-100 dark:bg-green-900/20 flex items-center justify-center mx-auto mb-2">
+                        <div className="h-10 w-10 rounded-full bg-green-100 dark:bg-green-950 flex items-center justify-center mx-auto mb-2">
                             <IconShieldCheck className="text-green-600 dark:text-green-400" size={20} />
                         </div>
                         <p className="text-xs text-gray-600 dark:text-gray-400">Insured Service</p>
                     </div>
                     <div className="text-center">
-                        <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center mx-auto mb-2">
+                        <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-950 flex items-center justify-center mx-auto mb-2">
                             <IconThumbUp className="text-blue-600 dark:text-blue-400" size={20} />
                         </div>
                         <p className="text-xs text-gray-600 dark:text-gray-400">Satisfaction Guaranteed</p>
                     </div>
                     <div className="text-center">
-                        <div className="h-10 w-10 rounded-full bg-purple-100 dark:bg-purple-900/20 flex items-center justify-center mx-auto mb-2">
+                        <div className="h-10 w-10 rounded-full bg-purple-100 dark:bg-purple-950 flex items-center justify-center mx-auto mb-2">
                             <FontAwesomeIcon icon={faInfoCircle} className="text-purple-600 dark:text-purple-400" />
                         </div>
                         <p className="text-xs text-gray-600 dark:text-gray-400">Support</p>

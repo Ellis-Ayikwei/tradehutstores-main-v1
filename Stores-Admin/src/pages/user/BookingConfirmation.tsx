@@ -306,7 +306,7 @@ const BookingConfirmation: React.FC = () => {
                     <button
                         onClick={handleConfirmBooking}
                         disabled={isSubmitting}
-                        className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded flex items-center justify-center disabled:opacity-50"
+                        className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded flex items-center justify-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
                     >
                         {isSubmitting ? (
                             <>

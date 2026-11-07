@@ -359,7 +359,7 @@ const BookingTracking: React.FC = () => {
             <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 max-w-md w-full">
                     <div className="flex flex-col items-center">
-                        <div className="bg-red-100 dark:bg-red-900/30 p-3 rounded-full mb-4">
+                        <div className="bg-red-100 dark:bg-red-950 p-3 rounded-full mb-4">
                             <FontAwesomeIcon icon={faExclamationTriangle} className="text-red-500 dark:text-red-400 text-2xl" />
                         </div>
                         <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-2">Error Loading Booking</h3>
@@ -378,7 +378,7 @@ const BookingTracking: React.FC = () => {
             <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 max-w-md w-full">
                     <div className="flex flex-col items-center">
-                        <div className="bg-yellow-100 dark:bg-yellow-900/30 p-3 rounded-full mb-4">
+                        <div className="bg-yellow-100 dark:bg-yellow-950 p-3 rounded-full mb-4">
                             <FontAwesomeIcon icon={faExclamationTriangle} className="text-yellow-500 dark:text-yellow-400 text-2xl" />
                         </div>
                         <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-2">Booking Not Found</h3>
@@ -414,7 +414,7 @@ const BookingTracking: React.FC = () => {
                                 <FontAwesomeIcon icon={faShare} />
                             </button>
                             {showShareOptions && (
-                                <div className="absolute right-0 mt-2 top-16 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-10">
+                                <div className="absolute right-0 mt-2 top-16 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-gray-200 dark:ring-gray-700 z-10">
                                     <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                                         <button onClick={copyTrackingId} className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-750">
                                             <FontAwesomeIcon icon={faCopy} className="mr-3" />
@@ -472,7 +472,7 @@ const BookingTracking: React.FC = () => {
                         <div className="relative pt-4">
                             <div className="flex mb-2 items-center justify-between">
                                 <div>
-                                    <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-blue-600 dark:text-blue-300 bg-blue-200 dark:bg-blue-900/30">
+                                    <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-blue-600 dark:text-blue-300 bg-blue-200 dark:bg-blue-950">
                                         Delivery Progress
                                     </span>
                                 </div>
@@ -510,7 +510,7 @@ const BookingTracking: React.FC = () => {
 
                 {/* ETA Card (only show for in_transit) */}
                 {booking.status === 'in_transit' && (
-                    <div className="bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-800/70 dark:to-indigo-900/70 rounded-xl shadow-lg mb-6 overflow-hidden dark:shadow-indigo-900/20">
+                    <div className="bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-900 dark:to-indigo-900 rounded-xl shadow-lg mb-6 overflow-hidden dark:shadow-indigo-900/20">
                         <div className="px-6 py-5 flex justify-between items-center">
                             <div className="text-white">
                                 <h2 className="text-lg font-bold">Estimated Arrival</h2>
@@ -523,7 +523,7 @@ const BookingTracking: React.FC = () => {
                         <div className="h-48 bg-blue-400 dark:bg-blue-900 relative">
                             <div className="absolute inset-0 flex items-center justify-center">
                                 <div className="text-white text-center">
-                                    <FontAwesomeIcon icon={faMapMarkedAlt} className="text-4xl mb-2 text-white/90 dark:text-white/80" />
+                                    <FontAwesomeIcon icon={faMapMarkedAlt} className="text-4xl mb-2 text-white dark:text-white" />
                                     <p className="font-medium">Live tracking map would be displayed here</p>
                                 </div>
                             </div>
@@ -541,7 +541,7 @@ const BookingTracking: React.FC = () => {
                             <div className="flex-1 mb-4 md:mb-0">
                                 <div className="flex items-start">
                                     <div className="mt-1 mr-4">
-                                        <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                                        <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-950 flex items-center justify-center">
                                             <FontAwesomeIcon icon={faMapMarkerAlt} className="text-blue-600 dark:text-blue-400" />
                                         </div>
                                     </div>
@@ -573,7 +573,7 @@ const BookingTracking: React.FC = () => {
                             <div className="flex-1">
                                 <div className="flex items-start">
                                     <div className="mt-1 mr-4">
-                                        <div className="h-8 w-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                                        <div className="h-8 w-8 rounded-full bg-green-100 dark:bg-green-950 flex items-center justify-center">
                                             <FontAwesomeIcon icon={faMapMarkerAlt} className="text-green-600 dark:text-green-400" />
                                         </div>
                                     </div>

@@ -588,7 +588,7 @@ const ProviderPayments: React.FC = () => {
                         Create Payment
                     </button>
                     <button
-                        className="border border-gray-700 dark:border-gray-300 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-900 dark:text-gray-100 px-4 py-2 rounded-md flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                        className="border border-gray-700 dark:border-gray-300 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-900 dark:text-gray-100 px-4 py-2 rounded-md flex items-center justify-center transition-colors disabled:bg-gray-100 disabled:text-gray-400 dark:disabled:bg-gray-800 dark:disabled:text-gray-500 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                         onClick={handleCreatePaymentsForCompletedJobs}
                         disabled={creatingPayments}
                         title="Create payments for all completed jobs that don't have payments yet"

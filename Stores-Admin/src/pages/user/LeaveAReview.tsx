@@ -125,19 +125,19 @@ const LeaveReviewPage: React.FC = () => {
     const handleDragOver = (e: DragEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      dropZone.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+      dropZone.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-950');
     };
     
     const handleDragLeave = (e: DragEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      dropZone.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+      dropZone.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-950');
     };
     
     const handleDrop = (e: DragEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      dropZone.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+      dropZone.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-950');
       
       if (e.dataTransfer && e.dataTransfer.files) {
         const files = Array.from(e.dataTransfer.files).filter(file => 
@@ -276,7 +276,7 @@ const LeaveReviewPage: React.FC = () => {
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ delay: 0.2, type: "spring" }}
-          className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6"
+          className="w-20 h-20 bg-green-100 dark:bg-green-950 rounded-full flex items-center justify-center mx-auto mb-6"
         >
           <FontAwesomeIcon icon={faCheck} className="text-green-500 dark:text-green-400 text-4xl" />
         </motion.div>
@@ -441,7 +441,7 @@ const LeaveReviewPage: React.FC = () => {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="mt-3 bg-blue-50 dark:bg-blue-900/20 p-4 rounded-md border border-blue-100 dark:border-blue-800"
+                  className="mt-3 bg-blue-50 dark:bg-blue-950 p-4 rounded-md border border-blue-100 dark:border-blue-800"
                 >
                   <h4 className="font-medium text-blue-800 dark:text-blue-300 mb-2 flex items-center">
                     <FontAwesomeIcon icon={faQuoteRight} className="mr-2" />
@@ -563,7 +563,7 @@ const LeaveReviewPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => removeFile(index)}
-                      className="absolute -top-2 -right-2 bg-red-500 dark:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-90 hover:opacity-100 transition-opacity"
+                      className="absolute -top-2 -right-2 bg-red-500 dark:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
                     >
                       <FontAwesomeIcon icon={faTimes} />
                     </button>
@@ -614,13 +614,13 @@ const LeaveReviewPage: React.FC = () => {
                 onClick={() => formik.setFieldValue('recommendProvider', true)}
                 className={`flex-1 p-4 rounded-lg border-2 transition-colors duration-200 flex flex-col items-center ${
                   formik.values.recommendProvider === true
-                    ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                    ? 'border-green-500 bg-green-50 dark:bg-green-950'
                     : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
                 }`}
               >
                 <div className={`rounded-full p-3 mb-2 ${
                   formik.values.recommendProvider === true
-                    ? 'bg-green-100 dark:bg-green-800/30 text-green-600 dark:text-green-400'
+                    ? 'bg-green-100 dark:bg-green-950 text-green-600 dark:text-green-400'
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
                 }`}>
                   <FontAwesomeIcon icon={faCheck} className="text-2xl" />
@@ -641,13 +641,13 @@ const LeaveReviewPage: React.FC = () => {
                 onClick={() => formik.setFieldValue('recommendProvider', false)}
                 className={`flex-1 p-4 rounded-lg border-2 transition-colors duration-200 flex flex-col items-center ${
                   formik.values.recommendProvider === false
-                    ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
+                    ? 'border-red-500 bg-red-50 dark:bg-red-950'
                     : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
                 }`}
               >
                 <div className={`rounded-full p-3 mb-2 ${
                   formik.values.recommendProvider === false
-                    ? 'bg-red-100 dark:bg-red-800/30 text-red-600 dark:text-red-400'
+                    ? 'bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400'
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
                 }`}>
                   <FontAwesomeIcon icon={faTimes} className="text-2xl" />

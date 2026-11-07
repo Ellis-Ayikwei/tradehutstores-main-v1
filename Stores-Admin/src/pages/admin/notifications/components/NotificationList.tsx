@@ -100,15 +100,15 @@ const NotificationList: React.FC<NotificationListProps> = ({
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'urgent':
-        return 'border-l-red-500 bg-red-50 dark:bg-red-900/20';
+        return 'border-l-red-500 bg-red-50 dark:bg-red-950';
       case 'high':
-        return 'border-l-orange-500 bg-orange-50 dark:bg-orange-900/20';
+        return 'border-l-orange-500 bg-orange-50 dark:bg-orange-950';
       case 'normal':
-        return 'border-l-blue-500 bg-blue-50 dark:bg-blue-900/20';
+        return 'border-l-blue-500 bg-blue-50 dark:bg-blue-950';
       case 'low':
-        return 'border-l-green-500 bg-green-50 dark:bg-green-900/20';
+        return 'border-l-green-500 bg-green-50 dark:bg-green-950';
       default:
-        return 'border-l-gray-500 bg-gray-50 dark:bg-gray-900/20';
+        return 'border-l-gray-500 bg-gray-50 dark:bg-gray-900';
     }
   };
 
@@ -207,7 +207,7 @@ const NotificationList: React.FC<NotificationListProps> = ({
           {n.delivery_channels.map((channel) => {
             const isDelivered = channel === 'email' ? n.email_sent : channel === 'sms' ? n.sms_sent : channel === 'push' ? n.push_sent : true;
             return (
-              <span key={channel} className={`px-1.5 py-0.5 rounded text-xs ${isDelivered ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400' : 'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400'}`} title={`${channel}: ${isDelivered ? 'delivered' : 'pending'}`}>
+              <span key={channel} className={`px-1.5 py-0.5 rounded text-xs ${isDelivered ? 'bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-400' : 'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400'}`} title={`${channel}: ${isDelivered ? 'delivered' : 'pending'}`}>
                 {channel === 'in_app' ? 'App' : channel.toUpperCase()}
               </span>
             );
@@ -271,7 +271,7 @@ const NotificationList: React.FC<NotificationListProps> = ({
   }, [rows, selectedNotifications, handleSelectNotification]);
 
   const headerContent = (
-    <div className="p-4 bg-gray-50 dark:bg-gray-700/50 flex items-center gap-3">
+    <div className="p-4 bg-gray-50 dark:bg-gray-700 flex items-center gap-3">
       <input
         type="checkbox"
         checked={selectedNotifications.length === rows.length && rows.length > 0}

@@ -51,8 +51,8 @@ export default function PromoBanner() {
                         <div className="max-w-screen-xl mx-auto px-4 w-full">
                             <div className="max-w-lg">
                                 <h2 className="text-4xl font-bold text-white mb-4">{banner.title}</h2>
-                                <p className="text-xl text-white/90 mb-8">{banner.description}</p>
-                                <Link to={banner.link} className="inline-block bg-white text-[#dc711a] px-8 py-3 rounded-full font-semibold hover:bg-white/90 transition-colors">
+                                <p className="text-xl text-white mb-8">{banner.description}</p>
+                                <Link to={banner.link} className="inline-block bg-white text-[#dc711a] px-8 py-3 rounded-full font-semibold hover:bg-white transition-colors">
                                     Shop Now
                                 </Link>
                             </div>
@@ -62,7 +62,7 @@ export default function PromoBanner() {
             ))}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
                 {banners.map((_, index) => (
-                    <button key={index} onClick={() => setCurrentBanner(index)} className={`w-2 h-2 rounded-full transition-colors ${index === currentBanner ? 'bg-white' : 'bg-white/50'}`} />
+                    <button key={index} onClick={() => setCurrentBanner(index)} className={`w-2 h-2 rounded-full transition-colors ${index === currentBanner ? 'bg-white' : 'bg-white'}`} />
                 ))}
             </div>
         </div>

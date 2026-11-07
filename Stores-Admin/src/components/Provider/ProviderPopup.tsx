@@ -170,7 +170,6 @@ const ProviderModal: React.FC<ProviderModalProps> = ({
 
                         {/* Provider Header with Gradient Background */}
                         <div className="relative overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-purple-600 dark:from-blue-800 dark:to-purple-900 opacity-10"></div>
                             <div className="p-6 sm:p-8 relative z-[1]">
                                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
                                     <div className="relative">
@@ -190,7 +189,7 @@ const ProviderModal: React.FC<ProviderModalProps> = ({
                                         <div className="flex flex-col sm:flex-row sm:items-center gap-2 justify-center sm:justify-start">
                                             <h2 className="text-2xl font-bold text-gray-800 dark:text-white">{provider.name}</h2>
                                             {provider.verified && (
-                                                <span className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-3 py-1 rounded-full text-xs font-medium inline-flex items-center">
+                                                <span className="bg-green-100 dark:bg-green-950 text-green-800 dark:text-green-300 px-3 py-1 rounded-full text-xs font-medium inline-flex items-center">
                                                     <FontAwesomeIcon icon={faCheckCircle} className="mr-1" />
                                                     Verified Provider
                                                 </span>
@@ -359,7 +358,7 @@ const ProviderModal: React.FC<ProviderModalProps> = ({
                                                 {provider.serviceTypes.map((service, index) => (
                                                     <span 
                                                         key={index} 
-                                                        className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full text-sm"
+                                                        className="px-3 py-1 bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 rounded-full text-sm"
                                                     >
                                                         {service}
                                                     </span>
@@ -371,10 +370,10 @@ const ProviderModal: React.FC<ProviderModalProps> = ({
                                     {/* Verification and Safety */}
                                     <div className="mb-6">
                                         <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3">Verification & Safety</h3>
-                                        <div className="bg-green-50 dark:bg-green-900/10 border border-green-100 dark:border-green-800/30 rounded-lg p-4">
+                                        <div className="bg-green-50 dark:bg-green-950 border border-green-100 dark:border-green-900 rounded-lg p-4">
                                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                                 <div className="flex items-start space-x-3">
-                                                    <div className="bg-green-100 dark:bg-green-800/30 rounded-full p-2">
+                                                    <div className="bg-green-100 dark:bg-green-950 rounded-full p-2">
                                                         <FontAwesomeIcon icon={faShieldAlt} className="text-green-600 dark:text-green-400" />
                                                     </div>
                                                     <div>
@@ -394,7 +393,7 @@ const ProviderModal: React.FC<ProviderModalProps> = ({
                                                         <div key={i} className="flex flex-col items-center mx-2 text-center">
                                                             <div className={`h-8 w-8 rounded-full flex items-center justify-center ${
                                                                 item.verified 
-                                                                    ? 'bg-green-100 dark:bg-green-800/30 text-green-600 dark:text-green-400' 
+                                                                    ? 'bg-green-100 dark:bg-green-950 text-green-600 dark:text-green-400' 
                                                                     : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600'
                                                             }`}>
                                                                 <FontAwesomeIcon icon={item.icon} />
@@ -550,8 +549,8 @@ const ProviderModal: React.FC<ProviderModalProps> = ({
                                 <button
                                     className={`flex-1 sm:flex-none px-6 py-3 border-2 ${
                                         isSaved 
-                                            ? 'border-red-500 text-red-600 dark:border-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10' 
-                                            : 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10'
+                                            ? 'border-red-500 text-red-600 dark:border-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950' 
+                                            : 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950'
                                     } rounded-lg transition-colors flex items-center justify-center`}
                                     onClick={handleSave}
                                 >

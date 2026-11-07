@@ -193,7 +193,7 @@ const ViewVehiclePage: React.FC = () => {
 
         return (
             <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-                <div className="px-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900/30 dark:to-gray-800/30 border-b border-gray-200 dark:border-gray-700">
+                <div className="px-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 border-b border-gray-200 dark:border-gray-700">
                     <h3 className="font-medium text-gray-800 dark:text-gray-200 flex items-center">
                         <MapPin className="w-4 h-4 mr-2 text-blue-500" />
                         Vehicle Location
@@ -670,7 +670,7 @@ const ViewVehiclePage: React.FC = () => {
                                         key={image.id}
                                         onClick={() => setSelectedImageIndex(index)}
                                         className={`w-3 h-3 rounded-full ${
-                                            index === selectedImageIndex ? 'bg-white' : 'bg-white bg-opacity-50'
+                                            index === selectedImageIndex ? 'bg-white' : 'bg-gray-400'
                                         }`}
                                     />
                                 ))}

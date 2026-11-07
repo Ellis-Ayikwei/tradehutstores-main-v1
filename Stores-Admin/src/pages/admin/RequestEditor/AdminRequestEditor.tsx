@@ -925,7 +925,7 @@ const AdminRequestEditor: React.FC<AdminRequestEditorProps> = ({ requestId }) =>
                                         classNames(
                                             'px-4 py-2 rounded-md text-sm font-medium outline-none flex items-center gap-2 transition-colors',
                                             selected
-                                                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                                                ? 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400'
                                                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                                         )
                                     }>

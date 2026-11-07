@@ -92,7 +92,7 @@ const CreateEditGroupModal: React.FC<CreateEditGroupModalProps> = ({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50  flex items-center justify-center z-50 p-4">
             <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200 dark:border-gray-700">
                 <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white">
@@ -148,7 +148,7 @@ const CreateEditGroupModal: React.FC<CreateEditGroupModalProps> = ({
                         </div>
 
                         {/* Global Select All */}
-                        <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800 mb-4">
+                        <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800 mb-4">
                             <div className="flex items-center gap-2">
                                 <input
                                     type="checkbox"
@@ -210,7 +210,7 @@ const CreateEditGroupModal: React.FC<CreateEditGroupModalProps> = ({
                     <button
                         onClick={onSave}
                         disabled={!groupForm.name.trim() || loading}
-                        className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
                     >
                         {loading ? 'Processing...' : isEdit ? 'Update Role' : 'Create Role'}
                     </button>

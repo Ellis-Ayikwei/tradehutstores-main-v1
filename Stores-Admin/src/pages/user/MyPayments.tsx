@@ -224,16 +224,16 @@ const MyPayments: React.FC = () => {
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'completed':
-                return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
+                return 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300';
             case 'pending':
-                return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300';
+                return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-300';
             case 'failed':
-                return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
+                return 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300';
             case 'refunded':
             case 'partially_refunded':
-                return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300';
+                return 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300';
             case 'processing':
-                return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
+                return 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300';
             default:
                 return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
         }
@@ -389,7 +389,7 @@ const MyPayments: React.FC = () => {
                                 <p className="text-sm text-gray-600 dark:text-gray-400">Total Paid</p>
                                 <p className="text-2xl font-bold text-gray-900 dark:text-white">{safeFormatAmount(paymentStats.totalPaid)}</p>
                             </div>
-                            <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
+                            <div className="w-12 h-12 bg-green-100 dark:bg-green-950 rounded-xl flex items-center justify-center">
                                 <IconTrendingUp className="w-6 h-6 text-green-600 dark:text-green-400" />
                             </div>
                         </div>
@@ -406,7 +406,7 @@ const MyPayments: React.FC = () => {
                                 <p className="text-sm text-gray-600 dark:text-gray-400">Pending</p>
                                 <p className="text-2xl font-bold text-gray-900 dark:text-white">{safeFormatAmount(paymentStats.totalPending)}</p>
                             </div>
-                            <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl flex items-center justify-center">
+                            <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-950 rounded-xl flex items-center justify-center">
                                 <IconClock className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
                             </div>
                         </div>
@@ -423,7 +423,7 @@ const MyPayments: React.FC = () => {
                                 <p className="text-sm text-gray-600 dark:text-gray-400">Monthly Spending</p>
                                 <p className="text-2xl font-bold text-gray-900 dark:text-white">{safeFormatAmount(paymentStats.monthlySpending)}</p>
                             </div>
-                            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-950 rounded-xl flex items-center justify-center">
                                 <IconCalendar className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                             </div>
                         </div>
@@ -440,7 +440,7 @@ const MyPayments: React.FC = () => {
                                 <p className="text-sm text-gray-600 dark:text-gray-400">Transactions</p>
                                 <p className="text-2xl font-bold text-gray-900 dark:text-white">{paymentStats.transactionCount}</p>
                             </div>
-                            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center">
+                            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-950 rounded-xl flex items-center justify-center">
                                 <IconReceipt className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                             </div>
                         </div>
@@ -585,7 +585,7 @@ const MyPayments: React.FC = () => {
                                 >
                                     <div className="flex items-center justify-between cursor-pointer" onClick={() => handlePaymentClick(payment)}>
                                         <div className="flex items-center space-x-4">
-                                            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                                            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-950 rounded-xl flex items-center justify-center">
                                                 <IconCreditCard className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                                             </div>
                                             <div>
@@ -653,7 +653,7 @@ const MyPayments: React.FC = () => {
 
                                                         {/* Error message */}
                                                         {downloadError && (
-                                                            <div className="mb-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+                                                            <div className="mb-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg p-3">
                                                                 <div className="flex items-center">
                                                                     <IconAlertCircle className="w-4 h-4 text-red-600 dark:text-red-400 mr-2" />
                                                                     <span className="text-sm text-red-800 dark:text-red-200">{downloadError}</span>
@@ -710,7 +710,7 @@ const MyPayments: React.FC = () => {
 
                                                                     <button
                                                                         onClick={() => handlePreviewInvoice(payment.id)}
-                                                                        className="w-full flex items-center justify-center px-4 py-2 border border-green-300 dark:border-green-600 rounded-lg text-sm font-medium text-green-700 dark:text-green-300 bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors"
+                                                                        className="w-full flex items-center justify-center px-4 py-2 border border-green-300 dark:border-green-600 rounded-lg text-sm font-medium text-green-700 dark:text-green-300 bg-green-50 dark:bg-green-950 hover:bg-green-100 dark:hover:bg-green-950 transition-colors"
                                                                     >
                                                                         <IconEye className="w-4 h-4 mr-2" />
                                                                         Preview Invoice
@@ -719,7 +719,7 @@ const MyPayments: React.FC = () => {
                                                             )}
 
                                                             {payment.status === 'pending' && (
-                                                                <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
+                                                                <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
                                                                     <div className="flex items-center">
                                                                         <IconClock className="w-4 h-4 text-yellow-600 dark:text-yellow-400 mr-2" />
                                                                         <span className="text-sm text-yellow-800 dark:text-yellow-200">Payment is being processed</span>
@@ -728,7 +728,7 @@ const MyPayments: React.FC = () => {
                                                             )}
 
                                                             {payment.status === 'failed' && (
-                                                                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+                                                                <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg p-3">
                                                                     <div className="flex items-center">
                                                                         <IconAlertCircle className="w-4 h-4 text-red-600 dark:text-red-400 mr-2" />
                                                                         <span className="text-sm text-red-800 dark:text-red-200">Payment failed - please try again</span>
@@ -752,7 +752,7 @@ const MyPayments: React.FC = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 }}
-                    className="mt-8 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6"
+                    className="mt-8 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-xl p-6"
                 >
                     <div className="flex items-start space-x-3">
                         <IconShieldCheck className="w-6 h-6 text-blue-600 dark:text-blue-400 mt-0.5" />

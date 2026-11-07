@@ -76,7 +76,7 @@ const ColumnDropdownContent = memo(({
         <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">
             <span className="font-medium text-sm text-gray-700 dark:text-gray-300">Manage Columns</span>
             <button
-                className="text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-800/40 px-2 py-1 rounded-md transition-colors font-medium"
+                className="text-xs bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900 px-2 py-1 rounded-md transition-colors font-medium"
                 onClick={onReset}
             >
                 Reset
@@ -89,7 +89,7 @@ const ColumnDropdownContent = memo(({
                     <li key={column.accessor} className="mb-1">
                         <label
                             className={`flex items-center py-1.5 px-2 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors ${
-                                isVisible ? 'bg-blue-50/50 dark:bg-blue-900/20' : ''
+                                isVisible ? 'bg-blue-50 dark:bg-blue-950' : ''
                             }`}
                             onClick={(e) => e.stopPropagation()}
                         >
@@ -463,26 +463,26 @@ const DraggableDataTable: React.FC<DraggableDataTableProps> = ({
 
 const NoRecordsFound = () => (
   <div className="flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
-   <img src="/assets/images/enterprise_life.png" alt="No records found" className="w-12 h-12 mb-3 opacity-30" />
+   <img src="/assets/images/enterprise_life.png" alt="No records found" className="w-12 h-12 mb-3" />
     <p>No records found</p>
   </div>
 );
     return (
-        <div className="panel p-0 mt-6 overflow-hidden rounded-none bg-white dark:bg-gray-800/95 shadow-sm border border-gray-200/80 dark:border-gray-700/80">
+        <div className="panel p-0 mt-6 overflow-hidden rounded-none bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700">
             {/* Header content if provided */}
             {headerContent && (
-                <div className="border-b border-gray-200/80 dark:border-gray-700/80">
+                <div className="border-b border-gray-200 dark:border-gray-700">
                     {headerContent}
                 </div>
             )}
 
             {/* Title and action buttons */}
-            <div className="flex md:items-center md:flex-row flex-col gap-4 p-5 border-b border-gray-200/80 dark:border-gray-700/80 bg-white dark:bg-gray-800/95">
+            <div className="flex md:items-center md:flex-row flex-col gap-4 p-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
                 {/* Title with styled badge */}
                 <div className="flex items-center">
                     <h5 className="font-semibold text-lg text-gray-800 dark:text-white">{title}</h5>
                     {filteredData.length > 0 && (
-                        <span className="ml-3 px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-full">
+                        <span className="ml-3 px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-full">
                             {filteredData.length} {filteredData.length === 1 ? 'record' : 'records'}
                         </span>
                     )}
@@ -493,7 +493,7 @@ const NoRecordsFound = () => (
                     <div className="relative flex-grow md:flex-grow-0">
                         <input
                             type="text"
-                            className="form-input w-full md:w-64 pl-9 pr-10 py-2 rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700/80 focus:border-primary dark:focus:border-primary focus:ring focus:ring-primary/20 dark:focus:ring-primary/40 transition-colors shadow-sm"
+                            className="form-input w-full md:w-64 pl-9 pr-10 py-2 rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-primary dark:focus:border-primary focus:ring focus:ring-primary-200 dark:focus:ring-primary-300 transition-colors shadow-sm"
                             placeholder="Search..."
                             value={search}
                             onChange={handleSearchChange}
@@ -520,7 +520,7 @@ const NoRecordsFound = () => (
                         {/* Export button */}
                         <button 
                             type="button" 
-                            className="btn bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600/80 flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors shadow-sm hover:shadow"
+                            className="btn bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors shadow-sm hover:shadow"
                             onClick={handleExportExcel}
                         >
                             <IconFile className="w-4 h-4 mr-2" />
@@ -531,7 +531,7 @@ const NoRecordsFound = () => (
                         <Dropdown
                             ref={columnDropdownRef}
                             placement="bottom-start"
-                            btnClassName="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600/80 transition-colors shadow-sm hover:shadow"
+                            btnClassName="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors shadow-sm hover:shadow"
                             button={<ColumnDropdownButton />}
                             dropdownClassName="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg rounded-lg py-2"
                             closeOnSelect={false}
@@ -548,7 +548,7 @@ const NoRecordsFound = () => (
                         {extraFilters && (
                             <Dropdown
                                 placement="bottom-end"
-                                btnClassName="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600/80 transition-colors shadow-sm hover:shadow"
+                                btnClassName="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors shadow-sm hover:shadow"
                                 button={
                                     <>
                                         <IconFilter className="w-4 h-4 mr-2" />
@@ -571,7 +571,7 @@ const NoRecordsFound = () => (
                             <Tippy content="Refresh data">
                                 <button
                                     type="button"
-                                    className="btn bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 w-9 h-9 p-0 rounded-lg flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-600/80 text-gray-700 dark:text-gray-300 transition-colors shadow-sm hover:shadow"
+                                    className="btn bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 w-9 h-9 p-0 rounded-lg flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors shadow-sm hover:shadow"
                                     onClick={onRefreshData}
                                 >
                                     <IconRefresh className="w-5 h-5" />
@@ -587,7 +587,7 @@ const NoRecordsFound = () => (
 
             {/* Bulk actions bar - Fixed at top with conditional rendering */}
             {selectedRecords.length > 0 && bulkActions && (
-                <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/30 border-b border-blue-100 dark:border-blue-800/50">
+                <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-950 border-b border-blue-100 dark:border-blue-800">
                     <span className="text-sm font-medium text-blue-700 dark:text-blue-300 pl-2">
                         {selectedRecords.length} {selectedRecords.length === 1 ? 'item' : 'items'} selected
                     </span>
@@ -606,7 +606,7 @@ const NoRecordsFound = () => (
             {/* Data table with enhanced styling */}
             <div className="datatables p-x-2">
                 <DataTable
-                    className="whitespace-nowrap bg-white dark:bg-gray-800/90 rounded-lg overflow-hidden border-gray-200 dark:border-gray-700 [&_td]:border-r [&_td]:border-gray-200 [&_th]:border-r [&_th]:border-gray-200 dark:[&_td]:border-gray-700 dark:[&_th]:border-gray-700 [&_td]:bg-white [&_th]:bg-gray-50 dark:[&_td]:bg-gray-800 dark:[&_th]:bg-gray-700 [&_.mantine-DataTable-columnHeader--dragging]:z-50 [&_.mantine-DataTable-columnHeader--dragging]:opacity-90 [&_.mantine-DataTable-columnHeader--dragging]:shadow-lg [&_.mantine-DataTable-columnHeader--dragging]:bg-white [&_.mantine-DataTable-columnHeader--dragging]:dark:bg-gray-800 [&_td]:overflow-hidden [&_th]:overflow-hidden [&_td]:text-ellipsis [&_th]:text-ellipsis [&_.mantine-DataTable-cell]:overflow-hidden [&_.mantine-DataTable-cell]:text-ellipsis [&_.mantine-DataTable-columnHeader]:overflow-hidden [&_.mantine-DataTable-columnHeader]:text-ellipsis"
+                    className="whitespace-nowrap bg-white dark:bg-gray-800 rounded-lg overflow-hidden border-gray-200 dark:border-gray-700 [&_td]:border-r [&_td]:border-gray-200 [&_th]:border-r [&_th]:border-gray-200 dark:[&_td]:border-gray-700 dark:[&_th]:border-gray-700 [&_td]:bg-white [&_th]:bg-gray-50 dark:[&_td]:bg-gray-800 dark:[&_th]:bg-gray-700 [&_.mantine-DataTable-columnHeader--dragging]:z-50 [&_.mantine-DataTable-columnHeader--dragging]:shadow-lg [&_.mantine-DataTable-columnHeader--dragging]:bg-white [&_.mantine-DataTable-columnHeader--dragging]:dark:bg-gray-800 [&_td]:overflow-hidden [&_th]:overflow-hidden [&_td]:text-ellipsis [&_th]:text-ellipsis [&_.mantine-DataTable-cell]:overflow-hidden [&_.mantine-DataTable-cell]:text-ellipsis [&_.mantine-DataTable-columnHeader]:overflow-hidden [&_.mantine-DataTable-columnHeader]:text-ellipsis"
                     records={Array.isArray(filteredData) ? filteredData : []}
                     columns={Array.isArray(effectiveColumns) ? effectiveColumns as DataTableColumn<unknown>[] : []}
                     fetching={loading}

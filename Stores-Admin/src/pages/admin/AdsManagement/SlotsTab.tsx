@@ -252,7 +252,7 @@ const SlotsTab: React.FC<Props> = ({ onChange }) => {
                     type="button"
                     onClick={openCreate}
                     disabled={!placements.length || !creatives.length}
-                    className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary/90 shadow disabled:opacity-50"
+                    className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary-hover shadow disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
                     title={
                         !placements.length
                             ? 'Create a placement first'
@@ -279,7 +279,7 @@ const SlotsTab: React.FC<Props> = ({ onChange }) => {
                             <button
                                 type="button"
                                 onClick={openCreate}
-                                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary/90"
+                                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary-hover"
                             >
                                 <IconPlus size={16} /> Book your first slot
                             </button>
@@ -446,9 +446,9 @@ const SlotsTab: React.FC<Props> = ({ onChange }) => {
 const StatusPill: React.FC<{ row: AdSlotRow }> = ({ row }) => {
     if (row.is_live) {
         return (
-            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
                 <span className="relative flex h-1.5 w-1.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300" />
                     <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
                 </span>
                 LIVE
@@ -457,7 +457,7 @@ const StatusPill: React.FC<{ row: AdSlotRow }> = ({ row }) => {
     }
     if (row.is_active) {
         return (
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300">
                 READY
             </span>
         );
@@ -478,7 +478,7 @@ const Pill: React.FC<{
         className={[
             'inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-semibold',
             tone === 'primary'
-                ? 'bg-primary/10 text-primary'
+                ? 'bg-primary-subtle text-primary'
                 : 'bg-gray-100 dark:bg-gray-800 text-on-surface-variant',
         ].join(' ')}
     >
@@ -555,7 +555,7 @@ const SlotEditor: React.FC<{
         <ModalShell
             title={isEdit ? 'Edit slot' : 'Book a new slot'}
             icon={
-                <span className="p-2 rounded-lg bg-primary/10 text-primary">
+                <span className="p-2 rounded-lg bg-primary-subtle text-primary">
                     <IconTarget size={18} />
                 </span>
             }
@@ -684,7 +684,7 @@ const SlotEditor: React.FC<{
                         </Field>
                     </div>
 
-                    <div className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 space-y-3 bg-gray-50/40 dark:bg-gray-800/30">
+                    <div className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 space-y-3 bg-gray-50 dark:bg-gray-800">
                         <p className="text-xs font-bold uppercase tracking-wide text-on-surface-variant">
                             Behaviour & frequency caps
                         </p>
@@ -773,7 +773,7 @@ const SlotEditor: React.FC<{
                         </div>
                     </div>
 
-                    <div className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 space-y-3 bg-gray-50/40 dark:bg-gray-800/30">
+                    <div className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 space-y-3 bg-gray-50 dark:bg-gray-800">
                         <div className="flex items-center justify-between">
                             <p className="text-xs font-bold uppercase tracking-wide text-on-surface-variant">
                                 Targeting
@@ -969,7 +969,7 @@ const SlotEditor: React.FC<{
                 </div>
 
                 {/* Right: contextual preview + summary */}
-                <div className="lg:sticky lg:top-0 lg:self-start p-6 bg-gray-50/60 dark:bg-gray-950/40 space-y-4">
+                <div className="lg:sticky lg:top-0 lg:self-start p-6 bg-gray-50 dark:bg-gray-950 space-y-4">
                     <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">
                         Slot summary
                     </p>
@@ -992,7 +992,7 @@ const SlotEditor: React.FC<{
                         </div>
                     )}
 
-                    <div className="rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900 p-3 text-[11px] text-blue-800 dark:text-blue-200 leading-relaxed">
+                    <div className="rounded-xl bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-900 p-3 text-[11px] text-blue-800 dark:text-blue-200 leading-relaxed">
                         <strong>How weight works:</strong> if 3 slots compete for the same placement
                         with weights 20 / 10 / 10, the first wins ~50% of the time, the others ~25% each.
                         Bump weight to win more often.

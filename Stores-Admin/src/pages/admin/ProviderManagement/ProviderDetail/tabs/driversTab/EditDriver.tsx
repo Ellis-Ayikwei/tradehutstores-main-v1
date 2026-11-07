@@ -320,7 +320,7 @@ const EditDriver: React.FC = () => {
 
             {/* Success Message */}
             {saveSuccess && (
-                <div className="fixed top-4 right-4 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 animate-fade-in-down">
+                <div className="fixed top-4 right-4 bg-green-100 dark:bg-green-950 text-green-800 dark:text-green-400 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 animate-fade-in-down">
                     <CheckCircle2 className="h-5 w-5" />
                     <span>Driver updated successfully!</span>
                 </div>
@@ -337,7 +337,7 @@ const EditDriver: React.FC = () => {
                             {/* Basic Information */}
                             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 hover:shadow-md transition-shadow">
                                 <div className="flex items-center gap-2 mb-6 pb-4 border-b border-gray-200 dark:border-slate-700">
-                                    <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                                    <div className="p-2 bg-blue-100 dark:bg-blue-950 rounded-lg">
                                         <User className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                                     </div>
                                     <h2 className="text-lg font-semibold dark:text-white">Basic Information</h2>
@@ -450,7 +450,7 @@ const EditDriver: React.FC = () => {
                             {/* Employment Details */}
                             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 hover:shadow-md transition-shadow">
                                 <div className="flex items-center gap-2 mb-6 pb-4 border-b border-gray-200 dark:border-slate-700">
-                                    <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                                    <div className="p-2 bg-purple-100 dark:bg-purple-950 rounded-lg">
                                         <Briefcase className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                                     </div>
                                     <h2 className="text-lg font-semibold dark:text-white">Employment Details</h2>
@@ -529,7 +529,7 @@ const EditDriver: React.FC = () => {
                             {/* License Information */}
                             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 hover:shadow-md transition-shadow">
                                 <div className="flex items-center gap-2 mb-6 pb-4 border-b border-gray-200 dark:border-slate-700">
-                                    <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                                    <div className="p-2 bg-green-100 dark:bg-green-950 rounded-lg">
                                         <IdCard className="h-5 w-5 text-green-600 dark:text-green-400" />
                                     </div>
                                     <h2 className="text-lg font-semibold dark:text-white">License Information</h2>
@@ -638,7 +638,7 @@ const EditDriver: React.FC = () => {
                             {/* Certifications */}
                             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 hover:shadow-md transition-shadow">
                                 <div className="flex items-center gap-2 mb-6 pb-4 border-b border-gray-200 dark:border-slate-700">
-                                    <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
+                                    <div className="p-2 bg-yellow-100 dark:bg-yellow-950 rounded-lg">
                                         <Award className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
                                     </div>
                                     <h2 className="text-lg font-semibold dark:text-white">Certifications</h2>
@@ -740,7 +740,7 @@ const EditDriver: React.FC = () => {
                             {/* Status and Notes */}
                             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 hover:shadow-md transition-shadow">
                                 <div className="flex items-center gap-2 mb-6 pb-4 border-b border-gray-200 dark:border-slate-700">
-                                    <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
+                                    <div className="p-2 bg-indigo-100 dark:bg-indigo-950 rounded-lg">
                                         <FileText className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                                     </div>
                                     <h2 className="text-lg font-semibold dark:text-white">Status and Notes</h2>
@@ -807,7 +807,7 @@ const EditDriver: React.FC = () => {
                 <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 hover:shadow-md transition-shadow mt-6">
                     <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200 dark:border-slate-700">
                         <div className="flex items-center gap-2">
-                            <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
+                            <div className="p-2 bg-red-100 dark:bg-red-950 rounded-lg">
                                 <FileText className="h-5 w-5 text-red-600 dark:text-red-400" />
                                         </div>
                             <h2 className="text-lg font-semibold dark:text-white">Documents</h2>
@@ -824,7 +824,7 @@ const EditDriver: React.FC = () => {
                                     </button>
                                 </div>
                     {documentsData?.map((doc) => (
-                    <div key={doc.id} className="bg-gray-50 dark:bg-slate-700/50 rounded-lg p-4 mb-4">
+                    <div key={doc.id} className="bg-gray-50 dark:bg-slate-700 rounded-lg p-4 mb-4">
                                             <div className="flex items-center justify-between mb-2">
                             <h3 className="font-medium text-gray-900 dark:text-white">
                                 {doc.name}

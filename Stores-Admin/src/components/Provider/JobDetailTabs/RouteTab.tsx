@@ -56,7 +56,7 @@ const RouteTab: React.FC<RouteTabProps> = ({ job }) => {
 
     return (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
-            <div className="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/30 dark:to-indigo-900/30 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-950 dark:to-indigo-950 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                 <h3 className="font-medium text-gray-800 dark:text-gray-200 flex items-center">
                     <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2 text-purple-600 dark:text-purple-400" />
                     Journey Route

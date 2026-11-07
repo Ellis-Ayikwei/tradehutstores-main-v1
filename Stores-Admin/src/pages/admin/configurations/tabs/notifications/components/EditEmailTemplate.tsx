@@ -178,7 +178,7 @@ const EditEmailTemplate: React.FC<EditEmailTemplateProps> = ({
 
   return (
     <Dialog open={true} onClose={onClose} className="relative z-50">
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" aria-hidden="true" />
+      <div className="fixed inset-0 bg-black/50 " aria-hidden="true" />
       
       <div className="fixed inset-0 flex items-center justify-center p-4">
         <Dialog.Panel className="w-full max-w-6xl max-h-[90vh] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden">
@@ -312,7 +312,7 @@ const EditEmailTemplate: React.FC<EditEmailTemplateProps> = ({
                         onClick={() => addVariable(variable)}
                         className={`px-3 py-2 text-xs rounded-lg border transition-colors ${
                           formData.variables.includes(variable)
-                            ? 'bg-blue-100 border-blue-300 text-blue-800 dark:bg-blue-900/30 dark:border-blue-700 dark:text-blue-400'
+                            ? 'bg-blue-100 border-blue-300 text-blue-800 dark:bg-blue-950 dark:border-blue-700 dark:text-blue-400'
                             : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600'
                         }`}
                       >
@@ -332,7 +332,7 @@ const EditEmailTemplate: React.FC<EditEmailTemplateProps> = ({
                       {formData.variables.map((variable) => (
                         <span
                           key={variable}
-                          className="inline-flex items-center px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 rounded-full text-sm"
+                          className="inline-flex items-center px-3 py-1 bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-400 rounded-full text-sm"
                         >
                           {variable}
                           <button
@@ -420,7 +420,7 @@ const EditEmailTemplate: React.FC<EditEmailTemplateProps> = ({
                 </div>
 
                 {/* Template Info */}
-                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
                   <h4 className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
                     Template Information
                   </h4>
@@ -460,7 +460,7 @@ const EditEmailTemplate: React.FC<EditEmailTemplateProps> = ({
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+          <div className="flex items-center justify-between p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
             <div className="flex items-center space-x-2">
               {Object.keys(errors).length > 0 ? (
                 <AlertTriangle className="w-4 h-4 text-orange-500" />
@@ -484,7 +484,7 @@ const EditEmailTemplate: React.FC<EditEmailTemplateProps> = ({
               <button
                 onClick={handleSave}
                 disabled={Object.keys(errors).length > 0}
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
               >
                 <Save className="mr-2 h-4 w-4" />
                 {template?.id ? 'Update' : 'Create'} Template

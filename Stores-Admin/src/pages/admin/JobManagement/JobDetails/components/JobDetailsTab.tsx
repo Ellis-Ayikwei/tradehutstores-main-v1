@@ -16,7 +16,7 @@ const JobDetailsTab: React.FC<JobDetailsTabProps> = ({ job }) => {
             {/* Core Job Details */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Job Information */}
-                <div className="backdrop-blur-sm bg-slate-50/80 dark:bg-slate-900/30 rounded-2xl p-6 border border-slate-200/50 dark:border-slate-700/50">
+                <div className=" bg-slate-50 dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
                     <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-orange-500"></div>
                         Job Information
@@ -36,10 +36,10 @@ const JobDetailsTab: React.FC<JobDetailsTabProps> = ({ job }) => {
                             <span
                                 className={`px-3 py-1 rounded-full text-sm font-bold ${
                                     (job.request as any)?.service_level === 'high'
-                                        ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                                        ? 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300'
                                         : (job.request as any)?.service_level === 'normal'
-                                        ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-                                        : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
+                                        ? 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
+                                        : 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300'
                                 }`}
                             >
                                 {((job.request as any)?.service_level?.toUpperCase() || 'NORMAL')}
@@ -75,8 +75,8 @@ const JobDetailsTab: React.FC<JobDetailsTabProps> = ({ job }) => {
                             <span
                                 className={`px-3 py-1 rounded-full text-sm font-bold ${
                                     job.request?.insurance_required
-                                        ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                                        : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
+                                        ? 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300'
+                                        : 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300'
                                 }`}
                             >
                                 {job.request?.insurance_required ? 'REQUIRED' : 'NOT REQUIRED'}
@@ -86,7 +86,7 @@ const JobDetailsTab: React.FC<JobDetailsTabProps> = ({ job }) => {
                 </div>
 
                 {/* Customer Information */}
-                <div className="backdrop-blur-sm bg-slate-50/80 dark:bg-slate-900/30 rounded-2xl p-6 border border-slate-200/50 dark:border-slate-700/50">
+                <div className=" bg-slate-50 dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
                     <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-blue-500"></div>
                         Customer Details
@@ -118,16 +118,16 @@ const JobDetailsTab: React.FC<JobDetailsTabProps> = ({ job }) => {
             </div>
 
             {/* Job Description */}
-            <div className="backdrop-blur-sm bg-slate-50/80 dark:bg-slate-900/30 rounded-2xl p-6 border border-slate-200/50 dark:border-slate-700/50">
+            <div className=" bg-slate-50 dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-purple-500"></div>
                     Job Description
                 </h3>
-                <div className="bg-white/50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200/30 dark:border-slate-700/30">
+                <div className="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
                     <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{job.request?.notes || 'No description provided.'}</p>
                 </div>
                 {job.request?.special_instructions && (
-                    <div className="mt-4 bg-blue-50/50 dark:bg-blue-900/10 rounded-xl p-4 border border-blue-200/30 dark:border-blue-700/30">
+                    <div className="mt-4 bg-blue-50 dark:bg-blue-950 rounded-xl p-4 border border-blue-200 dark:border-blue-900">
                         <h4 className="font-semibold text-blue-600 dark:text-blue-400 mb-2">Special Instructions:</h4>
                         <p className="text-slate-700 dark:text-slate-300">{job.request.special_instructions}</p>
                     </div>

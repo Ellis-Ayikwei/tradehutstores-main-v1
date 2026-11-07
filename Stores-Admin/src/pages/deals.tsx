@@ -96,7 +96,7 @@ export default function Deals() {
         <div className="max-w-screen-xl mx-auto px-4 py-8">
             {/* Header Section with enhanced animation */}
             <div className="text-center mb-16 relative">
-                <div className="absolute inset-0 -top-8 bg-gradient-to-r from-primary-500/10 to-primary-600/10 blur-3xl rounded-full" />
+                <div className="absolute inset-0 -top-8 bg-gradient-to-r from-primary-50 to-primary-50 blur-3xl rounded-full" />
                 <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-primary-500 to-primary-600 text-transparent bg-clip-text relative animate-fade-in">Epic Deals & Discounts</h1>
                 <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto relative">Discover incredible savings on premium tech - Limited time offers just for you!</p>
             </div>
@@ -104,13 +104,13 @@ export default function Deals() {
             {/* Enhanced Featured Deal */}
             <div className="bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 rounded-3xl p-8 mb-16 shadow-2xl relative overflow-hidden">
                 {/* Decorative elements */}
-                <div className="absolute inset-0 bg-grid-white/10 bg-[size:20px_20px]" />
-                <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-[size:20px_20px]" />
+                <div className="absolute inset-0 bg-gradient-to-r from-primary-800 via-transparent to-transparent" />
 
                 <div className="grid md:grid-cols-2 gap-12 items-center relative">
                     <div className="space-y-8">
                         <div className="flex flex-wrap items-center gap-4">
-                            <span className="inline-flex items-center bg-white/95 text-primary-500 px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+                            <span className="inline-flex items-center bg-white text-primary-500 px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
                                 <span className="animate-pulse mr-2">🔥</span>
                                 Featured Deal
                             </span>
@@ -121,33 +121,33 @@ export default function Deals() {
 
                         <div className="space-y-4">
                             <h2 className="text-5xl font-bold text-white leading-tight">{deals[0].name}</h2>
-                            <p className="text-white/90 text-xl leading-relaxed">{deals[0].description}</p>
+                            <p className="text-white text-xl leading-relaxed">{deals[0].description}</p>
                         </div>
 
                         <div className="space-y-6">
                             <div className="flex items-baseline gap-4">
                                 <span className="text-6xl font-bold text-white tracking-tight">${deals[0].price}</span>
-                                <span className="text-3xl text-white/60 line-through">${deals[0].originalPrice}</span>
+                                <span className="text-3xl text-gray-200 line-through">${deals[0].originalPrice}</span>
                             </div>
 
                             <div className="flex items-center gap-3">
                                 {[...Array(5)].map((_, i) => (
-                                    <span key={i} className={`text-2xl ${i < Math.floor(deals[0].rating) ? 'text-yellow-400 animate-twinkle' : 'text-white/30'}`}>
+                                    <span key={i} className={`text-2xl ${i < Math.floor(deals[0].rating) ? 'text-yellow-400 animate-twinkle' : 'text-gray-300'}`}>
                                         ★
                                     </span>
                                 ))}
-                                <span className="text-white/90 ml-2 text-lg">{deals[0].rating}/5</span>
+                                <span className="text-white ml-2 text-lg">{deals[0].rating}/5</span>
                             </div>
                         </div>
 
                         <div className="flex flex-wrap gap-4">
-                            <button className="group bg-white text-primary-500 px-8 py-4 rounded-xl font-semibold hover:bg-white/90 transition-all duration-300 shadow-lg hover:shadow-xl">
+                            <button className="group bg-white text-primary-500 px-8 py-4 rounded-xl font-semibold hover:bg-white transition-all duration-300 shadow-lg hover:shadow-xl">
                                 <span className="flex items-center gap-2">
                                     Buy Now
                                     <span className="group-hover:translate-x-1 transition-transform">→</span>
                                 </span>
                             </button>
-                            <button className="group border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition-all duration-300">
+                            <button className="group border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-gray-700 transition-all duration-300">
                                 <span className="flex items-center gap-2">
                                     Learn More
                                     <span className="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
@@ -159,8 +159,8 @@ export default function Deals() {
                     <div className="relative h-[600px] rounded-2xl overflow-hidden group">
                         {/* Glass effect overlay */}
                         <div
-                            className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm rounded-2xl 
-                            group-hover:backdrop-blur-none transition-all duration-500"
+                            className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-800  rounded-2xl 
+                             transition-all duration-500"
                         />
 
                         {/* Product image */}
@@ -173,8 +173,8 @@ export default function Deals() {
 
                         {/* Floating badges */}
                         <div className="absolute top-4 right-4 flex flex-col gap-3 transform translate-x-12 group-hover:translate-x-0 transition-transform duration-500">
-                            <span className="bg-green-500/90 text-white px-4 py-2 rounded-lg backdrop-blur-sm text-sm font-medium">Free Shipping</span>
-                            <span className="bg-blue-500/90 text-white px-4 py-2 rounded-lg backdrop-blur-sm text-sm font-medium">2 Year Warranty</span>
+                            <span className="bg-green-500 text-white px-4 py-2 rounded-lg  text-sm font-medium">Free Shipping</span>
+                            <span className="bg-blue-500 text-white px-4 py-2 rounded-lg  text-sm font-medium">2 Year Warranty</span>
                         </div>
                     </div>
                 </div>

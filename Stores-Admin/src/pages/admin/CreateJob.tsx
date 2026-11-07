@@ -480,7 +480,7 @@ const CreateJob: React.FC = () => {
                                     onClick={() => handleBookingSelect(booking)}
                                     className={`p-4 border rounded-xl cursor-pointer transition-all ${
                                         selectedBooking?.id === booking.id
-                                            ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20'
+                                            ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950'
                                             : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
                                     }`}
                                 >
@@ -491,10 +491,10 @@ const CreateJob: React.FC = () => {
                                             </span>
                                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                                                 booking.payment_status === 'paid' 
-                                                    ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                                                    ? 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-400'
                                                     : booking.payment_status === 'partial'
-                                                    ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400'
-                                                    : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
+                                                    ? 'bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-400'
+                                                    : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-400'
                                             }`}>
                                                 {booking.payment_status}
                                             </span>
@@ -753,7 +753,7 @@ const CreateJob: React.FC = () => {
                                 key={vehicleType}
                                 className={`flex items-center p-3 border rounded-xl cursor-pointer transition-all ${
                                     formData.preferred_vehicle_types.includes(vehicleType)
-                                        ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20'
+                                        ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950'
                                         : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
                                 }`}
                             >
@@ -783,7 +783,7 @@ const CreateJob: React.FC = () => {
                                 key={qualification}
                                 className={`flex items-center p-3 border rounded-xl cursor-pointer transition-all ${
                                     formData.required_qualifications.includes(qualification)
-                                        ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20'
+                                        ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950'
                                         : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
                                 }`}
                             >
@@ -1071,7 +1071,7 @@ const CreateJob: React.FC = () => {
 
                         {/* Error Message */}
                         {errors.submit && (
-                            <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
+                            <div className="mt-6 p-4 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-xl">
                                 <div className="flex items-center">
                                     <IconAlertTriangle className="w-5 h-5 text-red-500 mr-2" />
                                     <span className="text-red-700 dark:text-red-400">{errors.submit}</span>
@@ -1081,7 +1081,7 @@ const CreateJob: React.FC = () => {
 
                         {/* Success Message */}
                         {successMessage && (
-                            <div className="mt-6 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl">
+                            <div className="mt-6 p-4 bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 rounded-xl">
                                 <div className="flex items-center">
                                     <IconCheck className="w-5 h-5 text-emerald-500 mr-2" />
                                     <span className="text-emerald-700 dark:text-emerald-400">{successMessage}</span>
@@ -1117,7 +1117,7 @@ const CreateJob: React.FC = () => {
                                     <button
                                         type="submit"
                                         disabled={loading}
-                                        className="px-6 py-3 bg-emerald-500 text-white rounded-xl font-medium hover:bg-emerald-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                        className="px-6 py-3 bg-emerald-500 text-white rounded-xl font-medium hover:bg-emerald-600 transition-colors disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed flex items-center gap-2"
                                     >
                                         {loading ? (
                                             <>

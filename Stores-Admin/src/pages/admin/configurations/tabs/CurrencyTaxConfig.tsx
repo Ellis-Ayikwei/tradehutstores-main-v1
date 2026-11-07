@@ -148,14 +148,14 @@ const CurrencyTaxConfig: React.FC = () => {
                     </Field>
 
                     <Field label="Sample (1,000 base → display)">
-                        <div className="flex items-center h-[42px] px-4 rounded-xl bg-surface-container-low border border-outline-variant/15 font-mono text-sm font-bold text-on-surface">
+                        <div className="flex items-center h-[42px] px-4 rounded-xl bg-surface-container-low border border-border font-mono text-sm font-bold text-on-surface">
                             {formatDisplayPrice(1000)}
                         </div>
                     </Field>
                 </div>
 
                 {state.currency_base !== 'GHS' && (
-                    <div className="bg-bid-amber/10 border border-bid-amber/20 rounded-xl p-4 flex items-start gap-3">
+                    <div className="bg-warning-subtle border border-warning-200 rounded-xl p-4 flex items-start gap-3">
                         <span className="material-symbols-outlined text-bid-amber">warning</span>
                         <div className="text-sm text-on-surface">
                             Base is currently <strong>{state.currency_base}</strong>. The recommended
@@ -187,9 +187,9 @@ const CurrencyTaxConfig: React.FC = () => {
                                 disabled={isBase}
                                 className={`flex items-center justify-between p-3 rounded-xl border transition-all active:scale-95 ${
                                     enabled
-                                        ? 'bg-primary-container/10 border-primary-container/30 text-primary-container'
-                                        : 'bg-surface-container-low border-outline-variant/15 text-on-surface hover:border-primary-container/30'
-                                } ${isBase ? 'cursor-not-allowed opacity-90' : ''}`}
+                                        ? 'bg-primary-subtle border-primary-200 text-primary-container'
+                                        : 'bg-surface-container-low border-border text-on-surface hover:border-primary-200'
+                                } ${isBase ? 'cursor-not-allowed' : ''}`}
                             >
                                 <span className="flex items-center gap-2">
                                     <span className="font-mono text-sm font-bold">{c.symbol}</span>
@@ -200,13 +200,13 @@ const CurrencyTaxConfig: React.FC = () => {
                                 ) : enabled ? (
                                     <span className="material-symbols-outlined text-base">check_circle</span>
                                 ) : (
-                                    <span className="material-symbols-outlined text-base opacity-40">add</span>
+                                    <span className="material-symbols-outlined text-base">add</span>
                                 )}
                             </button>
                         );
                     })}
                 </div>
-                <p className="text-xs text-on-surface-variant opacity-70">
+                <p className="text-xs text-on-surface-variant">
                     The base currency is always available. Disabling a display currency hides it from
                     the storefront / admin pickers.
                 </p>
@@ -220,7 +220,7 @@ const CurrencyTaxConfig: React.FC = () => {
             >
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div className="bg-surface-container-low rounded-xl p-4">
-                        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant opacity-70">
+                        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">
                             Source
                         </p>
                         <p className="font-mono text-sm font-bold text-on-surface mt-1">
@@ -228,7 +228,7 @@ const CurrencyTaxConfig: React.FC = () => {
                         </p>
                     </div>
                     <div className="bg-surface-container-low rounded-xl p-4">
-                        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant opacity-70">
+                        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">
                             Last updated
                         </p>
                         <p className="font-mono text-sm font-bold text-on-surface mt-1">
@@ -236,7 +236,7 @@ const CurrencyTaxConfig: React.FC = () => {
                         </p>
                     </div>
                     <div className="bg-surface-container-low rounded-xl p-4">
-                        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant opacity-70">
+                        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">
                             Rates loaded
                         </p>
                         <p className="font-mono text-sm font-bold text-on-surface mt-1">
@@ -245,9 +245,9 @@ const CurrencyTaxConfig: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="overflow-x-auto rounded-xl border border-outline-variant/10">
+                <div className="overflow-x-auto rounded-xl border border-border">
                     <table className="w-full text-sm">
-                        <thead className="bg-surface-container-low/60">
+                        <thead className="bg-surface-container-low">
                             <tr className="text-left">
                                 <th className="px-4 py-2 text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">
                                     Code
@@ -260,7 +260,7 @@ const CurrencyTaxConfig: React.FC = () => {
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-outline-variant/10">
+                        <tbody className="divide-y divide-border">
                             {supportedCurrencies.map((c) => {
                                 const rate = exchangeRates[c.code];
                                 return (
@@ -276,7 +276,7 @@ const CurrencyTaxConfig: React.FC = () => {
                         </tbody>
                     </table>
                 </div>
-                <p className="text-xs text-on-surface-variant opacity-70">
+                <p className="text-xs text-on-surface-variant">
                     Rates are read-only here. To change the FX provider toggle{' '}
                     <code className="font-mono text-xs px-1.5 py-0.5 rounded bg-surface-container">
                         TRADEHUT_FX_FETCH_FRANKFURTER
@@ -348,7 +348,7 @@ const CurrencyTaxConfig: React.FC = () => {
                                         next[i] = { ...row, rate: Number(e.target.value) };
                                         set('tax_country_rates', next);
                                     }}
-                                    className="w-24 bg-surface-container-lowest border border-outline-variant/20 rounded-lg px-3 py-1.5 text-sm text-on-surface text-right focus:outline-none focus:border-primary-container"
+                                    className="w-24 bg-surface-container-lowest border border-border rounded-lg px-3 py-1.5 text-sm text-on-surface text-right focus:outline-none focus:border-primary-container"
                                 />
                                 <span className="text-xs text-on-surface-variant">%</span>
                             </div>
@@ -356,7 +356,7 @@ const CurrencyTaxConfig: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="divide-y divide-outline-variant/10">
+                <div className="divide-y divide-border">
                     <Toggle
                         label="Charge tax on shipping"
                         description="Shipping fees inherit the same tax rate as the cart subtotal."
@@ -372,7 +372,7 @@ const CurrencyTaxConfig: React.FC = () => {
                 </div>
 
                 {error && (
-                    <div className="bg-error-container/40 border border-error/30 text-on-error-container rounded-xl px-4 py-3 text-sm whitespace-pre-wrap">
+                    <div className="bg-error-container border border-error-container text-on-error-container rounded-xl px-4 py-3 text-sm whitespace-pre-wrap">
                         {error}
                     </div>
                 )}

@@ -193,7 +193,7 @@ const GroupPage: React.FC = () => {
                 <button
                     onClick={() => loadGroupData(true)}
                     disabled={refreshing}
-                    className="flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+                    className="flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
                 >
                     <IconRefresh className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
                     {refreshing ? 'Refreshing...' : 'Refresh'}
@@ -283,10 +283,10 @@ const GroupPage: React.FC = () => {
                                             <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
                                             <span className={`inline-block px-2 py-1 text-xs rounded-full mt-1 ${
                                                 user.user_type === 'admin' 
-                                                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300'
+                                                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
                                                     : user.user_type === 'provider'
-                                                    ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
-                                                    : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+                                                    ? 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300'
+                                                    : 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
                                             }`}>
                                                 {user.user_type}
                                             </span>
@@ -355,10 +355,10 @@ const GroupPage: React.FC = () => {
                                             <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
                                             <span className={`inline-block px-2 py-1 text-xs rounded-full mt-1 ${
                                                 user.user_type === 'admin' 
-                                                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300'
+                                                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
                                                     : user.user_type === 'provider'
-                                                    ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
-                                                    : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+                                                    ? 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300'
+                                                    : 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
                                             }`}>
                                                 {user.user_type}
                                             </span>

@@ -37,6 +37,13 @@ module.exports = {
                     DEFAULT:    'hsl(var(--destructive) / <alpha-value>)',
                     foreground: 'hsl(var(--destructive-foreground) / <alpha-value>)',
                 },
+                chart: {
+                    1: 'hsl(var(--chart-1) / <alpha-value>)',
+                    2: 'hsl(var(--chart-2) / <alpha-value>)',
+                    3: 'hsl(var(--chart-3) / <alpha-value>)',
+                    4: 'hsl(var(--chart-4) / <alpha-value>)',
+                    5: 'hsl(var(--chart-5) / <alpha-value>)',
+                },
                 // Solid tinted surfaces (use instead of bg-primary/10 etc.). See docs/ui-system.md.
                 'primary-hover':     'hsl(var(--primary-hover) / <alpha-value>)',
                 'destructive-hover': 'hsl(var(--destructive-hover) / <alpha-value>)',
@@ -262,6 +269,8 @@ module.exports = {
                 xl:  '0.75rem',
                 '2xl': '1rem',
                 '3xl': '1.5rem',
+                // shadcn base-maia pill radius (calc(var(--radius) * 2.6) ≈ 1.625rem). Used by shadcn controls.
+                '4xl': 'calc(var(--radius) * 2.6)',
                 full: '9999px',
             },
             spacing: {

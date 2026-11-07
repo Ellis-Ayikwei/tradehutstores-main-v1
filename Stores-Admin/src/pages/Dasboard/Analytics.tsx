@@ -374,7 +374,7 @@ const Analytics = () => {
                                     offset={[0, 5]}
                                     placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
                                     btnClassName="hover:text-primary"
-                                    button={<IconHorizontalDots className="text-black/70 dark:text-white/70 hover:!text-primary" />}
+                                    button={<IconHorizontalDots className="text-gray-700 dark:text-gray-200 hover:!text-primary" />}
                                 >
                                     <ul>
                                         <li>
@@ -423,7 +423,7 @@ const Analytics = () => {
                                     offset={[0, 5]}
                                     placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
                                     btnClassName="hover:text-primary"
-                                    button={<IconHorizontalDots className="text-black/70 dark:text-white/70 hover:!text-primary" />}
+                                    button={<IconHorizontalDots className="text-gray-700 dark:text-gray-200 hover:!text-primary" />}
                                 >
                                     <ul>
                                         <li>
@@ -448,7 +448,7 @@ const Analytics = () => {
                             <IconTrendingUp className="text-success inline" />
                         </div>
                         <div className="flex items-center justify-between">
-                            <div className="w-full rounded-full h-5 p-1 bg-dark-light overflow-hidden shadow-3xl dark:shadow-none dark:bg-dark-light/10">
+                            <div className="w-full rounded-full h-5 p-1 bg-dark-light overflow-hidden shadow-3xl dark:shadow-none dark:bg-gray-800">
                                 <div
                                     className="bg-gradient-to-r from-[#4361ee] to-[#805dca] w-full h-full rounded-full relative before:absolute before:inset-y-0 ltr:before:right-0.5 rtl:before:left-0.5 before:bg-white before:w-2 before:h-2 before:rounded-full before:m-auto"
                                     style={{ width: '65%' }}
@@ -495,7 +495,7 @@ const Analytics = () => {
                                     offset={[0, 5]}
                                     placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
                                     btnClassName="hover:text-primary"
-                                    button={<IconHorizontalDots className="text-black/70 dark:text-white/70 hover:!text-primary" />}
+                                    button={<IconHorizontalDots className="text-gray-700 dark:text-gray-200 hover:!text-primary" />}
                                 >
                                     <ul>
                                         <li>
@@ -523,7 +523,7 @@ const Analytics = () => {
                                     offset={[0, 5]}
                                     placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
                                     btnClassName="hover:text-primary"
-                                    button={<IconHorizontalDots className="text-black/70 dark:text-white/70 hover:!text-primary" />}
+                                    button={<IconHorizontalDots className="text-gray-700 dark:text-gray-200 hover:!text-primary" />}
                                 >
                                     <ul>
                                         <li>
@@ -539,7 +539,7 @@ const Analytics = () => {
                         <PerfectScrollbar className="perfect-scrollbar relative h-[360px] ltr:pr-3 rtl:pl-3 ltr:-mr-3 rtl:-ml-3">
                             <div className="space-y-7">
                                 <div className="flex">
-                                    <div className="shrink-0 ltr:mr-2 rtl:ml-2 relative z-10 before:w-[2px] before:h-[calc(100%-24px)] before:bg-white-dark/30 before:absolute before:top-10 before:left-4">
+                                    <div className="shrink-0 ltr:mr-2 rtl:ml-2 relative z-10 before:w-[2px] before:h-[calc(100%-24px)] before:bg-gray-300 before:absolute before:top-10 before:left-4">
                                         <div className="bg-secondary shadow shadow-secondary w-8 h-8 rounded-full flex items-center justify-center text-white">
                                             <IconPlus className="w-4 h-4" />
                                         </div>
@@ -555,7 +555,7 @@ const Analytics = () => {
                                     </div>
                                 </div>
                                 <div className="flex">
-                                    <div className="shrink-0 ltr:mr-2 rtl:ml-2 relative z-10 before:w-[2px] before:h-[calc(100%-24px)] before:bg-white-dark/30 before:absolute before:top-10 before:left-4">
+                                    <div className="shrink-0 ltr:mr-2 rtl:ml-2 relative z-10 before:w-[2px] before:h-[calc(100%-24px)] before:bg-gray-300 before:absolute before:top-10 before:left-4">
                                         <div className="bg-success shadow-success w-8 h-8 rounded-full flex items-center justify-center text-white">
                                             <IconMail className="w-4 h-4" />
                                         </div>
@@ -575,7 +575,7 @@ const Analytics = () => {
                                     </div>
                                 </div>
                                 <div className="flex">
-                                    <div className="shrink-0 ltr:mr-2 rtl:ml-2 relative z-10 before:w-[2px] before:h-[calc(100%-24px)] before:bg-white-dark/30 before:absolute before:top-10 before:left-4">
+                                    <div className="shrink-0 ltr:mr-2 rtl:ml-2 relative z-10 before:w-[2px] before:h-[calc(100%-24px)] before:bg-gray-300 before:absolute before:top-10 before:left-4">
                                         <div className="bg-primary w-8 h-8 rounded-full flex items-center justify-center text-white">
                                             <IconChecks className="w-4 h-4" />
                                         </div>
@@ -586,7 +586,7 @@ const Analytics = () => {
                                     </div>
                                 </div>
                                 <div className="flex">
-                                    <div className="shrink-0 ltr:mr-2 rtl:ml-2 relative z-10 before:w-[2px] before:h-[calc(100%-24px)] before:bg-white-dark/30 before:absolute before:top-10 before:left-4">
+                                    <div className="shrink-0 ltr:mr-2 rtl:ml-2 relative z-10 before:w-[2px] before:h-[calc(100%-24px)] before:bg-gray-300 before:absolute before:top-10 before:left-4">
                                         <div className="bg-danger w-8 h-8 rounded-full flex items-center justify-center text-white">
                                             <IconChecks className="w-4 h-4" />
                                         </div>
@@ -602,7 +602,7 @@ const Analytics = () => {
                                     </div>
                                 </div>
                                 <div className="flex">
-                                    <div className="shrink-0 ltr:mr-2 rtl:ml-2 relative z-10 before:w-[2px] before:h-[calc(100%-24px)] before:bg-white-dark/30 before:absolute before:top-10 before:left-4">
+                                    <div className="shrink-0 ltr:mr-2 rtl:ml-2 relative z-10 before:w-[2px] before:h-[calc(100%-24px)] before:bg-gray-300 before:absolute before:top-10 before:left-4">
                                         <div className="bg-warning w-8 h-8 rounded-full flex items-center justify-center text-white">
                                             <IconFile className="w-4 h-4" />
                                         </div>
@@ -638,7 +638,7 @@ const Analytics = () => {
                         <div className="flex flex-col space-y-5">
                             <div className="flex items-center">
                                 <div className="w-9 h-9">
-                                    <div className="bg-primary/10 text-primary rounded-xl w-9 h-9 flex justify-center items-center dark:bg-primary dark:text-white-light">
+                                    <div className="bg-primary-subtle text-primary rounded-xl w-9 h-9 flex justify-center items-center dark:bg-primary dark:text-white-light">
                                         <IconChrome className="w-5 h-5" />
                                     </div>
                                 </div>
@@ -648,7 +648,7 @@ const Analytics = () => {
                                         <p className="ltr:ml-auto rtl:mr-auto text-xs">65%</p>
                                     </div>
                                     <div>
-                                        <div className="w-full rounded-full h-5 p-1 bg-dark-light overflow-hidden shadow-3xl dark:bg-dark-light/10 dark:shadow-none">
+                                        <div className="w-full rounded-full h-5 p-1 bg-dark-light overflow-hidden shadow-3xl dark:bg-gray-800 dark:shadow-none">
                                             <div
                                                 className="bg-gradient-to-r from-[#009ffd] to-[#2a2a72] w-full h-full rounded-full relative before:absolute before:inset-y-0 ltr:before:right-0.5 rtl:before:left-0.5 before:bg-white before:w-2 before:h-2 before:rounded-full before:m-auto"
                                                 style={{ width: '65%' }}
@@ -659,7 +659,7 @@ const Analytics = () => {
                             </div>
                             <div className="flex items-center">
                                 <div className="w-9 h-9">
-                                    <div className="bg-danger/10 text-danger rounded-xl w-9 h-9 flex justify-center items-center dark:bg-danger dark:text-white-light">
+                                    <div className="bg-destructive-subtle text-danger rounded-xl w-9 h-9 flex justify-center items-center dark:bg-danger dark:text-white-light">
                                         <IconSafari className="w-5 h-5" />
                                     </div>
                                 </div>
@@ -669,7 +669,7 @@ const Analytics = () => {
                                         <p className="ltr:ml-auto rtl:mr-auto text-xs">40%</p>
                                     </div>
                                     <div>
-                                        <div className="w-full rounded-full h-5 p-1 bg-dark-light overflow-hidden shadow-3xl dark:bg-dark-light/10 dark:shadow-none">
+                                        <div className="w-full rounded-full h-5 p-1 bg-dark-light overflow-hidden shadow-3xl dark:bg-gray-800 dark:shadow-none">
                                             <div
                                                 className="bg-gradient-to-r from-[#a71d31] to-[#3f0d12] w-full h-full rounded-full relative before:absolute before:inset-y-0 ltr:before:right-0.5 rtl:before:left-0.5 before:bg-white before:w-2 before:h-2 before:rounded-full before:m-auto"
                                                 style={{ width: '40%' }}
@@ -680,7 +680,7 @@ const Analytics = () => {
                             </div>
                             <div className="flex items-center">
                                 <div className="w-9 h-9">
-                                    <div className="bg-warning/10 text-warning rounded-xl w-9 h-9 flex justify-center items-center dark:bg-warning dark:text-white-light">
+                                    <div className="bg-warning-subtle text-warning rounded-xl w-9 h-9 flex justify-center items-center dark:bg-warning dark:text-white-light">
                                         <IconGlobe className="w-5 h-5" />
                                     </div>
                                 </div>
@@ -690,7 +690,7 @@ const Analytics = () => {
                                         <p className="ltr:ml-auto rtl:mr-auto text-xs">25%</p>
                                     </div>
                                     <div>
-                                        <div className="w-full rounded-full h-5 p-1 bg-dark-light overflow-hidden shadow-3xl dark:bg-dark-light/10 dark:shadow-none">
+                                        <div className="w-full rounded-full h-5 p-1 bg-dark-light overflow-hidden shadow-3xl dark:bg-gray-800 dark:shadow-none">
                                             <div
                                                 className="bg-gradient-to-r from-[#fe5f75] to-[#fc9842] w-full h-full rounded-full relative before:absolute before:inset-y-0 ltr:before:right-0.5 rtl:before:left-0.5 before:bg-white before:w-2 before:h-2 before:rounded-full before:m-auto"
                                                 style={{ width: '25%' }}
@@ -704,7 +704,7 @@ const Analytics = () => {
 
                     <div className="panel h-full p-0">
                         <div className="flex p-5">
-                            <div className="shrink-0 bg-primary/10 text-primary rounded-xl w-11 h-11 flex justify-center items-center dark:bg-primary dark:text-white-light">
+                            <div className="shrink-0 bg-primary-subtle text-primary rounded-xl w-11 h-11 flex justify-center items-center dark:bg-primary dark:text-white-light">
                                 <IconUsersGroup className="w-5 h-5" />
                             </div>
                             <div className="ltr:ml-3 rtl:mr-3 font-semibold">
@@ -719,7 +719,7 @@ const Analytics = () => {
 
                     <div className="panel h-full p-0">
                         <div className="flex p-5">
-                            <div className="shrink-0 bg-danger/10 text-danger rounded-xl w-11 h-11 flex justify-center items-center dark:bg-danger dark:text-white-light">
+                            <div className="shrink-0 bg-destructive-subtle text-danger rounded-xl w-11 h-11 flex justify-center items-center dark:bg-danger dark:text-white-light">
                                 <IconLink className="w-5 h-5" />
                             </div>
                             <div className="ltr:ml-3 rtl:mr-3 font-semibold">
@@ -734,7 +734,7 @@ const Analytics = () => {
 
                     <div className="panel h-full p-0">
                         <div className="flex p-5">
-                            <div className="shrink-0 bg-success/10 text-success rounded-xl w-11 h-11 flex justify-center items-center dark:bg-success dark:text-white-light">
+                            <div className="shrink-0 bg-success-subtle text-success rounded-xl w-11 h-11 flex justify-center items-center dark:bg-success dark:text-white-light">
                                 <IconChatDots className="w-5 h-5" />
                             </div>
                             <div className="ltr:ml-3 rtl:mr-3 font-semibold">
@@ -768,7 +768,7 @@ const Analytics = () => {
                                     <IconThumbUp className="w-5 h-5 text-info inline ltr:mr-1.5 rtl:ml-1.5 relative -top-0.5" />
                                     <span className="dark:text-info">551 Likes</span>
                                 </div>
-                                <button type="button" className="flex items-center bg-success/30 text-success rounded-md px-1.5 py-1 text-xs hover:shadow-[0_10px_20px_-10px] hover:shadow-success">
+                                <button type="button" className="flex items-center bg-success-subtle text-success rounded-md px-1.5 py-1 text-xs hover:shadow-[0_10px_20px_-10px] hover:shadow-success">
                                     Read More
                                     <IconCaretsDown className="w-4 h-4 rtl:rotate-90 -rotate-90 ltr:ml-1.5 rtl:mr-1.5" />
                                 </button>
@@ -824,7 +824,7 @@ const Analytics = () => {
                                     offset={[0, 5]}
                                     placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
                                     btnClassName="hover:text-primary"
-                                    button={<IconHorizontalDots className="w-5 h-5 text-black/70 dark:text-white/70 hover:!text-primary" />}
+                                    button={<IconHorizontalDots className="w-5 h-5 text-gray-700 dark:text-gray-200 hover:!text-primary" />}
                                 >
                                     <ul>
                                         <li>
@@ -849,11 +849,11 @@ const Analytics = () => {
                                 </div>
                                 <p className="text-primary">65%</p>
                             </div>
-                            <div className="rounded-full h-2.5 p-0.5 bg-dark-light dark:bg-dark-light/10 mb-5">
+                            <div className="rounded-full h-2.5 p-0.5 bg-dark-light dark:bg-gray-800 mb-5">
                                 <div className="bg-gradient-to-r from-[#1e9afe] to-[#60dfcd] h-full rounded-full" style={{ width: '65%' }}></div>
                             </div>
                             <div className="flex items-end justify-between">
-                                <div className="flex items-center rounded-full bg-danger/20 px-2 py-1 text-xs text-danger font-semibold">
+                                <div className="flex items-center rounded-full bg-destructive-subtle px-2 py-1 text-xs text-danger font-semibold">
                                     <IconClock className="w-3 h-3 ltr:mr-1 rtl:ml-1" />3 Days Left
                                 </div>
                                 <div className="flex items-center justify-center group-hover:-space-x-2 rtl:space-x-reverse rtl:group-hover:space-x-reverse">

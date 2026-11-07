@@ -223,7 +223,7 @@ const MyBookings: React.FC = () => {
     if (isLoading) {
         return (
             <div className="w-full px-4 md:px-8 py-8 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-slate-900 min-h-screen">
-                <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-xl border border-white/20 dark:border-gray-700/50 rounded-2xl py-12 mb-8">
+                <div className="bg-white dark:bg-gray-800  shadow-xl border border-gray-200 dark:border-gray-700 rounded-2xl py-12 mb-8">
                     <div className="text-center">
                         <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-slate-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent flex items-center justify-center gap-4">
                             <IconTruck className="w-10 h-10 text-blue-600" stroke={1.5} />
@@ -248,7 +248,7 @@ const MyBookings: React.FC = () => {
     if (error) {
         return (
             <div className="w-full px-4 md:px-8 py-8 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-slate-900 min-h-screen">
-                <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-xl border border-white/20 dark:border-gray-700/50 rounded-2xl py-12 mb-8">
+                <div className="bg-white dark:bg-gray-800  shadow-xl border border-gray-200 dark:border-gray-700 rounded-2xl py-12 mb-8">
                     <div className="text-center">
                         <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-slate-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent flex items-center justify-center gap-4">
                             <IconTruck className="w-10 h-10 text-red-600" stroke={1.5} />
@@ -259,7 +259,7 @@ const MyBookings: React.FC = () => {
                 </div>
 
                 <div className="w-full max-w-7xl mx-auto">
-                    <div className="bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-red-800/20 border border-red-200 dark:border-red-800 rounded-2xl p-12 text-center shadow-xl">
+                    <div className="bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-950 dark:to-red-950 border border-red-200 dark:border-red-800 rounded-2xl p-12 text-center shadow-xl">
                         <h3 className="text-2xl font-bold text-red-800 dark:text-red-200 mb-3">Unable to load bookings</h3>
                         <p className="text-red-600 dark:text-red-300 mb-8 text-lg">{error.message || 'Failed to load your bookings. Please try again.'}</p>
                         <button
@@ -299,11 +299,10 @@ const MyBookings: React.FC = () => {
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 dark:from-blue-700 dark:via-indigo-800 dark:to-purple-900 backdrop-blur-sm shadow-xl border border-white/20 dark:border-gray-700/50 rounded-2xl py-8 md:py-12 mb-8 relative overflow-hidden"
+                className="bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 dark:from-blue-700 dark:via-indigo-800 dark:to-purple-900  shadow-xl border border-purple-500 dark:border-gray-700 rounded-2xl py-8 md:py-12 mb-8 relative overflow-hidden"
             >
                 {/* Enhanced background decoration with floating elements */}
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-transparent to-pink-500/10"></div>
-                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_20%,rgba(120,119,198,0.3),transparent)]"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-50 via-transparent to-pink-50"></div>
 
                 {/* Floating geometric shapes for commercial effect */}
                 <motion.div
@@ -315,7 +314,7 @@ const MyBookings: React.FC = () => {
                         rotate: { duration: 20, repeat: Infinity, ease: 'linear' },
                         scale: { duration: 4, repeat: Infinity, ease: 'easeInOut' },
                     }}
-                    className="absolute top-4 right-4 w-20 h-20 border-2 border-white/20 rounded-full"
+                    className="absolute top-4 right-4 w-20 h-20 border-2 border-purple-500 rounded-full"
                 ></motion.div>
 
                 <motion.div
@@ -327,7 +326,7 @@ const MyBookings: React.FC = () => {
                         rotate: { duration: 25, repeat: Infinity, ease: 'linear' },
                         y: { duration: 3, repeat: Infinity, ease: 'easeInOut' },
                     }}
-                    className="absolute bottom-4 left-4 w-16 h-16 border-2 border-white/15 rounded-lg rotate-45"
+                    className="absolute bottom-4 left-4 w-16 h-16 border-2 border-purple-500 rounded-lg rotate-45"
                 ></motion.div>
 
                 <motion.div
@@ -341,7 +340,7 @@ const MyBookings: React.FC = () => {
                         ease: 'easeInOut',
                         delay: 1,
                     }}
-                    className="absolute top-1/2 right-1/4 w-12 h-12 bg-white/10 rounded-full"
+                    className="absolute top-1/2 right-1/4 w-12 h-12 bg-purple-800 rounded-full"
                 ></motion.div>
 
                 <div className="relative z-10">
@@ -375,7 +374,7 @@ const MyBookings: React.FC = () => {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 md:p-8 rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/50 mb-8"
+                    className="bg-white dark:bg-gray-800  p-6 md:p-8 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 mb-8"
                 >
                     <div className="flex flex-col md:flex-row justify-between gap-6">
                         <div className="relative flex-grow">
@@ -386,7 +385,7 @@ const MyBookings: React.FC = () => {
                                 type="text"
                                 className="block w-full pl-12 pr-12 py-4 border border-gray-200 dark:border-gray-600 rounded-xl
                                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                                         bg-white/80 dark:bg-gray-700/80 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400
+                                         bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400
                                          text-lg font-medium shadow-sm transition-all duration-200"
                                 placeholder="Search bookings by ID, location, or provider..."
                                 value={searchQuery}
@@ -409,7 +408,7 @@ const MyBookings: React.FC = () => {
                                 <select
                                     className="border border-gray-200 dark:border-gray-600 rounded-xl
                                              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent py-3 px-4
-                                             bg-white/80 dark:bg-gray-700/80 text-gray-900 dark:text-gray-100 min-w-[160px]
+                                             bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 min-w-[160px]
                                              font-medium shadow-sm"
                                     value={filterStatus}
                                     onChange={(e) => setFilterStatus(e.target.value)}
@@ -429,7 +428,7 @@ const MyBookings: React.FC = () => {
                             <button
                                 onClick={() => mutate()}
                                 className="inline-flex items-center px-6 py-3 text-sm font-semibold text-gray-700 dark:text-gray-300
-                                         bg-white/80 dark:bg-gray-700/80 border border-gray-200 dark:border-gray-600 rounded-xl
+                                         bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl
                                          hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 shadow-sm hover:shadow-md
                                          transform hover:-translate-y-0.5"
                                 title="Refresh bookings"
@@ -445,7 +444,7 @@ const MyBookings: React.FC = () => {
                 <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="mb-8 flex flex-row border-b-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-2 shadow-lg border border-white/20 dark:border-gray-700/50 gap-1"
+                    className="mb-8 flex flex-row border-b-0 bg-white dark:bg-gray-800  rounded-2xl p-2 shadow-lg border border-gray-200 dark:border-gray-700 gap-1"
                 >
                     {[
                         { key: 'all', label: 'All Bookings', icon: IconTruck },
@@ -491,7 +490,7 @@ const MyBookings: React.FC = () => {
                                 <span className="sm:hidden">{label.split(' ')[0]}</span>
                                 <span
                                     className={`ml-1 md:ml-2 text-xs px-1.5 md:px-2 py-0.5 md:py-1 rounded-full font-bold ${
-                                        activeTab === key ? 'bg-white/20 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300'
+                                        activeTab === key ? 'bg-gray-700 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300'
                                     }`}
                                 >
                                     {count}
@@ -514,7 +513,7 @@ const MyBookings: React.FC = () => {
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/50 p-16 text-center"
+                                className="bg-white dark:bg-gray-800  rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-16 text-center"
                             >
                                 <div className="mb-8">
                                     {searchQuery || filterStatus !== 'all' ? (

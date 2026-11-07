@@ -49,10 +49,10 @@ const formatDate = (dateString: string) =>
 type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
 
 const ORDER_STATUS_STYLES: Record<OrderStatus, string> = {
-    pending:    'bg-bid-amber/10 text-bid-amber',
+    pending:    'bg-warning-subtle text-bid-amber',
     processing: 'bg-secondary-container text-on-secondary-container',
     shipped:    'bg-surface-container-highest text-on-surface-variant',
-    delivered:  'bg-bid-green/10 text-bid-green',
+    delivered:  'bg-success-subtle text-bid-green',
     cancelled:  'bg-error-container text-on-error-container',
 };
 
@@ -87,7 +87,7 @@ function KpiCard({ label, value, icon, iconColor, delta, deltaLabel, accent }: K
                     </span>
                 )}
                 {deltaLabel && (
-                    <span className="text-xs text-on-surface-variant opacity-70">{deltaLabel}</span>
+                    <span className="text-xs text-on-surface-variant">{deltaLabel}</span>
                 )}
             </div>
         </div>
@@ -143,16 +143,16 @@ const EcommerceDashboard = () => {
 
             {/* ── Currency Context Strip ──────────────────────────────────── */}
             <div className="flex flex-wrap items-center gap-3 text-[10px] uppercase tracking-widest text-on-surface-variant">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-tertiary/10 text-tertiary font-bold">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-info-subtle text-tertiary font-bold">
                     <span className="material-symbols-outlined text-sm">savings</span>
                     Base · {baseCurrency}
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-container/10 text-primary-container font-bold">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-subtle text-primary-container font-bold">
                     <span className="material-symbols-outlined text-sm">visibility</span>
                     Viewing · {currency}
                 </span>
                 {currency !== baseCurrency && (
-                    <span className="text-on-surface-variant opacity-70 normal-case tracking-normal">
+                    <span className="text-on-surface-variant normal-case tracking-normal">
                         Amounts are converted from <strong>{baseCurrency}</strong> for display.
                     </span>
                 )}
@@ -199,7 +199,7 @@ const EcommerceDashboard = () => {
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
                         <div>
                             <h3 className="font-headline font-bold text-xl text-on-surface">Sales Performance</h3>
-                            <p className="text-sm text-on-surface-variant opacity-70">Revenue trajectory over time</p>
+                            <p className="text-sm text-on-surface-variant">Revenue trajectory over time</p>
                         </div>
                         <div className="flex bg-surface-container-low p-1 rounded-lg">
                             {(['7d', '30d', '90d'] as const).map((p) => (
@@ -225,12 +225,12 @@ const EcommerceDashboard = () => {
                 {/* Payout Balance (1/3) */}
                 <div className="lg:w-1/3 bg-on-background text-white rounded-xl shadow-card overflow-hidden relative p-8 flex flex-col justify-between">
                     {/* Decorative glows */}
-                    <div className="absolute -right-8 -top-8 w-48 h-48 bg-primary-container/10 rounded-full blur-3xl pointer-events-none" />
-                    <div className="absolute -left-8 -bottom-8 w-48 h-48 bg-k-secondary/10 rounded-full blur-3xl pointer-events-none" />
+                    <div className="absolute -right-8 -top-8 w-48 h-48 bg-primary-subtle rounded-full blur-3xl pointer-events-none" />
+                    <div className="absolute -left-8 -bottom-8 w-48 h-48 bg-success-subtle rounded-full blur-3xl pointer-events-none" />
 
                     <div className="relative z-10">
                         <div className="flex justify-between items-center mb-6">
-                            <span className="text-[10px] font-bold uppercase tracking-widest opacity-60">Available Balance</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest">Available Balance</span>
                             <span className="material-symbols-outlined text-secondary-fixed">account_balance_wallet</span>
                         </div>
                         <div className="space-y-1">
@@ -249,7 +249,7 @@ const EcommerceDashboard = () => {
                         </button>
                         <Link
                             to="/admin/revenue/transactions"
-                            className="block text-center text-xs font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors"
+                            className="block text-center text-xs font-bold uppercase tracking-widest text-gray-300 hover:text-white transition-colors"
                         >
                             View Payout History
                         </Link>
@@ -259,7 +259,7 @@ const EcommerceDashboard = () => {
 
             {/* ── Recent Orders Table ──────────────────────────────────────── */}
             <div className="bg-surface-container-lowest rounded-xl shadow-card overflow-hidden">
-                <div className="p-6 border-b border-outline-variant/10 flex justify-between items-center">
+                <div className="p-6 border-b border-border flex justify-between items-center">
                     <h3 className="font-headline font-bold text-xl text-on-surface">Recent Orders</h3>
                     <Link
                         to="/admin/orders/list"
@@ -273,7 +273,7 @@ const EcommerceDashboard = () => {
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-surface-container-low/50">
+                            <tr className="bg-surface-container-low">
                                 {['Order ID', 'Product', 'Status', 'Date', 'Amount'].map((h) => (
                                     <th key={h} className="px-6 py-4 text-[10px] uppercase tracking-widest text-on-surface-variant font-bold whitespace-nowrap">
                                         {h}
@@ -281,7 +281,7 @@ const EcommerceDashboard = () => {
                                 ))}
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-outline-variant/10">
+                        <tbody className="divide-y divide-border">
                             {ordersLoading ? (
                                 <tr>
                                     <td colSpan={5} className="px-6 py-8 text-center">
@@ -290,7 +290,7 @@ const EcommerceDashboard = () => {
                                 </tr>
                             ) : recentOrders && recentOrders.length > 0 ? (
                                 recentOrders.slice(0, 5).map((order) => (
-                                    <tr key={order.id} className="hover:bg-surface-container-low/30 transition-colors">
+                                    <tr key={order.id} className="hover:bg-surface-container-low transition-colors">
                                         <td className="px-6 py-4 font-mono text-sm text-on-surface whitespace-nowrap">
                                             #{order.order_number}
                                         </td>
@@ -326,7 +326,7 @@ const EcommerceDashboard = () => {
             {/* TODO: wire to API — top products endpoint */}
             {(productsLoading || (topProducts && topProducts.length > 0)) && (
                 <div className="bg-surface-container-lowest rounded-xl shadow-card overflow-hidden">
-                    <div className="p-6 border-b border-outline-variant/10 flex justify-between items-center">
+                    <div className="p-6 border-b border-border flex justify-between items-center">
                         <h3 className="font-headline font-bold text-xl text-on-surface">Top Products</h3>
                         <Link
                             to="/admin/products/list"
@@ -336,7 +336,7 @@ const EcommerceDashboard = () => {
                             <span className="material-symbols-outlined text-sm">chevron_right</span>
                         </Link>
                     </div>
-                    <div className="divide-y divide-outline-variant/10">
+                    <div className="divide-y divide-border">
                         {productsLoading ? (
                             <div className="p-6 text-center">
                                 <IconLoader className="w-6 h-6 animate-spin mx-auto text-primary-container" />
@@ -345,7 +345,7 @@ const EcommerceDashboard = () => {
                             <Link
                                 key={product.id}
                                 to={`/admin/products/${product.id}`}
-                                className="flex items-center gap-4 px-6 py-4 hover:bg-surface-container-low/30 transition-colors"
+                                className="flex items-center gap-4 px-6 py-4 hover:bg-surface-container-low transition-colors"
                             >
                                 <span className="font-mono text-sm text-on-surface-variant w-5 text-right flex-shrink-0">{index + 1}</span>
                                 <div className="w-10 h-10 rounded-md bg-surface-container flex-shrink-0 overflow-hidden">
@@ -357,7 +357,7 @@ const EcommerceDashboard = () => {
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="font-medium text-sm text-on-surface truncate">{product.name}</p>
-                                    <p className="text-[10px] uppercase tracking-widest text-on-surface-variant opacity-70">{product.sales_count} sales</p>
+                                    <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{product.sales_count} sales</p>
                                 </div>
                                 <span className="font-mono font-bold text-on-surface whitespace-nowrap">{formatDisplayPrice(product.revenue)}</span>
                             </Link>
@@ -372,7 +372,7 @@ const EcommerceDashboard = () => {
                     {(stats?.pending_orders ?? 0) > 0 && (
                         <Link
                             to="/admin/orders/pending"
-                            className="bg-bid-amber/5 border border-bid-amber/20 p-4 rounded-xl hover:bg-bid-amber/10 transition-colors flex items-center gap-3 active:scale-95"
+                            className="bg-warning-subtle border border-warning-200 p-4 rounded-xl hover:bg-warning-100 transition-colors flex items-center gap-3 active:scale-95"
                         >
                             <span className="material-symbols-outlined text-bid-amber">schedule</span>
                             <div>
@@ -384,7 +384,7 @@ const EcommerceDashboard = () => {
                     {(stats?.low_stock_items ?? 0) > 0 && (
                         <Link
                             to="/admin/inventory/low-stock"
-                            className="bg-bid-amber/5 border border-bid-amber/20 p-4 rounded-xl hover:bg-bid-amber/10 transition-colors flex items-center gap-3 active:scale-95"
+                            className="bg-warning-subtle border border-warning-200 p-4 rounded-xl hover:bg-warning-100 transition-colors flex items-center gap-3 active:scale-95"
                         >
                             <span className="material-symbols-outlined text-bid-amber">inventory_2</span>
                             <div>
@@ -396,7 +396,7 @@ const EcommerceDashboard = () => {
                     {(stats?.out_of_stock_items ?? 0) > 0 && (
                         <Link
                             to="/admin/inventory/stock"
-                            className="bg-bid-red/5 border border-bid-red/20 p-4 rounded-xl hover:bg-bid-red/10 transition-colors flex items-center gap-3 active:scale-95"
+                            className="bg-destructive-subtle border border-danger-200 p-4 rounded-xl hover:bg-danger-100 transition-colors flex items-center gap-3 active:scale-95"
                         >
                             <span className="material-symbols-outlined text-bid-red">warning</span>
                             <div>
@@ -413,7 +413,7 @@ const EcommerceDashboard = () => {
             <div className="bg-surface-container-low p-6 rounded-xl border-l-4 border-tertiary">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="flex items-start gap-4">
-                        <div className="bg-tertiary/10 p-2 rounded-lg text-tertiary flex-shrink-0">
+                        <div className="bg-info-subtle p-2 rounded-lg text-tertiary flex-shrink-0">
                             <span className="material-symbols-outlined">health_metrics</span>
                         </div>
                         <div>
@@ -425,7 +425,7 @@ const EcommerceDashboard = () => {
                     </div>
                     <Link
                         to="/admin/products/list"
-                        className="bg-surface-container-lowest text-tertiary border border-tertiary/20 px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-tertiary hover:text-white transition-all active:scale-95 whitespace-nowrap"
+                        className="bg-surface-container-lowest text-tertiary border border-info-200 px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-tertiary hover:text-white transition-all active:scale-95 whitespace-nowrap"
                     >
                         Review Listings
                     </Link>

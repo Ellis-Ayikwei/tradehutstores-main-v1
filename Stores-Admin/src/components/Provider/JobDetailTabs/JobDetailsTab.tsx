@@ -22,10 +22,10 @@ const JobDetailsTab: React.FC<JobDetailsTabProps> = ({ job }) => {
                         <div
                             className={`h-10 w-10 rounded-md flex items-center justify-center mr-3 ${
                                 job.request.request_type === 'instant'
-                                    ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400'
+                                    ? 'bg-yellow-100 dark:bg-yellow-950 text-yellow-600 dark:text-yellow-400'
                                     : job.request.request_type === 'auction'
-                                    ? 'bg-purple-100 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400'
-                                    : 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                                    ? 'bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400'
+                                    : 'bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400'
                             }`}
                         >
                             <FontAwesomeIcon icon={job.request.request_type === 'instant' ? faBolt : job.request.request_type === 'auction' ? faGavel : faRoute} />
@@ -48,7 +48,7 @@ const JobDetailsTab: React.FC<JobDetailsTabProps> = ({ job }) => {
                 <div>
                     <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Personnel Required</h3>
                     <div className="flex items-center">
-                        <div className="h-10 w-10 rounded-md bg-indigo-100 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mr-3">
+                        <div className="h-10 w-10 rounded-md bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mr-3">
                             <FontAwesomeIcon icon={faUser} />
                         </div>
                         <div>
@@ -120,7 +120,7 @@ const JobDetailsTab: React.FC<JobDetailsTabProps> = ({ job }) => {
                     {job.request.contact_avatar ? (
                         <img src={job.request.contact_avatar} alt={job.request.contact_name} className="h-12 w-12 rounded-full mr-4 object-cover" />
                     ) : (
-                        <div className="h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 flex items-center justify-center mr-4">
+                        <div className="h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center mr-4">
                             <FontAwesomeIcon icon={faUser} />
                         </div>
                     )}

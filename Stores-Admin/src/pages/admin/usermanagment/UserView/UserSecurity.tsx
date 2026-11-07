@@ -615,7 +615,7 @@ const UserSecurity: React.FC<UserSecurityProps> = ({ user, isEditing, onSave, on
           {showPasswordForm && (
             <div className="space-y-4 mt-4 relative">
               {saving && (
-                <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center rounded-lg">
+                <div className="absolute inset-0 bg-white  z-10 flex items-center justify-center rounded-lg">
                   <div className="flex items-center space-x-2 text-blue-600">
                     <div className="animate-spin rounded-full h-6 w-6 border-2 border-blue-600 border-t-transparent"></div>
                     <span className="font-medium">Updating password...</span>
@@ -639,13 +639,13 @@ const UserSecurity: React.FC<UserSecurityProps> = ({ user, isEditing, onSave, on
                     }}
                     className={`w-full p-2 border rounded pr-10 ${
                       passwordErrors.newPassword.length > 0 ? 'border-red-500 focus:border-red-500' : ''
-                    } ${saving ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    } ${saving ? 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed' : ''}`}
                     disabled={saving}
                   />
                   <button
                     type="button"
                     onClick={() => setShowNewPassword(v => !v)}
-                    className={`absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 ${saving ? 'opacity-50 cursor-not-allowed' : 'hover:text-gray-700'}`}
+                    className={`absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 ${saving ? 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed' : 'hover:text-gray-700'}`}
                     tabIndex={-1}
                     disabled={saving}
                   >
@@ -698,13 +698,13 @@ const UserSecurity: React.FC<UserSecurityProps> = ({ user, isEditing, onSave, on
                     }}
                     className={`w-full p-2 border rounded pr-10 ${
                       passwordErrors.confirmPassword.length > 0 ? 'border-red-500 focus:border-red-500' : ''
-                    } ${saving ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    } ${saving ? 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed' : ''}`}
                     disabled={saving}
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(v => !v)}
-                    className={`absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 ${saving ? 'opacity-50 cursor-not-allowed' : 'hover:text-gray-700'}`}
+                    className={`absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 ${saving ? 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed' : 'hover:text-gray-700'}`}
                     tabIndex={-1}
                     disabled={saving}
                   >
@@ -753,7 +753,7 @@ const UserSecurity: React.FC<UserSecurityProps> = ({ user, isEditing, onSave, on
                     setError(null);
                   }}
                   disabled={saving}
-                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:opacity-50"
+                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
                 >
                   Cancel
                 </button>
@@ -878,7 +878,7 @@ const UserSecurity: React.FC<UserSecurityProps> = ({ user, isEditing, onSave, on
               <button
                 onClick={handleDeactivateUser}
                 disabled={otpLoading}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center disabled:opacity-50"
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
               >
                 <UserX className="w-4 h-4 mr-2" />
                 {otpLoading ? 'Processing...' : 'Deactivate User'}
@@ -887,7 +887,7 @@ const UserSecurity: React.FC<UserSecurityProps> = ({ user, isEditing, onSave, on
               <button
                 onClick={handleActivateUser}
                 disabled={otpLoading}
-                className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center disabled:opacity-50"
+                className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
               >
                 <UserCheck className="w-4 h-4 mr-2" />
                 {otpLoading ? 'Processing...' : 'Activate User'}
@@ -897,7 +897,7 @@ const UserSecurity: React.FC<UserSecurityProps> = ({ user, isEditing, onSave, on
             <button
               onClick={handleVerifyUser}
               disabled={otpLoading}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center disabled:opacity-50"
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
             >
               <CheckCircle2 className="w-4 h-4 mr-2" />
               {otpLoading ? 'Processing...' : 'Verify User'}
@@ -919,7 +919,7 @@ const UserSecurity: React.FC<UserSecurityProps> = ({ user, isEditing, onSave, on
             <button
               onClick={handleViewOTPs}
               disabled={otpLoading}
-              className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 flex items-center disabled:opacity-50"
+              className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 flex items-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
             >
               <ViewIcon className="w-4 h-4 mr-2" />
               {otpLoading ? 'Loading...' : 'View Current OTPs'}
@@ -1066,7 +1066,7 @@ const UserSecurity: React.FC<UserSecurityProps> = ({ user, isEditing, onSave, on
                 <button
                   onClick={handleGenerateLoginOTP}
                   disabled={otpLoading}
-                  className="px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-center disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow-md"
+                  className="px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   <RefreshCw className={`w-4 h-4 mr-2 ${otpLoading ? 'animate-spin' : ''}`} />
                   {otpLoading ? 'Generating...' : 'Generate Login OTP'}
@@ -1074,7 +1074,7 @@ const UserSecurity: React.FC<UserSecurityProps> = ({ user, isEditing, onSave, on
                 <button
                   onClick={handleSendLoginOTP}
                   disabled={otpLoading}
-                  className="px-4 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center justify-center disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow-md"
+                  className="px-4 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center justify-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   <Send className={`w-4 h-4 mr-2 ${otpLoading ? 'animate-pulse' : ''}`} />
                   {otpLoading ? 'Sending...' : 'Send Login OTP'}
@@ -1082,7 +1082,7 @@ const UserSecurity: React.FC<UserSecurityProps> = ({ user, isEditing, onSave, on
                 <button
                   onClick={() => handleResetOTPLimits("login")}
                   disabled={otpLoading}
-                  className="px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 flex items-center justify-center disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow-md"
+                  className="px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 flex items-center justify-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   <Wrench className={`w-4 h-4 mr-2 ${otpLoading ? 'animate-pulse' : ''}`} />
                   {otpLoading ? 'Resetting...' : 'Reset OTP Limit'}
@@ -1100,7 +1100,7 @@ const UserSecurity: React.FC<UserSecurityProps> = ({ user, isEditing, onSave, on
                 <button
                   onClick={handleGenerateVerifyOTP}
                   disabled={otpLoading}
-                  className="px-4 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 flex items-center justify-center disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow-md"
+                  className="px-4 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 flex items-center justify-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   <RefreshCw className={`w-4 h-4 mr-2 ${otpLoading ? 'animate-spin' : ''}`} />
                   {otpLoading ? 'Generating...' : 'Generate Verify OTP'}
@@ -1108,7 +1108,7 @@ const UserSecurity: React.FC<UserSecurityProps> = ({ user, isEditing, onSave, on
                 <button
                   onClick={handleSendVerifyOTP}
                   disabled={otpLoading}
-                  className="px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 flex items-center justify-center disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow-md"
+                  className="px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 flex items-center justify-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   <Send className={`w-4 h-4 mr-2 ${otpLoading ? 'animate-pulse' : ''}`} />
                   {otpLoading ? 'Sending...' : 'Send Verify OTP'}
@@ -1116,7 +1116,7 @@ const UserSecurity: React.FC<UserSecurityProps> = ({ user, isEditing, onSave, on
                 <button
                   onClick={() => handleResetOTPLimits("sign_up")}
                   disabled={otpLoading}
-                  className="px-4 py-3 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 flex items-center justify-center disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow-md"
+                  className="px-4 py-3 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 flex items-center justify-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   <Wrench className={`w-4 h-4 mr-2 ${otpLoading ? 'animate-pulse' : ''}`} />
                   {otpLoading ? 'Resetting...' : 'Reset OTP Limit'}
@@ -1135,7 +1135,7 @@ const UserSecurity: React.FC<UserSecurityProps> = ({ user, isEditing, onSave, on
                 <button
                   onClick={handleSendPasswordResetOTP}
                   disabled={otpLoading}
-                  className="w-full px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center justify-center disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow-md"
+                  className="w-full px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center justify-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   <Send className={`w-4 h-4 mr-2 ${otpLoading ? 'animate-pulse' : ''}`} />
                   {otpLoading ? 'Sending...' : 'Send Reset OTP'}
@@ -1151,7 +1151,7 @@ const UserSecurity: React.FC<UserSecurityProps> = ({ user, isEditing, onSave, on
                 <button
                   onClick={handleSendEmailChangeOTP}
                   disabled={otpLoading}
-                  className="w-full px-4 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 flex items-center justify-center disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow-md"
+                  className="w-full px-4 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 flex items-center justify-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   <Send className={`w-4 h-4 mr-2 ${otpLoading ? 'animate-pulse' : ''}`} />
                   {otpLoading ? 'Sending...' : 'Send Email OTP'}
@@ -1167,7 +1167,7 @@ const UserSecurity: React.FC<UserSecurityProps> = ({ user, isEditing, onSave, on
                 <button
                   onClick={handleSendPhoneChangeOTP}
                   disabled={otpLoading}
-                  className="w-full px-4 py-3 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 flex items-center justify-center disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow-md"
+                  className="w-full px-4 py-3 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 flex items-center justify-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   <Send className={`w-4 h-4 mr-2 ${otpLoading ? 'animate-pulse' : ''}`} />
                   {otpLoading ? 'Sending...' : 'Send Phone OTP'}

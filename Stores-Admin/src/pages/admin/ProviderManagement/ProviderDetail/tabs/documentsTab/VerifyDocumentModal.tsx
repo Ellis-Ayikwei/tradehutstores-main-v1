@@ -85,7 +85,7 @@ const VerifyDocumentModal: React.FC<VerifyDocumentModalProps> = ({ isOpen, onClo
                     </div>
 
                     {/* Document Details */}
-                    <div className="bg-gray-50 dark:bg-slate-700/30 p-3 rounded-lg mb-4">
+                    <div className="bg-gray-50 dark:bg-slate-700 p-3 rounded-lg mb-4">
                         <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Document Details</h4>
                         <div className="space-y-2">
                             <div className="flex justify-between">

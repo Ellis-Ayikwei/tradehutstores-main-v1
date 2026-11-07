@@ -167,7 +167,7 @@ const ColorSwatchPicker: React.FC<{
                             title={`${p.name}${p.value ? ` · ${p.value}` : ''}`}
                             className={`relative h-8 w-8 rounded-full border-2 transition shrink-0 ${
                                 selected
-                                    ? 'border-primary ring-2 ring-primary/30'
+                                    ? 'border-primary ring-2 ring-primary-200'
                                     : 'border-gray-200 dark:border-gray-700 hover:border-gray-400'
                             } ${isNone ? 'bg-white dark:bg-gray-800' : ''}`}
                             style={!isNone ? { backgroundColor: p.value } : undefined}
@@ -486,7 +486,7 @@ const MerchandisingHomepage: React.FC = () => {
                         type="button"
                         onClick={load}
                         disabled={loading}
-                        className="inline-flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-2 text-sm font-semibold text-on-surface dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 transition"
+                        className="inline-flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-2 text-sm font-semibold text-on-surface dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500 transition"
                     >
                         <IconRefresh size={16} className={loading ? 'animate-spin' : ''} />
                         Refresh
@@ -494,7 +494,7 @@ const MerchandisingHomepage: React.FC = () => {
                     <button
                         type="button"
                         onClick={openCreate}
-                        className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:opacity-90 transition shadow-card"
+                        className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:brightness-95 transition shadow-card"
                     >
                         <IconPlus size={16} />
                         New section
@@ -504,7 +504,7 @@ const MerchandisingHomepage: React.FC = () => {
 
             {/* Error banner */}
             {error && (
-                <div className="flex items-start gap-2 rounded-xl border border-warning/40 bg-warning/10 px-4 py-3 text-sm text-on-surface dark:text-white">
+                <div className="flex items-start gap-2 rounded-xl border border-warning-300 bg-warning-subtle px-4 py-3 text-sm text-on-surface dark:text-white">
                     <IconAlertTriangle className="w-5 h-5 shrink-0 text-warning" />
                     <span className="flex-1">{error}</span>
                     <button type="button" onClick={() => setError(null)} className="text-on-surface-variant hover:text-on-surface">
@@ -582,7 +582,7 @@ const MerchandisingHomepage: React.FC = () => {
             <section className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden">
                 {filteredRows.length === 0 ? (
                     <div className="px-6 py-16 text-center">
-                        <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                        <div className="mx-auto w-12 h-12 rounded-full bg-primary-subtle text-primary flex items-center justify-center">
                             <IconLayoutGrid size={24} />
                         </div>
                         <p className="mt-4 text-sm font-semibold text-on-surface dark:text-white">
@@ -597,7 +597,7 @@ const MerchandisingHomepage: React.FC = () => {
                             <button
                                 type="button"
                                 onClick={openCreate}
-                                className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:opacity-90 transition"
+                                className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:brightness-95 transition"
                             >
                                 <IconPlus size={16} /> New section
                             </button>
@@ -607,7 +607,7 @@ const MerchandisingHomepage: React.FC = () => {
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
-                                <tr className="text-left text-xs font-semibold uppercase tracking-wider text-on-surface-variant dark:text-gray-500 border-b border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50">
+                                <tr className="text-left text-xs font-semibold uppercase tracking-wider text-on-surface-variant dark:text-gray-500 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
                                     <th className="px-5 py-3">#</th>
                                     <th className="px-5 py-3">Section</th>
                                     <th className="px-5 py-3">Type</th>
@@ -621,7 +621,7 @@ const MerchandisingHomepage: React.FC = () => {
                                 {filteredRows.map((r) => (
                                     <tr
                                         key={r.id}
-                                        className="border-b border-gray-100 dark:border-gray-800/60 last:border-0 hover:bg-gray-50/60 dark:hover:bg-gray-800/40 transition"
+                                        className="border-b border-gray-100 dark:border-gray-800 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                                     >
                                         <td className="px-5 py-4 text-on-surface-variant dark:text-gray-400 font-mono">
                                             {r.position}
@@ -642,11 +642,11 @@ const MerchandisingHomepage: React.FC = () => {
                                         <td className="px-5 py-4">
                                             <div className="flex flex-wrap items-center gap-1.5">
                                                 {r.is_live ? (
-                                                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 text-xs font-semibold text-emerald-600">
+                                                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 text-xs font-semibold text-emerald-600">
                                                         <IconCircleCheckFilled size={12} /> Live
                                                     </span>
                                                 ) : r.is_active ? (
-                                                    <span className="inline-flex items-center gap-1 rounded-full bg-tertiary/10 px-2 py-0.5 text-xs font-semibold text-tertiary">
+                                                    <span className="inline-flex items-center gap-1 rounded-full bg-info-subtle px-2 py-0.5 text-xs font-semibold text-tertiary">
                                                         <IconClock size={12} /> Scheduled
                                                     </span>
                                                 ) : (
@@ -662,7 +662,7 @@ const MerchandisingHomepage: React.FC = () => {
                                                     type="button"
                                                     onClick={() => openEdit(r)}
                                                     title="Edit section"
-                                                    className="p-2 rounded-lg text-tertiary hover:bg-tertiary/10 transition"
+                                                    className="p-2 rounded-lg text-tertiary hover:bg-info-subtle transition"
                                                 >
                                                     <IconEdit size={16} />
                                                 </button>
@@ -670,7 +670,7 @@ const MerchandisingHomepage: React.FC = () => {
                                                     type="button"
                                                     onClick={() => handleDelete(r)}
                                                     title="Delete section"
-                                                    className="p-2 rounded-lg text-error hover:bg-error/10 transition"
+                                                    className="p-2 rounded-lg text-error hover:bg-destructive-subtle transition"
                                                 >
                                                     <IconTrash size={16} />
                                                 </button>
@@ -692,7 +692,7 @@ const MerchandisingHomepage: React.FC = () => {
 
             {/* Edit / Create modal */}
             {modalOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50  p-4">
                     <div className="w-full max-w-2xl max-h-[92vh] overflow-hidden flex flex-col rounded-2xl bg-white dark:bg-gray-900 shadow-2xl border border-gray-200 dark:border-gray-800">
                         {/* Modal header */}
                         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-800">
@@ -1046,7 +1046,7 @@ const MerchandisingHomepage: React.FC = () => {
                             )}
 
                             {tab === 'rule' && strategy === 'manual' && (
-                                <div className="rounded-xl border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50/60 dark:bg-gray-800/40 px-4 py-6 text-center">
+                                <div className="rounded-xl border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-6 text-center">
                                     <p className="text-sm text-on-surface-variant dark:text-gray-400">
                                         Manual strategy uses only the pinned products from the <strong>Manual picks</strong> tab — no rule needed.
                                     </p>
@@ -1056,7 +1056,7 @@ const MerchandisingHomepage: React.FC = () => {
                             {tab === 'items' && (
                                 <div className="space-y-4">
                                     {selectedId == null ? (
-                                        <div className="rounded-xl border border-warning/40 bg-warning/10 px-4 py-3 text-sm text-on-surface dark:text-white flex items-center gap-2">
+                                        <div className="rounded-xl border border-warning-300 bg-warning-subtle px-4 py-3 text-sm text-on-surface dark:text-white flex items-center gap-2">
                                             <IconAlertTriangle className="w-5 h-5 text-warning shrink-0" />
                                             Save the section first, then add product UUIDs here.
                                         </div>
@@ -1076,7 +1076,7 @@ const MerchandisingHomepage: React.FC = () => {
                                                 </div>
                                                 <button
                                                     type="button"
-                                                    className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:opacity-90 transition disabled:opacity-50"
+                                                    className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:brightness-95 transition disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
                                                     onClick={handleAddItem}
                                                     disabled={!newProductId.trim()}
                                                 >
@@ -1084,7 +1084,7 @@ const MerchandisingHomepage: React.FC = () => {
                                                 </button>
                                             </div>
                                             {(detail?.items?.length ?? 0) === 0 ? (
-                                                <div className="rounded-xl border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50/60 dark:bg-gray-800/40 px-4 py-6 text-center text-sm text-on-surface-variant">
+                                                <div className="rounded-xl border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-6 text-center text-sm text-on-surface-variant">
                                                     No pinned items yet.
                                                 </div>
                                             ) : (
@@ -1092,7 +1092,7 @@ const MerchandisingHomepage: React.FC = () => {
                                                     {(detail?.items ?? []).map((it) => (
                                                         <li
                                                             key={it.id}
-                                                            className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition"
+                                                            className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                                                         >
                                                             <div className="min-w-0">
                                                                 <p className="font-medium text-on-surface dark:text-white truncate">
@@ -1104,7 +1104,7 @@ const MerchandisingHomepage: React.FC = () => {
                                                             </div>
                                                             <button
                                                                 type="button"
-                                                                className="p-2 rounded-lg text-error hover:bg-error/10 transition shrink-0"
+                                                                className="p-2 rounded-lg text-error hover:bg-destructive-subtle transition shrink-0"
                                                                 onClick={() => handleRemoveItem(it.id)}
                                                                 title="Remove pinned product"
                                                             >
@@ -1121,7 +1121,7 @@ const MerchandisingHomepage: React.FC = () => {
                         </div>
 
                         {/* Modal footer */}
-                        <div className="flex justify-end gap-2 px-6 py-4 border-t border-gray-200 dark:border-gray-800 bg-gray-50/60 dark:bg-gray-900/60">
+                        <div className="flex justify-end gap-2 px-6 py-4 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
                             <button
                                 type="button"
                                 className="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-2 text-sm font-semibold text-on-surface dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 transition"
@@ -1132,7 +1132,7 @@ const MerchandisingHomepage: React.FC = () => {
                             {tab !== 'items' && (
                                 <button
                                     type="button"
-                                    className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:opacity-90 transition disabled:opacity-50 inline-flex items-center gap-2"
+                                    className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:brightness-95 transition disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:text-gray-500 inline-flex items-center gap-2"
                                     disabled={saving || !title.trim()}
                                     onClick={handleSave}
                                 >

@@ -158,8 +158,8 @@ const Login: React.FC = () => {
                                                 type="email"
                                                 className={`w-full pl-12 pr-4 py-4 bg-gray-50 border transition-all duration-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 ${
                                                     errors.email && touched.email
-                                                        ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500'
-                                                        : 'border-gray-300 focus:ring-orange-500/20 focus:border-orange-500 hover:border-orange-300'
+                                                        ? 'border-red-500 focus:ring-red-200 focus:border-red-500'
+                                                        : 'border-gray-300 focus:ring-orange-200 focus:border-orange-500 hover:border-orange-300'
                                                 }`}
                                                 placeholder="your@email.com"
                                             />
@@ -200,8 +200,8 @@ const Login: React.FC = () => {
                                                 type={showPassword ? 'text' : 'password'}
                                                 className={`w-full pl-12 pr-12 py-4 bg-gray-50 border transition-all duration-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 ${
                                                     errors.password && touched.password
-                                                        ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500'
-                                                        : 'border-gray-300 focus:ring-orange-500/20 focus:border-orange-500 hover:border-orange-300'
+                                                        ? 'border-red-500 focus:ring-red-200 focus:border-red-500'
+                                                        : 'border-gray-300 focus:ring-orange-200 focus:border-orange-500 hover:border-orange-300'
                                                 }`}
                                                 placeholder="Enter your password"
                                             />
@@ -224,7 +224,7 @@ const Login: React.FC = () => {
 
                                     {/* Remember Me */}
                                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="flex items-center">
-                                        <Field name="rememberMe" type="checkbox" className="h-4 w-4 text-orange-600 focus:ring-orange-500/20 border-gray-300 rounded bg-gray-50" />
+                                        <Field name="rememberMe" type="checkbox" className="h-4 w-4 text-orange-600 focus:ring-orange-200 border-gray-300 rounded bg-gray-50" />
                                         <label className="ml-3 text-sm text-gray-700">Keep me signed in</label>
                                     </motion.div>
 
@@ -233,7 +233,7 @@ const Login: React.FC = () => {
                                         <motion.button
                                             type="submit"
                                             disabled={isSubmitting || loading}
-                                            className="w-full bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500/20 shadow-lg hover:shadow-xl"
+                                            className="w-full bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-200 shadow-lg hover:shadow-xl"
                                             whileHover={{ scale: 1.02 }}
                                             whileTap={{ scale: 0.98 }}
                                         >

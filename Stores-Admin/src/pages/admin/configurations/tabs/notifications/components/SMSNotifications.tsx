@@ -6,7 +6,7 @@ const SMSNotifications: React.FC = () => {
     <div className="space-y-6">
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
         <div className="flex items-center space-x-3 mb-4">
-          <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+          <div className="p-2 bg-green-100 dark:bg-green-950 rounded-lg">
             <MessageSquare className="w-5 h-5 text-green-600 dark:text-green-400" />
           </div>
           <div>

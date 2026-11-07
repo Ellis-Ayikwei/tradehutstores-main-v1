@@ -14,7 +14,7 @@
     position: absolute;
     top: 10px;
     left: 10px;
-    background: rgba(255, 255, 255, 0.9);
+    background: #ffffff;
     padding: 8px 12px;
     border-radius: 4px;
     font-size: 14px;
@@ -27,7 +27,7 @@
     position: absolute;
     top: 10px;
     left: 10px;
-    background: rgba(239, 68, 68, 0.9);
+    background: #dc2626;
     color: white;
     padding: 8px 12px;
     border-radius: 4px;
@@ -70,7 +70,7 @@
 /* Dark mode styles */
 @media (prefers-color-scheme: dark) {
     .rt-loading {
-        background: rgba(31, 41, 55, 0.9);
+        background: #1f2937;
         color: #d1d5db;
     }
 
@@ -89,8 +89,8 @@
     }
 
     .rt-stats-content {
-        background: rgba(31, 41, 55, 0.95);
-        border-color: rgba(255, 255, 255, 0.1);
+        background: #1f2937;
+        border-color: #374151;
     }
 
     .rt-stats-value {
@@ -107,9 +107,8 @@
 }
 
 .rt-stats-content {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
     border-radius: 8px;
     padding: 8px 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);

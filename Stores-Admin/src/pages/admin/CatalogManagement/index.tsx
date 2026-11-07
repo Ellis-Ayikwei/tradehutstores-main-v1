@@ -301,7 +301,7 @@ function CategoriesTable({
                     </thead>
                     <tbody>
                         {rows.map((c) => (
-                            <tr key={c.id} className="border-t border-gray-100 hover:bg-gray-50/80">
+                            <tr key={c.id} className="border-t border-gray-100 hover:bg-gray-50">
                                 <td className="px-4 py-3 font-medium text-gray-900">{c.name}</td>
                                 <td className="px-4 py-3 text-gray-600 max-w-md truncate">{c.description || '—'}</td>
                                 <td className="px-4 py-3">
@@ -349,7 +349,7 @@ function CategoriesTable({
                             <button type="button" className="px-4 py-2 rounded-lg bg-gray-100" onClick={() => setModal(null)}>
                                 Cancel
                             </button>
-                            <button type="submit" disabled={busy} className="px-4 py-2 rounded-lg bg-primary-500 text-white disabled:opacity-50">
+                            <button type="submit" disabled={busy} className="px-4 py-2 rounded-lg bg-primary-500 text-white disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500">
                                 Save
                             </button>
                         </div>
@@ -451,7 +451,7 @@ function SubcategoriesTable({
                     </thead>
                     <tbody>
                         {rows.map((s) => (
-                            <tr key={s.id} className="border-t border-gray-100 hover:bg-gray-50/80">
+                            <tr key={s.id} className="border-t border-gray-100 hover:bg-gray-50">
                                 <td className="px-4 py-3 font-medium">{s.sub_category_name}</td>
                                 <td className="px-4 py-3 text-gray-600">{s.category_name || '—'}</td>
                                 <td className="px-4 py-3">

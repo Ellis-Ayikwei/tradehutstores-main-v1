@@ -482,12 +482,12 @@ const ProviderManagementContent: React.FC = () => {
 
       {/* Add Provider Modal */}
       {showAddProviderModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50  flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-md w-full border border-gray-200 dark:border-gray-700">
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
+                <div className="p-2 bg-blue-100 dark:bg-blue-950 rounded-lg">
                   <Info className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -504,7 +504,7 @@ const ProviderManagementContent: React.FC = () => {
 
             {/* Content */}
             <div className="p-6 space-y-4">
-              <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
+              <div className="p-4 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-xl">
                 <div className="flex items-start gap-3">
                   <Info className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
                   <div>
@@ -520,7 +520,7 @@ const ProviderManagementContent: React.FC = () => {
 
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-emerald-100 dark:bg-emerald-900/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-6 h-6 bg-emerald-100 dark:bg-emerald-950 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                     <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">1</span>
                   </div>
                   <div>
@@ -530,7 +530,7 @@ const ProviderManagementContent: React.FC = () => {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-emerald-100 dark:bg-emerald-900/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-6 h-6 bg-emerald-100 dark:bg-emerald-950 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                     <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">2</span>
                   </div>
                   <div>
@@ -540,7 +540,7 @@ const ProviderManagementContent: React.FC = () => {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-emerald-100 dark:bg-emerald-900/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-6 h-6 bg-emerald-100 dark:bg-emerald-950 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                     <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">3</span>
                   </div>
                   <div>

@@ -202,7 +202,7 @@ const RequestPricingTab: React.FC<RequestPricingTabProps> = ({
             )}
 
             {/* Get New Prices */}
-            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+            <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
                 <div className="flex items-start">
                     <IconAlertCircle className="w-6 h-6 text-blue-600 dark:text-blue-400 mt-0.5 mr-3 flex-shrink-0" />
                     <div className="flex-1">

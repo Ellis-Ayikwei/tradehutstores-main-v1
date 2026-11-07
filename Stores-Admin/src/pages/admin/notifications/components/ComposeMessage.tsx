@@ -37,7 +37,7 @@ const ComposeMessage: React.FC<ComposeMessageProps> = ({
       {composeOpen && (
         <div className="space-y-4">
           {/* Target Selection */}
-          <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
             <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">Target Audience</h4>
             <div className="space-y-3">
               <div>
@@ -121,7 +121,7 @@ const ComposeMessage: React.FC<ComposeMessageProps> = ({
               )}
 
               {compose.target_type === 'all' && (
-                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
                   <div className="flex items-center gap-2">
                     <AlertCircle className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                     <span className="text-sm font-medium text-blue-800 dark:text-blue-200">

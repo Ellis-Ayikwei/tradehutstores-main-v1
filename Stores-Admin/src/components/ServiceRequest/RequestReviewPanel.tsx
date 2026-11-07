@@ -87,7 +87,7 @@ const RequestReviewPanel: React.FC<RequestReviewPanelProps> = ({
     return (
         <motion.div initial={{ width: 0, opacity: 0 }} animate={{ width: isOpen ? '20%' : 0, opacity: isOpen ? 1 : 0 }} transition={{ duration: 0.3, ease: 'easeInOut' }} className="hidden lg:block">
             <div className="sticky top-16">
-                <div className="bg-white dark:bg-gray-800 shadow-xl rounded-xl overflow-hidden flex flex-col h-[calc(100vh-4rem)] backdrop-blur-lg bg-opacity-95 dark:bg-opacity-95">
+                <div className="bg-white dark:bg-gray-800 shadow-xl rounded-xl overflow-hidden flex flex-col h-[calc(100vh-4rem)]">
                     {/* Panel Header */}
                     <motion.div
                         initial={{ y: -20, opacity: 0 }}
@@ -99,7 +99,7 @@ const RequestReviewPanel: React.FC<RequestReviewPanelProps> = ({
                             <IconInfoCircle size={20} className="text-blue-200" />
                             <h3 className="font-semibold text-lg">Request Review</h3>
                         </div>
-                        <button onClick={onToggle} className="p-2 hover:bg-white/10 rounded-full transition-all duration-200 transform hover:scale-110">
+                        <button onClick={onToggle} className="p-2 hover:bg-indigo-700 rounded-full transition-all duration-200 transform hover:scale-110">
                             {isOpen ? <IconChevronRight size={20} /> : <IconChevronLeft size={20} />}
                         </button>
                     </motion.div>
@@ -111,7 +111,7 @@ const RequestReviewPanel: React.FC<RequestReviewPanelProps> = ({
                             {currentStep >= 2 && formValues.pickup_location && formValues.dropoff_location && (
                                 <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="space-y-4">
                                     <div className="flex items-center space-x-2 text-gray-700 dark:text-gray-300">
-                                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                                        <div className="p-2 bg-blue-100 dark:bg-blue-950 rounded-lg">
                                             <IconRoute className="text-blue-600 dark:text-blue-400" size={20} />
                                         </div>
                                         <h4 className="font-medium">Route Preview</h4>
@@ -165,10 +165,10 @@ const RequestReviewPanel: React.FC<RequestReviewPanelProps> = ({
                                 <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }}>
                                     <button
                                         onClick={() => setIsJourneyStopsOpen(!isJourneyStopsOpen)}
-                                        className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700/50 rounded-xl hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-700/70 dark:hover:to-gray-600/50 transition-all duration-200 shadow-sm"
+                                        className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-xl hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-700 dark:hover:to-gray-600 transition-all duration-200 shadow-sm"
                                     >
                                         <div className="flex items-center space-x-3">
-                                            <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                                            <div className="p-2 bg-purple-100 dark:bg-purple-950 rounded-lg">
                                                 <IconMapPin className="text-purple-600 dark:text-purple-400" size={20} />
                                             </div>
                                             <h4 className="font-medium text-gray-700 dark:text-gray-300">Journey Stops</h4>
@@ -200,10 +200,10 @@ const RequestReviewPanel: React.FC<RequestReviewPanelProps> = ({
                                                                 <div
                                                                     className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${
                                                                         stop.type === 'pickup'
-                                                                            ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400'
+                                                                            ? 'bg-green-100 text-green-600 dark:bg-green-950 dark:text-green-400'
                                                                             : stop.type === 'dropoff'
-                                                                            ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
-                                                                            : 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400'
+                                                                            ? 'bg-blue-100 text-blue-600 dark:bg-blue-950 dark:text-blue-400'
+                                                                            : 'bg-purple-100 text-purple-600 dark:bg-purple-950 dark:text-purple-400'
                                                                     }`}
                                                                 >
                                                                     <IconMapPin size={20} />
@@ -214,7 +214,7 @@ const RequestReviewPanel: React.FC<RequestReviewPanelProps> = ({
                                                                             {stop.type === 'pickup' ? 'Pickup' : stop.type === 'dropoff' ? 'Dropoff' : `Stop ${index + 1}`}
                                                                         </h5>
                                                                         {stop.estimated_time && (
-                                                                            <span className="text-sm text-gray-500 dark:text-gray-400 flex items-center bg-gray-50 dark:bg-gray-700/50 px-2 py-1 rounded-lg">
+                                                                            <span className="text-sm text-gray-500 dark:text-gray-400 flex items-center bg-gray-50 dark:bg-gray-700 px-2 py-1 rounded-lg">
                                                                                 <IconClock size={14} className="mr-1" />
                                                                                 {stop.estimated_time}
                                                                             </span>
@@ -224,7 +224,7 @@ const RequestReviewPanel: React.FC<RequestReviewPanelProps> = ({
                                                                     {stop.unit_number && <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Unit {stop.unit_number}</p>}
                                                                     {stop.instructions && <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{stop.instructions}</p>}
                                                                     {stop.items && stop.items.length > 0 && (
-                                                                        <div className="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50 px-2 py-1 rounded-lg w-fit">
+                                                                        <div className="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 px-2 py-1 rounded-lg w-fit">
                                                                             <IconPackage size={14} className="mr-1" />
                                                                             {stop.items.length} items
                                                                         </div>
@@ -244,10 +244,10 @@ const RequestReviewPanel: React.FC<RequestReviewPanelProps> = ({
                             <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4 }}>
                                 <button
                                     onClick={() => setIsRequestDetailsOpen(!isRequestDetailsOpen)}
-                                    className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700/50 rounded-xl hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-700/70 dark:hover:to-gray-600/50 transition-all duration-200 shadow-sm"
+                                    className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-xl hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-700 dark:hover:to-gray-600 transition-all duration-200 shadow-sm"
                                 >
                                     <div className="flex items-center space-x-3">
-                                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                                        <div className="p-2 bg-blue-100 dark:bg-blue-950 rounded-lg">
                                             <IconInfoCircle className="text-blue-600 dark:text-blue-400" size={20} />
                                         </div>
                                         <h4 className="font-medium text-gray-700 dark:text-gray-300">Request Details</h4>
@@ -332,24 +332,24 @@ const RequestReviewPanel: React.FC<RequestReviewPanelProps> = ({
 
                             {/* Trust Badges Section */}
                             <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }} className="grid grid-cols-3 gap-3">
-                                <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-700/50 rounded-xl p-4 shadow-sm text-center transform transition-all duration-200 hover:scale-105 hover:shadow-md">
-                                    <div className="h-12 w-12 rounded-xl bg-green-100 dark:bg-green-900/20 flex items-center justify-center mx-auto mb-2">
+                                <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-700 rounded-xl p-4 shadow-sm text-center transform transition-all duration-200 hover:scale-105 hover:shadow-md">
+                                    <div className="h-12 w-12 rounded-xl bg-green-100 dark:bg-green-950 flex items-center justify-center mx-auto mb-2">
                                         <IconStar className="text-green-600 dark:text-green-400" size={24} />
                                     </div>
                                     <h5 className="font-medium text-gray-900 dark:text-gray-100 text-sm">4.9/5 Rating</h5>
                                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">1000+ Reviews</p>
                                 </div>
 
-                                <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-700/50 rounded-xl p-4 shadow-sm text-center transform transition-all duration-200 hover:scale-105 hover:shadow-md">
-                                    <div className="h-12 w-12 rounded-xl bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center mx-auto mb-2">
+                                <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-700 rounded-xl p-4 shadow-sm text-center transform transition-all duration-200 hover:scale-105 hover:shadow-md">
+                                    <div className="h-12 w-12 rounded-xl bg-blue-100 dark:bg-blue-950 flex items-center justify-center mx-auto mb-2">
                                         <IconShieldCheck className="text-blue-600 dark:text-blue-400" size={24} />
                                     </div>
                                     <h5 className="font-medium text-gray-900 dark:text-gray-100 text-sm">Secure Service</h5>
                                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Fully Insured</p>
                                 </div>
 
-                                <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-700/50 rounded-xl p-4 shadow-sm text-center transform transition-all duration-200 hover:scale-105 hover:shadow-md">
-                                    <div className="h-12 w-12 rounded-xl bg-purple-100 dark:bg-purple-900/20 flex items-center justify-center mx-auto mb-2">
+                                <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-700 rounded-xl p-4 shadow-sm text-center transform transition-all duration-200 hover:scale-105 hover:shadow-md">
+                                    <div className="h-12 w-12 rounded-xl bg-purple-100 dark:bg-purple-950 flex items-center justify-center mx-auto mb-2">
                                         <IconTruck className="text-purple-600 dark:text-purple-400" size={24} />
                                     </div>
                                     <h5 className="font-medium text-gray-900 dark:text-gray-100 text-sm">Verified Drivers</h5>
@@ -407,7 +407,7 @@ const RequestReviewPanel: React.FC<RequestReviewPanelProps> = ({
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
                                     <div className="p-4 text-white">
                                         <h4 className="font-semibold text-lg">Professional Moving Service</h4>
-                                        <p className="text-sm text-white/80">Your trusted partner in relocation</p>
+                                        <p className="text-sm text-white">Your trusted partner in relocation</p>
                                     </div>
                                 </div>
                             </motion.div>

@@ -107,17 +107,17 @@ const DocumentsTab: React.FC<DocumentsTabProps> = ({ job }) => {
         const fileUrl = doc.file_url || (doc.file?.startsWith('http') ? doc.file : `${axiosInstance.defaults.baseURL || ''}${doc.file}`);
         
         return (
-            <div className="backdrop-blur-sm bg-slate-50/80 dark:bg-slate-900/30 rounded-2xl p-6 border border-slate-200/50 dark:border-slate-700/50 hover:border-orange-300 dark:hover:border-orange-600 transition-all duration-200 hover:shadow-lg">
+            <div className=" bg-slate-50 dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-600 transition-all duration-200 hover:shadow-lg">
                 <div className="flex items-start gap-4">
                     <div className="relative group">
                         {isImage ? (
                             <img
                                 src={fileUrl}
                                 alt={doc.document_name || doc.file_name || 'Document'}
-                                className="w-24 h-24 object-cover rounded-xl border-2 border-slate-200/50 dark:border-slate-700/50 group-hover:border-orange-300 dark:group-hover:border-orange-600 transition-all duration-200"
+                                className="w-24 h-24 object-cover rounded-xl border-2 border-slate-200 dark:border-slate-700 group-hover:border-orange-300 dark:group-hover:border-orange-600 transition-all duration-200"
                             />
                         ) : (
-                            <div className="w-24 h-24 rounded-xl border-2 border-slate-200/50 dark:border-slate-700/50 group-hover:border-orange-300 dark:group-hover:border-orange-600 transition-all duration-200 flex items-center justify-center bg-slate-100 dark:bg-slate-800">
+                            <div className="w-24 h-24 rounded-xl border-2 border-slate-200 dark:border-slate-700 group-hover:border-orange-300 dark:group-hover:border-orange-600 transition-all duration-200 flex items-center justify-center bg-slate-100 dark:bg-slate-800">
                                 <FileIcon className="w-12 h-12 text-slate-400 dark:text-slate-500" />
                             </div>
                         )}
@@ -151,14 +151,14 @@ const DocumentsTab: React.FC<DocumentsTabProps> = ({ job }) => {
                             <div className="flex items-center gap-2">
                                 <button
                                     onClick={() => handleView(doc)}
-                                    className="w-10 h-10 rounded-xl bg-blue-100/80 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-200/80 dark:hover:bg-blue-800/50 transition-all duration-200 flex items-center justify-center"
+                                    className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900 transition-all duration-200 flex items-center justify-center"
                                     title="View document"
                                 >
                                     <Eye className="w-5 h-5" />
                                 </button>
                                 <button
                                     onClick={() => handleDownload(doc)}
-                                    className="w-10 h-10 rounded-xl bg-green-100/80 dark:bg-green-900/30 text-green-600 dark:text-green-400 hover:bg-green-200/80 dark:hover:bg-green-800/50 transition-all duration-200 flex items-center justify-center"
+                                    className="w-10 h-10 rounded-xl bg-green-100 dark:bg-green-950 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900 transition-all duration-200 flex items-center justify-center"
                                     title="Download document"
                                 >
                                     <Download className="w-5 h-5" />
@@ -228,8 +228,8 @@ const DocumentsTab: React.FC<DocumentsTabProps> = ({ job }) => {
             ) : (
                 /* Empty State */
                 <div className="text-center py-16">
-                    <div className="backdrop-blur-xl bg-slate-50/80 dark:bg-slate-800/50 rounded-3xl p-12 border border-slate-200/50 dark:border-slate-700/30 max-w-md mx-auto">
-                        <div className="w-20 h-20 bg-slate-200/80 dark:bg-slate-700/80 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                    <div className=" bg-slate-50 dark:bg-slate-800 rounded-3xl p-12 border border-slate-200 dark:border-slate-700 max-w-md mx-auto">
+                        <div className="w-20 h-20 bg-slate-200 dark:bg-slate-700 rounded-3xl flex items-center justify-center mx-auto mb-6">
                             <FileText className="w-10 h-10 text-slate-400 dark:text-slate-500" />
                         </div>
                         <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">No Documents Available</h3>

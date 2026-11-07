@@ -108,7 +108,7 @@ const StorefrontConfig: React.FC = () => {
                         <button
                             type="button"
                             disabled
-                            className="w-full h-24 rounded-xl border-2 border-dashed border-outline-variant/30 bg-surface-container-low text-on-surface-variant flex flex-col items-center justify-center gap-1 cursor-not-allowed opacity-70"
+                            className="w-full h-24 rounded-xl border-2 border-dashed border-border bg-surface-container-low text-on-surface-variant flex flex-col items-center justify-center gap-1 cursor-not-allowed"
                         >
                             <span className="material-symbols-outlined">image</span>
                             <span className="text-xs">Upload — TODO</span>
@@ -118,7 +118,7 @@ const StorefrontConfig: React.FC = () => {
                         <button
                             type="button"
                             disabled
-                            className="w-full h-24 rounded-xl border-2 border-dashed border-outline-variant/30 bg-surface-container-low text-on-surface-variant flex flex-col items-center justify-center gap-1 cursor-not-allowed opacity-70"
+                            className="w-full h-24 rounded-xl border-2 border-dashed border-border bg-surface-container-low text-on-surface-variant flex flex-col items-center justify-center gap-1 cursor-not-allowed"
                         >
                             <span className="material-symbols-outlined">bookmark</span>
                             <span className="text-xs">Upload — TODO</span>
@@ -128,7 +128,7 @@ const StorefrontConfig: React.FC = () => {
                         <button
                             type="button"
                             disabled
-                            className="w-full h-24 rounded-xl border-2 border-dashed border-outline-variant/30 bg-surface-container-low text-on-surface-variant flex flex-col items-center justify-center gap-1 cursor-not-allowed opacity-70"
+                            className="w-full h-24 rounded-xl border-2 border-dashed border-border bg-surface-container-low text-on-surface-variant flex flex-col items-center justify-center gap-1 cursor-not-allowed"
                         >
                             <span className="material-symbols-outlined">photo_library</span>
                             <span className="text-xs">Upload — TODO</span>
@@ -194,7 +194,7 @@ const StorefrontConfig: React.FC = () => {
                     </SelectField>
                 </Field>
 
-                <div className="divide-y divide-outline-variant/10">
+                <div className="divide-y divide-border">
                     <Toggle
                         label="Show RFQ board"
                         description="Surface the Request-for-Quote portal in the public navigation."
@@ -216,7 +216,7 @@ const StorefrontConfig: React.FC = () => {
                 </div>
 
                 {error && (
-                    <div className="bg-error-container/40 border border-error/30 text-on-error-container rounded-xl px-4 py-3 text-sm whitespace-pre-wrap">
+                    <div className="bg-error-container border border-error-container text-on-error-container rounded-xl px-4 py-3 text-sm whitespace-pre-wrap">
                         {error}
                     </div>
                 )}

@@ -77,20 +77,25 @@ const defaultState: ThemeState = {
 /** Persisted choice: light | dark | follow OS (`system`). */
 function readStoredThemeMode(): ThemeMode {
     if (typeof window === 'undefined') return themeConfig.theme as ThemeMode;
-    return ((localStorage.getItem('theme') as ThemeMode) || themeConfig.theme) as ThemeMode;
+    const v = localStorage.getItem('theme');
+    // Default is LIGHT: only an explicit 'dark' / 'system' choice leaves it.
+    return (v === 'dark' || v === 'system' ? v : 'light') as ThemeMode;
 }
 
 /** Resolved presentation for Tailwind `dark:` — uses OS preference when mode is `system`. */
 export function resolveIsDark(mode: ThemeMode): boolean {
     if (mode === 'dark') return true;
-    if (mode === 'light') return false;
+    if (mode !== 'system') return false;
     if (typeof window === 'undefined') return false;
     return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
 }
 
 function syncHtmlDarkClass(isDark: boolean): void {
     if (typeof document === 'undefined') return;
-    document.documentElement.classList.toggle('dark', isDark);
+    const root = document.documentElement;
+    root.classList.toggle('dark', isDark);
+    root.classList.toggle('light', !isDark);
+    root.style.colorScheme = isDark ? 'dark' : 'light';
 }
 
 const getInitialAnimation = (): AnimationMode => {

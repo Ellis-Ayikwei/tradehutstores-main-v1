@@ -247,7 +247,7 @@ const PriceDetailsModal: React.FC<PriceDetailsModalProps> = ({ isOpen, onClose, 
                             className="relative w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl"
                         >
                             {/* Enhanced Header Section */}
-                            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-4 sm:px-8 pt-6 sm:pt-8 pb-4 sm:pb-6 border-b border-gray-200/60">
+                            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-4 sm:px-8 pt-6 sm:pt-8 pb-4 sm:pb-6 border-b border-gray-200">
                                 <div className="flex items-center justify-between mb-4 sm:mb-6">
                                     <div className="flex items-center space-x-3 sm:space-x-4">
                                         <motion.div
@@ -276,7 +276,7 @@ const PriceDetailsModal: React.FC<PriceDetailsModalProps> = ({ isOpen, onClose, 
                                 <div className="flex flex-wrap gap-2 sm:gap-3 mb-3 sm:mb-4">
                                     <motion.div
                                         whileHover={{ y: -2 }}
-                                        className="flex items-center px-3 sm:px-4 py-1.5 sm:py-2 bg-white rounded-lg sm:rounded-xl shadow-flat border border-gray-200/50"
+                                        className="flex items-center px-3 sm:px-4 py-1.5 sm:py-2 bg-white rounded-lg sm:rounded-xl shadow-flat border border-gray-200"
                                     >
                                         <CalendarIcon className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 mr-1.5 sm:mr-2" />
                                         <span className="text-xs sm:text-sm font-medium text-gray-700">{format(new Date(dayPrice.date), 'EEEE, MMM d')}</span>
@@ -306,7 +306,7 @@ const PriceDetailsModal: React.FC<PriceDetailsModalProps> = ({ isOpen, onClose, 
 
                                     <motion.div
                                         whileHover={{ y: -2 }}
-                                        className="flex items-center px-3 sm:px-4 py-1.5 sm:py-2 bg-white rounded-lg sm:rounded-xl shadow-flat border border-gray-200/50"
+                                        className="flex items-center px-3 sm:px-4 py-1.5 sm:py-2 bg-white rounded-lg sm:rounded-xl shadow-flat border border-gray-200"
                                     >
                                         <div className="flex items-center gap-2">
                                             <span className="text-lg">{getWeatherIcon(dayPrice.weather_type)}</span>
@@ -316,7 +316,7 @@ const PriceDetailsModal: React.FC<PriceDetailsModalProps> = ({ isOpen, onClose, 
 
                                     <motion.div
                                         whileHover={{ y: -2 }}
-                                        className="flex items-center px-3 sm:px-4 py-1.5 sm:py-2 bg-white rounded-lg sm:rounded-xl shadow-flat border border-gray-200/50"
+                                        className="flex items-center px-3 sm:px-4 py-1.5 sm:py-2 bg-white rounded-lg sm:rounded-xl shadow-flat border border-gray-200"
                                     >
                                         <TruckIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600 mr-1.5 sm:mr-2" />
                                         <span className="text-xs sm:text-sm font-medium text-gray-700 capitalize">{dayPrice.status}</span>
@@ -408,7 +408,7 @@ const PriceDetailsModal: React.FC<PriceDetailsModalProps> = ({ isOpen, onClose, 
                                     <button
                                         onClick={handleAccept}
                                         disabled={showLoadingModal}
-                                        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
                                     >
                                         Accept Price
                                     </button>

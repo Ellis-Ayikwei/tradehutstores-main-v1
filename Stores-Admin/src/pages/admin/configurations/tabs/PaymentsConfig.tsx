@@ -83,7 +83,7 @@ const PaymentsConfig: React.FC = () => {
                     {state.payments_gateways.map((g) => (
                         <div
                             key={g.id}
-                            className="bg-surface-container-low rounded-xl border border-outline-variant/10 overflow-hidden"
+                            className="bg-surface-container-low rounded-xl border border-border overflow-hidden"
                         >
                             <div className="flex items-center gap-3 p-4">
                                 <div className="w-11 h-11 rounded-xl bg-surface-container-lowest text-on-surface flex items-center justify-center flex-shrink-0">
@@ -99,7 +99,7 @@ const PaymentsConfig: React.FC = () => {
                                         {g.testMode && g.enabled && <Pill tone="amber">Test</Pill>}
                                         {g.enabled && !g.testMode && <Pill tone="green">Live</Pill>}
                                     </div>
-                                    <p className="text-xs text-on-surface-variant opacity-70 truncate">
+                                    <p className="text-xs text-on-surface-variant truncate">
                                         ID: {g.id}
                                     </p>
                                 </div>
@@ -134,7 +134,7 @@ const PaymentsConfig: React.FC = () => {
                                 </button>
                             </div>
                             {expanded === g.id && (
-                                <div className="px-4 pb-4 space-y-4 border-t border-outline-variant/10 pt-4">
+                                <div className="px-4 pb-4 space-y-4 border-t border-border pt-4">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <Field label="Public key">
                                             <TextField
@@ -207,7 +207,7 @@ const PaymentsConfig: React.FC = () => {
                     </Field>
 
                     <Field label="Currency on receipts">
-                        <div className="flex items-center h-[42px] px-4 rounded-xl bg-surface-container-low border border-outline-variant/15 font-mono text-sm font-bold text-on-surface">
+                        <div className="flex items-center h-[42px] px-4 rounded-xl bg-surface-container-low border border-border font-mono text-sm font-bold text-on-surface">
                             {baseCurrency}
                         </div>
                     </Field>
@@ -245,7 +245,7 @@ const PaymentsConfig: React.FC = () => {
                     </Field>
                     <Field label="Minimum payout">
                         <div className="flex">
-                            <span className="inline-flex items-center px-3 rounded-l-xl bg-surface-container border border-r-0 border-outline-variant/20 text-xs font-mono text-on-surface-variant">
+                            <span className="inline-flex items-center px-3 rounded-l-xl bg-surface-container border border-r-0 border-border text-xs font-mono text-on-surface-variant">
                                 {baseCurrency}
                             </span>
                             <input
@@ -255,7 +255,7 @@ const PaymentsConfig: React.FC = () => {
                                 onChange={(e) =>
                                     set('payments_min_payout', Number(e.target.value))
                                 }
-                                className="flex-1 bg-surface-container-low border border-outline-variant/20 rounded-r-xl px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:border-primary-container"
+                                className="flex-1 bg-surface-container-low border border-border rounded-r-xl px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:border-primary-container"
                             />
                         </div>
                     </Field>
@@ -285,7 +285,7 @@ const PaymentsConfig: React.FC = () => {
                 </div>
 
                 {error && (
-                    <div className="bg-error-container/40 border border-error/30 text-on-error-container rounded-xl px-4 py-3 text-sm whitespace-pre-wrap">
+                    <div className="bg-error-container border border-error-container text-on-error-container rounded-xl px-4 py-3 text-sm whitespace-pre-wrap">
                         {error}
                     </div>
                 )}

@@ -190,7 +190,7 @@ const DocumentsTab: React.FC<DocumentsTabProps> = ({ provider, isAdmin = false }
           {documents.map((doc) => (
           <div
             key={doc.id}
-            className="bg-gray-50 dark:bg-slate-700/50 rounded-lg p-4"
+            className="bg-gray-50 dark:bg-slate-700 rounded-lg p-4"
           >
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-medium text-gray-900 dark:text-white">

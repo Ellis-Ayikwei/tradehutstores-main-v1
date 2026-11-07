@@ -827,7 +827,7 @@ const AddProduct: React.FC = () => {
             quantity: variant.quantity,
             min_buy_amount: variant.min_buy_amount,
             attribute_values: buildVariantAttributePayload(variant),
-            name: variant.name?.trim() || variant.sku,
+            name: variant.name?.trim() || '',
         });
 
         const apiErrorDetail = (err: unknown): string => {
@@ -1998,7 +1998,7 @@ const AddProduct: React.FC = () => {
                 <button
                     onClick={handleSubmit}
                     disabled={submitting}
-                    className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                     {submitting ? (
                         <>

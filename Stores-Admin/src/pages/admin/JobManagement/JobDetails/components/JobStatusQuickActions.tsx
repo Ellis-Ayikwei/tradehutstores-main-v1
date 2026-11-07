@@ -148,7 +148,7 @@ const JobStatusQuickActions: React.FC<JobStatusQuickActionsProps> = ({
           <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50">
             <div className="p-2">
               {/* Current Status Display */}
-              <div className="px-3 py-2 mb-2 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+              <div className="px-3 py-2 mb-2 bg-gray-50 dark:bg-gray-900 rounded-lg">
                 <div className="flex items-center gap-2">
                   <StatusIcon className={`w-4 h-4 text-${statusColor}-600 dark:text-${statusColor}-400`} />
                   <span className="text-sm font-medium text-gray-900 dark:text-white">
@@ -189,7 +189,7 @@ const JobStatusQuickActions: React.FC<JobStatusQuickActionsProps> = ({
                     setShowOverrideModal(true);
                     setShowActions(false);
                   }}
-                  className="w-full flex items-center gap-3 px-3 py-2 text-left text-sm text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-lg transition-colors"
+                  className="w-full flex items-center gap-3 px-3 py-2 text-left text-sm text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950 rounded-lg transition-colors"
                 >
                   <AlertTriangle className="w-4 h-4" />
                   <span>Custom Status Override</span>

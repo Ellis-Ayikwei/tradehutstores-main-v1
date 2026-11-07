@@ -304,7 +304,7 @@ export const ConfirmJobModal: React.FC<any> = ({ isOpen, onClose, onConfirm, boo
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md">
                 <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                    <div className="p-2 bg-purple-100 dark:bg-purple-950 rounded-lg">
                         <IconGavel className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Confirm as Job</h3>
@@ -313,7 +313,7 @@ export const ConfirmJobModal: React.FC<any> = ({ isOpen, onClose, onConfirm, boo
                 <div className="space-y-4">
                     {/* Show existing price if available */}
                     {hasExistingPrice && (
-                        <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                        <div className="p-4 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg">
                             <div className="flex items-center gap-2">
                                 <IconCurrencyDollar className="w-5 h-5 text-green-600 dark:text-green-400" />
                                 <span className="font-medium text-green-800 dark:text-green-200">Existing Price: £{existingPrice}</span>
@@ -403,7 +403,7 @@ export const ConfirmJobModal: React.FC<any> = ({ isOpen, onClose, onConfirm, boo
                     </button>
                     <button
                         onClick={handleConfirm}
-                        className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center justify-center gap-2 disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
                         disabled={isProcessing || (isBiddable && !minimumBid) || (!isBiddable && !hasExistingPrice && !instantPrice)}
                     >
                         {isProcessing ? (

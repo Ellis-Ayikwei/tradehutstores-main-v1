@@ -51,7 +51,7 @@ const ProviderProfileBox: React.FC<ProviderProfileBoxProps> = ({ job, onTabChang
     };
 
     return (
-        <div className="backdrop-blur-xl bg-white/70 dark:bg-slate-800/70 l shadow-xl border border-white/20 dark:border-slate-700/30 overflow-hidden">
+        <div className=" bg-white dark:bg-slate-800 l shadow-xl border border-gray-200 dark:border-slate-700 overflow-hidden">
             <div className="p-4 sm:p-6">
                 <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
@@ -60,7 +60,7 @@ const ProviderProfileBox: React.FC<ProviderProfileBoxProps> = ({ job, onTabChang
 
                 <div className="space-y-4">
                     {/* Provider Info */}
-                    <div className="flex items-center gap-3 p-3 bg-slate-50/50 dark:bg-slate-900/30 rounded-xl border border-slate-200/50 dark:border-slate-700/50">
+                    <div className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
                         <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">
                             {job?.assigned_provider?.company_name?.charAt(0)?.toUpperCase() || 'P'}
                         </div>
@@ -79,7 +79,7 @@ const ProviderProfileBox: React.FC<ProviderProfileBoxProps> = ({ job, onTabChang
                                 <span className="text-slate-600 dark:text-slate-400 text-xs font-medium">{job.assigned_provider.rating?.toFixed(1) || '0.0'} Rating</span>
                             </div>
                             <div className="flex items-center gap-2 mt-1">
-                                <span className="px-2 py-0.5 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 rounded-full text-xs font-bold">ASSIGNED</span>
+                                <span className="px-2 py-0.5 bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300 rounded-full text-xs font-bold">ASSIGNED</span>
                                 <span className="text-slate-600 dark:text-slate-400 text-xs">ID: {job?.assigned_provider?.id}</span>
                             </div>
                         </div>
@@ -96,7 +96,7 @@ const ProviderProfileBox: React.FC<ProviderProfileBoxProps> = ({ job, onTabChang
                                 className="w-full px-3 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 
                                          text-white font-semibold rounded-lg flex items-center justify-center gap-2 
                                          transition-all duration-200 shadow-md shadow-green-500/25 hover:shadow-lg hover:shadow-green-500/30 
-                                         hover:scale-102 border border-green-400/50 text-sm"
+                                         hover:scale-102 border border-green-300 text-sm"
                             >
                                 <FontAwesomeIcon icon={faPhone} className="text-sm" />
                                 Call Provider
@@ -108,7 +108,7 @@ const ProviderProfileBox: React.FC<ProviderProfileBoxProps> = ({ job, onTabChang
                                 className="w-full px-3 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 
                                          text-white font-semibold rounded-lg flex items-center justify-center gap-2 
                                          transition-all duration-200 shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/30 
-                                         hover:scale-102 border border-blue-400/50 text-sm"
+                                         hover:scale-102 border border-blue-300 text-sm"
                             >
                                 <FontAwesomeIcon icon={faComments} className="text-sm" />
                                 Send Message
@@ -120,7 +120,7 @@ const ProviderProfileBox: React.FC<ProviderProfileBoxProps> = ({ job, onTabChang
                                 className="w-full px-3 py-2 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 
                                          text-white font-semibold rounded-lg flex items-center justify-center gap-2 
                                          transition-all duration-200 shadow-md shadow-purple-500/25 hover:shadow-lg hover:shadow-purple-500/30 
-                                         hover:scale-102 border border-purple-400/50 text-sm"
+                                         hover:scale-102 border border-purple-300 text-sm"
                             >
                                 <FontAwesomeIcon icon={faUser} className="text-sm" />
                                 View Profile
@@ -132,7 +132,7 @@ const ProviderProfileBox: React.FC<ProviderProfileBoxProps> = ({ job, onTabChang
                                 className="w-full px-3 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 
                                          text-white font-semibold rounded-lg flex items-center justify-center gap-2 
                                          transition-all duration-200 shadow-md shadow-red-500/25 hover:shadow-lg hover:shadow-red-500/30 
-                                         hover:scale-102 border border-red-400/50 text-sm"
+                                         hover:scale-102 border border-red-300 text-sm"
                             >
                                 <FontAwesomeIcon icon={faUserMinus} className="text-sm" />
                                 Unassign Provider
@@ -141,7 +141,7 @@ const ProviderProfileBox: React.FC<ProviderProfileBoxProps> = ({ job, onTabChang
                     </div>
 
                     {/* Provider Status */}
-                    <div className="p-3 bg-blue-50/50 dark:bg-blue-900/10 rounded-xl border border-blue-200/30 dark:border-blue-700/30">
+                    <div className="p-3 bg-blue-50 dark:bg-blue-950 rounded-xl border border-blue-200 dark:border-blue-900">
                         <h4 className="font-semibold text-blue-600 dark:text-blue-400 mb-2 text-sm">Provider Status</h4>
                         <div className="space-y-1 text-xs">
                             <div className="flex justify-between">

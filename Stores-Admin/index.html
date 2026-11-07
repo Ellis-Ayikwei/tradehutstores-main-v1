@@ -2,6 +2,8 @@
 <html lang="en" dir="ltr">
     <head>
         <meta charset="utf-8">
+        <!-- Theme boot: blocking, runs before first paint. Default LIGHT; dark only if the user chose 'dark' (or 'system' + OS dark). Key: localStorage 'theme'. -->
+        <script>(function(){var m='light';try{var t=localStorage.getItem('theme');if(t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches))m='dark'}catch(e){}var d=document.documentElement;d.classList.remove('light','dark');d.classList.add(m);d.style.colorScheme=m;})();</script>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#dc711a">
         <meta name="description" content="TradeHut - The ultimate platform for van and moving services. Connect with reliable providers for your moving needs.">

@@ -351,7 +351,7 @@ const ContactDetailsStep: React.FC<ContactDetailsStepProps> = ({
         <div className="space-y-6 animate-fadeIn">
             {/* Request Type Selection */}
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
-                <div className="px-6 py-4 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/30 dark:to-purple-800/30 border-b border-gray-200 dark:border-gray-700">
+                <div className="px-6 py-4 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-950 border-b border-gray-200 dark:border-gray-700">
                     <h3 className="font-medium text-gray-800 dark:text-gray-200 flex items-center">
                         <FontAwesomeIcon icon={faGavel} className="mr-2 text-purple-600 dark:text-purple-400" />
                         Request Type <span className="text-red-500">*</span>
@@ -361,7 +361,7 @@ const ContactDetailsStep: React.FC<ContactDetailsStepProps> = ({
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <label
                             className={`flex items-center p-4 border ${
-                                values.request_type === 'instant' ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-300 dark:border-gray-600'
+                                values.request_type === 'instant' ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-950' : 'border-gray-300 dark:border-gray-600'
                             } rounded-lg hover:bg-gray-50 dark:hover:bg-gray-750 cursor-pointer transition-all duration-200`}
                         >
                             <input
@@ -385,7 +385,7 @@ const ContactDetailsStep: React.FC<ContactDetailsStepProps> = ({
 
                         <label
                             className={`flex items-center p-4 border ${
-                                values.request_type === 'journey' ? 'border-green-500 dark:border-green-400 bg-green-50 dark:bg-green-900/20' : 'border-gray-300 dark:border-gray-600'
+                                values.request_type === 'journey' ? 'border-green-500 dark:border-green-400 bg-green-50 dark:bg-green-950' : 'border-gray-300 dark:border-gray-600'
                             } rounded-lg hover:bg-gray-50 dark:hover:bg-gray-750 cursor-pointer transition-all duration-200`}
                         >
                             <input
@@ -414,7 +414,7 @@ const ContactDetailsStep: React.FC<ContactDetailsStepProps> = ({
             {/* Service Type Section - Based on Request Type */}
             {values.request_type === 'instant' && (
                 <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
-                    <div className="px-6 py-4 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 border-b border-gray-200 dark:border-gray-700">
+                    <div className="px-6 py-4 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-950 dark:to-green-950 border-b border-gray-200 dark:border-gray-700">
                         <h3 className="font-medium text-gray-800 dark:text-gray-200 flex items-center">
                             <FontAwesomeIcon icon={faTag} className="mr-2 text-green-600 dark:text-green-400" />
                             Service Type <span className="text-red-500">*</span>
@@ -473,7 +473,7 @@ const ContactDetailsStep: React.FC<ContactDetailsStepProps> = ({
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         {/* Pickup location */}
                         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
-                            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                                 <h3 className="font-medium text-gray-800 dark:text-gray-200 flex items-center">
                                     <span className="h-8 w-8 rounded-full bg-blue-600 dark:bg-blue-500 mr-3 flex items-center justify-center text-white text-sm">A</span>
                                     Pickup Address
@@ -603,7 +603,7 @@ const ContactDetailsStep: React.FC<ContactDetailsStepProps> = ({
 
                         {/* Dropoff location */}
                         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
-                            <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                            <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                                 <h3 className="font-medium text-gray-800 dark:text-gray-200 flex items-center">
                                     <span className="h-8 w-8 rounded-full bg-green-600 dark:bg-green-500 mr-3 flex items-center justify-center text-white text-sm">B</span>
                                     Dropoff Address

@@ -76,7 +76,7 @@ const notificationActions = {
 const ErrorMessage = ({ message, onRetry }) => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg p-6 text-center shadow-md">
-      <div className="w-16 h-16 mx-auto mb-4 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center">
+      <div className="w-16 h-16 mx-auto mb-4 bg-red-100 dark:bg-red-950 rounded-full flex items-center justify-center">
         <FontAwesomeIcon icon={faExclamationCircle} className="text-red-500 text-2xl" />
       </div>
       <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">Something went wrong</h3>
@@ -356,9 +356,9 @@ const NotificationsPage: React.FC = () => {
         {/* Status message */}
         {statusMessage && (
           <div className={`mb-4 p-3 rounded-md ${
-            statusMessage.type === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-800/20 dark:text-green-400' :
-            statusMessage.type === 'error' ? 'bg-red-100 text-red-800 dark:bg-red-800/20 dark:text-red-400' :
-            'bg-blue-100 text-blue-800 dark:bg-blue-800/20 dark:text-blue-400'
+            statusMessage.type === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-400' :
+            statusMessage.type === 'error' ? 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400' :
+            'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-400'
           } flex items-center justify-between`}>
             <span>{statusMessage.message}</span>
             <button onClick={() => setStatusMessage(null)} className="text-gray-500 hover:text-gray-700">
@@ -368,7 +368,7 @@ const NotificationsPage: React.FC = () => {
         )}
 
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-500 rounded-lg shadow-lg overflow-hidden mb-6">
+        <div className="bg-blue-600 rounded-lg shadow-lg overflow-hidden mb-6">
           <div className="px-6 py-8 text-white">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
               <div>
@@ -386,7 +386,7 @@ const NotificationsPage: React.FC = () => {
                   disabled={unreadCount === 0}
                   className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center 
                     ${unreadCount === 0 
-                      ? 'bg-opacity-50 bg-white cursor-not-allowed' 
+                      ? 'bg-blue-500 text-blue-200 cursor-not-allowed' 
                       : 'bg-white text-blue-600 hover:bg-blue-50'}`}
                 >
                   <FontAwesomeIcon icon={faCheckDouble} className="mr-2" />
@@ -397,13 +397,13 @@ const NotificationsPage: React.FC = () => {
           </div>
           
           {/* Tabs */}
-          <div className="bg-white bg-opacity-10 px-6 py-2 flex border-t border-white border-opacity-20">
+          <div className="bg-blue-700 px-6 py-2 flex border-t border-blue-500">
             <button
               onClick={() => setSelectedTab('all')}
               className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                 selectedTab === 'all' 
                   ? 'bg-white text-blue-600' 
-                  : 'text-white hover:bg-white hover:bg-opacity-10'
+                  : 'text-white hover:bg-blue-600'
               }`}
             >
               All
@@ -413,17 +413,17 @@ const NotificationsPage: React.FC = () => {
               className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                 selectedTab === 'unread' 
                   ? 'bg-white text-blue-600' 
-                  : 'text-white hover:bg-white hover:bg-opacity-10'
+                  : 'text-white hover:bg-blue-600'
               }`}
             >
-              Unread <span className="ml-1 px-1.5 py-0.5 text-xs bg-white bg-opacity-20 rounded-full">{unreadCount}</span>
+              Unread <span className="ml-1 px-1.5 py-0.5 text-xs bg-blue-500 rounded-full">{unreadCount}</span>
             </button>
             <button
               onClick={() => setSelectedTab('read')}
               className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                 selectedTab === 'read' 
                   ? 'bg-white text-blue-600' 
-                  : 'text-white hover:bg-white hover:bg-opacity-10'
+                  : 'text-white hover:bg-blue-600'
               }`}
             >
               Read
@@ -471,7 +471,7 @@ const NotificationsPage: React.FC = () => {
         {/* Notification stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
           <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex items-center">
-            <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center mr-4">
+            <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-950 flex items-center justify-center mr-4">
               <FontAwesomeIcon icon={faBell} className="text-blue-500" />
             </div>
             <div>
@@ -480,7 +480,7 @@ const NotificationsPage: React.FC = () => {
             </div>
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex items-center">
-            <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center mr-4">
+            <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-950 flex items-center justify-center mr-4">
               <FontAwesomeIcon icon={faCircle} className="text-red-500" />
             </div>
             <div>
@@ -489,7 +489,7 @@ const NotificationsPage: React.FC = () => {
             </div>
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex items-center">
-            <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/20 flex items-center justify-center mr-4">
+            <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-950 flex items-center justify-center mr-4">
               <FontAwesomeIcon icon={faCheck} className="text-green-500" />
             </div>
             <div>
@@ -523,7 +523,7 @@ const NotificationsPage: React.FC = () => {
                           onClick={() => handleNotificationClick(notification)}
                           className={`p-4 md:px-6 md:py-5 flex relative cursor-pointer 
                                    hover:bg-gray-50 dark:hover:bg-gray-750 transition-all
-                                   ${!notification.read ? 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500' : ''}`}
+                                   ${!notification.read ? 'bg-blue-50 dark:bg-blue-950 border-l-4 border-blue-500' : ''}`}
                         >
                           {!notification.read && (
                             <span className="absolute right-4 top-4">
@@ -533,11 +533,11 @@ const NotificationsPage: React.FC = () => {
                           
                           <div className="mr-4 mt-1">
                             <div className={`w-12 h-12 rounded-full flex items-center justify-center
-                              ${notification.type === 'booking' ? 'bg-blue-100 dark:bg-blue-900/30' :
-                                notification.type === 'payment' ? 'bg-green-100 dark:bg-green-900/30' :
-                                notification.type === 'alert' ? 'bg-red-100 dark:bg-red-900/30' :
-                                notification.type === 'reminder' ? 'bg-yellow-100 dark:bg-yellow-900/30' :
-                                'bg-purple-100 dark:bg-purple-900/30'}`}
+                              ${notification.type === 'booking' ? 'bg-blue-100 dark:bg-blue-950' :
+                                notification.type === 'payment' ? 'bg-green-100 dark:bg-green-950' :
+                                notification.type === 'alert' ? 'bg-red-100 dark:bg-red-950' :
+                                notification.type === 'reminder' ? 'bg-yellow-100 dark:bg-yellow-950' :
+                                'bg-purple-100 dark:bg-purple-950'}`}
                             >
                               {getNotificationIcon(notification.type)}
                             </div>
@@ -607,7 +607,7 @@ const NotificationsPage: React.FC = () => {
                                     leaveFrom="transform opacity-100 scale-100"
                                     leaveTo="transform opacity-0 scale-95"
                                   >
-                                <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-gray-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-gray-800 py-1 shadow-lg ring-1 ring-gray-200 dark:ring-gray-700 focus:outline-none">
                                   <Menu.Item>
                                     {({ active }) => (
                                       <button

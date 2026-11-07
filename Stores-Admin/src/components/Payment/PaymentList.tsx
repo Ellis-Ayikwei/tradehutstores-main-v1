@@ -58,13 +58,13 @@ const PaymentList: React.FC = () => {
     const getStatusColor = (status: string) => {
         switch (status.toLowerCase()) {
             case 'completed':
-                return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
+                return 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-400';
             case 'failed':
-                return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
+                return 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400';
             case 'pending':
-                return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400';
+                return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-400';
             default:
-                return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+                return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-400';
         }
     };
 
@@ -78,7 +78,7 @@ const PaymentList: React.FC = () => {
 
     if (error) {
         return (
-            <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg">
+            <div className="p-4 bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 rounded-lg">
                 <p>{error}</p>
             </div>
         );

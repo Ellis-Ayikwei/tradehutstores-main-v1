@@ -277,21 +277,21 @@ const UserManagement: React.FC = () => {
 
         switch (status) {
             case 'active':
-                return `${baseClasses} bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400`;
+                return `${baseClasses} bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-400`;
             case 'pending':
-                return `${baseClasses} bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400`;
+                return `${baseClasses} bg-yellow-100 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-400`;
             case 'suspended':
-                return `${baseClasses} bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400`;
+                return `${baseClasses} bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400`;
             case 'inactive':
-                return `${baseClasses} bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400`;
+                return `${baseClasses} bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-400`;
             case 'verified':
-                return `${baseClasses} bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400`;
+                return `${baseClasses} bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-400`;
             case 'unverified':
-                return `${baseClasses} bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400`;
+                return `${baseClasses} bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-400`;
             case 'rejected':
-                return `${baseClasses} bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400`;
+                return `${baseClasses} bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400`;
             default:
-                return `${baseClasses} bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400`;
+                return `${baseClasses} bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-400`;
         }
     };
 
@@ -305,8 +305,8 @@ const UserManagement: React.FC = () => {
                     <div
                         className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center ${
                             item.user_type === 'admin'
-                                ? 'bg-emerald-100 dark:bg-emerald-900/30'
-                                : 'bg-blue-100 dark:bg-blue-900/30'
+                                ? 'bg-emerald-100 dark:bg-emerald-950'
+                                : 'bg-blue-100 dark:bg-blue-950'
                         }`}
                     >
                         {item.user_type === 'admin' ? (
@@ -338,8 +338,8 @@ const UserManagement: React.FC = () => {
                     <span
                         className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${
                             item.user_type === 'admin'
-                                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400'
-                                : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
+                                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-400'
+                                : 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-400'
                         }`}
                     >
                         {item.user_type === 'admin' ? (
@@ -427,7 +427,7 @@ const UserManagement: React.FC = () => {
                 <div className="flex flex-col gap-1">
                     {item.groups && item.groups.length > 0 ? (
                         item.groups.slice(0, 2).map((group, idx) => (
-                            <span key={idx} className="text-xs px-2 py-0.5 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 rounded-full">
+                            <span key={idx} className="text-xs px-2 py-0.5 bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-400 rounded-full">
                                 {group.name}
                             </span>
                         ))
@@ -446,7 +446,7 @@ const UserManagement: React.FC = () => {
                 <div className="flex items-center justify-center gap-2">
                     <Link
                         to={`/admin/users/${item.id}`}
-                        className="p-2 text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors"
+                        className="p-2 text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 dark:hover:bg-indigo-950 rounded-lg transition-colors"
                         title="View Details"
                     >
                         <IconEye className="w-4 h-4" />
@@ -454,7 +454,7 @@ const UserManagement: React.FC = () => {
                     {item.account_status === 'pending' && (
                         <button
                             onClick={() => handleVerifyUser(item)}
-                            className="p-2 text-green-600 hover:text-green-900 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
+                            className="p-2 text-green-600 hover:text-green-900 hover:bg-green-50 dark:hover:bg-green-950 rounded-lg transition-colors"
                             title="Verify User"
                         >
                             <IconCheck className="w-4 h-4" />
@@ -463,7 +463,7 @@ const UserManagement: React.FC = () => {
                     {item.account_status !== 'suspended' ? (
                         <button
                             onClick={() => handleSuspend(item)}
-                            className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                            className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg transition-colors"
                             title="Suspend User"
                         >
                             <IconBan className="w-4 h-4" />
@@ -471,7 +471,7 @@ const UserManagement: React.FC = () => {
                     ) : (
                         <button
                             onClick={() => handleSuspend(item)}
-                            className="p-2 text-green-600 hover:text-green-900 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
+                            className="p-2 text-green-600 hover:text-green-900 hover:bg-green-50 dark:hover:bg-green-950 rounded-lg transition-colors"
                             title="Reactivate User"
                         >
                             <IconCheck className="w-4 h-4" />
@@ -479,7 +479,7 @@ const UserManagement: React.FC = () => {
                     )}
                     <button
                         onClick={() => handleDelete(item)}
-                        className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                        className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg transition-colors"
                         title="Delete User"
                     >
                         <IconTrash className="w-4 h-4" />
@@ -535,7 +535,7 @@ const UserManagement: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-4">
-                        <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
+                        <div className="p-3 bg-blue-100 dark:bg-blue-950 rounded-xl">
                             <IconUsers className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                         </div>
                         <div>
@@ -546,7 +546,7 @@ const UserManagement: React.FC = () => {
                 </div>
                 <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-4">
-                        <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
+                        <div className="p-3 bg-green-100 dark:bg-green-950 rounded-xl">
                             <IconCheck className="w-6 h-6 text-green-600 dark:text-green-400" />
                         </div>
                         <div>
@@ -557,7 +557,7 @@ const UserManagement: React.FC = () => {
                 </div>
                 <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-4">
-                        <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl">
+                        <div className="p-3 bg-yellow-100 dark:bg-yellow-950 rounded-xl">
                             <IconAlertTriangle className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
                         </div>
                         <div>
@@ -583,7 +583,7 @@ const UserManagement: React.FC = () => {
                             All Users
                             <span className={`ml-2 py-0.5 px-2 rounded-full text-xs font-semibold ${
                                 activeFilter === 'all'
-                                    ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+                                    ? 'bg-blue-100 text-blue-600 dark:bg-blue-950 dark:text-blue-400'
                                     : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
                             }`}>
                                 {userCounts.all}
@@ -600,7 +600,7 @@ const UserManagement: React.FC = () => {
                             Customers
                             <span className={`ml-2 py-0.5 px-2 rounded-full text-xs font-semibold ${
                                 activeFilter === 'customer'
-                                    ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+                                    ? 'bg-blue-100 text-blue-600 dark:bg-blue-950 dark:text-blue-400'
                                     : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
                             }`}>
                                 {userCounts.customer}
@@ -617,7 +617,7 @@ const UserManagement: React.FC = () => {
                             Administrators
                             <span className={`ml-2 py-0.5 px-2 rounded-full text-xs font-semibold ${
                                 activeFilter === 'admin'
-                                    ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+                                    ? 'bg-blue-100 text-blue-600 dark:bg-blue-950 dark:text-blue-400'
                                     : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
                             }`}>
                                 {userCounts.admin}
@@ -647,7 +647,7 @@ const UserManagement: React.FC = () => {
                                 key={filter.key}
                                 className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                                     activeFilter === filter.key
-                                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400'
                                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                                 }`}
                                 onClick={() => handleFilterChange(filter.key)}
@@ -670,7 +670,7 @@ const UserManagement: React.FC = () => {
 
             {/* Suspend User Modal */}
             {showSuspendModal && selectedUser && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                <div className="fixed inset-0 bg-black/50  flex items-center justify-center z-50 p-4">
                     <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-gray-200 dark:border-gray-700">
                         <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{selectedUser.account_status === 'suspended' ? 'Reactivate User Account' : 'Suspend User Account'}</h3>
 
@@ -729,14 +729,14 @@ const UserManagement: React.FC = () => {
             )}
 
             {showDeleteModal && selectedUser && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                <div className="fixed inset-0 bg-black/50  flex items-center justify-center z-50 p-4">
                     <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-gray-200 dark:border-gray-700">
                         <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Delete User Account</h3>
 
                         <div className="mb-6">
                             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Are you sure you want to permanently delete this user account? This action cannot be undone.</p>
 
-                            <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800">
+                            <div className="p-4 bg-red-50 dark:bg-red-950 rounded-xl border border-red-200 dark:border-red-800">
                                 <p className="font-semibold text-red-900 dark:text-red-400 mb-2">User Details:</p>
                                 <div className="space-y-1 text-sm text-red-700 dark:text-red-300">
                                     <p>

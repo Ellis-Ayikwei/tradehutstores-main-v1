@@ -156,6 +156,10 @@ function WizardForm({ productId, initialStatus, initialValues, initialImages, in
                             },
                             onVariantsPruned: (ids) => {
                                 serverVariantIds.current = serverVariantIds.current.filter((id) => !ids.includes(id));
+                                // A deleted variant must not be PATCHed later if the seller switches that row back on.
+                                form.getValues('variants').forEach((row, i) => {
+                                    if (row.serverId && ids.includes(row.serverId)) form.setValue(`variants.${i}.serverId`, undefined);
+                                });
                             },
                             onImages: (saved) => {
                                 imagesRef.current = saved;
@@ -245,7 +249,7 @@ function WizardForm({ productId, initialStatus, initialValues, initialImages, in
 
                 <section aria-label={STEPS[step].label}>
                     {STEPS[step].id === 'details' ? <DetailsStep /> : null}
-                    {STEPS[step].id === 'variants' ? <VariantsStep currency={currency} /> : null}
+                    {STEPS[step].id === 'variants' ? <VariantsStep currency={currency} images={images} onImagesChange={setImages} /> : null}
                     {STEPS[step].id === 'images' ? <ImagesStep images={images} onChange={setImages} /> : null}
                     {STEPS[step].id === 'shipping' ? <ShippingStep /> : null}
                     {STEPS[step].id === 'review' ? <ReviewStep images={images} currency={currency} canPublish={images.length > 0} /> : null}
@@ -367,7 +371,7 @@ export default function ListingWizard({ productId }: { productId?: string }) {
             productId={productId}
             initialStatus={product.data.status}
             initialValues={valuesFromServer(product.data, variants.data)}
-            initialImages={imagesFromServer(images.data)}
+            initialImages={imagesFromServer(images.data, variants.data)}
             initialVariantIds={variants.data.map((v) => String(v.id))}
             currency={product.data.pricing_currency ?? stats.data?.currency}
         />

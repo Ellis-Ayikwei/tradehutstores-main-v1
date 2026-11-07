@@ -62,7 +62,7 @@ const ConfirmDialogComponent: React.FC<ConfirmDialogProps> = ({
 
     return (
         <Dialog open={isOpen} onClose={() => onClose(false)} className="relative z-50">
-            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" aria-hidden="true" />
+            <div className="fixed inset-0 bg-black/50 " aria-hidden="true" />
             
             <div className="fixed inset-0 flex items-center justify-center p-4">
                 <Dialog.Panel className="mx-auto max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl">
@@ -91,7 +91,7 @@ const ConfirmDialogComponent: React.FC<ConfirmDialogProps> = ({
                         )}
                         
                         {note && (
-                            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
+                            <div className="p-4 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-xl">
                                 <div className="flex items-start gap-2">
                                     <InformationCircleIcon className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                                     <p className="text-sm text-blue-700 dark:text-blue-300">
@@ -102,7 +102,7 @@ const ConfirmDialogComponent: React.FC<ConfirmDialogProps> = ({
                         )}
                         
                         {recommended && (
-                            <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl">
+                            <div className="p-4 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-xl">
                                 <div className="flex items-start gap-2">
                                     <CheckCircleIcon className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
                                     <p className="text-sm text-green-700 dark:text-green-300">

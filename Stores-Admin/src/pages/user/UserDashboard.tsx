@@ -332,15 +332,15 @@ const UserDashboard: React.FC = () => {
     const getStatusBadgeClass = (status: string): string => {
         switch (status) {
             case 'pending':
-                return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500';
+                return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-500';
             case 'confirmed':
-                return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-500';
+                return 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-500';
             case 'in_progress':
-                return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-500';
+                return 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-500';
             case 'completed':
-                return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-500';
+                return 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-500';
             case 'cancelled':
-                return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-500';
+                return 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-500';
             default:
                 return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
         }
@@ -450,9 +450,6 @@ const UserDashboard: React.FC = () => {
 
         return (
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 relative overflow-hidden">
-                <div className="absolute top-0 right-0 opacity-10">
-                    <FontAwesomeIcon icon={getWeatherIcon(weather.condition)} className="text-8xl text-blue-500" />
-                </div>
 
                 <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Move Day Weather</h2>
 
@@ -500,21 +497,12 @@ const UserDashboard: React.FC = () => {
                 <div className="container mx-auto px-4 py-8">
                     {/* Enhanced Header with Logistics Branding */}
                     <div className="bg-gradient-to-r from-blue-800 via-blue-900 to-slate-800 rounded-3xl shadow-xl mb-8 overflow-hidden relative">
-                        {/* Background Pattern */}
-                        <div className="absolute inset-0 opacity-10">
-                            <div
-                                className="w-full h-full"
-                                style={{
-                                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.3'%3E%3Cpath d='M15 30c8.284 0 15-6.716 15-15 0 8.284 6.716 15 15 15-8.284 0-15 6.716-15 15 0-8.284-6.716-15-15-15z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                                }}
-                            ></div>
-                        </div>
 
                         {/* Floating Elements */}
                         <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
-                            <div className="absolute top-10 left-10 w-32 h-32 rounded-full bg-orange-500/20 animate-pulse"></div>
-                            <div className="absolute bottom-10 right-10 w-24 h-24 rounded-full bg-blue-500/20 animate-pulse delay-700"></div>
-                            <div className="absolute top-24 right-32 w-16 h-16 rounded-full bg-orange-400/30 animate-pulse delay-300"></div>
+                            <div className="absolute top-10 left-10 w-32 h-32 rounded-full bg-orange-100 animate-pulse"></div>
+                            <div className="absolute bottom-10 right-10 w-24 h-24 rounded-full bg-blue-100 animate-pulse delay-700"></div>
+                            <div className="absolute top-24 right-32 w-16 h-16 rounded-full bg-orange-100 animate-pulse delay-300"></div>
                         </div>
 
                         <div className="p-8 relative z-10">
@@ -534,19 +522,19 @@ const UserDashboard: React.FC = () => {
 
                                     {/* Enhanced Status Badges */}
                                     <div className="flex flex-wrap gap-3">
-                                        <span className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold bg-orange-500/20 text-orange-100 border border-orange-400/30 backdrop-blur-sm">
+                                        <span className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold bg-orange-100 text-orange-100 border border-orange-200 ">
                                             <FontAwesomeIcon icon={faTruck} className="mr-2" />
                                             {bookings.filter((b) => b.status === 'in_progress' || b.status === 'in_transit').length} Active Shipments
                                         </span>
-                                        <span className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold bg-green-500/20 text-green-100 border border-green-400/30 backdrop-blur-sm">
+                                        <span className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold bg-green-100 text-green-100 border border-green-200 ">
                                             <FontAwesomeIcon icon={faCheckCircle} className="mr-2" />
                                             Premium Business Account
                                         </span>
-                                        <span className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold bg-purple-500/20 text-purple-100 border border-purple-400/30 backdrop-blur-sm">
+                                        <span className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold bg-purple-100 text-purple-100 border border-purple-200 ">
                                             <FontAwesomeIcon icon={faStar} className="mr-2" />
                                             320 Loyalty Points
                                         </span>
-                                        <span className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold bg-blue-500/20 text-blue-100 border border-blue-400/30 backdrop-blur-sm">
+                                        <span className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold bg-blue-100 text-blue-100 border border-blue-200 ">
                                             <FontAwesomeIcon icon={faShieldAlt} className="mr-2" />
                                             Enterprise Protected
                                         </span>
@@ -557,14 +545,14 @@ const UserDashboard: React.FC = () => {
                                 <div className="mt-8 lg:mt-0 flex flex-col sm:flex-row gap-4">
                                     <Link
                                         to="/service-request"
-                                        className="inline-flex items-center px-6 py-4 bg-white/10 backdrop-blur-sm border border-secondary text-secondary font-semibold rounded-xl hover:bg-white/20 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                                        className="inline-flex items-center px-6 py-4 bg-gray-800  border border-secondary text-secondary font-semibold rounded-xl hover:bg-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                                             <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
                                         </svg>
                                         Book A Move
                                     </Link>
-                                    <button className="inline-flex items-center px-6 py-4 bg-white/5 backdrop-blur-sm border border-white/20 text-white font-medium rounded-xl hover:bg-white/10 transition-all duration-300">
+                                    <button className="inline-flex items-center px-6 py-4 bg-gray-800  border border-gray-200 text-white font-medium rounded-xl hover:bg-gray-700 transition-all duration-300">
                                         <FontAwesomeIcon icon={faHeadset} className="mr-2" />
                                         Support
                                     </button>
@@ -575,7 +563,7 @@ const UserDashboard: React.FC = () => {
 
                     {/* Enhanced Stats Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                        <div className="bg-white/70 backdrop-blur-sm border border-white/20 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                        <div className="bg-white  border border-gray-200 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <div className="flex items-center mb-2">
@@ -604,7 +592,7 @@ const UserDashboard: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="bg-white/70 backdrop-blur-sm border border-white/20 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                        <div className="bg-white  border border-gray-200 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <div className="flex items-center mb-2">
@@ -624,7 +612,7 @@ const UserDashboard: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="bg-white/70 backdrop-blur-sm border border-white/20 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                        <div className="bg-white  border border-gray-200 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <div className="flex items-center mb-2">
@@ -646,7 +634,7 @@ const UserDashboard: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="bg-white/70 backdrop-blur-sm border border-white/20 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                        <div className="bg-white  border border-gray-200 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <div className="flex items-center mb-2">
@@ -675,33 +663,33 @@ const UserDashboard: React.FC = () => {
                                     <li>
                                         <Link
                                             to="/service-request"
-                                            className="flex items-center p-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                                            className="flex items-center p-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors"
                                         >
-                                            <div className="rounded-full bg-blue-100 dark:bg-blue-900/50 p-2 mr-3">
+                                            <div className="rounded-full bg-blue-100 dark:bg-blue-900 p-2 mr-3">
                                                 <FontAwesomeIcon icon={faBox} className="text-blue-500 dark:text-blue-400" />
                                             </div>
                                             <span>Request New Move</span>
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link to="/support" className="flex items-center p-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
-                                            <div className="rounded-full bg-purple-100 dark:bg-purple-900/50 p-2 mr-3">
+                                        <Link to="/support" className="flex items-center p-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors">
+                                            <div className="rounded-full bg-purple-100 dark:bg-purple-900 p-2 mr-3">
                                                 <FontAwesomeIcon icon={faHeadset} className="text-purple-500 dark:text-purple-400" />
                                             </div>
                                             <span>Contact Support</span>
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link to="/profile" className="flex items-center p-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
-                                            <div className="rounded-full bg-green-100 dark:bg-green-900/50 p-2 mr-3">
+                                        <Link to="/profile" className="flex items-center p-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors">
+                                            <div className="rounded-full bg-green-100 dark:bg-green-900 p-2 mr-3">
                                                 <FontAwesomeIcon icon={faUser} className="text-green-500 dark:text-green-400" />
                                             </div>
                                             <span>Update Profile</span>
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link to="/invoices" className="flex items-center p-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
-                                            <div className="rounded-full bg-yellow-100 dark:bg-yellow-900/50 p-2 mr-3">
+                                        <Link to="/invoices" className="flex items-center p-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors">
+                                            <div className="rounded-full bg-yellow-100 dark:bg-yellow-900 p-2 mr-3">
                                                 <FontAwesomeIcon icon={faFileInvoice} className="text-yellow-500 dark:text-yellow-400" />
                                             </div>
                                             <span>View Invoices</span>
@@ -749,7 +737,7 @@ const UserDashboard: React.FC = () => {
 
                                 <div className="space-y-3">
                                     {activeDisputes.some((d) => d.resolution?.outcome === 'refunded') ? (
-                                        <div className="flex items-start p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-900/40">
+                                        <div className="flex items-start p-3 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-900">
                                             <div className="mr-3 text-green-500">
                                                 <FontAwesomeIcon icon={faCheckCircle} className="text-xl" />
                                             </div>
@@ -763,7 +751,7 @@ const UserDashboard: React.FC = () => {
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="flex items-start p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-900/40">
+                                        <div className="flex items-start p-3 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-900">
                                             <div className="mr-3 text-blue-500">
                                                 <FontAwesomeIcon icon={faCreditCard} className="text-xl" />
                                             </div>
@@ -842,7 +830,7 @@ const UserDashboard: React.FC = () => {
                                 ) : (
                                     <div className="overflow-x-auto -mx-4 sm:mx-0">
                                         <div className="inline-block min-w-full align-middle">
-                                            <div className="overflow-hidden shadow-sm ring-1 ring-black ring-opacity-5">
+                                            <div className="overflow-hidden shadow-sm ring-1 ring-gray-200 dark:ring-gray-700">
                                                 <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
                                                     <thead className="bg-gray-50 dark:bg-gray-800">
                                                         <tr>
@@ -874,7 +862,7 @@ const UserDashboard: React.FC = () => {
                                                     </thead>
                                                     <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
                                                         {filteredBookings.map((booking) => (
-                                                            <tr key={booking.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors">
+                                                            <tr key={booking.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{booking.id}</td>
                                                                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                                     <span className={`px-2 py-1 rounded-full text-xs ${getStatusBadgeClass(booking.status)}`}>{getStatusText(booking.status)}</span>

@@ -159,7 +159,7 @@ const ServiceModal: React.FC<ServiceModalProps> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm" />
+          <div className="fixed inset-0 bg-black bg-opacity-50 " />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -330,7 +330,7 @@ const ServiceModal: React.FC<ServiceModalProps> = ({
                           <div className="border-2 border-gray-200 dark:border-gray-600 rounded-lg p-4 min-h-[120px]">
                             {itemCategories.length === 0 ? (
                               <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                                <Package className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                                <Package className="w-8 h-8 mx-auto mb-2 text-gray-400" />
                                 <p>No item categories available</p>
                                 <p className="text-sm">Click "Add New" to create one</p>
                               </div>
@@ -341,7 +341,7 @@ const ServiceModal: React.FC<ServiceModalProps> = ({
                                     key={category.id}
                                     className={`p-3 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
                                       selectedItemCategories.includes(category.id)
-                                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-950'
                                         : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
                                     }`}
                                     onClick={() => handleItemCategoryToggle(category.id)}
@@ -373,7 +373,7 @@ const ServiceModal: React.FC<ServiceModalProps> = ({
                                   return (
                                     <span
                                       key={categoryId}
-                                      className="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 rounded-full text-sm font-medium"
+                                      className="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-400 rounded-full text-sm font-medium"
                                     >
                                       {category?.name}
                                     </span>
@@ -399,7 +399,7 @@ const ServiceModal: React.FC<ServiceModalProps> = ({
                     <button
                       type="submit"
                       disabled={loading}
-                      className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium shadow-sm hover:shadow-md"
+                      className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed transition-all duration-200 font-medium shadow-sm hover:shadow-md"
                     >
                       {loading ? (
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />

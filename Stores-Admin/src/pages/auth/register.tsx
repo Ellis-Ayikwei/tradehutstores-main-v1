@@ -101,17 +101,8 @@ const Register: React.FC = () => {
             {/* Left Side - Hero Section */}
             <div className="hidden lg:flex lg:flex-1 relative overflow-hidden">
                 {/* Background Elements */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-800/90 via-blue-900/95 to-slate-900/90"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-800 via-blue-900 to-slate-900"></div>
 
-                {/* Logistics Pattern Overlay */}
-                <div className="absolute inset-0 opacity-10">
-                    <div
-                        className="w-full h-full"
-                        style={{
-                            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.3'%3E%3Cpath d='M15 30c8.284 0 15-6.716 15-15 0 8.284 6.716 15 15 15-8.284 0-15 6.716-15 15 0-8.284-6.716-15-15-15z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                        }}
-                    ></div>
-                </div>
 
                 {/* Content */}
                 <div className="relative z-10 flex flex-col justify-center px-12 py-12 text-white">
@@ -138,19 +129,19 @@ const Register: React.FC = () => {
                         {/* Benefits */}
                         <div className="space-y-4 mb-8">
                             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 }} className="flex items-center">
-                                <div className="bg-white/20 rounded-full p-2 mr-4">
+                                <div className="bg-orange-700 rounded-full p-2 mr-4">
                                     <FontAwesomeIcon icon={faShieldAlt} className="h-5 w-5 text-orange-400" />
                                 </div>
                                 <span className="text-white">Secure platform with industry compliance</span>
                             </motion.div>
                             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.6 }} className="flex items-center">
-                                <div className="bg-white/20 rounded-full p-2 mr-4">
+                                <div className="bg-orange-700 rounded-full p-2 mr-4">
                                     <FontAwesomeIcon icon={faUsers} className="h-5 w-5 text-orange-400" />
                                 </div>
                                 <span className="text-white">Access to nationwide provider network</span>
                             </motion.div>
                             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.7 }} className="flex items-center">
-                                <div className="bg-white/20 rounded-full p-2 mr-4">
+                                <div className="bg-orange-700 rounded-full p-2 mr-4">
                                     <FontAwesomeIcon icon={faChartLine} className="h-5 w-5 text-orange-400" />
                                 </div>
                                 <span className="text-white">Support available when you need it</span>
@@ -163,12 +154,12 @@ const Register: React.FC = () => {
                 <motion.div
                     animate={{ y: [0, -10, 0] }}
                     transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                    className="absolute top-1/4 right-12 w-20 h-20 bg-orange-500/20 rounded-full backdrop-blur-sm"
+                    className="absolute top-1/4 right-12 w-20 h-20 bg-orange-100 rounded-full "
                 ></motion.div>
                 <motion.div
                     animate={{ y: [0, 15, 0] }}
                     transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-                    className="absolute bottom-1/4 right-24 w-12 h-12 bg-blue-500/30 rounded-full backdrop-blur-sm"
+                    className="absolute bottom-1/4 right-24 w-12 h-12 bg-blue-100 rounded-full "
                 ></motion.div>
             </div>
 
@@ -187,7 +178,7 @@ const Register: React.FC = () => {
                     </div>
 
                     {/* Main Card */}
-                    <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-8">
+                    <div className="bg-orange-800  border border-gray-200 rounded-3xl shadow-2xl p-8">
                         {/* Header */}
                         <div className="text-center mb-8">
                             <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.2 }}>
@@ -200,7 +191,7 @@ const Register: React.FC = () => {
                         <AnimatePresence mode="wait">
                             {registerError && (
                                 <motion.div
-                                    className="bg-red-500/10 border border-red-500/30 rounded-2xl p-4 mb-6 backdrop-blur-sm"
+                                    className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-6 "
                                     initial={{ opacity: 0, y: -20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -20 }}
@@ -245,10 +236,10 @@ const Register: React.FC = () => {
                                                 </div>
                                                 <Field
                                                     name="firstName"
-                                                    className={`w-full pl-12 pr-4 py-3 bg-white/5 backdrop-blur-sm border transition-all duration-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                                                    className={`w-full pl-12 pr-4 py-3 bg-gray-800  border transition-all duration-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${
                                                         errors.firstName && touched.firstName
-                                                            ? 'border-red-500/50 focus:ring-red-500/20'
-                                                            : 'border-white/20 focus:ring-orange-500/20 focus:border-orange-500/50'
+                                                            ? 'border-red-300 focus:ring-red-200'
+                                                            : 'border-gray-500 focus:ring-orange-200 focus:border-orange-300'
                                                     }`}
                                                     placeholder="First name"
                                                 />
@@ -264,10 +255,10 @@ const Register: React.FC = () => {
                                                 </div>
                                                 <Field
                                                     name="lastName"
-                                                    className={`w-full pl-12 pr-4 py-3 bg-white/5 backdrop-blur-sm border transition-all duration-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                                                    className={`w-full pl-12 pr-4 py-3 bg-gray-800  border transition-all duration-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${
                                                         errors.lastName && touched.lastName
-                                                            ? 'border-red-500/50 focus:ring-red-500/20'
-                                                            : 'border-white/20 focus:ring-orange-500/20 focus:border-orange-500/50'
+                                                            ? 'border-red-300 focus:ring-red-200'
+                                                            : 'border-gray-500 focus:ring-orange-200 focus:border-orange-300'
                                                     }`}
                                                     placeholder="Last name"
                                                 />
@@ -287,10 +278,10 @@ const Register: React.FC = () => {
                                                 <Field
                                                     name="email"
                                                     type="email"
-                                                    className={`w-full pl-12 pr-4 py-3 bg-white/5 backdrop-blur-sm border transition-all duration-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                                                    className={`w-full pl-12 pr-4 py-3 bg-gray-800  border transition-all duration-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${
                                                         errors.email && touched.email
-                                                            ? 'border-red-500/50 focus:ring-red-500/20'
-                                                            : 'border-white/20 focus:ring-orange-500/20 focus:border-orange-500/50'
+                                                            ? 'border-red-300 focus:ring-red-200'
+                                                            : 'border-gray-500 focus:ring-orange-200 focus:border-orange-300'
                                                     }`}
                                                     placeholder="Email address"
                                                 />
@@ -307,10 +298,10 @@ const Register: React.FC = () => {
                                                 <Field
                                                     name="phone"
                                                     type="tel"
-                                                    className={`w-full pl-12 pr-4 py-3 bg-white/5 backdrop-blur-sm border transition-all duration-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                                                    className={`w-full pl-12 pr-4 py-3 bg-gray-800  border transition-all duration-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${
                                                         errors.phone && touched.phone
-                                                            ? 'border-red-500/50 focus:ring-red-500/20'
-                                                            : 'border-white/20 focus:ring-orange-500/20 focus:border-orange-500/50'
+                                                            ? 'border-red-300 focus:ring-red-200'
+                                                            : 'border-gray-500 focus:ring-orange-200 focus:border-orange-300'
                                                     }`}
                                                     placeholder="Phone number"
                                                 />
@@ -329,10 +320,10 @@ const Register: React.FC = () => {
                                                 </div>
                                                 <Field
                                                     name="employeeId"
-                                                    className={`w-full pl-12 pr-4 py-3 bg-white/5 backdrop-blur-sm border transition-all duration-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                                                    className={`w-full pl-12 pr-4 py-3 bg-gray-800  border transition-all duration-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${
                                                         errors.employeeId && touched.employeeId
-                                                            ? 'border-red-500/50 focus:ring-red-500/20'
-                                                            : 'border-white/20 focus:ring-orange-500/20 focus:border-orange-500/50'
+                                                            ? 'border-red-300 focus:ring-red-200'
+                                                            : 'border-gray-500 focus:ring-orange-200 focus:border-orange-300'
                                                     }`}
                                                     placeholder="Employee ID"
                                                 />
@@ -348,10 +339,10 @@ const Register: React.FC = () => {
                                                 </div>
                                                 <Field
                                                     name="department"
-                                                    className={`w-full pl-12 pr-4 py-3 bg-white/5 backdrop-blur-sm border transition-all duration-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                                                    className={`w-full pl-12 pr-4 py-3 bg-gray-800  border transition-all duration-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${
                                                         errors.department && touched.department
-                                                            ? 'border-red-500/50 focus:ring-red-500/20'
-                                                            : 'border-white/20 focus:ring-orange-500/20 focus:border-orange-500/50'
+                                                            ? 'border-red-300 focus:ring-red-200'
+                                                            : 'border-gray-500 focus:ring-orange-200 focus:border-orange-300'
                                                     }`}
                                                     placeholder="Department"
                                                 />
@@ -371,10 +362,10 @@ const Register: React.FC = () => {
                                                 <Field
                                                     name="password"
                                                     type={showPassword ? 'text' : 'password'}
-                                                    className={`w-full pl-12 pr-12 py-3 bg-white/5 backdrop-blur-sm border transition-all duration-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                                                    className={`w-full pl-12 pr-12 py-3 bg-gray-800  border transition-all duration-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${
                                                         errors.password && touched.password
-                                                            ? 'border-red-500/50 focus:ring-red-500/20'
-                                                            : 'border-white/20 focus:ring-orange-500/20 focus:border-orange-500/50'
+                                                            ? 'border-red-300 focus:ring-red-200'
+                                                            : 'border-gray-500 focus:ring-orange-200 focus:border-orange-300'
                                                     }`}
                                                     placeholder="Password"
                                                 />
@@ -398,10 +389,10 @@ const Register: React.FC = () => {
                                                 <Field
                                                     name="confirmPassword"
                                                     type={showConfirmPassword ? 'text' : 'password'}
-                                                    className={`w-full pl-12 pr-12 py-3 bg-white/5 backdrop-blur-sm border transition-all duration-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                                                    className={`w-full pl-12 pr-12 py-3 bg-gray-800  border transition-all duration-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${
                                                         errors.confirmPassword && touched.confirmPassword
-                                                            ? 'border-red-500/50 focus:ring-red-500/20'
-                                                            : 'border-white/20 focus:ring-orange-500/20 focus:border-orange-500/50'
+                                                            ? 'border-red-300 focus:ring-red-200'
+                                                            : 'border-gray-500 focus:ring-orange-200 focus:border-orange-300'
                                                     }`}
                                                     placeholder="Confirm password"
                                                 />
@@ -422,7 +413,7 @@ const Register: React.FC = () => {
                                         <Field
                                             name="termsAccepted"
                                             type="checkbox"
-                                            className="h-4 w-4 text-orange-500 focus:ring-orange-500/20 border-gray-600 rounded bg-white/10 backdrop-blur-sm mt-1"
+                                            className="h-4 w-4 text-orange-500 focus:ring-orange-200 border-gray-600 rounded bg-gray-800  mt-1"
                                         />
                                         <label className="ml-3 text-sm text-gray-300 leading-relaxed">
                                             I agree to the{' '}
@@ -442,7 +433,7 @@ const Register: React.FC = () => {
                                         <Field
                                             name="securityClearance"
                                             type="checkbox"
-                                            className="h-4 w-4 text-orange-500 focus:ring-orange-500/20 border-gray-600 rounded bg-white/10 backdrop-blur-sm mt-1"
+                                            className="h-4 w-4 text-orange-500 focus:ring-orange-200 border-gray-600 rounded bg-gray-800  mt-1"
                                         />
                                         <label className="ml-3 text-sm text-gray-300 leading-relaxed">
                                             I acknowledge the{' '}
@@ -458,7 +449,7 @@ const Register: React.FC = () => {
                                         <motion.button
                                             type="submit"
                                             disabled={isSubmitting}
-                                            className="w-full bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500/20 shadow-lg hover:shadow-xl"
+                                            className="w-full bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-200 shadow-lg hover:shadow-xl"
                                             whileHover={{ scale: 1.02 }}
                                             whileTap={{ scale: 0.98 }}
                                         >
@@ -486,10 +477,10 @@ const Register: React.FC = () => {
                         {/* Divider */}
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }} className="relative my-8">
                             <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-white/20"></div>
+                                <div className="w-full border-t border-orange-500"></div>
                             </div>
                             <div className="relative flex justify-center">
-                                <span className="px-4 bg-slate-900/50 text-gray-400 text-sm">Or register with</span>
+                                <span className="px-4 bg-slate-900 text-gray-400 text-sm">Or register with</span>
                             </div>
                         </motion.div>
 
@@ -498,7 +489,7 @@ const Register: React.FC = () => {
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
-                                className="flex items-center justify-center px-4 py-3 bg-white/5 backdrop-blur-sm border border-white/20 rounded-xl text-gray-200 hover:bg-white/10 transition-all duration-300"
+                                className="flex items-center justify-center px-4 py-3 bg-gray-800  border border-gray-200 rounded-xl text-gray-200 hover:bg-gray-700 transition-all duration-300"
                             >
                                 <FontAwesomeIcon icon={faGoogle} className="text-red-400 mr-2" />
                                 Google
@@ -506,7 +497,7 @@ const Register: React.FC = () => {
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
-                                className="flex items-center justify-center px-4 py-3 bg-white/5 backdrop-blur-sm border border-white/20 rounded-xl text-gray-200 hover:bg-white/10 transition-all duration-300"
+                                className="flex items-center justify-center px-4 py-3 bg-gray-800  border border-gray-200 rounded-xl text-gray-200 hover:bg-gray-700 transition-all duration-300"
                             >
                                 <FontAwesomeIcon icon={faFacebookF} className="text-blue-400 mr-2" />
                                 Facebook

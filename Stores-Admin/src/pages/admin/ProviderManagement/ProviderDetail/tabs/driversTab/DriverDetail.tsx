@@ -263,17 +263,17 @@ const DriverDetail: React.FC = () => {
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'available':
-                return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+                return 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-400';
             case 'on_job':
-                return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
+                return 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-400';
             case 'off_duty':
                 return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400';
             case 'on_break':
-                return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
+                return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-400';
             case 'unavailable':
-                return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400';
+                return 'bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-400';
             case 'suspended':
-                return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
+                return 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400';
             case 'inactive':
                 return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400';
             default:
@@ -284,11 +284,11 @@ const DriverDetail: React.FC = () => {
     const getVerificationStatusColor = (status: string) => {
         switch (status) {
             case 'verified':
-                return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+                return 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-400';
             case 'pending':
-                return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
+                return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-400';
             case 'rejected':
-                return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
+                return 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400';
             case 'unverified':
             default:
                 return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400';
@@ -523,7 +523,7 @@ const DriverDetail: React.FC = () => {
                     <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
                         <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-4">
                             <div className="flex items-center gap-4">
-                                <div className="h-12 w-12 rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center">
+                                <div className="h-12 w-12 rounded-lg bg-indigo-800  flex items-center justify-center">
                                     <User className="h-6 w-6 text-white" />
                         </div>
                                 <div>
@@ -570,7 +570,7 @@ const DriverDetail: React.FC = () => {
                     <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
                         <div className="bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-4">
                             <div className="flex items-center gap-4">
-                                <div className="h-12 w-12 rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center">
+                                <div className="h-12 w-12 rounded-lg bg-teal-800  flex items-center justify-center">
                                     <Briefcase className="h-6 w-6 text-white" />
                                 </div>
                                 <div>
@@ -631,7 +631,7 @@ const DriverDetail: React.FC = () => {
                     <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
                         <div className="bg-gradient-to-r from-purple-500 to-indigo-600 px-6 py-4">
                             <div className="flex items-center gap-4">
-                                <div className="h-12 w-12 rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center">
+                                <div className="h-12 w-12 rounded-lg bg-indigo-800  flex items-center justify-center">
                                     <IdCard className="h-6 w-6 text-white" />
                                 </div>
                                 <div>
@@ -654,7 +654,7 @@ const DriverDetail: React.FC = () => {
                                     <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">License Categories</label>
                             <div className="flex flex-wrap gap-2 mt-1">
                                         {driverData.license_categories.map((category) => (
-                                            <span key={category} className="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium">
+                                            <span key={category} className="px-3 py-1 bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium">
                                         {category}
                                     </span>
                                 ))}
@@ -675,7 +675,7 @@ const DriverDetail: React.FC = () => {
                                     </p>
                                 </div>
                                 {driverData.needs_license_renewal && (
-                                    <div className="mt-2 p-3 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                                    <div className="mt-2 p-3 bg-yellow-50 dark:bg-yellow-950 rounded-lg border border-yellow-200 dark:border-yellow-800">
                                         <p className="text-yellow-700 dark:text-yellow-400 text-sm flex items-center gap-2">
                                             <AlertTriangle className="h-4 w-4" />
                                             License renewal required
@@ -690,7 +690,7 @@ const DriverDetail: React.FC = () => {
                     <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
                         <div className="bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-4">
                             <div className="flex items-center gap-4">
-                                <div className="h-12 w-12 rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center">
+                                <div className="h-12 w-12 rounded-lg bg-orange-800  flex items-center justify-center">
                                     <Award className="h-6 w-6 text-white" />
                 </div>
                         <div>
@@ -755,7 +755,7 @@ const DriverDetail: React.FC = () => {
                 <div className="mt-6 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
                     <div className="bg-gradient-to-r from-gray-500 to-gray-600 px-6 py-4">
                         <div className="flex items-center gap-4">
-                            <div className="h-12 w-12 rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center">
+                            <div className="h-12 w-12 rounded-lg bg-gray-800  flex items-center justify-center">
                                 <FileText className="h-6 w-6 text-white" />
                         </div>
                         <div>
@@ -800,7 +800,7 @@ const DriverDetail: React.FC = () => {
                     ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {documents?.map((document) => (
-                                <div key={document.id} className="bg-gray-50 dark:bg-slate-700/50 rounded-lg p-4">
+                                <div key={document.id} className="bg-gray-50 dark:bg-slate-700 rounded-lg p-4">
                             <div className="flex items-center justify-between mb-2">
                                         <h3 className="font-medium text-gray-900 dark:text-white">
                                             {document.name}
@@ -930,7 +930,7 @@ const DriverDetail: React.FC = () => {
                                     onClick={() => handleVerificationUpdate('unverified')}
                                     className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-colors ${
                                         selectedVerificationStatus === 'unverified' 
-                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' 
                                             : 'border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700'
                                     }`}
                                     disabled={isUpdatingVerification}
@@ -949,7 +949,7 @@ const DriverDetail: React.FC = () => {
                                     onClick={() => handleVerificationUpdate('pending')}
                                     className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-colors ${
                                         selectedVerificationStatus === 'pending' 
-                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' 
                                             : 'border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700'
                                     }`}
                                     disabled={isUpdatingVerification}
@@ -968,7 +968,7 @@ const DriverDetail: React.FC = () => {
                                     onClick={() => handleVerificationUpdate('verified')}
                                     className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-colors ${
                                         selectedVerificationStatus === 'verified' 
-                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' 
                                             : 'border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700'
                                     }`}
                                     disabled={isUpdatingVerification}
@@ -987,7 +987,7 @@ const DriverDetail: React.FC = () => {
                                     onClick={() => handleVerificationUpdate('rejected')}
                                     className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-colors ${
                                         selectedVerificationStatus === 'rejected' 
-                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' 
                                             : 'border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700'
                                     }`}
                                     disabled={isUpdatingVerification}
@@ -1060,7 +1060,7 @@ const DriverDetail: React.FC = () => {
                                     onClick={() => handleStatusUpdate('available')}
                                     className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-colors ${
                                         selectedStatus === 'available' 
-                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' 
                                             : 'border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700'
                                     }`}
                                     disabled={isUpdatingStatus}
@@ -1079,7 +1079,7 @@ const DriverDetail: React.FC = () => {
                                     onClick={() => handleStatusUpdate('on_job')}
                                     className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-colors ${
                                         selectedStatus === 'on_job' 
-                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' 
                                             : 'border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700'
                                     }`}
                                     disabled={isUpdatingStatus}
@@ -1098,7 +1098,7 @@ const DriverDetail: React.FC = () => {
                                     onClick={() => handleStatusUpdate('off_duty')}
                                     className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-colors ${
                                         selectedStatus === 'off_duty' 
-                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' 
                                             : 'border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700'
                                     }`}
                                     disabled={isUpdatingStatus}
@@ -1117,7 +1117,7 @@ const DriverDetail: React.FC = () => {
                                     onClick={() => handleStatusUpdate('on_break')}
                                     className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-colors ${
                                         selectedStatus === 'on_break' 
-                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' 
                                             : 'border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700'
                                     }`}
                                     disabled={isUpdatingStatus}
@@ -1136,7 +1136,7 @@ const DriverDetail: React.FC = () => {
                                     onClick={() => handleStatusUpdate('unavailable')}
                                     className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-colors ${
                                         selectedStatus === 'unavailable' 
-                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' 
                                             : 'border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700'
                                     }`}
                                     disabled={isUpdatingStatus}
@@ -1155,7 +1155,7 @@ const DriverDetail: React.FC = () => {
                                     onClick={() => handleStatusUpdate('suspended')}
                                     className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-colors ${
                                         selectedStatus === 'suspended' 
-                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' 
                                             : 'border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700'
                                     }`}
                                     disabled={isUpdatingStatus}
@@ -1174,7 +1174,7 @@ const DriverDetail: React.FC = () => {
                                     onClick={() => handleStatusUpdate('inactive')}
                                     className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-colors ${
                                         selectedStatus === 'inactive' 
-                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-950' 
                                             : 'border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700'
                                     }`}
                                     disabled={isUpdatingStatus}

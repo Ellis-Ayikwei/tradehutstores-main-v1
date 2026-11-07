@@ -130,10 +130,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ className = '' }) =
                                         
         {/* Notification badge */}
         {unreadCount > 0 && (
-          <span className="flex absolute w-3 h-3 ltr:right-0 rtl:left-0 top-0">
-          <span className="animate-ping absolute ltr:-left-[3px] rtl:-right-[3px] -top-[3px] inline-flex h-full w-full rounded-full bg-success/50 opacity-75"></span>
-          <span className="relative inline-flex rounded-full w-[6px] h-[6px] bg-success"></span>
-      </span>
+          <span className="absolute ltr:right-0 rtl:left-0 top-0 inline-flex h-2.5 w-2.5 rounded-full bg-destructive ring-2 ring-background"></span>
         )}
                                     </span>
         

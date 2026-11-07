@@ -111,7 +111,7 @@ const ConfigurationsTab: React.FC<ConfigurationsTabProps> = ({
                         </p>
                     </div>
                     <button
-                        className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-sm"
+                        className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-4 focus:ring-blue-200 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-sm"
                         onClick={onAddConfiguration}
                     >
                         <Plus className="mr-2 h-4 w-4" />
@@ -124,7 +124,7 @@ const ConfigurationsTab: React.FC<ConfigurationsTabProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center">
-                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                        <div className="p-2 bg-blue-100 dark:bg-blue-950 rounded-lg">
                             <Settings className="text-blue-600 dark:text-blue-400 h-5 w-5" />
                         </div>
                         <div className="ml-3">
@@ -135,7 +135,7 @@ const ConfigurationsTab: React.FC<ConfigurationsTabProps> = ({
                 </div>
                 <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center">
-                        <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                        <div className="p-2 bg-green-100 dark:bg-green-950 rounded-lg">
                             <CheckCircle className="text-green-600 dark:text-green-400 h-5 w-5" />
                         </div>
                         <div className="ml-3">
@@ -148,7 +148,7 @@ const ConfigurationsTab: React.FC<ConfigurationsTabProps> = ({
                 </div>
                 <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center">
-                        <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
+                        <div className="p-2 bg-yellow-100 dark:bg-yellow-950 rounded-lg">
                             <Star className="text-yellow-600 dark:text-yellow-400 h-5 w-5" />
                         </div>
                         <div className="ml-3">
@@ -161,7 +161,7 @@ const ConfigurationsTab: React.FC<ConfigurationsTabProps> = ({
                 </div>
                 <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center">
-                        <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                        <div className="p-2 bg-purple-100 dark:bg-purple-950 rounded-lg">
                             <TrendingUp className="text-purple-600 dark:text-purple-400 h-5 w-5" />
                         </div>
                         <div className="ml-3">
@@ -193,13 +193,13 @@ const ConfigurationsTab: React.FC<ConfigurationsTabProps> = ({
                                     <div className="flex items-center space-x-2 mt-1">
                                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                                             config.is_active 
-                                                ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' 
-                                                : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
+                                                ? 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-400' 
+                                                : 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400'
                                         }`}>
                                             {config.is_active ? 'Active' : 'Inactive'}
                                         </span>
                                         {config.is_default && (
-                                            <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                                            <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-400">
                                                 Default
                                             </span>
                                         )}
@@ -207,7 +207,7 @@ const ConfigurationsTab: React.FC<ConfigurationsTabProps> = ({
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     {config.is_default && (
-                                        <div className="p-1.5 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
+                                        <div className="p-1.5 bg-yellow-100 dark:bg-yellow-950 rounded-lg">
                                             <Star className="text-yellow-600 dark:text-yellow-400 h-4 w-4" />
                                         </div>
                                     )}
@@ -217,7 +217,7 @@ const ConfigurationsTab: React.FC<ConfigurationsTabProps> = ({
                             {/* Pricing Details */}
                             <div className="space-y-3">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                    <div className="p-2.5 rounded-lg bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600/40">
+                                    <div className="p-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-100 dark:border-gray-600">
                                         <div className="flex items-center justify-between text-xs font-medium text-gray-500 dark:text-gray-400">
                                             <span>Base Price</span>
                                             <span className="text-gray-700 dark:text-gray-300">£{Number(config.base_price).toFixed(2)}</span>
@@ -231,10 +231,10 @@ const ConfigurationsTab: React.FC<ConfigurationsTabProps> = ({
                                             <span className="text-gray-700 dark:text-gray-300">£{Number(config.distance_rate_per_km).toFixed(2)}/km</span>
                                         </div>
                                     </div>
-                                    <div className="p-2.5 rounded-lg bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600/40">
+                                    <div className="p-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-100 dark:border-gray-600">
                                         <div className="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center justify-between">
                                             <span>Item Pricing</span>
-                                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold bg-gray-100 text-gray-700 dark:bg-gray-700/40 dark:text-gray-300`}>
+                                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300`}>
                                                 {config.dimension_preference ? 'Dimensions' : 'Weight'} Priority
                                             </span>
                                         </div>
@@ -249,7 +249,7 @@ const ConfigurationsTab: React.FC<ConfigurationsTabProps> = ({
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                    <div className="p-2.5 rounded-lg bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600/40">
+                                    <div className="p-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-100 dark:border-gray-600">
                                         <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Surcharges</div>
                                         <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                                             <span>Fuel</span>
@@ -264,7 +264,7 @@ const ConfigurationsTab: React.FC<ConfigurationsTabProps> = ({
                                             <span className="text-gray-700 dark:text-gray-300">£{Number(config.carbon_offset_rate).toFixed(2)}</span>
                                         </div>
                                     </div>
-                                    <div className="p-2.5 rounded-lg bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600/40">
+                                    <div className="p-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-100 dark:border-gray-600">
                                         <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Time Multipliers</div>
                                         <div className="flex flex-wrap gap-1.5">
                                             {[
@@ -274,7 +274,7 @@ const ConfigurationsTab: React.FC<ConfigurationsTabProps> = ({
                                                 { label: 'Same Day', value: (config as any).same_day_multiplier },
                                                 { label: 'Next Day', value: config.next_day_multiplier },
                                             ].map((chip) => (
-                                                <div key={chip.label} className={`px-2 py-0.5 rounded-full text-[10px] font-semibold bg-gray-100 text-gray-700 dark:bg-gray-700/40 dark:text-gray-300`}>
+                                                <div key={chip.label} className={`px-2 py-0.5 rounded-full text-[10px] font-semibold bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300`}>
                                                     {chip.label}: {Number(chip.value || 1).toFixed(2)}x
                                                 </div>
                                             ))}
@@ -285,11 +285,11 @@ const ConfigurationsTab: React.FC<ConfigurationsTabProps> = ({
                         </div>
 
                         {/* Actions */}
-                        <div className="px-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700/50 dark:to-gray-600/50 border-t border-gray-200 dark:border-gray-600">
+                        <div className="px-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600 border-t border-gray-200 dark:border-gray-600">
                             <div className="flex justify-end space-x-2">
                                 {!config.is_default && (
                                     <button
-                                        className="inline-flex items-center px-3 py-1.5 bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-200 rounded-lg hover:bg-green-200 dark:hover:bg-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md text-xs"
+                                        className="inline-flex items-center px-3 py-1.5 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200 rounded-lg hover:bg-green-200 dark:hover:bg-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md text-xs"
                                         onClick={() => onSetDefault(config.id)}
                                     >
                                         <Check className="mr-1 h-3 w-3" />
@@ -297,14 +297,14 @@ const ConfigurationsTab: React.FC<ConfigurationsTabProps> = ({
                                     </button>
                                 )}
                                 <button
-                                    className="inline-flex items-center px-3 py-1.5 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-200 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md text-xs"
+                                    className="inline-flex items-center px-3 py-1.5 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md text-xs"
                                     onClick={() => onEditConfiguration(config)}
                                 >
                                     <Edit className="mr-1 h-3 w-3" />
                                     Edit
                                 </button>
                                 <button
-                                    className="inline-flex items-center px-3 py-1.5 bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-200 rounded-lg hover:bg-red-200 dark:hover:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed text-xs"
+                                    className="inline-flex items-center px-3 py-1.5 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-lg hover:bg-red-200 dark:hover:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md disabled:bg-gray-100 disabled:text-gray-400 dark:disabled:bg-gray-800 dark:disabled:text-gray-500 disabled:cursor-not-allowed text-xs"
                                     onClick={() => onDeleteConfiguration(config.id)}
                                     disabled={config.is_default}
                                 >
@@ -328,7 +328,7 @@ const ConfigurationsTab: React.FC<ConfigurationsTabProps> = ({
                         Get started by creating your first pricing configuration.
                     </p>
                     <button
-                        className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-sm"
+                        className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-4 focus:ring-blue-200 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-sm"
                         onClick={onAddConfiguration}
                     >
                         <Plus className="mr-2 h-4 w-4" />

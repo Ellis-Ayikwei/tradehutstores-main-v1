@@ -399,7 +399,6 @@ const ProviderEdit: React.FC = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
             <div className="relative h-48 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600">
               {/* Banner Pattern Overlay */}
-              <div className="absolute inset-0 bg-black/10"></div>
               <div className="absolute inset-0 bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]"></div>
               
               {/* Banner Upload */}
@@ -411,7 +410,7 @@ const ProviderEdit: React.FC = () => {
                     onChange={(e) => handleImageUpload(e, 'banner')}
                     className="hidden"
                   />
-                  <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4 text-white hover:bg-white/30 transition-all duration-200">
+                  <div className="bg-indigo-700  rounded-xl p-4 text-white hover:bg-indigo-600 transition-all duration-200">
                     <FontAwesomeIcon icon={faUpload} className="w-6 h-6 mb-2" />
                     <p className="text-sm">Upload Banner</p>
                   </div>
@@ -1071,7 +1070,7 @@ const ProviderEdit: React.FC = () => {
             <button
               type="submit"
               disabled={saving}
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {saving ? (
                 <>

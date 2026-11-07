@@ -258,28 +258,28 @@ const AdminJobBidding: React.FC<AdminJobBiddingProps> = ({
         switch (bid.status) {
             case 'accepted':
                 return (
-                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 text-xs rounded-full font-semibold">
+                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300 text-xs rounded-full font-semibold">
                         <Crown className="w-3 h-3" />
                         ACCEPTED
                     </span>
                 );
             case 'rejected':
                 return (
-                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 text-xs rounded-full font-semibold">
+                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300 text-xs rounded-full font-semibold">
                         <Ban className="w-3 h-3" />
                         REJECTED
                     </span>
                 );
             case 'expired':
                 return (
-                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300 text-xs rounded-full font-semibold">
+                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300 text-xs rounded-full font-semibold">
                         <TimerOff className="w-3 h-3" />
                         EXPIRED
                     </span>
                 );
             default:
                 return (
-                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300 text-xs rounded-full font-semibold">
+                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-300 text-xs rounded-full font-semibold">
                         <Clock className="w-3 h-3" />
                         PENDING
                     </span>
@@ -346,7 +346,7 @@ const AdminJobBidding: React.FC<AdminJobBiddingProps> = ({
                                 <button
                                     onClick={handleEndBidding}
                                     disabled={isEnding === 'job'}
-                                    className="flex items-center gap-2 px-3 py-2 bg-purple-500 hover:bg-purple-600 text-white text-xs font-bold rounded-xl shadow transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="flex items-center gap-2 px-3 py-2 bg-purple-500 hover:bg-purple-600 text-white text-xs font-bold rounded-xl shadow transition-all duration-200 disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
                                     title="End Bidding (expires all pending bids)"
                                 >
                                     {isEnding === 'job' ? (
@@ -360,7 +360,7 @@ const AdminJobBidding: React.FC<AdminJobBiddingProps> = ({
                                 <button
                                     onClick={handleExpireBidding}
                                     disabled={isExpiring === 'job'}
-                                    className="flex items-center gap-2 px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl shadow transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="flex items-center gap-2 px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl shadow transition-all duration-200 disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
                                     title="Expire All Pending Bids"
                                 >
                                     {isExpiring === 'job' ? (
@@ -383,7 +383,7 @@ const AdminJobBidding: React.FC<AdminJobBiddingProps> = ({
 
                 <div className="px-6 py-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                        <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800/50 dark:to-gray-700/50 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                        <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
                             <div className="flex items-center justify-between">
                                 <div className="flex-1">
                                     <h3 className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Bidding Ends</h3>
@@ -407,7 +407,7 @@ const AdminJobBidding: React.FC<AdminJobBiddingProps> = ({
                                 </div>
                             </div>
                         </div>
-                        <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800/50 dark:to-gray-700/50 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                        <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h3 className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Minimum Bid</h3>
@@ -426,7 +426,7 @@ const AdminJobBidding: React.FC<AdminJobBiddingProps> = ({
 
                     {/* Admin Summary */}
                     {stats && (
-                        <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
+                        <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                             <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
                                 <BarChart3 className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                                 Bid Statistics
@@ -478,7 +478,7 @@ const AdminJobBidding: React.FC<AdminJobBiddingProps> = ({
                         
                         <div className="space-y-4">
                             {displayedBids.map((bid) => (
-                                <div key={bid.id} className="group relative bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-750 rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
+                                <div key={bid.id} className="group relative bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-750 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
                                     {/* Status indicator */}
                                     <div className="absolute top-2 right-4">
                                         {getBidStatusBadge(bid)}
@@ -528,7 +528,7 @@ const AdminJobBidding: React.FC<AdminJobBiddingProps> = ({
                                     
                                     {/* Bid message */}
                                     {bid.notes && (
-                                        <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200/50 dark:border-blue-700/30">
+                                        <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-950 rounded-xl border border-blue-200 dark:border-blue-900">
                                             <div className="flex items-start gap-2">
                                                 <MessageSquare className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
                                                 <p className="text-sm text-gray-700 dark:text-gray-300 italic">
@@ -540,11 +540,11 @@ const AdminJobBidding: React.FC<AdminJobBiddingProps> = ({
                                     
                                     {/* Action buttons for pending bids - full set when bidding is active */}
                                     {bid.status === 'pending' && !biddingHasEnded && (
-                                        <div className="flex flex-wrap items-center justify-end gap-2 pt-4 border-t border-gray-200/50 dark:border-gray-700/50">
+                                        <div className="flex flex-wrap items-center justify-end gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
                                             <button
                                                 onClick={() => handleAcceptBid(bid.id)}
                                                 disabled={isAccepting === bid.id}
-                                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-sm font-medium rounded-xl shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-sm font-medium rounded-xl shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/30 transition-all duration-200 disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
                                                 title="Accept Bid"
                                             >
                                                 {isAccepting === bid.id ? (
@@ -567,7 +567,7 @@ const AdminJobBidding: React.FC<AdminJobBiddingProps> = ({
                                             <button
                                                 onClick={() => handleRejectBid(bid.id)}
                                                 disabled={isRejecting === bid.id}
-                                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-sm font-medium rounded-xl shadow-lg shadow-orange-500/25 hover:shadow-xl hover:shadow-orange-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-sm font-medium rounded-xl shadow-lg shadow-orange-500/25 hover:shadow-xl hover:shadow-orange-500/30 transition-all duration-200 disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
                                                 title="Reject/Cancel Bid"
                                             >
                                                 {isRejecting === bid.id ? (
@@ -582,7 +582,7 @@ const AdminJobBidding: React.FC<AdminJobBiddingProps> = ({
                                             <button
                                                 onClick={() => handleDeleteBid(bid.id)}
                                                 disabled={isDeleting === bid.id}
-                                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white text-sm font-medium rounded-xl shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white text-sm font-medium rounded-xl shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/30 transition-all duration-200 disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
                                                 title="Delete Bid"
                                             >
                                                 {isDeleting === bid.id ? (
@@ -597,11 +597,11 @@ const AdminJobBidding: React.FC<AdminJobBiddingProps> = ({
                                     
                                     {/* Action buttons for pending bids when bidding has ended - only accept available */}
                                     {bid.status === 'pending' && biddingHasEnded && (
-                                        <div className="flex flex-wrap items-center justify-end gap-2 pt-4 border-t border-gray-200/50 dark:border-gray-700/50">
+                                        <div className="flex flex-wrap items-center justify-end gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
                                             <button
                                                 onClick={() => handleAcceptBid(bid.id)}
                                                 disabled={isAccepting === bid.id}
-                                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-sm font-medium rounded-xl shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-sm font-medium rounded-xl shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/30 transition-all duration-200 disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
                                                 title="Accept Bid"
                                             >
                                                 {isAccepting === bid.id ? (
@@ -616,7 +616,7 @@ const AdminJobBidding: React.FC<AdminJobBiddingProps> = ({
                                     
                                     {/* Accepted/Rejected status message */}
                                     {bid.status === 'accepted' && (
-                                        <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200/50 dark:border-green-700/30">
+                                        <div className="mt-4 p-3 bg-green-50 dark:bg-green-950 rounded-xl border border-green-200 dark:border-green-900">
                                             <div className="flex items-center gap-2 text-green-700 dark:text-green-300">
                                                 <Crown className="w-4 h-4" />
                                                 <span className="text-sm font-medium">This bid has been accepted</span>
@@ -625,7 +625,7 @@ const AdminJobBidding: React.FC<AdminJobBiddingProps> = ({
                                     )}
                                     
                                     {bid.status === 'rejected' && (
-                                        <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200/50 dark:border-red-700/30">
+                                        <div className="mt-4 p-3 bg-red-50 dark:bg-red-950 rounded-xl border border-red-200 dark:border-red-900">
                                             <div className="flex items-center gap-2 text-red-700 dark:text-red-300">
                                                 <Ban className="w-4 h-4" />
                                                 <span className="text-sm font-medium">This bid has been rejected</span>

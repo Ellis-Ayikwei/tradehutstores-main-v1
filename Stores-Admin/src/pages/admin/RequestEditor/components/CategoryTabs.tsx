@@ -91,7 +91,7 @@ const CategoryTabs: React.FC<CategoryTabsProps> = ({
                 animate={{ scale: 1 }}
                 className={`ml-3 px-2 py-1 rounded-full text-xs font-medium ${
                   isSelected 
-                    ? 'bg-white/20 text-white' 
+                    ? 'bg-gray-700 text-white' 
                     : 'bg-blue-100 text-blue-700'
                 }`}
               >

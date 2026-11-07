@@ -473,11 +473,10 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-            <div className="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-6xl max-h-[95vh] overflow-hidden shadow-2xl border border-gray-200/20 dark:border-gray-700/20">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 ">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-6xl max-h-[95vh] overflow-hidden shadow-2xl border border-gray-200 dark:border-gray-700">
                 {/* Header */}
                 <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 p-6">
-                    <div className="absolute inset-0 bg-black/10"></div>
                     <div className="relative flex items-center justify-between">
                         <div>
                             <h2 className="text-2xl font-bold text-white mb-1">Add New Driver</h2>
@@ -485,7 +484,7 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                         </div>
                         <button 
                             onClick={onClose} 
-                            className="p-2 rounded-xl hover:bg-white/20 transition-all duration-200 backdrop-blur-sm"
+                            className="p-2 rounded-xl hover:bg-blue-700 transition-all duration-200 "
                         >
                             <IconX className="w-6 h-6 text-white" />
                         </button>
@@ -522,7 +521,7 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                 type="text"
                                                 name="name"
                                                 className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl 
-                                                          focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent
+                                                          focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent
                                                           transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500
                                                           ${errors.name && touched.name ? 'border-red-500 dark:border-red-500' : 'border-gray-200 dark:border-gray-700'}`}
                                                 placeholder="Enter full name"
@@ -539,7 +538,7 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                 type="email"
                                                 name="email"
                                                 className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl 
-                                                          focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent
+                                                          focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent
                                                           transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500
                                                           ${errors.email && touched.email ? 'border-red-500 dark:border-red-500' : 'border-gray-200 dark:border-gray-700'}`}
                                                 placeholder="driver@example.com"
@@ -556,7 +555,7 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                 type="tel"
                                                 name="phoneNumber"
                                                 className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl 
-                                                          focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent
+                                                          focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent
                                                           transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500
                                                           ${errors.phoneNumber && touched.phoneNumber ? 'border-red-500 dark:border-red-500' : 'border-gray-200 dark:border-gray-700'}`}
                                                 placeholder="+44 7XXX XXXXXX"
@@ -573,7 +572,7 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                 type="text"
                                                 name="nationalInsuranceNumber"
                                                 className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl 
-                                                          focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent
+                                                          focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent
                                                           transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500
                                                           ${errors.nationalInsuranceNumber && touched.nationalInsuranceNumber ? 'border-red-500 dark:border-red-500' : 'border-gray-200 dark:border-gray-700'}`}
                                                 placeholder="AB123456C"
@@ -591,7 +590,7 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                 name="address"
                                                 rows={3}
                                                 className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl 
-                                                          focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent
+                                                          focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent
                                                           transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500
                                                           ${errors.address && touched.address ? 'border-red-500 dark:border-red-500' : 'border-gray-200 dark:border-gray-700'}`}
                                                 placeholder="Enter full address"
@@ -608,7 +607,7 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                 type="text"
                                                 name="postcode"
                                                 className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl 
-                                                          focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent
+                                                          focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent
                                                           transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500
                                                           ${errors.postcode && touched.postcode ? 'border-red-500 dark:border-red-500' : 'border-gray-200 dark:border-gray-700'}`}
                                                 placeholder="SW1A 1AA"
@@ -625,7 +624,7 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                 as="select"
                                                 name="employmentType"
                                                 className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl 
-                                                          focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent
+                                                          focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent
                                                           transition-all duration-200 text-gray-900 dark:text-white
                                                           ${errors.employmentType && touched.employmentType ? 'border-red-500 dark:border-red-500' : 'border-gray-200 dark:border-gray-700'}`}
                                             >
@@ -646,7 +645,7 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                 type="date"
                                                 name="dateStarted"
                                                 className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl 
-                                                          focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent
+                                                          focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent
                                                           transition-all duration-200 text-gray-900 dark:text-white
                                                           ${errors.dateStarted && touched.dateStarted ? 'border-red-500 dark:border-red-500' : 'border-gray-200 dark:border-gray-700'}`}
                                             />
@@ -677,7 +676,7 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                 type="text"
                                                 name="licenseNumber"
                                                 className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl 
-                                                          focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent
+                                                          focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent
                                                           transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500
                                                           ${errors.licenseNumber && touched.licenseNumber ? 'border-red-500 dark:border-red-500' : 'border-gray-200 dark:border-gray-700'}`}
                                                 placeholder="JONES061102W97TW"
@@ -695,7 +694,7 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                 name="licenseExpiry"
                                                 min={dayjs().format('YYYY-MM-DD')}
                                                 className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl 
-                                                          focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent
+                                                          focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent
                                                           transition-all duration-200 text-gray-900 dark:text-white
                                                           ${errors.licenseExpiry && touched.licenseExpiry ? 'border-red-500 dark:border-red-500' : 'border-gray-200 dark:border-gray-700'}`}
                                             />
@@ -732,7 +731,7 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                         },
                                                         '&:focus-within': {
                                                             borderColor: 'rgb(59 130 246)',
-                                                            boxShadow: '0 0 0 2px rgba(59, 130, 246, 0.5)',
+                                                            boxShadow: '0 0 0 2px #93c5fd',
                                                         }
                                                     })
                                                 }}
@@ -764,7 +763,7 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                         name="cpcExpiry"
                                                         min={dayjs().format('YYYY-MM-DD')}
                                                         className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl 
-                                                                  focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent
+                                                                  focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent
                                                                   transition-all duration-200 text-gray-900 dark:text-white
                                                                   ${errors.cpcExpiry && touched.cpcExpiry ? 'border-red-500 dark:border-red-500' : 'border-gray-200 dark:border-gray-600'}`}
                                                     />
@@ -794,7 +793,7 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                             type="text"
                                                             name="digitalTachographCardNumber"
                                                             className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl 
-                                                                      focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent
+                                                                      focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-transparent
                                                                       transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500
                                                                       ${errors.digitalTachographCardNumber && touched.digitalTachographCardNumber ? 'border-red-500 dark:border-red-500' : 'border-gray-200 dark:border-gray-600'}`}
                                                             placeholder="Enter card number"
@@ -810,7 +809,7 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                             name="tachoExpiry"
                                                             min={dayjs().format('YYYY-MM-DD')}
                                                             className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl 
-                                                                      focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent
+                                                                      focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-transparent
                                                                       transition-all duration-200 text-gray-900 dark:text-white
                                                                       ${errors.tachoExpiry && touched.tachoExpiry ? 'border-red-500 dark:border-red-500' : 'border-gray-200 dark:border-gray-600'}`}
                                                         />
@@ -846,7 +845,7 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                 min="1"
                                                 max="168"
                                                 className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl 
-                                                          focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent
+                                                          focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent
                                                           transition-all duration-200 text-gray-900 dark:text-white
                                                           ${errors.maxWeeklyHours && touched.maxWeeklyHours ? 'border-red-500 dark:border-red-500' : 'border-gray-200 dark:border-gray-700'}`}
                                             />
@@ -864,7 +863,7 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                 min="0"
                                                 max="12"
                                                 className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl 
-                                                          focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent
+                                                          focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent
                                                           transition-all duration-200 text-gray-900 dark:text-white
                                                           ${errors.penaltyPoints && touched.penaltyPoints ? 'border-red-500 dark:border-red-500' : 'border-gray-200 dark:border-gray-700'}`}
                                             />
@@ -881,7 +880,7 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                 name="notes"
                                                 rows={3}
                                                 className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl 
-                                                          focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent
+                                                          focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent
                                                           transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500
                                                           ${errors.notes && touched.notes ? 'border-red-500 dark:border-red-500' : 'border-gray-200 dark:border-gray-700'}`}
                                                 placeholder="Enter any additional notes"
@@ -930,7 +929,7 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                 className={`flex items-center px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 ${
                                                     activeDocument === doc.key
                                                         ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-md transform scale-105'
-                                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-gray-700/50'
+                                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-gray-700'
                                                 }`}
                                                 onClick={() => setActiveDocument(doc.key as any)}
                                             >
@@ -972,8 +971,8 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                     <div
                                         className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-300 cursor-pointer
                                                   ${dragActive 
-                                                    ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/20 scale-105' 
-                                                    : 'border-gray-300 dark:border-gray-600 hover:border-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                                                    ? 'border-blue-400 bg-blue-50 dark:bg-blue-950 scale-105' 
+                                                    : 'border-gray-300 dark:border-gray-600 hover:border-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800'
                                                   }`}
                                         onDragEnter={handleDrag}
                                         onDragOver={handleDrag}
@@ -1008,8 +1007,8 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                                 e.stopPropagation();
                                                                 handlePreview(documents.medical);
                                                             }}
-                                                            className="flex items-center px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 
-                                                                     rounded-xl hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-all duration-200"
+                                                            className="flex items-center px-4 py-2 bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 
+                                                                     rounded-xl hover:bg-blue-200 dark:hover:bg-blue-900 transition-all duration-200"
                                                         >
                                                             <IconEye className="w-4 h-4 mr-2" />
                                                             View
@@ -1020,8 +1019,8 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                                 e.stopPropagation();
                                                                 handleDownload(documents.medical);
                                                             }}
-                                                            className="flex items-center px-4 py-2 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 
-                                                                     rounded-xl hover:bg-green-200 dark:hover:bg-green-900/50 transition-all duration-200"
+                                                            className="flex items-center px-4 py-2 bg-green-100 dark:bg-green-950 text-green-600 dark:text-green-400 
+                                                                     rounded-xl hover:bg-green-200 dark:hover:bg-green-900 transition-all duration-200"
                                                         >
                                                             <IconDownload className="w-4 h-4 mr-2" />
                                                             Download
@@ -1032,8 +1031,8 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                                 e.stopPropagation();
                                                                 removeFile();
                                                             }}
-                                                            className="flex items-center px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 
-                                                                     rounded-xl hover:bg-red-200 dark:hover:bg-red-900/50 transition-all duration-200"
+                                                            className="flex items-center px-4 py-2 bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400 
+                                                                     rounded-xl hover:bg-red-200 dark:hover:bg-red-900 transition-all duration-200"
                                                         >
                                                             <IconTrash className="w-4 h-4 mr-2" />
                                                             Remove
@@ -1079,8 +1078,8 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                                 e.stopPropagation();
                                                                 handlePreview(documents[activeDocument][activeSide]);
                                                             }}
-                                                            className="flex items-center px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 
-                                                                     rounded-xl hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-all duration-200"
+                                                            className="flex items-center px-4 py-2 bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 
+                                                                     rounded-xl hover:bg-blue-200 dark:hover:bg-blue-900 transition-all duration-200"
                                                         >
                                                             <IconEye className="w-4 h-4 mr-2" />
                                                             View
@@ -1091,8 +1090,8 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                                 e.stopPropagation();
                                                                 handleDownload(documents[activeDocument][activeSide]);
                                                             }}
-                                                            className="flex items-center px-4 py-2 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 
-                                                                     rounded-xl hover:bg-green-200 dark:hover:bg-green-900/50 transition-all duration-200"
+                                                            className="flex items-center px-4 py-2 bg-green-100 dark:bg-green-950 text-green-600 dark:text-green-400 
+                                                                     rounded-xl hover:bg-green-200 dark:hover:bg-green-900 transition-all duration-200"
                                                         >
                                                             <IconDownload className="w-4 h-4 mr-2" />
                                                             Download
@@ -1103,8 +1102,8 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                                                 e.stopPropagation();
                                                                 removeFile();
                                                             }}
-                                                            className="flex items-center px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 
-                                                                     rounded-xl hover:bg-red-200 dark:hover:bg-red-900/50 transition-all duration-200"
+                                                            className="flex items-center px-4 py-2 bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400 
+                                                                     rounded-xl hover:bg-red-200 dark:hover:bg-red-900 transition-all duration-200"
                                                         >
                                                             <IconTrash className="w-4 h-4 mr-2" />
                                                             Remove
@@ -1134,9 +1133,9 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                 </div>
 
                                 {/* Form-level Error Message */}
-                                <ErrorMessage name="submit" component="div" className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 
+                                <ErrorMessage name="submit" component="div" className="mb-6 p-4 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 
                                                       text-red-600 dark:text-red-400 rounded-xl flex items-center">
-                                    <div className="w-6 h-6 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center mr-3">
+                                    <div className="w-6 h-6 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center mr-3">
                                         <span className="text-red-600 dark:text-red-400 text-sm">⚠</span>
                                     </div>
                                     <ErrorMessage name="submit" />
@@ -1157,7 +1156,7 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
                                         type="submit"
                                         className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl 
                                                  hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-semibold
-                                                 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:transform-none
+                                                 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:transform-none
                                                  flex items-center"
                                         disabled={isSubmitting || isUploading}
                                     >
@@ -1201,7 +1200,7 @@ const AddDriverModal: React.FC<AddDriverModalProps> = ({ isOpen, onClose, onAdd,
 
             {/* File Preview Modal */}
             {previewOpen && previewFile && (
-                <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+                <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 ">
                     <div className="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl">
                         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                             <div>

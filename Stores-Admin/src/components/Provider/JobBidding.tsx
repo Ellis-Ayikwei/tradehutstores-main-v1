@@ -164,21 +164,21 @@ const JobBidding: React.FC<JobBiddingProps> = ({
         switch (bid.status) {
             case 'accepted':
                 return (
-                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 text-xs rounded-full font-semibold">
+                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300 text-xs rounded-full font-semibold">
                         <FontAwesomeIcon icon={faCrown} className="w-3 h-3" />
                         ACCEPTED
                     </span>
                 );
             case 'rejected':
                 return (
-                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 text-xs rounded-full font-semibold">
+                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300 text-xs rounded-full font-semibold">
                         <FontAwesomeIcon icon={faBan} className="w-3 h-3" />
                         REJECTED
                     </span>
                 );
             default:
                 return (
-                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300 text-xs rounded-full font-semibold">
+                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-300 text-xs rounded-full font-semibold">
                         <FontAwesomeIcon icon={faClock} className="w-3 h-3" />
                         PENDING
                     </span>
@@ -192,7 +192,7 @@ const JobBidding: React.FC<JobBiddingProps> = ({
                 <div className="flex items-center justify-between">
                     <h2 className="text-lg font-bold text-gray-900 dark:text-white">Auction Details</h2>
                     {isAdmin && (
-                        <span className="px-3 py-1 bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 text-xs rounded-full font-semibold">
+                        <span className="px-3 py-1 bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 text-xs rounded-full font-semibold">
                             ADMIN VIEW
                         </span>
                     )}
@@ -223,7 +223,7 @@ const JobBidding: React.FC<JobBiddingProps> = ({
                             <div key={bid.id} className="bg-gray-50 dark:bg-gray-750 rounded-lg p-4">
                                 <div className="flex items-center justify-between mb-3">
                                     <div className="flex items-center">
-                                        <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 flex items-center justify-center mr-3">
+                                        <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center mr-3">
                                             <FontAwesomeIcon icon={faUser} />
                                         </div>
                                         <div>
@@ -239,7 +239,7 @@ const JobBidding: React.FC<JobBiddingProps> = ({
                                             <button
                                                 onClick={() => handleAcceptBid(bid.id)}
                                                 disabled={isAccepting === bid.id}
-                                                className="p-2 bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:hover:bg-green-900/50 text-green-600 dark:text-green-400 rounded-lg transition-colors disabled:opacity-50"
+                                                className="p-2 bg-green-100 hover:bg-green-200 dark:bg-green-950 dark:hover:bg-green-900 text-green-600 dark:text-green-400 rounded-lg transition-colors disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
                                                 title="Accept Bid"
                                             >
                                                 {isAccepting === bid.id ? (
@@ -251,7 +251,7 @@ const JobBidding: React.FC<JobBiddingProps> = ({
                                             
                                             <button
                                                 onClick={() => handleEditBid(bid)}
-                                                className="p-2 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-lg transition-colors"
+                                                className="p-2 bg-blue-100 hover:bg-blue-200 dark:bg-blue-950 dark:hover:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-lg transition-colors"
                                                 title="Edit Bid"
                                             >
                                                 <FontAwesomeIcon icon={faEdit} className="w-4 h-4" />
@@ -260,7 +260,7 @@ const JobBidding: React.FC<JobBiddingProps> = ({
                                             <button
                                                 onClick={() => handleDeleteBid(bid.id)}
                                                 disabled={isDeleting === bid.id}
-                                                className="p-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 rounded-lg transition-colors disabled:opacity-50"
+                                                className="p-2 bg-red-100 hover:bg-red-200 dark:bg-red-950 dark:hover:bg-red-900 text-red-600 dark:text-red-400 rounded-lg transition-colors disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
                                                 title="Delete Bid"
                                             >
                                                 {isDeleting === bid.id ? (
@@ -303,7 +303,7 @@ const JobBidding: React.FC<JobBiddingProps> = ({
 
                 {/* Admin Summary */}
                 {isAdmin && job.bids && job.bids.length > 0 && (
-                    <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+                    <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-700">
                         <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">Admin Summary</h4>
                         <div className="grid grid-cols-2 gap-4 text-sm">
                             <div>
@@ -382,7 +382,7 @@ const JobBidding: React.FC<JobBiddingProps> = ({
                                     <button
                                         onClick={handleSaveEdit}
                                         disabled={isEditing}
-                                        className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow-lg transition-all duration-200 disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
                                     >
                                         {isEditing ? (
                                             <div className="flex items-center gap-2">

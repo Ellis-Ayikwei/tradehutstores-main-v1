@@ -22,7 +22,7 @@ const Home: React.FC = () => {
             alt="Moving van"
             className="w-full h-full object-cover opacity-20"
           />
-          {/* <div className="absolute inset-20 bg-gradient-to-r from-blue-600/90 to-indigo-700/90"></div> */}
+          {/* <div className="absolute inset-20 bg-gradient-to-r from-blue-600 to-indigo-700"></div> */}
         </div>
         
         <div className="max-w-7xl !items-start !mx-auto !my-auto relative z-10 ">
@@ -66,7 +66,7 @@ const Home: React.FC = () => {
               >
                 <Link 
                   to="/login" 
-                  className="inline-flex items-center px-6 py-3 rounded-lg bg-blue-800 bg-opacity-50 text-white font-medium border border-white border-opacity-30 hover:bg-opacity-70 transition duration-300"
+                  className="inline-flex items-center px-6 py-3 rounded-lg bg-blue-800 text-white font-medium border border-blue-400 hover:bg-blue-900 transition duration-300"
                 >
                   Sign In
                 </Link>
@@ -80,11 +80,11 @@ const Home: React.FC = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 1, duration: 0.8 }}
             >
-              <div className="flex items-center bg-white bg-opacity-20 backdrop-blur-sm px-4 py-2 rounded-full">
+              <div className="flex items-center bg-blue-700  px-4 py-2 rounded-full">
                 <FontAwesomeIcon icon={faShieldAlt} className="text-green-300 mr-2" />
                 <span>Verified Providers</span>
               </div>
-              <div className="flex items-center bg-white bg-opacity-20 backdrop-blur-sm px-4 py-2 rounded-full">
+              <div className="flex items-center bg-blue-700  px-4 py-2 rounded-full">
                 <FontAwesomeIcon icon={faCheckCircle} className="text-green-300 mr-2" />
                 <span>Insured Moves</span>
               </div>

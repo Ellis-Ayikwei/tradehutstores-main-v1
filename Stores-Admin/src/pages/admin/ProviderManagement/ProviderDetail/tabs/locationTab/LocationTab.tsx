@@ -188,7 +188,7 @@ const LocationTab: React.FC<LocationTabProps> = ({ provider, onProviderUpdate })
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
+          <div className="p-2 bg-blue-100 dark:bg-blue-950 rounded-lg">
             <MapPin className="w-6 h-6 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
@@ -374,14 +374,14 @@ const LocationTab: React.FC<LocationTabProps> = ({ provider, onProviderUpdate })
                     {!area.is_primary && (
                       <button
                         onClick={() => handleSetPrimary(area.id)}
-                        className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 text-blue-800 dark:text-blue-300 text-sm font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                        className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-100 hover:bg-blue-200 dark:bg-blue-950 dark:hover:bg-blue-900 text-blue-800 dark:text-blue-300 text-sm font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
                       >
                         Set Primary
                       </button>
                     )}
                     <button
                       onClick={() => handleRemoveServiceArea(area.id)}
-                      className="inline-flex items-center justify-center p-2 text-red-600 hover:text-red-800 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1"
+                      className="inline-flex items-center justify-center p-2 text-red-600 hover:text-red-800 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1"
                       title="Remove service area"
                     >
                       <Trash2 className="w-4 h-4" />

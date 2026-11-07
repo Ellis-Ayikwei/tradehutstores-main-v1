@@ -135,7 +135,7 @@ export default function CheckoutModal({ isOpen, onClose, total, onGuestCheckout,
         <Transition appear show={isOpen} as={Fragment}>
             <Dialog as="div" className="relative z-50" onClose={onClose}>
                 <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
-                    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm" />
+                    <div className="fixed inset-0 bg-black bg-opacity-50 " />
                 </Transition.Child>
 
                 <div className="fixed inset-0 overflow-y-auto">
@@ -161,7 +161,7 @@ export default function CheckoutModal({ isOpen, onClose, total, onGuestCheckout,
 
                                 <div className="space-y-8">
                                     {/* Order Summary */}
-                                    <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                                         <div className="flex justify-between items-center">
                                             <span className="text-lg font-semibold text-gray-900 dark:text-white">Total Amount</span>
                                             <span className="text-2xl font-bold text-primary-500">${total.toLocaleString()}</span>
@@ -177,7 +177,7 @@ export default function CheckoutModal({ isOpen, onClose, total, onGuestCheckout,
                                                     key={method.id}
                                                     className={`relative rounded-lg border-2 p-4 cursor-pointer transition-all ${
                                                         selectedPayment === method.id
-                                                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/10'
+                                                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-subtle'
                                                             : 'border-gray-200 dark:border-gray-700 hover:border-primary-200'
                                                     }`}
                                                     onClick={() => setSelectedPayment(method.id)}

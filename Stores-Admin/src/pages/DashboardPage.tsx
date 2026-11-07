@@ -10,28 +10,28 @@ const DashboardPage: React.FC = () => {
             value: '12',
             icon: faTruck,
             color: 'text-blue-500',
-            bgColor: 'bg-blue-50 dark:bg-blue-900/20',
+            bgColor: 'bg-blue-50 dark:bg-blue-950',
         },
         {
             title: 'Service Requests',
             value: '24',
             icon: faFileAlt,
             color: 'text-green-500',
-            bgColor: 'bg-green-50 dark:bg-green-900/20',
+            bgColor: 'bg-green-50 dark:bg-green-950',
         },
         {
             title: 'Payments',
             value: '$5,280',
             icon: faCreditCard,
             color: 'text-purple-500',
-            bgColor: 'bg-purple-50 dark:bg-purple-900/20',
+            bgColor: 'bg-purple-50 dark:bg-purple-950',
         },
         {
             title: 'Revenue',
             value: '$12,450',
             icon: faChartLine,
             color: 'text-yellow-500',
-            bgColor: 'bg-yellow-50 dark:bg-yellow-900/20',
+            bgColor: 'bg-yellow-50 dark:bg-yellow-950',
         },
     ];
 
@@ -73,11 +73,11 @@ const DashboardPage: React.FC = () => {
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
                     <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
                     <div className="grid grid-cols-2 gap-4">
-                        <Link to="/service-requests/new" className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-center hover:bg-blue-100 dark:hover:bg-blue-900/30">
+                        <Link to="/service-requests/new" className="p-4 bg-blue-50 dark:bg-blue-950 rounded-lg text-center hover:bg-blue-100 dark:hover:bg-blue-950">
                             <FontAwesomeIcon icon={faFileAlt} className="h-6 w-6 text-blue-500 mx-auto mb-2" />
                             <span className="text-sm font-medium text-gray-900 dark:text-white">New Request</span>
                         </Link>
-                        <Link to="/vehicles" className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg text-center hover:bg-green-100 dark:hover:bg-green-900/30">
+                        <Link to="/vehicles" className="p-4 bg-green-50 dark:bg-green-950 rounded-lg text-center hover:bg-green-100 dark:hover:bg-green-950">
                             <FontAwesomeIcon icon={faTruck} className="h-6 w-6 text-green-500 mx-auto mb-2" />
                             <span className="text-sm font-medium text-gray-900 dark:text-white">Manage Vehicles</span>
                         </Link>

@@ -182,14 +182,14 @@ const AddBidModal: React.FC<AddBidModalProps> = ({
                                             key={provider.id}
                                             className={`p-4 border rounded-xl cursor-pointer transition-colors ${
                                                 selectedProvider === provider.id
-                                                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-950'
                                                     : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
                                             }`}
                                             onClick={() => setSelectedProvider(provider.id)}
                                         >
                                             <div className="flex items-center justify-between">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                                                    <div className="p-2 bg-blue-100 dark:bg-blue-950 rounded-lg">
                                                         <FontAwesomeIcon icon={faUser} className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                                                     </div>
                                                     <div>
@@ -283,7 +283,7 @@ const AddBidModal: React.FC<AddBidModalProps> = ({
                             <button
                                 type="submit"
                                 disabled={isSubmitting || !selectedProvider || !bidAmount}
-                                className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium rounded-xl shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium rounded-xl shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/30 transition-all duration-200 disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
                             >
                                 {isSubmitting ? (
                                     <div className="flex items-center gap-2">

@@ -121,7 +121,7 @@ const AdsManagement: React.FC = () => {
             <div className="max-w-7xl mx-auto p-6 space-y-6">
                 {/* ── Hero ──────────────────────────────────────────────── */}
                 <div className="rounded-3xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
-                    <div className="relative px-6 md:px-8 py-6 md:py-8 bg-gradient-to-br from-primary/5 via-transparent to-primary/10">
+                    <div className="relative px-6 md:px-8 py-6 md:py-8 bg-gradient-to-br from-primary-subtle via-transparent to-primary-subtle">
                         <div className="flex items-start justify-between gap-6 flex-wrap">
                             <div className="flex items-start gap-4 min-w-0">
                                 <div className="p-3 rounded-2xl bg-primary text-white shadow-lg shadow-primary/20">
@@ -210,10 +210,10 @@ const AdsManagement: React.FC = () => {
                                             <span
                                                 className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
                                                     i === 0
-                                                        ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'
+                                                        ? 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300'
                                                         : i === 1
                                                         ? 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
-                                                        : 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300'
+                                                        : 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300'
                                                 }`}
                                             >
                                                 #{i + 1}
@@ -255,8 +255,8 @@ const AdsManagement: React.FC = () => {
                                     className={[
                                         'group relative flex-1 min-w-[170px] flex items-start gap-3 px-4 py-3 text-left transition-colors',
                                         active
-                                            ? 'bg-primary/5 dark:bg-primary/10'
-                                            : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
+                                            ? 'bg-primary-subtle dark:bg-primary-subtle'
+                                            : 'hover:bg-gray-50 dark:hover:bg-gray-800',
                                     ].join(' ')}
                                 >
                                     <div
@@ -264,7 +264,7 @@ const AdsManagement: React.FC = () => {
                                             'shrink-0 p-2 rounded-lg transition-colors',
                                             active
                                                 ? 'bg-primary text-white'
-                                                : 'bg-gray-100 dark:bg-gray-800 text-on-surface-variant group-hover:bg-primary/10 group-hover:text-primary',
+                                                : 'bg-gray-100 dark:bg-gray-800 text-on-surface-variant group-hover:bg-primary-subtle group-hover:text-primary',
                                         ].join(' ')}
                                     >
                                         <Icon size={16} />
@@ -313,10 +313,10 @@ const StatCard: React.FC<{
     tone?: 'emerald' | 'blue' | 'violet' | 'amber';
 }> = ({ icon, label, value, hint, tone = 'emerald' }) => {
     const toneCls = {
-        emerald: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 dark:text-emerald-400',
-        blue: 'text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400',
-        violet: 'text-violet-600 bg-violet-50 dark:bg-violet-900/30 dark:text-violet-400',
-        amber: 'text-amber-600 bg-amber-50 dark:bg-amber-900/30 dark:text-amber-400',
+        emerald: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400',
+        blue: 'text-blue-600 bg-blue-50 dark:bg-blue-950 dark:text-blue-400',
+        violet: 'text-violet-600 bg-violet-50 dark:bg-violet-950 dark:text-violet-400',
+        amber: 'text-amber-600 bg-amber-50 dark:bg-amber-950 dark:text-amber-400',
     }[tone];
     return (
         <div className="rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 shadow-sm">

@@ -116,7 +116,7 @@ const NotificationDetail: React.FC = () => {
           </div>
         ) : error ? (
           <div className="bg-white dark:bg-gray-800 rounded-lg p-8 shadow-md text-center">
-            <div className="w-16 h-16 mx-auto mb-4 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center">
+            <div className="w-16 h-16 mx-auto mb-4 bg-red-100 dark:bg-red-950 rounded-full flex items-center justify-center">
               <FontAwesomeIcon icon={faExclamationCircle} className="text-red-500 text-2xl" />
             </div>
             <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">{error}</h3>
@@ -132,11 +132,11 @@ const NotificationDetail: React.FC = () => {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
             {/* Header */}
             <div className={`p-6 ${
-              notification.type === 'booking' ? 'bg-blue-50 dark:bg-blue-900/20' : 
-              notification.type === 'payment' ? 'bg-green-50 dark:bg-green-900/20' : 
-              notification.type === 'alert' ? 'bg-red-50 dark:bg-red-900/20' : 
-              notification.type === 'reminder' ? 'bg-yellow-50 dark:bg-yellow-900/20' : 
-              'bg-purple-50 dark:bg-purple-900/20'
+              notification.type === 'booking' ? 'bg-blue-50 dark:bg-blue-950' : 
+              notification.type === 'payment' ? 'bg-green-50 dark:bg-green-950' : 
+              notification.type === 'alert' ? 'bg-red-50 dark:bg-red-950' : 
+              notification.type === 'reminder' ? 'bg-yellow-50 dark:bg-yellow-950' : 
+              'bg-purple-50 dark:bg-purple-950'
             } border-b border-gray-200 dark:border-gray-700`}>
               <div className="flex items-start">
                 <div className="mr-4">
@@ -208,7 +208,7 @@ const NotificationDetail: React.FC = () => {
                 </button>
                 
                 <button
-                  className="px-4 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg flex items-center ml-auto"
+                  className="px-4 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg flex items-center ml-auto"
                 >
                   <FontAwesomeIcon icon={faTrash} className="mr-2" />
                   Delete

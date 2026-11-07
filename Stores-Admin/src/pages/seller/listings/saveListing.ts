@@ -9,7 +9,9 @@ import {
     updateVariant,
     uploadImage,
     type ProductWrite,
+    type VariantWrite,
 } from '@/services/sellerListingsService';
+import { themeForTypes } from './components/optionUtils';
 import type { ImageItem, ListingFormValues } from './schema';
 
 export type SaveAction = 'draft' | 'publish' | 'save';
@@ -38,6 +40,14 @@ export interface SaveResult {
     productId: string;
 }
 
+const isStructured = (v: ListingFormValues) => v.hasOptions && v.optionsMode === 'attributes';
+
+/** `single` for a simple item, a known theme (e.g. size-color) for structured options, `custom` for named options. */
+const themeFor = (v: ListingFormValues): string => {
+    if (!v.hasOptions) return 'single';
+    return isStructured(v) ? themeForTypes(v.optionTypes) : 'custom';
+};
+
 const toWrite = (v: ListingFormValues): ProductWrite => ({
     name: v.name.trim(),
     description: v.description.trim(),
@@ -48,7 +58,7 @@ const toWrite = (v: ListingFormValues): ProductWrite => ({
     condition: v.condition,
     discount_percentage: Number(v.discount_percentage) || 0,
     free_shipping: v.free_shipping,
-    variation_theme: v.variants.length > 1 ? 'custom' : 'single',
+    variation_theme: themeFor(v),
     available: true,
 });
 
@@ -60,6 +70,7 @@ const toWrite = (v: ListingFormValues): ProductWrite => ({
  */
 export async function saveListing(input: SaveInput, progress: SaveProgress): Promise<SaveResult> {
     const { values, action } = input;
+    const structured = isStructured(values);
     let productId = input.productId;
 
     try {
@@ -74,34 +85,63 @@ export async function saveListing(input: SaveInput, progress: SaveProgress): Pro
         throw toListingSaveError(err, '', 'Could not save the listing details');
     }
 
-    const variantIds: string[] = [];
-    for (let i = 0; i < values.variants.length; i += 1) {
-        const v = values.variants[i];
-        const body = { sku: v.sku.trim(), price: v.price.trim(), quantity: Number(v.quantity), name: v.name.trim() };
+    // Only switched-on rows are saved; `index` stays the row's position in the form so errors land on the right row.
+    const rows = values.variants.map((variant, index) => ({ variant, index })).filter(({ variant }) => variant.enabled);
+    const savedRows: { variantId: string; valueIds: string[] }[] = [];
+    for (const { variant: v, index: i } of rows) {
+        // A simple product has nothing for buyers to choose, so its single variant is saved with a blank name
+        // (the API allows blank). Structured options are saved with a blank name too: buyers see the attribute values.
+        // Never a placeholder such as "Default": the storefront would show it to buyers.
+        const body: Omit<VariantWrite, 'product'> = {
+            sku: v.sku.trim(),
+            price: v.price.trim(),
+            quantity: Number(v.quantity),
+            name: values.hasOptions && !structured ? v.name.trim() : '',
+        };
+        // Structured rows send their value ids. Other rows leave attributes alone, except a row that used to be structured
+        // (valueIds present) which is cleared so stale values do not linger.
+        if (structured) body.attribute_values = v.valueIds ?? [];
+        else if (v.valueIds !== undefined) body.attribute_values = [];
         try {
             if (v.serverId) {
                 await updateVariant(v.serverId, body);
-                variantIds.push(v.serverId);
+                savedRows.push({ variantId: v.serverId, valueIds: v.valueIds ?? [] });
             } else {
                 const created = await createVariant({ product: productId, ...body, min_buy_amount: 1 });
-                variantIds.push(String(created.id));
+                savedRows.push({ variantId: String(created.id), valueIds: v.valueIds ?? [] });
                 progress.onVariant(i, String(created.id));
             }
         } catch (err) {
             throw toListingSaveError(err, `variants.${i}.`, `Could not save variant ${i + 1}`);
         }
     }
-    const anchorVariantId = variantIds[0];
-    const keptVariantIds = new Set(variantIds);
+    const anchorVariantId = savedRows[0].variantId;
+    const keptVariantIds = new Set(savedRows.map((r) => r.variantId));
+    const valueIdsByVariant = new Map(savedRows.map((r) => [r.variantId, r.valueIds]));
 
-    // Images belong to a variant and are deleted with it, so move them to the first variant before pruning.
+    // The colour a picture belongs to decides which variant carries it; any variant of that colour will do.
+    const pictureTypeIndex = structured ? values.optionTypes.findIndex((t) => t.displayType === 'swatch' || t.displayType === 'image' || /^colou?rs?$/i.test(t.name.trim())) : -1;
+    const groupOf = (img: ImageItem) => (pictureTypeIndex >= 0 ? img.optionValueId : undefined);
+    const variantForGroup = (groupId: string) => savedRows.find((r) => r.valueIds[pictureTypeIndex] === groupId)?.variantId;
+    /** Where a picture should live, or null when its colour is no longer offered (the picture is then dropped). */
+    const targetFor = (img: ImageItem): string | null => {
+        const group = groupOf(img);
+        if (group) {
+            if (img.variantId && keptVariantIds.has(img.variantId) && valueIdsByVariant.get(img.variantId)?.[pictureTypeIndex] === group) return img.variantId;
+            return variantForGroup(group) ?? null;
+        }
+        return img.variantId && keptVariantIds.has(img.variantId) ? img.variantId : anchorVariantId;
+    };
+
+    // Images belong to a variant and are deleted with it, so move them before pruning variants.
     const staleVariantIds = input.serverVariantIds.filter((id) => !keptVariantIds.has(id));
-    let images = input.images;
+    let images = input.images.filter((img) => targetFor(img) !== null);
     try {
         for (const img of images) {
-            if (img.id && img.variantId && staleVariantIds.includes(img.variantId)) {
-                await updateImage(img.id, { product_variant: anchorVariantId });
-                images = images.map((x) => (x.key === img.key ? { ...x, variantId: anchorVariantId } : x));
+            const target = targetFor(img) as string;
+            if (img.id && img.variantId !== target) {
+                await updateImage(img.id, { product_variant: target });
+                images = images.map((x) => (x.key === img.key ? { ...x, variantId: target } : x));
             }
         }
         for (const id of staleVariantIds) await deleteVariant(id);
@@ -134,8 +174,9 @@ export async function saveListing(input: SaveInput, progress: SaveProgress): Pro
         for (let i = 0; i < images.length; i += 1) {
             const img = images[i];
             if (img.file) {
-                const saved = await uploadImage({ productId, variantId: anchorVariantId, file: img.file, isMain: i === 0 });
-                images = images.map((x) => (x.key === img.key ? { key: x.key, id: String(saved.id), url: saved.image || x.url, variantId: anchorVariantId, savedMain: i === 0 } : x));
+                const target = targetFor(img) as string;
+                const saved = await uploadImage({ productId, variantId: target, file: img.file, isMain: i === 0 });
+                images = images.map((x) => (x.key === img.key ? { key: x.key, id: String(saved.id), url: saved.image || x.url, variantId: target, savedMain: i === 0, optionValueId: x.optionValueId } : x));
             }
         }
         progress.onImages(images);

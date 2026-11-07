@@ -403,7 +403,7 @@ const ProviderForm: React.FC = () => {
 
             {/* Success Message */}
             {successMessage && (
-                <div className="bg-gradient-to-r from-green-50 to-purple-50 border border-green-200 rounded-xl p-4 dark:from-green-900/20 dark:to-purple-900/20 dark:border-green-800">
+                <div className="bg-gradient-to-r from-green-50 to-purple-50 border border-green-200 rounded-xl p-4 dark:from-green-950 dark:to-purple-950 dark:border-green-800">
                     <div className="flex items-center gap-3">
                         <IconCheck className="w-5 h-5 text-green-600 dark:text-green-400" />
                         <span className="text-green-800 dark:text-green-300 font-medium">{successMessage}</span>
@@ -416,7 +416,7 @@ const ProviderForm: React.FC = () => {
                 {/* Business Information */}
                 <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                        <div className="p-2 bg-purple-100 dark:bg-purple-950 rounded-lg">
                             <IconBuilding className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                         </div>
                         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Business Information</h2>
@@ -513,7 +513,7 @@ const ProviderForm: React.FC = () => {
                 {!isEditing && (
                     <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
+                            <div className="p-2 bg-red-100 dark:bg-red-950 rounded-lg">
                                 <IconShield className="w-5 h-5 text-red-600 dark:text-red-400" />
                             </div>
                             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Account Security</h2>
@@ -579,7 +579,7 @@ const ProviderForm: React.FC = () => {
                 {/* Business Details */}
                 <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                        <div className="p-2 bg-blue-100 dark:bg-blue-950 rounded-lg">
                             <IconFileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                         </div>
                         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Business Registration</h2>
@@ -669,7 +669,7 @@ const ProviderForm: React.FC = () => {
                 {/* Services Offered */}
                 <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                        <div className="p-2 bg-green-100 dark:bg-green-950 rounded-lg">
                             <IconTruck className="w-5 h-5 text-green-600 dark:text-green-400" />
                         </div>
                         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Services Offered</h2>
@@ -694,7 +694,7 @@ const ProviderForm: React.FC = () => {
                 {/* Account Settings - Updated */}
                 <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
+                        <div className="p-2 bg-indigo-100 dark:bg-indigo-950 rounded-lg">
                             <IconSettings className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                         </div>
                         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Account Settings</h2>
@@ -793,7 +793,7 @@ const ProviderForm: React.FC = () => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl font-medium hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                        className="px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl font-medium hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed flex items-center gap-2"
                     >
                         {loading ? (
                             <>

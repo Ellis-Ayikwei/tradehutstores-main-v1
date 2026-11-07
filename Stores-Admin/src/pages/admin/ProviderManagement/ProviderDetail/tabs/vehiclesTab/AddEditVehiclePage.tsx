@@ -395,7 +395,7 @@ const AddEditVehiclePage: React.FC = () => {
                                     onClick={() => setActiveTab(tab.id)}
                                     className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
                                         activeTab === tab.id
-                                            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                                            ? 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300'
                                             : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                                     }`}
                                 >
@@ -894,7 +894,7 @@ const AddEditVehiclePage: React.FC = () => {
                             type="submit"
                             onClick={handleSubmit}
                             disabled={loading}
-                            className="px-6 py-2 btn btn-outline-warning bg-gradient-to-r  font-medium rounded-xl shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-6 py-2 btn btn-outline-warning bg-gradient-to-r  font-medium rounded-xl shadow-lg transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-400 dark:disabled:bg-gray-800 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
                         >
                             {loading ? (
                                 <div className="flex items-center gap-2">

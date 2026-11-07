@@ -23,6 +23,18 @@ All new or rewritten admin/seller pages use shadcn/ui. Legacy pages keep antd / 
 - Status colours come from the existing `success / warning / info` scales; `Badge` has `success | warning | info | destructive` variants.
 - Font stays Charlie. Icons: `lucide-react`.
 
+### Preset `bbVJxYW` (base-maia, neutral)
+
+The look follows shadcn preset `bbVJxYW` (style `base-maia`, base colour `neutral`, subtle menu accent), **hand-ported** to Tailwind v3 + Radix. Do **not** run `shadcn init --preset bbVJxYW` here: it rewrites the project to Tailwind v4, `@base-ui/react`, `tw-animate-css` and the Inter font. `components.json` stays on `style: default` so `shadcn add` keeps producing v3/Radix code; restyle anything added to match:
+
+- Radius: `--radius: 0.625rem`. Controls (button, input, select, badge, tabs) are pills: `rounded-4xl`. Cards/menus `rounded-2xl`, menu items and textareas `rounded-xl`, dialogs `rounded-4xl` (`rounded-3xl` on mobile).
+- Sizes: buttons/inputs/selects `h-9` (`sm` `h-8`, `lg` `h-10`, extra `xs`, `icon-xs|sm|lg`). Weight `font-medium`.
+- Fields are filled: `border-input bg-muted`. Focus: `focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-primary-subtle`. Invalid: `aria-[invalid=true]:border-destructive … ring-destructive-subtle`.
+- Overlays: `bg-popover border border-border shadow-2xl`; tooltips are inverted (`bg-foreground text-background`).
+- Neutral greys from the preset; `accent` is neutral (menu hover). Brand tint chips use `primary-subtle`. `destructive` buttons/badges are subtle, solid red on hover.
+- Charts: `chart-1..5` tokens (`chart-1` = brand orange).
+- Maia's translucent recipes (`bg-input/30`, `bg-destructive/10`, `ring-foreground/10`, backdrop blur) are replaced with the solid equivalents above, per the rule below.
+
 ## Solid surfaces (no translucent / glass backgrounds)
 
 Icon chips, avatars, badges, buttons, cards, chips and nav items use **solid** colours. Never `bg-primary/10`, `bg-white/20`, `bg-black/5`, `bg-opacity-*`, `bg-transparent` chips, `backdrop-blur`, or `border-white/10`-style borders (AGENTS.md section 1b).

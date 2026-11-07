@@ -36,7 +36,7 @@ const RolesTab: React.FC<RolesTabProps> = ({ groups, loading, onEditGroup, onDel
                     className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 >
                     <div className="flex items-center gap-4">
-                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                        <div className="p-2 bg-blue-100 dark:bg-blue-950 rounded-lg">
                             <IconUsersGroup className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                         </div>
                         <div>
@@ -49,14 +49,14 @@ const RolesTab: React.FC<RolesTabProps> = ({ groups, loading, onEditGroup, onDel
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => onEditGroup(group.id)}
-                            className="p-2 text-blue-600 hover:text-blue-900 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                            className="p-2 text-blue-600 hover:text-blue-900 hover:bg-blue-50 dark:hover:bg-blue-950 rounded-lg transition-colors"
                             title="Edit Group"
                         >
                             <IconEdit className="w-4 h-4" />
                         </button>
                         <button
                             onClick={() => onDeleteGroup(group.id)}
-                            className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                            className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg transition-colors"
                             title="Delete Group"
                         >
                             <IconTrash className="w-4 h-4" />

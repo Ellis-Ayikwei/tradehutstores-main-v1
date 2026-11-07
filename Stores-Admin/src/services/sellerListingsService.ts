@@ -80,12 +80,24 @@ export interface ProductDetail {
     pricing_currency?: string;
 }
 
+/** One structured option on a variant (Colour: Red). From `ProductVariantAttributeValueSerializer`. */
+export interface VariantAttributeValue {
+    id: string;
+    attribute: string;
+    attribute_name?: string;
+    attribute_display_type?: string;
+    value_name: string | null;
+    color_code?: string | null;
+    image?: string | null;
+}
+
 export interface VariantDetail {
     id: string;
     sku: string;
     price: string;
     quantity: number | null;
     name: string | null;
+    attribute_values?: VariantAttributeValue[];
 }
 
 export interface ImageDetail {
@@ -104,6 +116,23 @@ export interface SellerSelf {
 export interface CatalogOption {
     id: string;
     label: string;
+}
+
+/** An option type such as Colour or Size (`GET catalog/attributes/`). `display_type` is dropdown | swatch | image | text. */
+export interface AttributeOption {
+    id: string;
+    name: string;
+    displayType: string;
+}
+
+/** A pickable value such as Red (`GET catalog/attribute-values/`). */
+export interface AttributeValueOption {
+    id: string;
+    attributeId: string;
+    attributeName: string;
+    label: string;
+    colorCode: string;
+    image: string | null;
 }
 
 /* ------------------------------------------------------------------ errors */
@@ -195,6 +224,8 @@ export const sellerListingsApi = {
     categories: 'catalog/categories/',
     subcategories: 'catalog/subcategories/',
     brands: 'catalog/brands/',
+    attributes: 'catalog/attributes/',
+    attributeValues: 'catalog/attribute-values/',
 };
 
 export const fetchSellerListings = (q: ListingQuery) =>
@@ -230,6 +261,36 @@ export async function fetchBrands(categoryId: string): Promise<CatalogOption[]> 
     return rows.map((r) => ({ id: String(r.id), label: r.name }));
 }
 
+/** Option types. The API has no category link on attributes, so every type is returned. Read-only and public. */
+export async function fetchAttributes(): Promise<AttributeOption[]> {
+    const rows = unwrap(await get<{ id: string; name: string; display_type?: string }[] | { results: { id: string; name: string; display_type?: string }[] }>(sellerListingsApi.attributes));
+    return rows.map((r) => ({ id: String(r.id), name: r.name, displayType: r.display_type ?? 'dropdown' }));
+}
+
+interface RawAttributeValue {
+    id: string;
+    attribute: string | null;
+    attribute_name?: string | null;
+    value_name: string | null;
+    color_code?: string | null;
+    image?: string | null;
+}
+
+/** Values for one option type, or every value when `attributeId` is omitted. Sellers cannot create values (the endpoint is read-only). */
+export async function fetchAttributeValues(attributeId?: string): Promise<AttributeValueOption[]> {
+    const rows = unwrap(await get<RawAttributeValue[] | { results: RawAttributeValue[] }>(sellerListingsApi.attributeValues, attributeId ? { attribute: attributeId } : undefined));
+    return rows
+        .filter((r) => r.attribute && r.value_name)
+        .map((r) => ({
+            id: String(r.id),
+            attributeId: String(r.attribute),
+            attributeName: r.attribute_name ?? '',
+            label: String(r.value_name),
+            colorCode: r.color_code ?? '',
+            image: r.image ?? null,
+        }));
+}
+
 /* ------------------------------------------------------------------ writes */
 
 export interface ProductWrite {
@@ -255,6 +316,8 @@ export interface VariantWrite {
     quantity: number;
     name: string;
     min_buy_amount?: number;
+    /** AttributeValue ids. Replaces the variant's set on PATCH; omit to leave it unchanged. */
+    attribute_values?: string[];
 }
 
 const multipart = { headers: { 'Content-Type': 'multipart/form-data' } };

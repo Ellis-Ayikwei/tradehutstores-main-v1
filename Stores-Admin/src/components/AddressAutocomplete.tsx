@@ -384,7 +384,7 @@ const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
 
                 {/* Postcode addresses display for legacy interface */}
                 {showPostcodeAddresses && postcodeAddresses.length > 0 && (
-                    <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg">
+                    <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-700 rounded-lg">
                         <div className="flex items-center justify-between mb-3">
                             <h6 className="text-sm font-medium text-blue-900 dark:text-blue-100">🏘️ Available Addresses in this Postcode ({postcodeAddresses.length} found)</h6>
                         </div>
@@ -430,7 +430,7 @@ const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
 
             {/* Display selected address details */}
             {showDetails && selectedAddress && (
-                <div className="mt-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg">
+                <div className="mt-4 p-4 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-700 rounded-lg">
                     <div className="flex items-center mb-3">
                         <div className="text-green-600 dark:text-green-400 font-medium">📍 Selected Address Details</div>
                     </div>
@@ -468,7 +468,7 @@ const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
 
             {/* Postcode addresses display for enhanced interface */}
             {showPostcodeAddresses && postcodeAddresses.length > 0 && (
-                <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg">
+                <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-700 rounded-lg">
                     <div className="flex items-center mb-3">
                         <div className="text-blue-600 dark:text-blue-400 font-medium">🏘️ Available Addresses in this Postcode ({postcodeAddresses.length} found)</div>
                     </div>

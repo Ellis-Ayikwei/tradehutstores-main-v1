@@ -125,7 +125,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
             {/* Backdrop */}
             <div 
-                className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                className="absolute inset-0 bg-black/50 "
                 onClick={handleCancel}
             />
             
@@ -158,7 +158,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
                     )}
                     
                     {note && (
-                        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200/50 dark:border-blue-700/30">
+                        <div className="p-4 bg-blue-50 dark:bg-blue-950 rounded-xl border border-blue-200 dark:border-blue-900">
                             <div className="flex items-start gap-2">
                                 <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
                                 <p className="text-sm text-blue-700 dark:text-blue-300">
@@ -169,7 +169,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
                     )}
                     
                     {recommended && (
-                        <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200/50 dark:border-green-700/30">
+                        <div className="p-4 bg-green-50 dark:bg-green-950 rounded-xl border border-green-200 dark:border-green-900">
                             <div className="flex items-start gap-2">
                                 <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
                                 <p className="text-sm text-green-700 dark:text-green-300">
@@ -179,7 +179,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
                         </div>
                     )}
                     
-                    <div className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
+                    <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
                         <p className="text-sm font-semibold text-gray-900 dark:text-white">
                             {finalQuestion}
                         </p>

@@ -86,18 +86,18 @@ const fmtDate = (d: string) =>
 type VStatus = 'pending' | 'verified' | 'rejected' | 'suspended';
 
 const STATUS_STYLES: Record<VStatus, string> = {
-    verified:  'bg-bid-green/10 text-bid-green',
-    pending:   'bg-bid-amber/10 text-bid-amber',
+    verified:  'bg-success-subtle text-bid-green',
+    pending:   'bg-warning-subtle text-bid-amber',
     rejected:  'bg-error-container text-on-error-container',
-    suspended: 'bg-bid-red/10 text-bid-red',
+    suspended: 'bg-destructive-subtle text-bid-red',
 };
 
 type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
 const ORDER_STATUS_STYLES: Record<OrderStatus, string> = {
-    pending:    'bg-bid-amber/10 text-bid-amber',
+    pending:    'bg-warning-subtle text-bid-amber',
     processing: 'bg-secondary-container text-on-secondary-container',
     shipped:    'bg-surface-container-highest text-on-surface-variant',
-    delivered:  'bg-bid-green/10 text-bid-green',
+    delivered:  'bg-success-subtle text-bid-green',
     cancelled:  'bg-error-container text-on-error-container',
 };
 
@@ -136,11 +136,11 @@ const TABS = ['About', 'Listings', 'Orders', 'Reviews', 'Disputes', 'Admin Actio
 type Tab = (typeof TABS)[number];
 
 const ACTIVITY_TYPE_STYLES: Record<ActivityEvent['type'], string> = {
-    sale:    'bg-bid-green/10 text-bid-green',
-    review:  'bg-primary-container/10 text-primary-container',
-    dispute: 'bg-bid-red/10 text-bid-red',
+    sale:    'bg-success-subtle text-bid-green',
+    review:  'bg-primary-subtle text-primary-container',
+    dispute: 'bg-destructive-subtle text-bid-red',
     system:  'bg-surface-container text-on-surface-variant',
-    admin:   'bg-tertiary/10 text-tertiary',
+    admin:   'bg-info-subtle text-tertiary',
 };
 
 // ─── Admin Actions Panel ──────────────────────────────────────────────────────
@@ -163,7 +163,7 @@ function AdminActionsPanel({ seller, onStatusChange, onCommissionChange, onNoteA
     return (
         <div className="space-y-6">
             {/* Status actions */}
-            <div className="bg-surface-container-lowest rounded-2xl shadow-card p-6 border border-outline-variant/10">
+            <div className="bg-surface-container-lowest rounded-2xl shadow-card p-6 border border-border">
                 <h3 className="font-headline font-bold text-lg text-on-surface mb-5">Account Actions</h3>
                 <div className="space-y-3">
                     {seller.verification_status !== 'verified' && (
@@ -180,7 +180,7 @@ function AdminActionsPanel({ seller, onStatusChange, onCommissionChange, onNoteA
                         <>
                             <button
                                 onClick={() => setShowSuspendField((v) => !v)}
-                                className="w-full py-3 px-5 bg-bid-red/10 text-bid-red font-bold rounded-xl flex items-center justify-center gap-2 border border-bid-red/20 hover:bg-bid-red/20 active:scale-95 transition-all"
+                                className="w-full py-3 px-5 bg-destructive-subtle text-bid-red font-bold rounded-xl flex items-center justify-center gap-2 border border-danger-200 hover:bg-danger-100 active:scale-95 transition-all"
                             >
                                 <span className="material-symbols-outlined text-base">block</span>
                                 Suspend Account
@@ -192,12 +192,12 @@ function AdminActionsPanel({ seller, onStatusChange, onCommissionChange, onNoteA
                                         onChange={(e) => setSuspendReason(e.target.value)}
                                         placeholder="Reason for suspension…"
                                         rows={3}
-                                        className="form-textarea w-full text-sm rounded-xl border-outline-variant/20 bg-surface-container-low focus:ring-primary-container focus:border-primary-container resize-none"
+                                        className="form-textarea w-full text-sm rounded-xl border-border bg-surface-container-low focus:ring-primary-container focus:border-primary-container resize-none"
                                     />
                                     <button
                                         onClick={() => { onStatusChange('suspended', suspendReason); setShowSuspendField(false); setSuspendReason(''); }}
                                         disabled={!suspendReason.trim()}
-                                        className="w-full py-2.5 px-4 bg-bid-red text-white text-sm font-bold rounded-xl disabled:opacity-40 active:scale-95 transition-all"
+                                        className="w-full py-2.5 px-4 bg-bid-red text-white text-sm font-bold rounded-xl disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500 active:scale-95 transition-all"
                                     >
                                         Confirm Suspension
                                     </button>
@@ -207,7 +207,7 @@ function AdminActionsPanel({ seller, onStatusChange, onCommissionChange, onNoteA
                     ) : (
                         <button
                             onClick={() => onStatusChange('verified', 'Reinstated by admin')}
-                            className="w-full py-3 px-5 bg-bid-green/10 text-bid-green font-bold rounded-xl flex items-center justify-center gap-2 border border-bid-green/20 hover:bg-bid-green/20 active:scale-95 transition-all"
+                            className="w-full py-3 px-5 bg-success-subtle text-bid-green font-bold rounded-xl flex items-center justify-center gap-2 border border-success-200 hover:bg-success-100 active:scale-95 transition-all"
                         >
                             <span className="material-symbols-outlined text-base">check_circle</span>
                             Reinstate Account
@@ -217,7 +217,7 @@ function AdminActionsPanel({ seller, onStatusChange, onCommissionChange, onNoteA
             </div>
 
             {/* Commission */}
-            <div className="bg-surface-container-lowest rounded-2xl shadow-card p-6 border border-outline-variant/10">
+            <div className="bg-surface-container-lowest rounded-2xl shadow-card p-6 border border-border">
                 <h3 className="font-headline font-bold text-lg text-on-surface mb-4">Commission Rate</h3>
                 <p className="text-xs text-on-surface-variant mb-3">Override the platform default commission for this seller.</p>
                 <div className="flex items-center gap-3">
@@ -229,7 +229,7 @@ function AdminActionsPanel({ seller, onStatusChange, onCommissionChange, onNoteA
                             step="0.5"
                             value={commissionDraft}
                             onChange={(e) => setCommissionDraft(e.target.value)}
-                            className="form-input w-full text-sm rounded-xl border-outline-variant/20 bg-surface-container-low focus:ring-primary-container focus:border-primary-container pr-8"
+                            className="form-input w-full text-sm rounded-xl border-border bg-surface-container-low focus:ring-primary-container focus:border-primary-container pr-8"
                         />
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-bold text-on-surface-variant">%</span>
                     </div>
@@ -243,19 +243,19 @@ function AdminActionsPanel({ seller, onStatusChange, onCommissionChange, onNoteA
             </div>
 
             {/* Internal note */}
-            <div className="bg-surface-container-lowest rounded-2xl shadow-card p-6 border border-outline-variant/10">
+            <div className="bg-surface-container-lowest rounded-2xl shadow-card p-6 border border-border">
                 <h3 className="font-headline font-bold text-lg text-on-surface mb-4">Add Internal Note</h3>
                 <textarea
                     value={noteDraft}
                     onChange={(e) => setNoteDraft(e.target.value)}
                     placeholder="Internal note visible to admins only…"
                     rows={4}
-                    className="form-textarea w-full text-sm rounded-xl border-outline-variant/20 bg-surface-container-low focus:ring-primary-container focus:border-primary-container resize-none mb-3"
+                    className="form-textarea w-full text-sm rounded-xl border-border bg-surface-container-low focus:ring-primary-container focus:border-primary-container resize-none mb-3"
                 />
                 <button
                     onClick={() => { onNoteAdd(noteDraft); setNoteDraft(''); }}
                     disabled={!noteDraft.trim()}
-                    className="w-full py-2.5 px-4 bg-surface-container text-on-surface-variant text-sm font-bold rounded-xl border border-outline-variant/20 hover:bg-surface-container-high disabled:opacity-40 active:scale-95 transition-all"
+                    className="w-full py-2.5 px-4 bg-surface-container text-on-surface-variant text-sm font-bold rounded-xl border border-border hover:bg-surface-container-high disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:text-gray-500 active:scale-95 transition-all"
                 >
                     Save Note
                 </button>
@@ -373,7 +373,7 @@ const SellerProfile = () => {
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                         />
                     ) : (
-                        <div className="w-full h-full primary-gradient opacity-30" />
+                        <div className="w-full h-full bg-primary-subtle" />
                     )}
                 </div>
 
@@ -447,7 +447,7 @@ const SellerProfile = () => {
 
                     {/* Tab bar */}
                     <div className="overflow-x-auto no-scrollbar">
-                        <div className="flex gap-6 border-b border-outline-variant/15 min-w-max">
+                        <div className="flex gap-6 border-b border-border min-w-max">
                             {TABS.map((tab) => (
                                 <button
                                     key={tab}
@@ -455,7 +455,7 @@ const SellerProfile = () => {
                                     className={`pb-3 text-sm font-bold whitespace-nowrap transition-colors active:scale-95 ${
                                         activeTab === tab
                                             ? 'text-primary-container border-b-2 border-primary-container'
-                                            : 'text-on-surface-variant/60 hover:text-on-surface-variant'
+                                            : 'text-on-surface-variant hover:text-on-surface-variant'
                                     }`}
                                 >
                                     {tab}
@@ -467,7 +467,7 @@ const SellerProfile = () => {
                     {/* ── About tab ──────────────────────────────────────────── */}
                     {activeTab === 'About' && (
                         <div className="space-y-5">
-                            <div className="bg-surface-container-lowest rounded-2xl shadow-card p-6 border border-outline-variant/10">
+                            <div className="bg-surface-container-lowest rounded-2xl shadow-card p-6 border border-border">
                                 <h3 className="font-headline font-bold text-lg text-on-surface mb-4">Business Details</h3>
                                 <dl className="space-y-4">
                                     {[
@@ -478,7 +478,7 @@ const SellerProfile = () => {
                                         { icon: 'payments',       label: 'Commission',   value: `${seller.commission_rate ?? 8.5}%` },
                                     ].map(({ icon, label, value }) => (
                                         <div key={label} className="flex items-center gap-3">
-                                            <span className="material-symbols-outlined text-on-surface-variant/60 text-lg w-5 text-center">{icon}</span>
+                                            <span className="material-symbols-outlined text-on-surface-variant text-lg w-5 text-center">{icon}</span>
                                             <dt className="text-xs font-bold uppercase tracking-widest text-on-surface-variant w-28 flex-shrink-0">{label}</dt>
                                             <dd className="text-sm text-on-surface">{value}</dd>
                                         </div>
@@ -487,7 +487,7 @@ const SellerProfile = () => {
                             </div>
 
                             {/* Recent activity */}
-                            <div className="bg-surface-container-lowest rounded-2xl shadow-card p-6 border border-outline-variant/10">
+                            <div className="bg-surface-container-lowest rounded-2xl shadow-card p-6 border border-border">
                                 <h3 className="font-headline font-bold text-lg text-on-surface mb-4">Recent Activity</h3>
                                 <ul className="space-y-4">
                                     {activity.map((ev) => (
@@ -497,7 +497,7 @@ const SellerProfile = () => {
                                             </span>
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-sm text-on-surface">{ev.description}</p>
-                                                <p className="text-[10px] text-on-surface-variant/60 mt-0.5">
+                                                <p className="text-[10px] text-on-surface-variant mt-0.5">
                                                     {fmtDate(ev.timestamp)}
                                                 </p>
                                             </div>
@@ -568,8 +568,8 @@ const SellerProfile = () => {
 
                     {/* ── Orders tab ──────────────────────────────────────────── */}
                     {activeTab === 'Orders' && (
-                        <div className="bg-surface-container-lowest rounded-2xl shadow-card overflow-hidden border border-outline-variant/10">
-                            <div className="p-5 border-b border-outline-variant/10 flex items-center justify-between">
+                        <div className="bg-surface-container-lowest rounded-2xl shadow-card overflow-hidden border border-border">
+                            <div className="p-5 border-b border-border flex items-center justify-between">
                                 <h3 className="font-headline font-bold text-lg text-on-surface">Orders ({orders.length})</h3>
                                 <Link
                                     to="/admin/orders/list"
@@ -582,7 +582,7 @@ const SellerProfile = () => {
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left border-collapse">
                                     <thead>
-                                        <tr className="bg-surface-container-low/50">
+                                        <tr className="bg-surface-container-low">
                                             {['Order', 'Customer', 'Status', 'Date', 'Amount'].map((h) => (
                                                 <th key={h} className="px-5 py-3 text-[10px] uppercase tracking-widest text-on-surface-variant font-bold whitespace-nowrap">
                                                     {h}
@@ -590,9 +590,9 @@ const SellerProfile = () => {
                                             ))}
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-outline-variant/10">
+                                    <tbody className="divide-y divide-border">
                                         {orders.map((order) => (
-                                            <tr key={order.id} className="hover:bg-surface-container-low/30 transition-colors">
+                                            <tr key={order.id} className="hover:bg-surface-container-low transition-colors">
                                                 <td className="px-5 py-3 font-mono text-sm text-on-surface whitespace-nowrap">#{order.order_number}</td>
                                                 <td className="px-5 py-3 text-sm text-on-surface">{order.customer_name}</td>
                                                 <td className="px-5 py-3">
@@ -614,7 +614,7 @@ const SellerProfile = () => {
                     {activeTab === 'Reviews' && (
                         <div className="space-y-4">
                             {reviews.map((rev) => (
-                                <div key={rev.id} className="bg-surface-container-lowest rounded-2xl shadow-card p-5 border border-outline-variant/10">
+                                <div key={rev.id} className="bg-surface-container-lowest rounded-2xl shadow-card p-5 border border-border">
                                     <div className="flex items-start gap-3 mb-3">
                                         <div className="w-8 h-8 rounded-full bg-surface-container-high flex-shrink-0 overflow-hidden">
                                             {rev.reviewer_avatar ? (
@@ -626,7 +626,7 @@ const SellerProfile = () => {
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center justify-between flex-wrap gap-1">
                                                 <p className="font-bold text-sm text-on-surface">{rev.reviewer_name}</p>
-                                                <p className="text-[10px] text-on-surface-variant/60">{fmtDate(rev.created_at)}</p>
+                                                <p className="text-[10px] text-on-surface-variant">{fmtDate(rev.created_at)}</p>
                                             </div>
                                             <Stars rating={rev.rating} />
                                         </div>
@@ -639,7 +639,7 @@ const SellerProfile = () => {
 
                     {/* ── Disputes tab ────────────────────────────────────────── */}
                     {activeTab === 'Disputes' && (
-                        <div className="bg-surface-container-lowest rounded-2xl shadow-card p-6 border border-outline-variant/10 flex flex-col items-center gap-4 py-16">
+                        <div className="bg-surface-container-lowest rounded-2xl shadow-card p-6 border border-border flex flex-col items-center gap-4 py-16">
                             <span className="material-symbols-outlined text-5xl text-outline">balance</span>
                             <p className="text-on-surface-variant text-sm">Dispute history will appear here.</p>
                             <Link
@@ -668,21 +668,21 @@ const SellerProfile = () => {
                     <div className="lg:sticky lg:top-24 space-y-4">
 
                         {/* Quick info card */}
-                        <div className="bg-surface-container-lowest rounded-2xl shadow-card p-6 border border-outline-variant/10">
+                        <div className="bg-surface-container-lowest rounded-2xl shadow-card p-6 border border-border">
                             <h2 className="font-syne font-bold text-xl text-on-surface mb-5">Seller Info</h2>
                             <ul className="space-y-3 mb-6">
                                 <li className="flex items-center gap-3 text-sm">
-                                    <span className="material-symbols-outlined text-on-surface-variant/60">calendar_today</span>
+                                    <span className="material-symbols-outlined text-on-surface-variant">calendar_today</span>
                                     <span className="text-on-surface-variant">
                                         Joined {seller.joined_date ? fmtDate(seller.joined_date) : '—'}
                                     </span>
                                 </li>
                                 <li className="flex items-center gap-3 text-sm">
-                                    <span className="material-symbols-outlined text-on-surface-variant/60">location_on</span>
+                                    <span className="material-symbols-outlined text-on-surface-variant">location_on</span>
                                     <span className="text-on-surface-variant">{seller.location ?? '—'}</span>
                                 </li>
                                 <li className="flex items-center gap-3 text-sm">
-                                    <span className="material-symbols-outlined text-on-surface-variant/60">mail</span>
+                                    <span className="material-symbols-outlined text-on-surface-variant">mail</span>
                                     <span className="text-on-surface-variant truncate">{seller.user.email}</span>
                                 </li>
                                 {seller.is_verified && (
@@ -694,7 +694,7 @@ const SellerProfile = () => {
                             </ul>
 
                             {/* Admin action buttons (visible on lg+; tab used on smaller breakpoints) */}
-                            <div className="hidden lg:block space-y-3 pt-5 border-t border-outline-variant/10">
+                            <div className="hidden lg:block space-y-3 pt-5 border-t border-border">
                                 <AdminActionsPanel
                                     seller={seller}
                                     onStatusChange={handleStatusChange}
@@ -705,13 +705,13 @@ const SellerProfile = () => {
                         </div>
 
                         {/* Trust / Escrow badge */}
-                        <div className="bg-bid-green/5 rounded-2xl p-4 border border-bid-green/10 flex items-center gap-4">
+                        <div className="bg-success-subtle rounded-2xl p-4 border border-success-200 flex items-center gap-4">
                             <div className="w-10 h-10 rounded-full bg-bid-green flex items-center justify-center text-white flex-shrink-0">
                                 <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>shield</span>
                             </div>
                             <div>
                                 <p className="text-xs font-bold text-k-secondary uppercase tracking-tighter">Buyer Protection</p>
-                                <p className="text-[10px] text-on-surface-variant/80">Every transaction is secured via TradeHut Escrow.</p>
+                                <p className="text-[10px] text-on-surface-variant">Every transaction is secured via TradeHut Escrow.</p>
                             </div>
                         </div>
                     </div>

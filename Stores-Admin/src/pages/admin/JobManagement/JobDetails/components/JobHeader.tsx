@@ -23,17 +23,17 @@ const JobHeader: React.FC<JobHeaderProps> = ({
     const navigate = useNavigate();
 
     return (
-        <div className="relative backdrop-blur-xl bg-white/70 dark:bg-slate-800/70 border-b border-white/20 dark:border-slate-700/30">
+        <div className="relative  bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700">
             <div className="mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 {/* Top Row - Job Info and Actions */}
                 <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center space-x-6">
                         <button
                             onClick={() => navigate('/admin/jobs')}
-                            className="flex items-center justify-center w-12 h-12 rounded-2xl bg-slate-100/80 dark:bg-slate-700/80 
+                            className="flex items-center justify-center w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-700 
                                      text-slate-600 hover:text-orange-600 dark:text-slate-400 dark:hover:text-orange-400 
-                                     hover:bg-white dark:hover:bg-slate-600 transition-all duration-200 backdrop-blur-sm
-                                     border border-slate-200/50 dark:border-slate-600/50 hover:border-orange-300 dark:hover:border-orange-600"
+                                     hover:bg-white dark:hover:bg-slate-600 transition-all duration-200 
+                                     border border-slate-200 dark:border-slate-600 hover:border-orange-300 dark:hover:border-orange-600"
                         >
                             <ArrowLeft className="w-5 h-5" />
                         </button>
@@ -45,7 +45,7 @@ const JobHeader: React.FC<JobHeaderProps> = ({
 
                     <div className="flex items-center space-x-4">
                         {/* Status Badge */}
-                        <span className={`flex items-center px-2 py-1 rounded-2xl  font-bold backdrop-blur-sm border-2 ${getStatusBadgeClass(job.status)}`}>
+                        <span className={`flex items-center px-2 py-1 rounded-2xl  font-bold  border-2 ${getStatusBadgeClass(job.status)}`}>
                             {getStatusIcon(job.status)}
                             <span className="ml-2">{(job?.status || 'unknown').replace(/_/g, ' ')}</span>
                         </span>

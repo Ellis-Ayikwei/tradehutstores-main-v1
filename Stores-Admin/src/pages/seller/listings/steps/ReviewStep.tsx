@@ -5,6 +5,7 @@ import useSWR from 'swr';
 import { Badge } from '@/components/shadcn/badge';
 import { Card } from '@/components/shadcn/card';
 import { fetchBrands, fetchCategories, fetchSubcategories, formatMoney } from '@/services/sellerListingsService';
+import { groupsWithoutPictures, summarizeOptions, valueLabels } from '../components/optionUtils';
 import type { ImageItem, ListingFormValues } from '../schema';
 
 interface ReviewStepProps {
@@ -34,11 +35,20 @@ export function ReviewStep({ images, currency, canPublish }: ReviewStepProps) {
 
     const label = (opts: { id: string; label: string }[] | undefined, id: string) => opts?.find((o) => o.id === id)?.label ?? '-';
     const discount = Number(v.discount_percentage) || 0;
-    const totalStock = v.variants.reduce((sum, x) => sum + (Number(x.quantity) || 0), 0);
+    const structured = v.hasOptions && v.optionsMode === 'attributes';
+    const rows = v.variants.filter((x) => x.enabled);
+    const totalStock = rows.reduce((sum, x) => sum + (Number(x.quantity) || 0), 0);
+    const prices = rows.map((x) => Number(x.price)).filter((n) => Number.isFinite(n));
+    const minPrice = prices.length ? Math.min(...prices) : 0;
+    const maxPrice = prices.length ? Math.max(...prices) : 0;
+    const missingPictures = structured ? groupsWithoutPictures(v.optionTypes, v.variants, images) : [];
+    const rowLabel = (x: (typeof rows)[number]) => (structured ? valueLabels(v.optionTypes, x.valueIds ?? []).join(' / ') : v.hasOptions ? x.name.trim() : 'Single item');
 
     const blockers: string[] = [];
     if (images.length === 0) blockers.push('Add at least one image to publish.');
     if (totalStock === 0) blockers.push('Every variant has zero stock, so buyers could not order it.');
+    const hints: string[] = [];
+    if (missingPictures.length > 0) hints.push(`No picture yet for ${missingPictures.map((m) => m.label).join(', ')}. We recommend one for each ${v.optionTypes.find((t) => t.values.some((x) => x.id === missingPictures[0].id))?.name.toLowerCase() ?? 'colour'}.`);
 
     return (
         <div className="space-y-3">
@@ -58,6 +68,17 @@ export function ReviewStep({ images, currency, canPublish }: ReviewStepProps) {
                 </div>
             )}
 
+            {hints.length > 0 ? (
+                <div className="flex items-start gap-2 rounded-lg bg-info-subtle p-3 text-sm text-info-subtle-foreground" role="note">
+                    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                    <ul className="space-y-0.5">
+                        {hints.map((h) => (
+                            <li key={h}>{h}</li>
+                        ))}
+                    </ul>
+                </div>
+            ) : null}
+
             <Card className="p-3">
                 <h3 className="mb-1 text-sm font-semibold text-foreground">Details</h3>
                 <dl className="divide-y">
@@ -70,12 +91,20 @@ export function ReviewStep({ images, currency, canPublish }: ReviewStepProps) {
             </Card>
 
             <Card className="p-3">
-                <h3 className="mb-1 text-sm font-semibold text-foreground">Variants and stock</h3>
+                <h3 className="mb-1 text-sm font-semibold text-foreground">Price and stock</h3>
+                <p className="text-xs text-muted-foreground">
+                    {structured ? `Options: ${summarizeOptions(v.optionTypes, v.variants)} — ${rows.length} variant${rows.length === 1 ? '' : 's'}` : `Options: ${v.hasOptions ? rows.map((x) => x.name.trim()).filter(Boolean).join(', ') : 'none'}`}
+                </p>
+                {rows.length > 1 ? (
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                        {minPrice === maxPrice ? formatMoney(minPrice, currency) : `${formatMoney(minPrice, currency)} to ${formatMoney(maxPrice, currency)}`} · {totalStock} in stock in total
+                    </p>
+                ) : null}
                 <ul className="divide-y">
-                    {v.variants.map((x, i) => (
+                    {rows.map((x, i) => (
                         <li key={`${x.sku}-${i}`} className="flex items-center justify-between gap-3 py-1.5 text-sm">
                             <div className="min-w-0">
-                                <p className="truncate font-medium text-foreground">{x.name.trim() || 'Single item'}</p>
+                                <p className="truncate font-medium text-foreground">{rowLabel(x)}</p>
                                 <p className="truncate text-xs text-muted-foreground">SKU {x.sku}</p>
                             </div>
                             <div className="shrink-0 text-right">

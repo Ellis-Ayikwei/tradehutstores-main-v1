@@ -631,15 +631,15 @@ const AdminDashboard = () => {
     const getStatusBadge = (status: string) => {
         switch (status) {
             case 'COMPLETED':
-                return 'badge bg-success/20 text-success';
+                return 'badge bg-success-subtle text-success';
             case 'IN_PROGRESS':
-                return 'badge bg-info/20 text-info';
+                return 'badge bg-info-subtle text-info';
             case 'PENDING':
-                return 'badge bg-warning/20 text-warning';
+                return 'badge bg-warning-subtle text-warning';
             case 'CANCELLED':
-                return 'badge bg-danger/20 text-danger';
+                return 'badge bg-destructive-subtle text-danger';
             default:
-                return 'badge bg-secondary/20 text-secondary';
+                return 'badge bg-muted text-secondary';
         }
     };
 
@@ -663,15 +663,15 @@ const AdminDashboard = () => {
     const getActivityColor = (status: string) => {
         switch (status) {
             case 'success':
-                return 'text-green-600 bg-green-50 dark:bg-green-900/20';
+                return 'text-green-600 bg-green-50 dark:bg-green-950';
             case 'pending':
-                return 'text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20';
+                return 'text-yellow-600 bg-yellow-50 dark:bg-yellow-950';
             case 'alert':
-                return 'text-red-600 bg-red-50 dark:bg-red-900/20';
+                return 'text-red-600 bg-red-50 dark:bg-red-950';
             case 'new':
-                return 'text-blue-600 bg-blue-50 dark:bg-blue-900/20';
+                return 'text-blue-600 bg-blue-50 dark:bg-blue-950';
             default:
-                return 'text-gray-600 bg-gray-50 dark:bg-gray-900/20';
+                return 'text-gray-600 bg-gray-50 dark:bg-gray-900';
         }
     };
 
@@ -710,7 +710,7 @@ const AdminDashboard = () => {
                                 <span className="text-xs font-medium">+{dashboardData.monthlyGrowth}%</span>
                             </div>
                         </div>
-                        <div className="bg-white/20 p-2 rounded-lg">
+                        <div className="bg-blue-700 p-2 rounded-lg">
                             <IconPackage className="w-5 h-5 sm:w-6 sm:h-6" />
                         </div>
                     </div>
@@ -727,7 +727,7 @@ const AdminDashboard = () => {
                                 <span className="text-xs font-medium">+{dashboardData.newSignupsToday} today</span>
                             </div>
                         </div>
-                        <div className="bg-white/20 p-2 rounded-lg">
+                        <div className="bg-emerald-700 p-2 rounded-lg">
                             <IconUsers className="w-5 h-5 sm:w-6 sm:h-6" />
                         </div>
                     </div>
@@ -744,7 +744,7 @@ const AdminDashboard = () => {
                                 <span className="text-xs font-medium">{dashboardData.averageRating}/5.0 avg</span>
                             </div>
                         </div>
-                        <div className="bg-white/20 p-2 rounded-lg">
+                        <div className="bg-purple-700 p-2 rounded-lg">
                             <IconTruck className="w-5 h-5 sm:w-6 sm:h-6" />
                         </div>
                     </div>
@@ -761,7 +761,7 @@ const AdminDashboard = () => {
                                 <span className="text-xs font-medium">85% active</span>
                             </div>
                         </div>
-                        <div className="bg-white/20 p-2 rounded-lg">
+                        <div className="bg-indigo-700 p-2 rounded-lg">
                             <IconCar className="w-5 h-5 sm:w-6 sm:h-6" />
                         </div>
                     </div>
@@ -778,7 +778,7 @@ const AdminDashboard = () => {
                                 <span className="text-xs font-medium">+18.2% MTD</span>
                             </div>
                         </div>
-                        <div className="bg-white/20 p-2 rounded-lg">
+                        <div className="bg-green-700 p-2 rounded-lg">
                             <IconCurrencyDollar className="w-5 h-5 sm:w-6 sm:h-6" />
                         </div>
                     </div>
@@ -844,7 +844,7 @@ const AdminDashboard = () => {
                     </div>
                     <div className="space-y-4">
                         {realtimeActivity.map((activity) => (
-                            <div key={activity.id} className="flex items-start gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
+                            <div key={activity.id} className="flex items-start gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
                                 <div className={`p-2 rounded-lg ${getActivityColor(activity.status)}`}>{getActivityIcon(activity.type)}</div>
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{activity.message}</p>
@@ -987,7 +987,7 @@ const AdminDashboard = () => {
                     </div>
                     <div className="space-y-4">
                         {topPerformers.map((performer, index) => (
-                            <div key={performer.id} className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <div key={performer.id} className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                 <div
                                     className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white ${
                                         index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : index === 2 ? 'bg-orange-600' : 'bg-gray-300'

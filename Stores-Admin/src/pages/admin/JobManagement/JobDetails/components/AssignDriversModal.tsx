@@ -132,7 +132,7 @@ const AssignDriversModal: React.FC<AssignDriversModalProps> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
+          <div className="fixed inset-0 bg-black/60 " />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -146,7 +146,7 @@ const AssignDriversModal: React.FC<AssignDriversModalProps> = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-2xl ring-1 ring-white/10 transition-all">
+              <Dialog.Panel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-2xl ring-1 ring-gray-200 transition-all">
                 <div className="relative">
                   {/* Header */}
                   <div className="px-6 pt-6">
@@ -166,7 +166,7 @@ const AssignDriversModal: React.FC<AssignDriversModalProps> = ({
                       </div>
                       <button 
                         onClick={onClose} 
-                        className="absolute right-0 p-2 rounded-lg text-gray-500 hover:text-gray-800 hover:bg-black/5 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/10 transition"
+                        className="absolute right-0 p-2 rounded-lg text-gray-500 hover:text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-800 transition"
                       >
                         <X className="w-5 h-5" />
                       </button>
@@ -182,13 +182,13 @@ const AssignDriversModal: React.FC<AssignDriversModalProps> = ({
                         <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
                           {currentlyAssigned.length > 0 ? 'Manage Drivers' : 'Driver Assignment'}
                         </h4>
-                        <span className="px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 text-xs font-medium rounded-full">
+                        <span className="px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 text-xs font-medium rounded-full">
                           {requiredDrivers} Required
                         </span>
                       </div>
 
                       {requiredDrivers && (
-                        <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+                        <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-700">
                           <div className="flex items-start gap-2">
                             <AlertCircle className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5" />
                             <div>
@@ -208,7 +208,7 @@ const AssignDriversModal: React.FC<AssignDriversModalProps> = ({
                             <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
                               Currently Assigned Drivers
                             </h4>
-                            <span className="px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 text-xs font-medium rounded-full">
+                            <span className="px-2 py-1 bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300 text-xs font-medium rounded-full">
                               {currentlyAssigned.length} Assigned
                             </span>
                           </div>
@@ -222,8 +222,8 @@ const AssignDriversModal: React.FC<AssignDriversModalProps> = ({
                                   key={driver.id}
                                   className={`p-4 rounded-lg border-2 transition-all ${
                                     isSelected
-                                      ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
-                                      : 'border-green-200 dark:border-green-700 bg-green-50/50 dark:bg-green-900/10'
+                                      ? 'border-green-500 bg-green-50 dark:bg-green-950'
+                                      : 'border-green-200 dark:border-green-700 bg-green-50 dark:bg-green-950'
                                   }`}
                                   onClick={() => handleDriverSelect(driver.id)}
                                 >
@@ -261,7 +261,7 @@ const AssignDriversModal: React.FC<AssignDriversModalProps> = ({
                             })}
                           </div>
                           
-                          <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-700">
+                          <div className="mt-3 p-3 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-700">
                             <div className="flex items-center gap-2">
                               <AlertCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
                               <span className="text-sm text-green-800 dark:text-green-200 font-medium">
@@ -289,7 +289,7 @@ const AssignDriversModal: React.FC<AssignDriversModalProps> = ({
                         </div>
                       ) : !Array.isArray(availableDrivers) || availableDrivers.length === 0 ? (
                         <div className="text-center py-8">
-                          <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <div className="w-16 h-16 bg-orange-100 dark:bg-orange-950 rounded-full flex items-center justify-center mx-auto mb-4">
                             <AlertTriangle className="w-8 h-8 text-orange-600 dark:text-orange-400" />
                           </div>
                           <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
@@ -310,9 +310,9 @@ const AssignDriversModal: React.FC<AssignDriversModalProps> = ({
                                 key={driver.id}
                                 className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
                                   isSelected
-                                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-950'
                                     : isDisabled
-                                    ? 'border-gray-200 dark:border-gray-700 opacity-50 cursor-not-allowed'
+                                    ? 'border-gray-200 dark:border-gray-700 bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed'
                                     : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                                 }`}
                                 onClick={() => !isDisabled && handleDriverSelect(driver.id)}
@@ -345,7 +345,7 @@ const AssignDriversModal: React.FC<AssignDriversModalProps> = ({
                       )}
 
                       {/* Selection Status */}
-                      <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+                      <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -386,7 +386,7 @@ const AssignDriversModal: React.FC<AssignDriversModalProps> = ({
 
                     {/* Error Display */}
                     {error && (
-                      <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg">
+                      <div className="mb-4 p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-700 rounded-lg">
                         <div className="flex items-center gap-2">
                           <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
                           <span className="text-sm text-red-800 dark:text-red-200">{error}</span>
@@ -399,7 +399,7 @@ const AssignDriversModal: React.FC<AssignDriversModalProps> = ({
                   <div className="px-6 pb-6 flex items-center justify-end gap-3">
                     <button
                       onClick={onClose}
-                      className="px-4 py-2 text-sm rounded-lg border border-gray-300/80 dark:border-gray-700/80 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/10 transition"
+                      className="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                     >
                       Cancel
                     </button>
@@ -407,7 +407,7 @@ const AssignDriversModal: React.FC<AssignDriversModalProps> = ({
                       onClick={handleAssignDrivers}
                       disabled={!canAssignDrivers || loading}
                       className={`px-4 py-2 text-sm rounded-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md shadow-blue-600/20 flex items-center gap-2 transition ${
-                        !canAssignDrivers || loading ? 'opacity-60 cursor-not-allowed' : ''
+                        !canAssignDrivers || loading ? 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed' : ''
                       }`}
                     >
                       {loading ? (

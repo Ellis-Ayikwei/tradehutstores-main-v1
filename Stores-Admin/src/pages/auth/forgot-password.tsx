@@ -36,17 +36,8 @@ export default function ForgotPassword() {
             {/* Left Side - Admin Hero Section */}
             <div className="hidden lg:flex lg:flex-1 relative overflow-hidden">
                 {/* Background Elements */}
-                <div className="absolute inset-0 bg-gradient-to-br from-slate-800/90 via-gray-900/95 to-slate-900/90"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-gray-900 to-slate-900"></div>
 
-                {/* Admin Pattern Overlay */}
-                <div className="absolute inset-0 opacity-10">
-                    <div
-                        className="w-full h-full"
-                        style={{
-                            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Ccircle cx='9' cy='9' r='2'/%3E%3Ccircle cx='21' cy='21' r='2'/%3E%3Ccircle cx='33' cy='33' r='2'/%3E%3Ccircle cx='45' cy='45' r='2'/%3E%3Ccircle cx='51' cy='9' r='2'/%3E%3Ccircle cx='39' cy='21' r='2'/%3E%3Ccircle cx='27' cy='33' r='2'/%3E%3Ccircle cx='15' cy='45' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                        }}
-                    ></div>
-                </div>
 
                 {/* Content */}
                 <div className="relative z-10 flex flex-col justify-center px-12 py-12 text-white">
@@ -73,19 +64,19 @@ export default function ForgotPassword() {
                         {/* Security Features */}
                         <div className="space-y-4 mb-8">
                             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 }} className="flex items-center">
-                                <div className="bg-white/20 rounded-full p-2 mr-4">
+                                <div className="bg-indigo-700 rounded-full p-2 mr-4">
                                     <FontAwesomeIcon icon={faShieldAlt} className="h-5 w-5 text-blue-400" />
                                 </div>
                                 <span className="text-white">Enterprise-grade security encryption</span>
                             </motion.div>
                             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.6 }} className="flex items-center">
-                                <div className="bg-white/20 rounded-full p-2 mr-4">
+                                <div className="bg-indigo-700 rounded-full p-2 mr-4">
                                     <FontAwesomeIcon icon={faCog} className="h-5 w-5 text-blue-400" />
                                 </div>
                                 <span className="text-white">Secure links expire in 15 minutes</span>
                             </motion.div>
                             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.7 }} className="flex items-center">
-                                <div className="bg-white/20 rounded-full p-2 mr-4">
+                                <div className="bg-indigo-700 rounded-full p-2 mr-4">
                                     <FontAwesomeIcon icon={faUsers} className="h-5 w-5 text-blue-400" />
                                 </div>
                                 <span className="text-white">Admin-only access restoration</span>
@@ -97,10 +88,10 @@ export default function ForgotPassword() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.8 }}
-                            className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20"
+                            className="bg-gray-800  rounded-2xl p-6 border border-gray-200"
                         >
                             <div className="text-center">
-                                <p className="text-white/90 text-sm mb-2">Need immediate admin assistance?</p>
+                                <p className="text-white text-sm mb-2">Need immediate admin assistance?</p>
                                 <a href="tel:+233248138722" className="text-blue-400 font-semibold">Support: 024 813 8722</a>
                                 
                             </div>
@@ -112,12 +103,12 @@ export default function ForgotPassword() {
                 <motion.div
                     animate={{ y: [0, -10, 0] }}
                     transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                    className="absolute top-1/4 right-12 w-20 h-20 bg-blue-500/20 rounded-full backdrop-blur-sm"
+                    className="absolute top-1/4 right-12 w-20 h-20 bg-blue-100 rounded-full "
                 ></motion.div>
                 <motion.div
                     animate={{ y: [0, 15, 0] }}
                     transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-                    className="absolute bottom-1/4 right-24 w-12 h-12 bg-indigo-500/30 rounded-full backdrop-blur-sm"
+                    className="absolute bottom-1/4 right-24 w-12 h-12 bg-indigo-100 rounded-full "
                 ></motion.div>
             </div>
 
@@ -136,7 +127,7 @@ export default function ForgotPassword() {
                     </div>
 
                     {/* Main Card */}
-                    <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-8">
+                    <div className="bg-indigo-800  border border-gray-200 rounded-3xl shadow-2xl p-8">
                         <AnimatePresence mode="wait">
                             {!isSubmitted ? (
                                 <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -164,7 +155,7 @@ export default function ForgotPassword() {
                                                     value={email}
                                                     onChange={(e) => setEmail(e.target.value)}
                                                     required
-                                                    className="w-full pl-12 pr-4 py-4 bg-white/5 backdrop-blur-sm border border-white/20 transition-all duration-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 hover:border-white/30"
+                                                    className="w-full pl-12 pr-4 py-4 bg-indigo-800  border border-gray-200 transition-all duration-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 hover:border-gray-200"
                                                     placeholder="admin@tradehut.com"
                                                 />
                                             </div>
@@ -174,7 +165,7 @@ export default function ForgotPassword() {
                                             <motion.button
                                                 type="submit"
                                                 disabled={isLoading || !email}
-                                                className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 shadow-lg hover:shadow-xl"
+                                                className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-200 shadow-lg hover:shadow-xl"
                                                 whileHover={{ scale: isLoading ? 1 : 1.02 }}
                                                 whileTap={{ scale: isLoading ? 1 : 0.98 }}
                                             >
@@ -199,7 +190,7 @@ export default function ForgotPassword() {
 
                                     {/* Security Notice */}
                                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="mt-6">
-                                        <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 text-center">
+                                        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
                                             <div className="flex items-center justify-center mb-2">
                                                 <FontAwesomeIcon icon={faShieldAlt} className="text-blue-400 mr-2 h-4 w-4" />
                                                 <span className="text-blue-200 text-sm font-medium">Administrative Security</span>
@@ -235,7 +226,7 @@ export default function ForgotPassword() {
                                             We've sent a secure password reset link to <strong className="text-blue-400">{email}</strong>. Please check your email and follow the instructions to reset
                                             your admin password.
                                         </p>
-                                        <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 mb-6">
+                                        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
                                             <p className="text-blue-300 text-sm">
                                                 <FontAwesomeIcon icon={faShieldAlt} className="mr-2" />
                                                 The reset link will expire in 15 minutes for security reasons.
@@ -247,7 +238,7 @@ export default function ForgotPassword() {
                                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="space-y-4">
                                         <button
                                             onClick={() => setIsSubmitted(false)}
-                                            className="w-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300"
+                                            className="w-full bg-emerald-800 hover:bg-emerald-700 border border-gray-200 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300"
                                         >
                                             Send Another Link
                                         </button>

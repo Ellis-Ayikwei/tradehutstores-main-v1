@@ -346,7 +346,7 @@ const UpdatePaymentModal: React.FC<UpdatePaymentModalProps> = ({
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
                                     disabled={submitting}
                                 >
                                     {submitting ? 'Updating...' : 'Update Payment'}

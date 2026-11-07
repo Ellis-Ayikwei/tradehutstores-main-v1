@@ -34,10 +34,10 @@ const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
                         <span className="px-3 py-1 bg-primary text-white text-sm rounded-full shadow-lg">{post.category}</span>
                     </div>
                     <div className="absolute top-4 right-4 flex space-x-2">
-                        <button className="p-2 bg-white/90 backdrop-blur-sm rounded-full text-gray-700 hover:text-primary transition-colors">
+                        <button className="p-2 bg-white  rounded-full text-gray-700 hover:text-primary transition-colors">
                             <FontAwesomeIcon icon={faBookmark} />
                         </button>
-                        <button className="p-2 bg-white/90 backdrop-blur-sm rounded-full text-gray-700 hover:text-primary transition-colors">
+                        <button className="p-2 bg-white  rounded-full text-gray-700 hover:text-primary transition-colors">
                             <FontAwesomeIcon icon={faShare} />
                         </button>
                     </div>

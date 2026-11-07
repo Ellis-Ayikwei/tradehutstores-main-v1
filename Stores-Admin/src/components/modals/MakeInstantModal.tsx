@@ -101,7 +101,7 @@ const MakeInstantModal: React.FC<MakeInstantModalProps> = ({
                 </div>
 
                 {/* Warning/Info */}
-                <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-xl p-4 mb-6">
+                <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-700 rounded-xl p-4 mb-6">
                     <div className="flex items-start gap-3">
                         <FontAwesomeIcon icon={faBolt} className="text-yellow-600 dark:text-yellow-400 mt-1" />
                         <div>
@@ -129,7 +129,7 @@ const MakeInstantModal: React.FC<MakeInstantModalProps> = ({
                     <button
                         onClick={handleSubmit}
                         disabled={isSubmitting}
-                        className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-medium rounded-xl shadow-lg shadow-yellow-500/25 hover:shadow-xl hover:shadow-yellow-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-medium rounded-xl shadow-lg shadow-yellow-500/25 hover:shadow-xl hover:shadow-yellow-500/30 transition-all duration-200 disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
                     >
                         {isSubmitting ? (
                             <div className="flex items-center gap-2">

@@ -502,7 +502,7 @@ const BookingManagement: React.FC = () => {
             <button
                 onClick={handleBulkDelete}
                 disabled={bulkActionLoading}
-                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 border border-red-200 rounded-full hover:bg-red-100 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 border border-red-200 rounded-full hover:bg-red-100 transition-colors duration-200 disabled:bg-gray-100 disabled:text-gray-400 dark:disabled:bg-gray-800 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
                 title="Delete Selected"
             >
                 <IconTrash className="w-3 h-3 mr-1" />
@@ -512,7 +512,7 @@ const BookingManagement: React.FC = () => {
             {/* <button
                 onClick={handleBulkVerify}
                 disabled={bulkActionLoading}
-                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full hover:bg-emerald-100 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full hover:bg-emerald-100 transition-colors duration-200 disabled:bg-gray-100 disabled:text-gray-400 dark:disabled:bg-gray-800 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
                 title="Verify Selected"
             >
                 <IconShieldCheck className="w-3 h-3 mr-1" />
@@ -522,7 +522,7 @@ const BookingManagement: React.FC = () => {
             <button
                 onClick={handleBulkDeactivate}
                 disabled={bulkActionLoading}
-                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-orange-700 bg-orange-50 border border-orange-200 rounded-full hover:bg-orange-100 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-orange-700 bg-orange-50 border border-orange-200 rounded-full hover:bg-orange-100 transition-colors duration-200 disabled:bg-gray-100 disabled:text-gray-400 dark:disabled:bg-gray-800 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
                 title="Deactivate Selected"
             >
                 <IconShieldOff className="w-3 h-3 mr-1" />
@@ -532,7 +532,7 @@ const BookingManagement: React.FC = () => {
             <button
                 onClick={handleBulkUnverify}
                 disabled={bulkActionLoading}
-                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-full hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-full hover:bg-gray-100 transition-colors duration-200 disabled:bg-gray-100 disabled:text-gray-400 dark:disabled:bg-gray-800 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
                 title="Unverify Selected"
             >
                 <IconShieldX className="w-3 h-3 mr-1" />
@@ -727,7 +727,7 @@ const BookingManagement: React.FC = () => {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-6 border border-blue-100 dark:border-blue-800">
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 rounded-2xl p-6 border border-blue-100 dark:border-blue-800">
                     <div className="flex items-center gap-4">
                         <div className="p-3 bg-blue-500 rounded-xl">
                             <IconPackage className="w-6 h-6 text-white" />
@@ -739,7 +739,7 @@ const BookingManagement: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 rounded-2xl p-6 border border-emerald-100 dark:border-emerald-800">
+                <div className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950 dark:to-green-950 rounded-2xl p-6 border border-emerald-100 dark:border-emerald-800">
                     <div className="flex items-center gap-4">
                         <div className="p-3 bg-emerald-500 rounded-xl">
                             <IconCheck className="w-6 h-6 text-white" />
@@ -751,7 +751,7 @@ const BookingManagement: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 rounded-2xl p-6 border border-amber-100 dark:border-amber-800">
+                <div className="bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950 dark:to-yellow-950 rounded-2xl p-6 border border-amber-100 dark:border-amber-800">
                     <div className="flex items-center gap-4">
                         <div className="p-3 bg-amber-500 rounded-xl">
                             <IconClock className="w-6 h-6 text-white" />
@@ -763,7 +763,7 @@ const BookingManagement: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-gradient-to-r from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 rounded-2xl p-6 border border-purple-100 dark:border-purple-800">
+                <div className="bg-gradient-to-r from-purple-50 to-violet-50 dark:from-purple-950 dark:to-violet-950 rounded-2xl p-6 border border-purple-100 dark:border-purple-800">
                     <div className="flex items-center gap-4">
                         <div className="p-3 bg-purple-500 rounded-xl">
                             <IconCurrencyDollar className="w-6 h-6 text-white" />

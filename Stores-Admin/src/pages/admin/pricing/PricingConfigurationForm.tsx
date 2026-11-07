@@ -409,7 +409,7 @@ const PricingConfigurationForm: React.FC<PricingConfigurationFormProps> = ({
             case 'base':
                 return (
                     <div className="space-y-6">
-                        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                        <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
                             <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">Base Pricing Configuration</h4>
                             <p className="text-sm text-blue-600 dark:text-blue-300">Set the fundamental pricing parameters for all services.</p>
                         </div>
@@ -424,7 +424,7 @@ const PricingConfigurationForm: React.FC<PricingConfigurationFormProps> = ({
             case 'distance':
                 return (
                     <div className="space-y-6">
-                        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                        <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
                             <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">Distance-Based Pricing</h4>
                             <p className="text-sm text-blue-600 dark:text-blue-300">Configure pricing based on distance traveled.</p>
                         </div>
@@ -440,7 +440,7 @@ const PricingConfigurationForm: React.FC<PricingConfigurationFormProps> = ({
             case 'weight':
                 return (
                     <div className="space-y-6">
-                        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                        <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
                             <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">Weight-Based Pricing</h4>
                             <p className="text-sm text-blue-600 dark:text-blue-300">Configure pricing based on item weight (used when dimension preference is disabled).</p>
                         </div>
@@ -455,7 +455,7 @@ const PricingConfigurationForm: React.FC<PricingConfigurationFormProps> = ({
             case 'dimension':
                 return (
                     <div className="space-y-6">
-                        <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+                        <div className="bg-green-50 dark:bg-green-950 p-4 rounded-lg">
                             <h4 className="text-sm font-medium text-green-800 dark:text-green-200 mb-2">Dimension-Based Pricing (Priority)</h4>
                             <p className="text-sm text-green-600 dark:text-green-300">Configure pricing based on item dimensions. When enabled, dimensions take priority over weight.</p>
                         </div>
@@ -491,7 +491,7 @@ const PricingConfigurationForm: React.FC<PricingConfigurationFormProps> = ({
             case 'property':
                 return (
                     <div className="space-y-6">
-                        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                        <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
                             <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">Property Complexity Pricing</h4>
                             <p className="text-sm text-blue-600 dark:text-blue-300">Configure pricing based on property characteristics and complexity.</p>
                         </div>
@@ -509,7 +509,7 @@ const PricingConfigurationForm: React.FC<PricingConfigurationFormProps> = ({
             case 'staff':
                 return (
                     <div className="space-y-6">
-                        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                        <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
                             <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">Staff Requirements Pricing</h4>
                             <p className="text-sm text-blue-600 dark:text-blue-300">Configure pricing based on number of staff required.</p>
                         </div>
@@ -526,7 +526,7 @@ const PricingConfigurationForm: React.FC<PricingConfigurationFormProps> = ({
             case 'time':
                 return (
                     <div className="space-y-6">
-                        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                        <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
                             <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">Time-Based Multipliers</h4>
                             <p className="text-sm text-blue-600 dark:text-blue-300">Configure pricing multipliers for different time periods.</p>
                         </div>
@@ -544,7 +544,7 @@ const PricingConfigurationForm: React.FC<PricingConfigurationFormProps> = ({
             case 'weather':
         return (
                     <div className="space-y-6">
-                        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                        <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
                             <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">Weather Condition Multipliers</h4>
                             <p className="text-sm text-blue-600 dark:text-blue-300">Configure pricing multipliers for different weather conditions.</p>
                         </div>
@@ -559,7 +559,7 @@ const PricingConfigurationForm: React.FC<PricingConfigurationFormProps> = ({
             case 'vehicle':
                 return (
                     <div className="space-y-6">
-                        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                        <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
                             <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">Vehicle Requirements Pricing</h4>
                             <p className="text-sm text-blue-600 dark:text-blue-300">Configure pricing based on vehicle requirements.</p>
                         </div>
@@ -570,7 +570,7 @@ const PricingConfigurationForm: React.FC<PricingConfigurationFormProps> = ({
                         
                         <div className="border-t pt-6 mt-6">
                             <h5 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Vehicle Transport Pricing (Car/Motorcycle Shipping)</h5>
-                            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mb-4">
+                            <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg mb-4">
                                 <p className="text-sm text-blue-600 dark:text-blue-300">Base pricing settings for vehicle transport</p>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
@@ -614,7 +614,7 @@ const PricingConfigurationForm: React.FC<PricingConfigurationFormProps> = ({
             case 'special':
                 return (
                     <div className="space-y-6">
-                        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                        <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
                             <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">Special Handling Requirements</h4>
                             <p className="text-sm text-blue-600 dark:text-blue-300">Configure pricing for special handling requirements.</p>
                                     </div>
@@ -629,7 +629,7 @@ const PricingConfigurationForm: React.FC<PricingConfigurationFormProps> = ({
             case 'insurance':
                 return (
                     <div className="space-y-6">
-                        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                        <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
                             <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">Insurance and Protection</h4>
                             <p className="text-sm text-blue-600 dark:text-blue-300">Configure insurance and protection pricing.</p>
                         </div>
@@ -644,7 +644,7 @@ const PricingConfigurationForm: React.FC<PricingConfigurationFormProps> = ({
             case 'surcharges':
                 return (
                     <div className="space-y-6">
-                        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                        <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
                             <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">Additional Fees and Charges</h4>
                             <p className="text-sm text-blue-600 dark:text-blue-300">Configure additional fees and surcharges.</p>
                         </div>
@@ -659,7 +659,7 @@ const PricingConfigurationForm: React.FC<PricingConfigurationFormProps> = ({
             case 'loading':
         return (
                     <div className="space-y-6">
-                        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                        <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
                             <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">Loading Time Pricing</h4>
                             <p className="text-sm text-blue-600 dark:text-blue-300">Configure pricing based on loading and unloading time.</p>
                         </div>
@@ -687,7 +687,7 @@ const PricingConfigurationForm: React.FC<PricingConfigurationFormProps> = ({
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                 >
-                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
+                    <div className="fixed inset-0 bg-black/50 " />
                 </Transition.Child>
 
                 <div className="fixed inset-0 overflow-y-auto">
@@ -822,7 +822,7 @@ const PricingConfigurationForm: React.FC<PricingConfigurationFormProps> = ({
                                     {/* Main Content */}
                                     <div className="flex-1 p-6 overflow-y-auto">
                                         {error && (
-                                            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                                            <div className="mb-6 p-4 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg">
                                                 <div className="flex items-center">
                                                     <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mr-2" />
                                                     <span className="text-red-800 dark:text-red-200">{error}</span>
@@ -870,7 +870,7 @@ const PricingConfigurationForm: React.FC<PricingConfigurationFormProps> = ({
                             type="submit"
                             disabled={isSubmitting || !formik.isValid}
                             onClick={() => formik.handleSubmit()}
-                                            className="px-6 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                            className="px-6 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed transition-colors"
                         >
                                             {isSubmitting ? 'Saving...' : initialData?.id ? 'Update Configuration' : 'Create Configuration'}
                         </button>

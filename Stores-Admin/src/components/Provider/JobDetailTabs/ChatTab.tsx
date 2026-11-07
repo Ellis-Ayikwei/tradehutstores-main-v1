@@ -263,7 +263,7 @@ const ChatTab: React.FC<ChatTabProps> = ({ job, onSendMessage, onMessageUpdate }
                                                         <button
                                                             onClick={() => toggleDropdown(msg.id)}
                                                             disabled={isUpdating}
-                                                            className="p-1.5 bg-white dark:bg-gray-800 rounded-full shadow-md border border-gray-200 dark:border-gray-700 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 disabled:opacity-50"
+                                                            className="p-1.5 bg-white dark:bg-gray-800 rounded-full shadow-md border border-gray-200 dark:border-gray-700 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
                                                         >
                                                             <MoreVertical className="w-4 h-4" />
                                                         </button>
@@ -273,7 +273,7 @@ const ChatTab: React.FC<ChatTabProps> = ({ job, onSendMessage, onMessageUpdate }
                                                                 <button
                                                                     onClick={() => handleEditMessage(msg)}
                                                                     disabled={isUpdating}
-                                                                    className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center disabled:opacity-50"
+                                                                    className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
                                                                 >
                                                                     <Edit className="w-3 h-3 mr-2" />
                                                                     Edit
@@ -281,7 +281,7 @@ const ChatTab: React.FC<ChatTabProps> = ({ job, onSendMessage, onMessageUpdate }
                                                                 <button
                                                                     onClick={() => handleDeleteMessage(msg.id)}
                                                                     disabled={isUpdating}
-                                                                    className="w-full px-3 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center disabled:opacity-50"
+                                                                    className="w-full px-3 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
                                                                 >
                                                                     <Trash2 className="w-3 h-3 mr-2" />
                                                                     Delete
@@ -300,7 +300,7 @@ const ChatTab: React.FC<ChatTabProps> = ({ job, onSendMessage, onMessageUpdate }
                                                         onChange={(e) => setEditContent(e.target.value)}
                                                         onKeyPress={handleEditKeyPress}
                                                         disabled={isUpdating}
-                                                        className="w-full p-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white resize-none disabled:opacity-50"
+                                                        className="w-full p-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white resize-none disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
                                                         rows={Math.max(1, editContent.split('\n').length)}
                                                         autoFocus
                                                     />
@@ -308,14 +308,14 @@ const ChatTab: React.FC<ChatTabProps> = ({ job, onSendMessage, onMessageUpdate }
                                                         <button
                                                             onClick={handleSaveEdit}
                                                             disabled={isUpdating || !editContent.trim()}
-                                                            className="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                            className="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
                                                         >
                                                             {isUpdating ? 'Saving...' : 'Save'}
                                                         </button>
                                                         <button
                                                             onClick={handleCancelEdit}
                                                             disabled={isUpdating}
-                                                            className="px-3 py-1 text-xs bg-gray-500 text-white rounded hover:bg-gray-600 disabled:opacity-50"
+                                                            className="px-3 py-1 text-xs bg-gray-500 text-white rounded hover:bg-gray-600 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
                                                         >
                                                             Cancel
                                                         </button>
@@ -335,7 +335,7 @@ const ChatTab: React.FC<ChatTabProps> = ({ job, onSendMessage, onMessageUpdate }
                                                                 <img
                                                                     src={msg.attachment_url}
                                                                     alt={msg.attachment_name || 'Image'}
-                                                                    className="max-w-xs max-h-48 rounded-lg border border-gray-200 dark:border-gray-600 cursor-pointer hover:opacity-90"
+                                                                    className="max-w-xs max-h-48 rounded-lg border border-gray-200 dark:border-gray-600 cursor-pointer hover:brightness-95"
                                                                     onClick={() => window.open(msg.attachment_url || '', '_blank')}
                                                                 />
                                                             ) : (

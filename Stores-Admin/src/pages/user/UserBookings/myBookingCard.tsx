@@ -70,12 +70,12 @@ export const MyBookingCard: React.FC<MyBookingCardProps> = ({ booking, expandedB
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-xl dark:shadow-gray-900/30 overflow-hidden border border-white/20 dark:border-gray-700/50 transition-all duration-300 hover:shadow-2xl dark:hover:shadow-gray-900/50 hover:border-gray-200 dark:hover:border-gray-600 transform hover:-translate-y-1"
+            className="group bg-white dark:bg-gray-800  rounded-2xl shadow-xl dark:shadow-gray-900/30 overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:shadow-2xl dark:hover:shadow-gray-900/50 hover:border-gray-200 dark:hover:border-gray-600 transform hover:-translate-y-1"
         >
             {/* Modern Booking Header */}
             <div
-                className="p-6 md:p-8 border-b border-gray-100/50 dark:border-gray-700/50 cursor-pointer 
-                             hover:bg-gradient-to-r hover:from-gray-50/50 hover:to-blue-50/30 dark:hover:from-gray-750/50 dark:hover:to-blue-900/20 transition-all duration-300"
+                className="p-6 md:p-8 border-b border-gray-100 dark:border-gray-700 cursor-pointer 
+                             hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50 dark:hover:from-gray-750 dark:hover:to-blue-950 transition-all duration-300"
                 onClick={() => toggleBookingDetails(booking.id)}
             >
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -93,7 +93,7 @@ export const MyBookingCard: React.FC<MyBookingCardProps> = ({ booking, expandedB
 
                         {/* Tracking Code and Booking Date */}
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="flex items-center bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 px-4 py-2 rounded-xl border border-blue-200/50 dark:border-blue-700/50">
+                            <div className="flex items-center bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-950 px-4 py-2 rounded-xl border border-blue-200 dark:border-blue-800">
                                 <IconHash className="w-4 h-4 text-blue-600 dark:text-blue-400 mr-2" stroke={2} />
                                 <span className="font-mono text-sm font-semibold text-blue-800 dark:text-blue-200">{booking.tracking_number || booking.id}</span>
                             </div>
@@ -111,7 +111,7 @@ export const MyBookingCard: React.FC<MyBookingCardProps> = ({ booking, expandedB
 
                         {/* Modern Info Cards - All using primary blue color */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="flex items-center bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 px-4 py-3 rounded-xl border border-blue-200/50 dark:border-blue-700/50 shadow-sm">
+                            <div className="flex items-center bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-950 px-4 py-3 rounded-xl border border-blue-200 dark:border-blue-800 shadow-sm">
                                 <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-3">
                                     <IconCalendar className="w-5 h-5 text-white" stroke={2} />
                                 </div>
@@ -123,7 +123,7 @@ export const MyBookingCard: React.FC<MyBookingCardProps> = ({ booking, expandedB
                                 </div>
                             </div>
 
-                            <div className="flex items-center bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 px-4 py-3 rounded-xl border border-blue-200/50 dark:border-blue-700/50 shadow-sm">
+                            <div className="flex items-center bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-950 px-4 py-3 rounded-xl border border-blue-200 dark:border-blue-800 shadow-sm">
                                 <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-3">
                                     <IconTruck className="w-5 h-5 text-white" stroke={2} />
                                 </div>
@@ -133,7 +133,7 @@ export const MyBookingCard: React.FC<MyBookingCardProps> = ({ booking, expandedB
                                 </div>
                             </div>
 
-                            <div className="flex items-center bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 px-4 py-3 rounded-xl border border-blue-200/50 dark:border-blue-700/50 shadow-sm">
+                            <div className="flex items-center bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-950 px-4 py-3 rounded-xl border border-blue-200 dark:border-blue-800 shadow-sm">
                                 <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-3">
                                     <IconCurrencyDollar className="w-5 h-5 text-white" stroke={2} />
                                 </div>
@@ -142,7 +142,7 @@ export const MyBookingCard: React.FC<MyBookingCardProps> = ({ booking, expandedB
                                     <div className="flex items-center gap-2">
                                         <p className="text-sm font-bold text-blue-800 dark:text-blue-200">Euro{booking.amount?.toFixed(2)}</p>
                                         {booking.status !== 'completed' && booking.status !== 'bidding' && (
-                                            <span className="text-xs text-amber-600 dark:text-amber-400 font-medium bg-amber-100 dark:bg-amber-900/30 px-2 py-0.5 rounded-full">Pending</span>
+                                            <span className="text-xs text-amber-600 dark:text-amber-400 font-medium bg-amber-100 dark:bg-amber-950 px-2 py-0.5 rounded-full">Pending</span>
                                         )}
                                     </div>
                                 </div>
@@ -159,7 +159,7 @@ export const MyBookingCard: React.FC<MyBookingCardProps> = ({ booking, expandedB
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                className="flex items-center bg-white/80 dark:bg-gray-700/80 backdrop-blur-sm rounded-2xl px-4 py-3 border border-gray-200/50 dark:border-gray-600/50 shadow-lg"
+                                className="flex items-center bg-white dark:bg-gray-700  rounded-2xl px-4 py-3 border border-gray-200 dark:border-gray-600 shadow-lg"
                             >
                                 <div>
                                     <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{booking.provider_name}</p>
@@ -190,7 +190,7 @@ export const MyBookingCard: React.FC<MyBookingCardProps> = ({ booking, expandedB
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.3, ease: 'easeInOut' }}
-                        className="bg-gradient-to-br from-gray-50/50 to-blue-50/30 dark:from-gray-800/50 dark:to-blue-900/20 backdrop-blur-sm"
+                        className="bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-800 dark:to-blue-950 "
                     >
                         <div className="p-6 md:p-8">
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -202,7 +202,7 @@ export const MyBookingCard: React.FC<MyBookingCardProps> = ({ booking, expandedB
                                         </div>
                                         Journey Route
                                     </h3>
-                                    <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/20 dark:border-gray-700/50 mb-6">
+                                    <div className="bg-white dark:bg-gray-800  p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 mb-6">
                                         <div className="space-y-6">
                                             {booking.journey_stops?.map((stop: any, index: number) => (
                                                 <motion.div
@@ -229,8 +229,8 @@ export const MyBookingCard: React.FC<MyBookingCardProps> = ({ booking, expandedB
                                                             <span
                                                                 className={`text-xs px-2 py-1 rounded-full font-medium ${
                                                                     stop.type === 'pickup'
-                                                                        ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                                                                        : 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'
+                                                                        ? 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300'
+                                                                        : 'bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-300'
                                                                 }`}
                                                             >
                                                                 {stop.type}
@@ -241,7 +241,7 @@ export const MyBookingCard: React.FC<MyBookingCardProps> = ({ booking, expandedB
                                                             {stop.location?.address || stop.address || 'Address not provided'}
                                                         </p>
                                                         {stop.location?.contact_name && (
-                                                            <div className="flex items-center text-xs text-gray-600 dark:text-gray-400 mt-2 bg-blue-50/50 dark:bg-blue-900/20 px-3 py-2 rounded-lg">
+                                                            <div className="flex items-center text-xs text-gray-600 dark:text-gray-400 mt-2 bg-blue-50 dark:bg-blue-950 px-3 py-2 rounded-lg">
                                                                 <IconUser className="w-3 h-3 text-blue-500 mr-2" stroke={2} />
                                                                 Contact: {stop.location.contact_name}
                                                                 {stop.location?.contact_phone && (
@@ -253,7 +253,7 @@ export const MyBookingCard: React.FC<MyBookingCardProps> = ({ booking, expandedB
                                                             </div>
                                                         )}
                                                         {stop.notes && (
-                                                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 bg-blue-50 dark:bg-blue-900/20 px-3 py-2 rounded-lg border border-blue-200 dark:border-blue-800">
+                                                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 bg-blue-50 dark:bg-blue-950 px-3 py-2 rounded-lg border border-blue-200 dark:border-blue-800">
                                                                 <IconInfoCircle className="w-3 h-3 text-blue-500 inline mr-1" stroke={2} />
                                                                 {stop.notes}
                                                             </p>
@@ -271,14 +271,14 @@ export const MyBookingCard: React.FC<MyBookingCardProps> = ({ booking, expandedB
                                         </div>
                                         Service Details
                                     </h3>
-                                    <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/20 dark:border-gray-700/50">
+                                    <div className="bg-white dark:bg-gray-800  p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
                                         <div className="grid grid-cols-2 gap-6">
-                                            <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-4 rounded-xl">
+                                            <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-950 p-4 rounded-xl">
                                                 <p className="text-xs text-blue-600 dark:text-blue-400 font-semibold mb-2 uppercase tracking-wide">Service Provider</p>
                                                 <p className="text-sm font-bold text-blue-800 dark:text-blue-200">{booking.provider_name || 'Not assigned yet'}</p>
                                             </div>
 
-                                            <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-4 rounded-xl">
+                                            <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-950 p-4 rounded-xl">
                                                 <p className="text-xs text-blue-600 dark:text-blue-400 font-semibold mb-2 uppercase tracking-wide">Insurance</p>
                                                 <div className="flex items-center">
                                                     {booking.insurance_required ? (
@@ -292,7 +292,7 @@ export const MyBookingCard: React.FC<MyBookingCardProps> = ({ booking, expandedB
                                                 </div>
                                             </div>
 
-                                            <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-4 rounded-xl">
+                                            <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-950 p-4 rounded-xl">
                                                 <p className="text-xs text-blue-600 dark:text-blue-400 font-semibold mb-2 uppercase tracking-wide">Moving Date</p>
                                                 <p className="text-sm font-bold text-blue-800 dark:text-blue-200">
                                                     {formatDate(booking.preferred_pickup_date, {
@@ -304,7 +304,7 @@ export const MyBookingCard: React.FC<MyBookingCardProps> = ({ booking, expandedB
                                                 </p>
                                             </div>
 
-                                            <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-4 rounded-xl">
+                                            <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-950 p-4 rounded-xl">
                                                 <p className="text-xs text-blue-600 dark:text-blue-400 font-semibold mb-2 uppercase tracking-wide">Time Slot</p>
                                                 <p className="text-sm font-bold text-blue-800 dark:text-blue-200">{booking.preferred_pickup_time || booking.time || 'Flexible'}</p>
                                             </div>
@@ -314,7 +314,7 @@ export const MyBookingCard: React.FC<MyBookingCardProps> = ({ booking, expandedB
                                             <motion.div
                                                 initial={{ opacity: 0, scale: 0.95 }}
                                                 animate={{ opacity: 1, scale: 1 }}
-                                                className="mt-6 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 p-4 rounded-xl border border-amber-200 dark:border-amber-800/30"
+                                                className="mt-6 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950 dark:to-orange-950 p-4 rounded-xl border border-amber-200 dark:border-amber-900"
                                             >
                                                 <div className="flex items-center">
                                                     <IconExclamationCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 mr-3" stroke={2} />
@@ -327,9 +327,9 @@ export const MyBookingCard: React.FC<MyBookingCardProps> = ({ booking, expandedB
                                         )}
 
                                         {booking.special_instructions && (
-                                            <div className="mt-6 pt-4 border-t border-gray-200/50 dark:border-gray-700/50">
+                                            <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
                                                 <p className="text-xs text-blue-600 dark:text-blue-400 font-semibold mb-2 uppercase tracking-wide">Special Notes</p>
-                                                <p className="text-sm text-gray-700 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
+                                                <p className="text-sm text-gray-700 dark:text-gray-300 bg-blue-50 dark:bg-blue-950 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
                                                     {booking.special_instructions}
                                                 </p>
                                             </div>
@@ -345,7 +345,7 @@ export const MyBookingCard: React.FC<MyBookingCardProps> = ({ booking, expandedB
                                         </div>
                                         Tracking Updates
                                     </h3>
-                                    <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/20 dark:border-gray-700/50 mb-6">
+                                    <div className="bg-white dark:bg-gray-800  p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 mb-6">
                                         <div className="text-center py-8">
                                             <IconHistory className="w-12 h-12 text-blue-400 mx-auto mb-4" stroke={1.5} />
                                             <p className="text-sm text-gray-500 dark:text-gray-400">Tracking updates will appear here once your booking is confirmed</p>

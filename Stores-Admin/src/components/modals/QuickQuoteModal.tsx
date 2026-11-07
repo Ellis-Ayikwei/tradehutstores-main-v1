@@ -32,8 +32,8 @@ const QuickQuoteModal: React.FC<QuickQuoteModalProps> = ({ isOpen, onClose, serv
                     title: 'Man & Van Service',
                     description: 'Perfect for small moves and single items',
                     icon: IconTruck,
-                    color: 'from-secondary to-secondary/90',
-                    accent: 'bg-secondary/10',
+                    color: 'from-secondary to-secondary',
+                    accent: 'bg-muted',
                     features: ['Same day delivery available', 'Up to 2 cubic meters', 'Loading & unloading included'],
                     warranty: '100% Satisfaction',
                     insurance: 'Full Insurance ',
@@ -44,8 +44,8 @@ const QuickQuoteModal: React.FC<QuickQuoteModalProps> = ({ isOpen, onClose, serv
                     title: 'Vehicle Transport',
                     description: 'Safe and secure vehicle transportation',
                     icon: IconTruck,
-                    color: 'from-secondary to-secondary/90',
-                    accent: 'bg-secondary/10',
+                    color: 'from-secondary to-secondary',
+                    accent: 'bg-muted',
                     features: ['Secure strapping', 'Insurance included', 'Nationwide coverage'],
                     warranty: 'Damage Protection ',
                     insurance: ' Vehicle Insurance',
@@ -56,8 +56,8 @@ const QuickQuoteModal: React.FC<QuickQuoteModalProps> = ({ isOpen, onClose, serv
                     title: 'Piano Moving',
                     description: 'Expert piano moving service',
                     icon: IconPiano,
-                    color: 'from-secondary to-secondary/90',
-                    accent: 'bg-secondary/10',
+                    color: 'from-secondary to-secondary',
+                    accent: 'bg-muted',
                     features: ['Specialized equipment', 'Trained professionals', 'Insurance coverage'],
                     warranty: 'Professional Handling ',
                     insurance: 'Specialized  Insurance',
@@ -68,8 +68,8 @@ const QuickQuoteModal: React.FC<QuickQuoteModalProps> = ({ isOpen, onClose, serv
                     title: 'Storage Solutions',
                     description: 'Secure storage for your belongings',
                     icon: IconBox,
-                    color: 'from-secondary to-secondary/90',
-                    accent: 'bg-secondary/10',
+                    color: 'from-secondary to-secondary',
+                    accent: 'bg-muted',
                     features: ['Flexible terms', '24/7 access', 'Insurance options'],
                     warranty: 'Secure ',
                     insurance: 'Storage Insurance',
@@ -80,8 +80,8 @@ const QuickQuoteModal: React.FC<QuickQuoteModalProps> = ({ isOpen, onClose, serv
                     title: 'Quick Quote',
                     description: 'Get a quote for your move',
                     icon: IconPackage,
-                    color: 'from-secondary to-secondary/90',
-                    accent: 'bg-secondary/10',
+                    color: 'from-secondary to-secondary',
+                    accent: 'bg-muted',
                     features: ['Fast response', 'Competitive pricing', 'Professional service'],
                     warranty: 'Service Satisfaction',
                     insurance: 'Insurance Coverage',
@@ -285,7 +285,7 @@ const QuickQuoteModal: React.FC<QuickQuoteModalProps> = ({ isOpen, onClose, serv
                         initial={{ opacity: 0 }} 
                         animate={{ opacity: 1 }} 
                         exit={{ opacity: 0 }} 
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]" 
+                        className="fixed inset-0 bg-black/60  z-[100]" 
                         onClick={onClose} 
                     />
 
@@ -298,22 +298,22 @@ const QuickQuoteModal: React.FC<QuickQuoteModalProps> = ({ isOpen, onClose, serv
                         <div className="w-full max-w-2xl bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-800 my-8">
                             {/* Header with gradient */}
                             <div className="relative p-4 sm:p-6 bg-secondary">
-                                <div className="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
+                                <div className="absolute inset-0 bg-gray-800 "></div>
                                 <div className="relative z-10">
                                         {/* Title and Close Button */}
                                     <div className="flex items-start justify-between gap-4">
                                         <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-                                            <div className="bg-white/20 p-3 sm:p-4 rounded-xl backdrop-blur-sm flex-shrink-0">
+                                            <div className="bg-gray-700 p-3 sm:p-4 rounded-xl  flex-shrink-0">
                                                 <ServiceIcon className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
                                                 </div>
                                             <div className="min-w-0 flex-1">
                                                 <h2 className="text-lg sm:text-xl md:text-2xl font-bold truncate text-white">{serviceInfo.title}</h2>
-                                                <p className="text-xs sm:text-sm text-white/90 truncate">{serviceInfo.description}</p>
+                                                <p className="text-xs sm:text-sm text-white truncate">{serviceInfo.description}</p>
                                             </div>
                                         </div>
                                         <button 
                                             onClick={onClose} 
-                                            className="p-2 sm:p-3 hover:bg-white/20 rounded-lg transition-colors backdrop-blur-sm flex-shrink-0"
+                                            className="p-2 sm:p-3 hover:bg-gray-700 rounded-lg transition-colors  flex-shrink-0"
                                         >
                                             <IconX className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                                         </button>
@@ -325,15 +325,15 @@ const QuickQuoteModal: React.FC<QuickQuoteModalProps> = ({ isOpen, onClose, serv
                             <div className="p-6">
                                 <div className="grid grid-cols-3 gap-2 sm:gap-4">
                                     {/* Warranty and Insurance Info */}
-                                    <div className="flex items-center justify-center gap-2 backdrop-blur-sm px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-primary/10 text-primary">
+                                    <div className="flex items-center justify-center gap-2  px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-primary-subtle text-primary">
                                         <IconShield className="w-6 h-6 sm:w-7 sm:h-7" />
                                         <span className="text-xs sm:text-sm font-medium">{serviceInfo.warranty}</span>
                                         </div>
-                                    <div className="flex items-center justify-center gap-2 backdrop-blur-sm px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-primary/10 text-primary">
+                                    <div className="flex items-center justify-center gap-2  px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-primary-subtle text-primary">
                                         <IconShieldCheck className="w-6 h-6 sm:w-7 sm:h-7" />
                                         <span className="text-xs sm:text-sm font-medium">{serviceInfo.insurance}</span>
                                         </div>
-                                    <div className="flex items-center justify-center gap-2 backdrop-blur-sm px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-primary/10 text-primary">
+                                    <div className="flex items-center justify-center gap-2  px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-primary-subtle text-primary">
                                         <IconCheck className="w-6 h-6 sm:w-7 sm:h-7" />
                                         <span className="text-xs sm:text-sm font-medium">Licensed & Insured</span>
                                     </div>
@@ -418,7 +418,7 @@ const QuickQuoteModal: React.FC<QuickQuoteModalProps> = ({ isOpen, onClose, serv
                                                             name="moveDate"
                                                             value={formData.moveDate}
                                                             onChange={handleChange}
-                                                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-secondary focus:border-transparent transition-all shadow-sm group-hover:shadow-md group-hover:border-secondary/50 text-sm sm:text-base"
+                                                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-secondary focus:border-transparent transition-all shadow-sm group-hover:shadow-md group-hover:border-secondary-300 text-sm sm:text-base"
                                                             required
                                                         />
                                                 </div>
@@ -439,7 +439,7 @@ const QuickQuoteModal: React.FC<QuickQuoteModalProps> = ({ isOpen, onClose, serv
                                                             name="email"
                                                             value={formData.email}
                                                             onChange={handleChange}
-                                                            className="w-full px-3 sm:px-4 py-2.5 sm:py-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-secondary focus:border-transparent transition-all shadow-sm group-hover:shadow-md group-hover:border-secondary/50 text-sm sm:text-base"
+                                                            className="w-full px-3 sm:px-4 py-2.5 sm:py-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-secondary focus:border-transparent transition-all shadow-sm group-hover:shadow-md group-hover:border-secondary-300 text-sm sm:text-base"
                                                             placeholder="Enter your email"
                                                             required
                                                         />
@@ -460,7 +460,7 @@ const QuickQuoteModal: React.FC<QuickQuoteModalProps> = ({ isOpen, onClose, serv
                                                             name="phone"
                                                             value={formData.phone}
                                                             onChange={handleChange}
-                                                            className="w-full px-3 sm:px-4 py-2.5 sm:py-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-secondary focus:border-transparent transition-all shadow-sm group-hover:shadow-md group-hover:border-secondary/50 text-sm sm:text-base"
+                                                            className="w-full px-3 sm:px-4 py-2.5 sm:py-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-secondary focus:border-transparent transition-all shadow-sm group-hover:shadow-md group-hover:border-secondary-300 text-sm sm:text-base"
                                                             placeholder="Enter your phone number"
                                                             required
                                                         />
@@ -471,7 +471,7 @@ const QuickQuoteModal: React.FC<QuickQuoteModalProps> = ({ isOpen, onClose, serv
                                             <div className="flex justify-end pt-4">
                                                 <button
                                                     type="submit"
-                                                    className={`px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r ${serviceInfo.color} text-white rounded-xl font-medium hover:opacity-90 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] text-sm sm:text-base`}
+                                                    className={`px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r ${serviceInfo.color} text-white rounded-xl font-medium hover:brightness-95 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] text-sm sm:text-base`}
                                                 >
                                                     Request a Move
                                                 </button>

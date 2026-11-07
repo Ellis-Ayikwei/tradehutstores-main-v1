@@ -110,13 +110,13 @@ const OverrideStatusModal: React.FC<OverrideStatusModalProps> = ({
   const getStatusColor = (color: string) => {
     const colors = {
       gray: 'text-gray-600 bg-gray-100 dark:bg-gray-800 dark:text-gray-300',
-      amber: 'text-amber-600 bg-amber-100 dark:bg-amber-900/30 dark:text-amber-300',
-      purple: 'text-purple-600 bg-purple-100 dark:bg-purple-900/30 dark:text-purple-300',
-      blue: 'text-blue-600 bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300',
-      cyan: 'text-cyan-600 bg-cyan-100 dark:bg-cyan-900/30 dark:text-cyan-300',
-      orange: 'text-orange-600 bg-orange-100 dark:bg-orange-900/30 dark:text-orange-300',
-      green: 'text-green-600 bg-green-100 dark:bg-green-900/30 dark:text-green-300',
-      red: 'text-red-600 bg-red-100 dark:bg-red-900/30 dark:text-red-300',
+      amber: 'text-amber-600 bg-amber-100 dark:bg-amber-950 dark:text-amber-300',
+      purple: 'text-purple-600 bg-purple-100 dark:bg-purple-950 dark:text-purple-300',
+      blue: 'text-blue-600 bg-blue-100 dark:bg-blue-950 dark:text-blue-300',
+      cyan: 'text-cyan-600 bg-cyan-100 dark:bg-cyan-950 dark:text-cyan-300',
+      orange: 'text-orange-600 bg-orange-100 dark:bg-orange-950 dark:text-orange-300',
+      green: 'text-green-600 bg-green-100 dark:bg-green-950 dark:text-green-300',
+      red: 'text-red-600 bg-red-100 dark:bg-red-950 dark:text-red-300',
     };
     return colors[color as keyof typeof colors] || colors.gray;
   };
@@ -133,7 +133,7 @@ const OverrideStatusModal: React.FC<OverrideStatusModalProps> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
+          <div className="fixed inset-0 bg-black/60 " />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -147,7 +147,7 @@ const OverrideStatusModal: React.FC<OverrideStatusModalProps> = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-2xl ring-1 ring-white/10 transition-all">
+              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-2xl ring-1 ring-gray-200 transition-all">
                 <div className="relative">
                   {/* Header */}
                   <div className="px-6 pt-6">
@@ -167,7 +167,7 @@ const OverrideStatusModal: React.FC<OverrideStatusModalProps> = ({
                       </div>
                       <button 
                         onClick={onClose} 
-                        className="absolute right-0 p-2 rounded-lg text-gray-500 hover:text-gray-800 hover:bg-black/5 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/10 transition"
+                        className="absolute right-0 p-2 rounded-lg text-gray-500 hover:text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-800 transition"
                       >
                         <X className="w-5 h-5" />
                       </button>
@@ -178,7 +178,7 @@ const OverrideStatusModal: React.FC<OverrideStatusModalProps> = ({
                   <div className="px-6 py-5">
                     {/* Current Status Display */}
                     <div className="mb-6">
-                      <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+                      <div className="p-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-700">
                         <div className="flex items-center gap-2 mb-2">
                           <currentStatusInfo.icon className="w-4 h-4 text-blue-600" />
                           <span className="text-sm font-medium text-blue-800 dark:text-blue-200">Current Status</span>
@@ -213,9 +213,9 @@ const OverrideStatusModal: React.FC<OverrideStatusModalProps> = ({
                               key={option.value}
                               className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
                                 isSelected
-                                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-950'
                                   : isCurrentStatus
-                                  ? 'border-gray-300 dark:border-gray-600 opacity-50 cursor-not-allowed'
+                                  ? 'border-gray-300 dark:border-gray-600 bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed'
                                   : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                               }`}
                               onClick={() => !isCurrentStatus && setNewStatus(option.value)}
@@ -223,7 +223,7 @@ const OverrideStatusModal: React.FC<OverrideStatusModalProps> = ({
                               <div className="flex items-center gap-3">
                                 <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                                   isSelected 
-                                    ? 'bg-blue-100 dark:bg-blue-900/30' 
+                                    ? 'bg-blue-100 dark:bg-blue-950' 
                                     : 'bg-gray-100 dark:bg-gray-700'
                                 }`}>
                                   <Icon className={`w-4 h-4 ${
@@ -269,7 +269,7 @@ const OverrideStatusModal: React.FC<OverrideStatusModalProps> = ({
 
                     {/* Status Change Preview */}
                     {newStatus !== currentStatus && (
-                      <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+                      <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
                         <div className="flex items-center gap-2 mb-2">
                           <Info className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                           <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Status Change Preview</span>
@@ -287,7 +287,7 @@ const OverrideStatusModal: React.FC<OverrideStatusModalProps> = ({
                     )}
 
                     {/* Warning Notice */}
-                    <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-700">
+                    <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-950 rounded-lg border border-amber-200 dark:border-amber-700">
                       <div className="flex items-start gap-2">
                         <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5" />
                         <div>
@@ -304,7 +304,7 @@ const OverrideStatusModal: React.FC<OverrideStatusModalProps> = ({
 
                     {/* Error Display */}
                     {error && (
-                      <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg">
+                      <div className="mb-4 p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-700 rounded-lg">
                         <div className="flex items-center gap-2">
                           <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
                           <span className="text-sm text-red-800 dark:text-red-200">{error}</span>
@@ -318,7 +318,7 @@ const OverrideStatusModal: React.FC<OverrideStatusModalProps> = ({
                     <button
                       onClick={onClose}
                       disabled={isSubmitting}
-                      className="px-4 py-2 text-sm rounded-lg border border-gray-300/80 dark:border-gray-700/80 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/10 transition disabled:opacity-50"
+                      className="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
                     >
                       Cancel
                     </button>
@@ -326,7 +326,7 @@ const OverrideStatusModal: React.FC<OverrideStatusModalProps> = ({
                       onClick={handleSubmit}
                       disabled={isSubmitting || !newStatus || !reason.trim() || newStatus === currentStatus}
                       className={`px-4 py-2 text-sm rounded-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md shadow-blue-600/20 flex items-center gap-2 transition ${
-                        isSubmitting || !newStatus || !reason.trim() || newStatus === currentStatus ? 'opacity-60 cursor-not-allowed' : ''
+                        isSubmitting || !newStatus || !reason.trim() || newStatus === currentStatus ? 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed' : ''
                       }`}
                     >
                       {isSubmitting ? (

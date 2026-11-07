@@ -162,13 +162,13 @@ const SystemConfigurations: React.FC = () => {
                 {/* ── Page header ───────────────────────────────────────── */}
                 <header className="mb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
                     <div>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant opacity-70">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
                             Admin · Settings
                         </p>
                         <h1 className="font-syne text-3xl md:text-4xl font-extrabold tracking-tight text-on-surface mt-1">
                             Store Configurations
                         </h1>
-                        <p className="text-sm text-on-surface-variant opacity-80 mt-1 max-w-2xl">
+                        <p className="text-sm text-on-surface-variant mt-1 max-w-2xl">
                             Storefront identity, currency, payments, shipping, and platform settings
                             for the marketplace.
                         </p>
@@ -176,7 +176,7 @@ const SystemConfigurations: React.FC = () => {
 
                     {/* Quick search across tabs */}
                     <div className="relative md:w-72">
-                        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-60 text-base pointer-events-none">
+                        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-base pointer-events-none">
                             search
                         </span>
                         <input
@@ -184,7 +184,7 @@ const SystemConfigurations: React.FC = () => {
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Find a setting"
-                            className="w-full bg-surface-container-lowest border border-outline-variant/15 rounded-xl pl-9 pr-3 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary-container shadow-card"
+                            className="w-full bg-surface-container-lowest border border-border rounded-xl pl-9 pr-3 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary-container shadow-card"
                         />
                     </div>
                 </header>
@@ -205,7 +205,7 @@ const SystemConfigurations: React.FC = () => {
                                     className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all active:scale-95 ${
                                         isActive
                                             ? 'bg-primary-container text-on-primary shadow-card'
-                                            : 'bg-surface-container-lowest text-on-surface hover:bg-surface-container-low border border-outline-variant/15'
+                                            : 'bg-surface-container-lowest text-on-surface hover:bg-surface-container-low border border-border'
                                     }`}
                                 >
                                     <span className="material-symbols-outlined text-base">{t.icon}</span>
@@ -226,7 +226,7 @@ const SystemConfigurations: React.FC = () => {
                             {sections.map(({ section, label, tabs }) =>
                                 tabs.length === 0 ? null : (
                                     <div key={section}>
-                                        <p className="px-4 pt-4 pb-2 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant opacity-70">
+                                        <p className="px-4 pt-4 pb-2 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
                                             {label}
                                         </p>
                                         <ul className="px-2 pb-2 space-y-0.5">
@@ -239,7 +239,7 @@ const SystemConfigurations: React.FC = () => {
                                                             onClick={() => setActiveTab(t.key)}
                                                             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors active:scale-[0.98] ${
                                                                 isActive
-                                                                    ? 'bg-primary-container/10 text-primary-container'
+                                                                    ? 'bg-primary-subtle text-primary-container'
                                                                     : 'text-on-surface hover:bg-surface-container-low'
                                                             }`}
                                                         >
@@ -256,7 +256,7 @@ const SystemConfigurations: React.FC = () => {
                                                                 <span className="block text-sm font-bold truncate">
                                                                     {t.label}
                                                                 </span>
-                                                                <span className="block text-[11px] text-on-surface-variant opacity-70 truncate">
+                                                                <span className="block text-[11px] text-on-surface-variant truncate">
                                                                     {t.description}
                                                                 </span>
                                                             </span>
@@ -276,14 +276,14 @@ const SystemConfigurations: React.FC = () => {
                         </div>
 
                         {/* Help card */}
-                        <div className="mt-4 bg-surface-container-low rounded-2xl p-4 border border-outline-variant/10">
+                        <div className="mt-4 bg-surface-container-low rounded-2xl p-4 border border-border">
                             <div className="flex items-center gap-2 mb-1">
                                 <span className="material-symbols-outlined text-base text-tertiary">
                                     help
                                 </span>
                                 <p className="text-sm font-bold text-on-surface">Need a hand?</p>
                             </div>
-                            <p className="text-xs text-on-surface-variant opacity-80">
+                            <p className="text-xs text-on-surface-variant">
                                 Each section saves independently. Currency changes propagate everywhere
                                 via the global Currency context.
                             </p>
@@ -294,10 +294,10 @@ const SystemConfigurations: React.FC = () => {
                     <div ref={contentRef} className="min-w-0">
                         {/* Section breadcrumb */}
                         <div className="hidden lg:flex items-center gap-2 mb-4 text-xs text-on-surface-variant">
-                            <span className="font-bold uppercase tracking-widest opacity-70">
+                            <span className="font-bold uppercase tracking-widest">
                                 {SECTION_LABELS[active.section]}
                             </span>
-                            <span className="material-symbols-outlined text-sm opacity-60">
+                            <span className="material-symbols-outlined text-sm">
                                 chevron_right
                             </span>
                             <span className="font-bold text-on-surface">{active.label}</span>

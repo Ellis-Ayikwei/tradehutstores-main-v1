@@ -109,9 +109,9 @@ const TimelineTab: React.FC<TimelineTabProps> = ({ job, userType }) => {
                                     <div
                                         className={`p-4 rounded-lg ${
                                             isCompleted
-                                                ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
+                                                ? 'bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800'
                                                 : isCurrent
-                                                ? 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800'
+                                                ? 'bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800'
                                                 : 'bg-gray-50 dark:bg-gray-750'
                                         }`}
                                     >

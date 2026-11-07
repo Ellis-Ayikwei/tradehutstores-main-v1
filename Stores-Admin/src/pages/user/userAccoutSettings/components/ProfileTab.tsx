@@ -74,10 +74,10 @@ const ProfileTab: React.FC<ProfileTabProps> = ({
                             </h2>
                             <p className="text-gray-600 dark:text-gray-400 mt-1">{profile?.email}</p>
                             <div className="flex flex-wrap justify-center sm:justify-start gap-2 mt-2">
-                                <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-sm rounded-full">
+                                <span className="px-3 py-1 bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 text-sm rounded-full">
                                     {profile?.user_type === 'business' ? 'Business Account' : 'Personal Account'}
                                 </span>
-                                <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-sm rounded-full">Verified</span>
+                                <span className="px-3 py-1 bg-green-100 dark:bg-green-950 text-green-800 dark:text-green-300 text-sm rounded-full">Verified</span>
                             </div>
                         </div>
 

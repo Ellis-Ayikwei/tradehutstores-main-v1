@@ -166,8 +166,8 @@ const JobMap: React.FC<JobMapProps> = ({ job, height = '400px' }) => {
 
     if (loading) {
         return (
-            <div className="backdrop-blur-xl bg-white/70 dark:bg-slate-800/70 shadow-2xl border border-white/20 dark:border-slate-700/30 overflow-hidden">
-                <div className="px-6 py-4 bg-slate-50/50 dark:bg-slate-900/30 border-b border-slate-200/50 dark:border-slate-700/50">
+            <div className=" bg-white dark:bg-slate-800 shadow-2xl border border-gray-200 dark:border-slate-700 overflow-hidden">
+                <div className="px-6 py-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                         <FontAwesomeIcon icon={faRoute} className="text-blue-500" />
                         Route Map
@@ -185,8 +185,8 @@ const JobMap: React.FC<JobMapProps> = ({ job, height = '400px' }) => {
 
     if (error) {
         return (
-            <div className="backdrop-blur-xl bg-white/70 dark:bg-slate-800/70 shadow-2xl border border-white/20 dark:border-slate-700/30 overflow-hidden">
-                <div className="px-6 py-4 bg-slate-50/50 dark:bg-slate-900/30 border-b border-slate-200/50 dark:border-slate-700/50">
+            <div className=" bg-white dark:bg-slate-800 shadow-2xl border border-gray-200 dark:border-slate-700 overflow-hidden">
+                <div className="px-6 py-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                         <FontAwesomeIcon icon={faRoute} className="text-red-500" />
                         Route Map
@@ -204,8 +204,8 @@ const JobMap: React.FC<JobMapProps> = ({ job, height = '400px' }) => {
 
     if (mapLocations.length === 0) {
         return (
-            <div className="backdrop-blur-xl bg-white/70 dark:bg-slate-800/70  shadow-2xl border border-white/20 dark:border-slate-700/30 overflow-hidden">
-                <div className="px-6 py-4 bg-slate-50/50 dark:bg-slate-900/30 border-b border-slate-200/50 dark:border-slate-700/50">
+            <div className=" bg-white dark:bg-slate-800  shadow-2xl border border-gray-200 dark:border-slate-700 overflow-hidden">
+                <div className="px-6 py-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                         <FontAwesomeIcon icon={faRoute} className="text-slate-500" />
                         Route Map
@@ -222,8 +222,8 @@ const JobMap: React.FC<JobMapProps> = ({ job, height = '400px' }) => {
     }
 
     return (
-        <div className="backdrop-blur-xl bg-white/70 dark:bg-slate-800/70  shadow-2xl border border-white/20 dark:border-slate-700/30 overflow-hidden">
-            <div className="px-6 py-4 bg-slate-50/50 dark:bg-slate-900/30 border-b border-slate-200/50 dark:border-slate-700/50">
+        <div className=" bg-white dark:bg-slate-800  shadow-2xl border border-gray-200 dark:border-slate-700 overflow-hidden">
+            <div className="px-6 py-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     <FontAwesomeIcon icon={faRoute} className="text-blue-500" />
                     Route Map

@@ -88,7 +88,7 @@ const NotificationPreferences: React.FC<NotificationPreferencesProps> = ({
                     }}
                     className={`w-full flex items-center justify-between p-4 rounded-lg transition-colors ${
                       activeChannel === channel.key
-                        ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
+                        ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
                         : 'bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}
                   >
@@ -149,7 +149,7 @@ const NotificationPreferences: React.FC<NotificationPreferencesProps> = ({
                         
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                           {Object.entries(prefsForm[`${channel.key}_types`] || {}).map(([type, enabled]) => (
-                            <label key={type} className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer">
+                            <label key={type} className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
                               <div className="flex items-center gap-2">
                                 <input
                                   type="checkbox"

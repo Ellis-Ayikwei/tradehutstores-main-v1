@@ -53,7 +53,7 @@ const ProviderJobDetail: React.FC = () => {
 
     if (error || !request) {
         return (
-            <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg">
+            <div className="p-4 bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 rounded-lg">
                 <p>{error || 'Service request not found'}</p>
             </div>
         );
@@ -68,7 +68,7 @@ const ProviderJobDetail: React.FC = () => {
                         onClick={() => handleStatusChange('accepted')}
                         disabled={status === 'accepted'}
                         className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${
-                            status === 'accepted' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' : 'bg-green-600 text-white hover:bg-green-700'
+                            status === 'accepted' ? 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-400' : 'bg-green-600 text-white hover:bg-green-700'
                         }`}
                     >
                         <FontAwesomeIcon icon={faCheck} />
@@ -78,7 +78,7 @@ const ProviderJobDetail: React.FC = () => {
                         onClick={() => handleStatusChange('in_progress')}
                         disabled={status === 'in_progress'}
                         className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${
-                            status === 'in_progress' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400' : 'bg-blue-600 text-white hover:bg-blue-700'
+                            status === 'in_progress' ? 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-400' : 'bg-blue-600 text-white hover:bg-blue-700'
                         }`}
                     >
                         <FontAwesomeIcon icon={faClock} />
@@ -88,7 +88,7 @@ const ProviderJobDetail: React.FC = () => {
                         onClick={() => handleStatusChange('completed')}
                         disabled={status === 'completed'}
                         className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${
-                            status === 'completed' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400' : 'bg-purple-600 text-white hover:bg-purple-700'
+                            status === 'completed' ? 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-400' : 'bg-purple-600 text-white hover:bg-purple-700'
                         }`}
                     >
                         <FontAwesomeIcon icon={faCheck} />

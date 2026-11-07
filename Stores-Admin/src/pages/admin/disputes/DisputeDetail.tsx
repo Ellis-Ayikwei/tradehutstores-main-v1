@@ -224,7 +224,7 @@ const DisputeDetail: React.FC = () => {
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 rounded-lg transition-colors flex items-center"
+                  className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500 rounded-lg transition-colors flex items-center"
                 >
                   <Save className="w-4 h-4 mr-2" /> {saving ? 'Saving...' : 'Save'}
                 </button>
@@ -412,7 +412,7 @@ const DisputeDetail: React.FC = () => {
                 <button
                   onClick={handleSendMessage}
                   disabled={saving || !message.trim()}
-                  className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 rounded-lg transition-colors flex items-center"
+                  className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500 rounded-lg transition-colors flex items-center"
                 >
                   <Send className="w-4 h-4 mr-2" />
                   {saving ? 'Sending...' : 'Send'}

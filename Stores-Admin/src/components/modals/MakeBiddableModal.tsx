@@ -120,7 +120,7 @@ const MakeBiddableModal: React.FC<MakeBiddableModalProps> = ({
 
                 {/* Error Display */}
                 {error && (
-                    <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
+                    <div className="mb-6 p-4 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-xl">
                         <div className="flex items-start gap-3">
                             <FontAwesomeIcon 
                                 icon={faExclamationCircle} 
@@ -198,7 +198,7 @@ const MakeBiddableModal: React.FC<MakeBiddableModalProps> = ({
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-medium rounded-xl shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-medium rounded-xl shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/30 transition-all duration-200 disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
                         >
                             {isSubmitting ? (
                                 <div className="flex items-center gap-2">

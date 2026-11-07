@@ -123,7 +123,7 @@ const DraggableJobTable: React.FC<DraggableJobTableProps> = ({
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-semibold text-gray-900 dark:text-white">{job.request.tracking_number}</span>
                         {job.is_instant && (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-cyan-100 text-cyan-800 dark:bg-cyan-950 dark:text-cyan-400">
                             <IconBolt className="w-3 h-3" />
                             Instant
                           </span>

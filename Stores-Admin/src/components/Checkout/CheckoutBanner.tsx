@@ -40,7 +40,7 @@ export default function CheckoutBanner({ onGuestCheckout, onSignInCheckout }: Ch
                             <div
                                 key={method.id}
                                 className={`relative rounded-lg border-2 p-4 cursor-pointer transition-all ${
-                                    selectedPayment === method.id ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/10' : 'border-gray-200 dark:border-gray-700 hover:border-primary-200'
+                                    selectedPayment === method.id ? 'border-primary-500 bg-primary-50 dark:bg-primary-subtle' : 'border-gray-200 dark:border-gray-700 hover:border-primary-200'
                                 }`}
                                 onClick={() => setSelectedPayment(method.id)}
                             >

@@ -24,26 +24,37 @@
 @tailwind utilities;
 
 /* shadcn/ui theme tokens (HSL channels, consumed via tailwind.config.cjs).
-   Primary is the TradeHut orange (#dc711a). `dark` follows the existing html.dark toggle. */
+   Ported from shadcn preset `bbVJxYW` (style base-maia, base colour neutral, subtle menu accent)
+   onto Tailwind v3 + Radix. Kept on purpose: TradeHut orange primary (#dc711a), the Charlie font,
+   and the navy `.dark` palette that matches the legacy dark layout. `dark` follows html.dark. */
 @layer base {
     :root {
+        --radius: 0.625rem;
+
         --background: 0 0% 100%;
-        --foreground: 0 0% 15%;
+        --foreground: 0 0% 3.9%;
         --card: 0 0% 100%;
-        --card-foreground: 0 0% 15%;
+        --card-foreground: 0 0% 3.9%;
         --popover: 0 0% 100%;
-        --popover-foreground: 0 0% 15%;
+        --popover-foreground: 0 0% 3.9%;
         --primary: 27 79% 48%;
         --primary-foreground: 0 0% 100%;
-        --muted: 0 0% 96%;
-        --muted-foreground: 0 0% 40%;
-        --accent: 27 80% 95%;
-        --accent-foreground: 24 70% 28%;
+        --muted: 0 0% 96.1%;
+        --muted-foreground: 0 0% 45.1%;
+        --accent: 0 0% 96.1%;
+        --accent-foreground: 0 0% 9%;
         --destructive: 0 65% 51%;
         --destructive-foreground: 0 0% 100%;
-        --border: 220 13% 91%;
-        --input: 220 13% 88%;
+        --border: 0 0% 89.8%;
+        --input: 0 0% 89.8%;
         --ring: 27 79% 48%;
+
+        /* Chart series (Recharts / ApexCharts): brand first, then the preset's neutral ramp. */
+        --chart-1: 27 79% 48%;
+        --chart-2: 0 0% 45.1%;
+        --chart-3: 0 0% 32.2%;
+        --chart-4: 0 0% 63.9%;
+        --chart-5: 0 0% 83.1%;
 
         /* Solid "subtle" surfaces for icon chips, avatars, badges and tinted cards (no alpha backgrounds). */
         --primary-hover: 27 79% 42%;
@@ -79,6 +90,12 @@
         --input: 214 45% 18%;
         --ring: 27 85% 54%;
 
+        --chart-1: 27 85% 54%;
+        --chart-2: 214 20% 70%;
+        --chart-3: 214 18% 55%;
+        --chart-4: 214 22% 40%;
+        --chart-5: 214 30% 28%;
+
         --primary-hover: 27 85% 60%;
         --destructive-hover: 0 62% 56%;
         --primary-subtle: 27 40% 18%;
@@ -100,7 +117,7 @@
 
 /* Shared utility recipes still used by legacy admin layouts and pages. */
 @layer components {
-    .glass-header     { backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
+    .glass-header     { background-color: hsl(var(--background)); }
     .primary-gradient { background: linear-gradient(135deg, #a43d00 0%, #f5620f 100%); }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar     { scrollbar-width: none; -ms-overflow-style: none; }
@@ -144,7 +161,7 @@
         @apply sticky top-0 z-20;
     }
     .navbar-floating header {
-        @apply bg-[#fafafa]/90 px-6 pt-4 dark:bg-[#060818]/90;
+        @apply bg-[#fafafa] px-6 pt-4 dark:bg-[#060818];
     }
     .navbar-floating header > div .horizontal-menu {
         @apply rounded-b-md shadow;
@@ -157,11 +174,11 @@
 
     .sidebar .nav-item > button,
     .sidebar .nav-item > a {
-        @apply mb-1 flex items-center justify-between overflow-hidden whitespace-nowrap rounded-md p-2.5 text-[#506690] hover:bg-[#000]/[0.08] hover:text-black dark:hover:bg-[#181f32] dark:hover:text-white-dark w-full;
+        @apply mb-1 flex items-center justify-between overflow-hidden whitespace-nowrap rounded-md p-2.5 text-[#506690] hover:bg-gray-200 hover:text-black dark:hover:bg-[#181f32] dark:hover:text-white-dark w-full;
     }
     .sidebar .nav-item > button.active,
     .sidebar .nav-item > a.active {
-        @apply bg-[#000]/[0.08] text-black dark:bg-[#181f32] dark:text-white-dark;
+        @apply bg-gray-200 text-black dark:bg-[#181f32] dark:text-white-dark;
     }
 
     .sidebar .nav-item > button.active > div > span,
@@ -181,7 +198,7 @@
 
     .sidebar .nav-item a div:first-child svg,
     .sidebar .nav-item button div:first-child svg {
-        @apply w-5 h-5 text-black/50 dark:text-white/50;
+        @apply w-5 h-5 text-gray-500 dark:text-gray-400;
     }
 
     .main-container .main-content {
@@ -207,20 +224,20 @@
 
     .horizontal .nav-item a div:first-child svg,
     .horizontal .nav-item button div:first-child svg {
-        @apply w-5 h-5 text-black/50 dark:text-white/50;
+        @apply w-5 h-5 text-gray-500 dark:text-gray-400;
     }
 
     .horizontal .dark .nav-item button div:first-child svg,
     .dark.horizontal .nav-item button div:first-child svg {
-        @apply text-white/50;
+        @apply text-gray-400;
     }
 
     .horizontal-menu .nav-link {
-        @apply flex items-center py-2.5 px-2 rounded-lg hover:bg-[#000]/[0.08] hover:text-black dark:hover:bg-[#181f32] dark:hover:text-white-dark xl:px-4;
+        @apply flex items-center py-2.5 px-2 rounded-lg hover:bg-gray-200 hover:text-black dark:hover:bg-[#181f32] dark:hover:text-white-dark xl:px-4;
     }
 
     .horizontal-menu .nav-link.active {
-        @apply bg-[#000]/[0.08] text-black dark:bg-[#181f32] dark:text-white-dark;
+        @apply bg-gray-200 text-black dark:bg-[#181f32] dark:text-white-dark;
     }
 
     .horizontal-menu ul.sub-menu {
@@ -229,12 +246,12 @@
 
     .horizontal-menu ul.sub-menu a,
     .horizontal-menu ul.sub-menu button {
-        @apply flex items-center justify-between px-4 py-2 hover:bg-gray-100 hover:text-primary dark:hover:bg-primary/10 w-full;
+        @apply flex items-center justify-between px-4 py-2 hover:bg-gray-100 hover:text-primary dark:hover:bg-primary-subtle w-full;
     }
 
     .horizontal-menu ul.sub-menu a.active,
     .horizontal-menu ul.sub-menu button.active {
-        @apply bg-gray-100 text-primary dark:bg-primary/10;
+        @apply bg-gray-100 text-primary dark:bg-primary-subtle;
     }
 
     .horizontal-menu > li.nav-item:hover > ul.sub-menu,
@@ -341,7 +358,7 @@
         @apply px-2.5 py-1.5 text-xs;
     }
     .btn[disabled] {
-        @apply cursor-not-allowed opacity-60;
+        @apply cursor-not-allowed !border-gray-200 !bg-gray-200 !text-gray-500 dark:!border-gray-700 dark:!bg-gray-700 dark:!text-gray-500;
     }
 
     .btn-primary {
@@ -458,7 +475,7 @@
     .has-error .form-select,
     .has-error .form-multiselect,
     .has-error .multiselect__tags {
-        @apply border-danger text-danger bg-danger/[0.08] placeholder-danger/70 focus:border-danger;
+        @apply border-danger text-danger bg-danger-50 placeholder-danger-400 focus:border-danger;
     }
     .has-error .form-label,
     .has-error .form-help,
@@ -479,7 +496,7 @@
     .has-success .form-select,
     .has-success .form-multiselect,
     .has-success .multiselect__tags {
-        @apply border-success text-success bg-success/[0.08] placeholder-success/70 focus:border-success;
+        @apply border-success text-success bg-success-50 placeholder-success-400 focus:border-success;
     }
     .has-success .form-label,
     .has-success .form-help,
@@ -568,7 +585,7 @@
     }
     .dropdown ul li > a,
     .dropdown ul li > button {
-        @apply flex items-center px-4 py-2 hover:bg-primary/10 hover:text-primary;
+        @apply flex items-center px-4 py-2 hover:bg-primary-subtle hover:text-primary;
     }
     .dropdown ul li > button {
         @apply w-full;
@@ -583,7 +600,7 @@
     }
     table thead tr,
     table tfoot tr {
-        @apply border-b-0 bg-white-light/30  dark:!bg-[#1a2941];
+        @apply border-b-0 bg-gray-50 dark:!bg-[#1a2941];
     }
     table thead tr th,
     table tfoot tr th,
@@ -595,13 +612,13 @@
         @apply font-semibold;
     }
     table tbody tr {
-        @apply border-b !border-white-light/40 dark:!border-[#191e3a];
+        @apply border-b !border-gray-200 dark:!border-[#191e3a];
     }
     table.table-hover tbody tr {
-        @apply hover:!bg-white-light/20 dark:hover:!bg-[#1a2941]/40;
+        @apply hover:!bg-gray-50 dark:hover:!bg-[#1a2941];
     }
     table.table-striped tbody tr:nth-child(odd) {
-        @apply !bg-white-light/20 dark:!bg-[#1a2941]/40;
+        @apply !bg-gray-50 dark:!bg-[#1a2941];
     }
 
     table.dataTable-table tbody tr th,

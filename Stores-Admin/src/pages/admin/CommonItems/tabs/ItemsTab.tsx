@@ -393,8 +393,8 @@ const ItemsTab: React.FC = () => {
       render: (item: CommonItem) => (
         <span className={`px-2 py-1 text-xs rounded-full ${
           item.fragile 
-            ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' 
-            : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+            ? 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400' 
+            : 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-400'
         }`}>
           {item.fragile ? 'Yes' : 'No'}
         </span>
@@ -408,8 +408,8 @@ const ItemsTab: React.FC = () => {
       render: (item: CommonItem) => (
         <span className={`px-2 py-1 text-xs rounded-full ${
           item.needs_disassembly 
-            ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400' 
-            : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'
+            ? 'bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-400' 
+            : 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-400'
         }`}>
           {item.needs_disassembly ? 'Yes' : 'No'}
         </span>
@@ -434,14 +434,14 @@ const ItemsTab: React.FC = () => {
       render: (item: CommonItem) => (
         <div className="flex gap-2 justify-center">
           <button 
-            className="p-2 text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors" 
+            className="p-2 text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 dark:hover:bg-indigo-950 rounded-lg transition-colors" 
             onClick={() => openForm(item)}
             title="Edit Item"
           >
             <Edit className="w-4 h-4" />
           </button>
           <button 
-            className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors" 
+            className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg transition-colors" 
             onClick={() => handleDelete(item.id)}
             title="Delete Item"
           >
@@ -472,7 +472,7 @@ const ItemsTab: React.FC = () => {
                 `w-full rounded-xl py-3 px-4 text-sm font-medium transition-all duration-200 ${
                   selected
                     ? 'bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 shadow-sm'
-                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-600/50'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-white dark:hover:bg-gray-600'
                 }`
               }
               onClick={() => {
@@ -487,7 +487,7 @@ const ItemsTab: React.FC = () => {
                 All Items
                 <span className={`ml-1 py-0.5 px-2 rounded-full text-xs font-semibold ${
                   selectedTab === 0
-                    ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+                    ? 'bg-blue-100 text-blue-600 dark:bg-blue-950 dark:text-blue-400'
                     : 'bg-gray-200 text-gray-600 dark:bg-gray-600 dark:text-gray-300'
                 }`}>
                   {categoryCounts.all}
@@ -503,7 +503,7 @@ const ItemsTab: React.FC = () => {
                     `w-full rounded-xl py-3 px-4 text-sm font-medium transition-all duration-200 ${
                       selected
                         ? 'bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 shadow-sm'
-                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-600/50'
+                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-white dark:hover:bg-gray-600'
                     }`
                   }
                   onClick={() => {
@@ -520,7 +520,7 @@ const ItemsTab: React.FC = () => {
                     {category.name}
                     <span className={`ml-1 py-0.5 px-2 rounded-full text-xs font-semibold ${
                       selectedTab === index + 1
-                        ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+                        ? 'bg-blue-100 text-blue-600 dark:bg-blue-950 dark:text-blue-400'
                         : 'bg-gray-200 text-gray-600 dark:bg-gray-600 dark:text-gray-300'
                     }`}>
                       {categoryCounts[category.id] || 0}
@@ -608,7 +608,7 @@ const ItemsTab: React.FC = () => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
+            <div className="fixed inset-0 bg-black/50 " />
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">

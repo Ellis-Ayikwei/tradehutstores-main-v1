@@ -93,7 +93,7 @@ export default function GuestCheckoutFlow({ isOpen, onClose, onBack, total }: Gu
         <Transition appear show={isOpen} as={Fragment}>
             <Dialog as="div" className="relative z-50" onClose={onClose}>
                 <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
-                    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm" />
+                    <div className="fixed inset-0 bg-black bg-opacity-50 " />
                 </Transition.Child>
 
                 <div className="fixed inset-0 overflow-y-auto">
@@ -178,7 +178,7 @@ export default function GuestCheckoutFlow({ isOpen, onClose, onBack, total }: Gu
                                 </div>
 
                                 {/* Support Section */}
-                                <div className="mt-8 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                <div className="mt-8 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                                     <div className="flex items-center gap-4">
                                         <FontAwesomeIcon icon={faHeadset} className="w-6 h-6 text-primary-500" />
                                         <div>

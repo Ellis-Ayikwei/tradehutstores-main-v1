@@ -102,9 +102,9 @@ const NotificationTemplates: React.FC = () => {
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'email': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
-      case 'sms': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
-      case 'push': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
+      case 'email': return 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-400';
+      case 'sms': return 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-400';
+      case 'push': return 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-400';
       default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400';
     }
   };
@@ -169,7 +169,7 @@ const NotificationTemplates: React.FC = () => {
       render: (template) => (
         <span className={`px-2 py-1 text-xs rounded-full font-medium ${
           template.isActive 
-            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+            ? 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-400'
             : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400'
         }`}>
           {template.isActive ? 'Active' : 'Inactive'}
@@ -295,7 +295,7 @@ const NotificationTemplates: React.FC = () => {
                   <span className="text-sm text-gray-600 dark:text-gray-400">Status</span>
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                     template.isActive 
-                      ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                      ? 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-400'
                       : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400'
                   }`}>
                     {template.isActive ? 'Active' : 'Inactive'}
@@ -307,7 +307,7 @@ const NotificationTemplates: React.FC = () => {
                     <span className="text-sm text-gray-600 dark:text-gray-400">Variables:</span>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {template.variables.map((variable) => (
-                        <span key={variable} className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 rounded-full text-xs">
+                        <span key={variable} className="px-2 py-1 bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-400 rounded-full text-xs">
                           {variable}
                         </span>
                       ))}

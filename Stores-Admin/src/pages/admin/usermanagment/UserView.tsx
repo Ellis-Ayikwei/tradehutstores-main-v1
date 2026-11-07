@@ -1195,7 +1195,7 @@ console.log("the user data", userResponse)
                   <button
                     onClick={handleVerifyUser}
                     disabled={actionLoading}
-                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center disabled:opacity-50"
+                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
                     title="Verify User"
                   >
                     <UserCheck className="w-4 h-4 mr-2" />
@@ -1206,7 +1206,7 @@ console.log("the user data", userResponse)
                   <button
                     onClick={handleActivateUser}
                     disabled={actionLoading}
-                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center disabled:opacity-50"
+                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
                     title="Activate User"
                   >
                     <Power className="w-4 h-4 mr-2" />
@@ -1217,7 +1217,7 @@ console.log("the user data", userResponse)
                   <button
                     onClick={handleDisableUser}
                     disabled={actionLoading}
-                    className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 flex items-center disabled:opacity-50"
+                    className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 flex items-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
                     title="Disable User"
                   >
                     <Ban className="w-4 h-4 mr-2" />
@@ -1227,7 +1227,7 @@ console.log("the user data", userResponse)
                 <button
                   onClick={handleSuspend}
                   disabled={actionLoading}
-                  className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 flex items-center disabled:opacity-50"
+                  className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 flex items-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
                   title={user.account_status === 'suspended' ? 'Reactivate User' : 'Suspend User'}
                 >
                   {user.account_status === 'suspended' ? (
@@ -1245,7 +1245,7 @@ console.log("the user data", userResponse)
                 <button
                   onClick={handleDelete}
                   disabled={actionLoading}
-                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center disabled:opacity-50"
+                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
                   title="Delete User"
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
@@ -1254,7 +1254,7 @@ console.log("the user data", userResponse)
                 <button
                   onClick={handleEdit}
                   disabled={actionLoading}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center disabled:opacity-50"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
                   title="Edit User"
                 >
                   <Edit2 className="w-4 h-4 mr-2" />
@@ -1263,7 +1263,7 @@ console.log("the user data", userResponse)
                 <button
                   onClick={() => mutate()}
                   disabled={actionLoading}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center disabled:opacity-50"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
                   title="Refresh User"
                 >
                   <RefreshCcw className="w-4 h-4" />
@@ -1335,7 +1335,7 @@ console.log("the user data", userResponse)
 
       {/* Suspend/Reactivate Modal */}
       {showSuspendModal && selectedUser && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50  flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-gray-200 dark:border-gray-700">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
               {selectedUser.account_status === 'suspended' ? 'Reactivate User Account' : 'Suspend User Account'}
@@ -1405,7 +1405,7 @@ console.log("the user data", userResponse)
 
       {/* Delete Modal */}
       {showDeleteModal && selectedUser && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50  flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-gray-200 dark:border-gray-700">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Delete User Account</h3>
 
@@ -1414,7 +1414,7 @@ console.log("the user data", userResponse)
                 Are you sure you want to permanently delete this user account? This action cannot be undone.
               </p>
 
-              <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800">
+              <div className="p-4 bg-red-50 dark:bg-red-950 rounded-xl border border-red-200 dark:border-red-800">
                 <p className="font-semibold text-red-900 dark:text-red-400 mb-2">User Details:</p>
                 <div className="space-y-1 text-sm text-red-700 dark:text-red-300">
                   <p>
@@ -1438,7 +1438,7 @@ console.log("the user data", userResponse)
                 Cancel
               </button>
               <button 
-                className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 rounded-xl text-white text-sm font-medium transition-colors disabled:opacity-50" 
+                className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 rounded-xl text-white text-sm font-medium transition-colors disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500" 
                 onClick={handleConfirmDelete}
                 disabled={actionLoading}
               >
@@ -1458,7 +1458,7 @@ console.log("the user data", userResponse)
 
       {/* Activate Modal */}
       {showActivateModal && selectedUser && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50  flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-gray-200 dark:border-gray-700">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Activate User Account</h3>
 
@@ -1467,7 +1467,7 @@ console.log("the user data", userResponse)
                 Are you sure you want to activate this user account? The user will be able to access the system again.
               </p>
 
-              <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800">
+              <div className="p-4 bg-green-50 dark:bg-green-950 rounded-xl border border-green-200 dark:border-green-800">
                 <p className="font-semibold text-green-900 dark:text-green-400 mb-2">User Details:</p>
                 <div className="space-y-1 text-sm text-green-700 dark:text-green-300">
                   <p>
@@ -1491,7 +1491,7 @@ console.log("the user data", userResponse)
                 Cancel
               </button>
               <button
-                className="flex-1 px-4 py-2.5 bg-green-600 hover:bg-green-700 rounded-xl text-white text-sm font-medium transition-colors disabled:opacity-50"
+                className="flex-1 px-4 py-2.5 bg-green-600 hover:bg-green-700 rounded-xl text-white text-sm font-medium transition-colors disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
                 onClick={handleConfirmActivate}
                 disabled={actionLoading}
               >
@@ -1511,7 +1511,7 @@ console.log("the user data", userResponse)
 
       {/* Deactivate Modal */}
       {showDeactivateModal && selectedUser && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50  flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-gray-200 dark:border-gray-700">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Deactivate User Account</h3>
 
@@ -1528,7 +1528,7 @@ console.log("the user data", userResponse)
                 placeholder="Enter reason for deactivation..."
               />
 
-              <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border border-yellow-200 dark:border-yellow-800">
+              <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-950 rounded-xl border border-yellow-200 dark:border-yellow-800">
                 <p className="font-semibold text-yellow-900 dark:text-yellow-400 mb-2">User Details:</p>
                 <div className="space-y-1 text-sm text-yellow-700 dark:text-yellow-300">
                   <p>
@@ -1553,7 +1553,7 @@ console.log("the user data", userResponse)
                 Cancel
               </button>
               <button
-                className="flex-1 px-4 py-2.5 bg-yellow-600 hover:bg-yellow-700 rounded-xl text-white text-sm font-medium transition-colors disabled:opacity-50"
+                className="flex-1 px-4 py-2.5 bg-yellow-600 hover:bg-yellow-700 rounded-xl text-white text-sm font-medium transition-colors disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
                 onClick={handleConfirmDeactivate}
                 disabled={actionLoading || !deactivationReason.trim()}
               >
@@ -1572,7 +1572,7 @@ console.log("the user data", userResponse)
       )}
       {/* Manage Groups Modal */}
       {showManageGroups && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50  flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">Manage Groups</h3>
@@ -1614,7 +1614,7 @@ console.log("the user data", userResponse)
               </button>
               <button
                 onClick={handleAddUserToGroups}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm disabled:opacity-50"
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
                 disabled={actionLoading || selectedGroupIds.length === 0}
               >
                 {actionLoading ? 'Saving...' : 'Add to Groups'}

@@ -851,7 +851,7 @@ const ServiceRequestForm: React.FC = () => {
                         <div className="relative py-16 mb-10 overflow-hidden rounded-2xl shadow-2xl">
                             {/* Gradient Overlay + Background Image */}
                             <div className="absolute inset-0">
-                                <div className="absolute inset-0 bg-gradient-to-r from-blue-900/90 via-blue-800/80 to-indigo-900/90 z-10" />
+                                <div className="absolute inset-0 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 z-10" />
                                 <div
                                     className="absolute inset-0 bg-no-repeat bg-center bg-cover filter  opacity-125"
                                     style={{
@@ -868,20 +868,20 @@ const ServiceRequestForm: React.FC = () => {
                                     <span className="inline-block transform transition-all animate-fadeIn">Professional Moving Services</span>
                                 </h1>
 
-                                <p className="text-xl text-blue-100 mt-6 max-w-3xl mx-auto font-light opacity-90">Get instant quotes from verified moving professionals in your area</p>
+                                <p className="text-xl text-blue-100 mt-6 max-w-3xl mx-auto font-light">Get instant quotes from verified moving professionals in your area</p>
 
                                 <div className="mt-8 flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
-                                    <div className="flex flex-row items-center gap-1 border border-gray-200/20 rounded-lg p-2 text-green-300">
+                                    <div className="flex flex-row items-center gap-1 border border-gray-200 rounded-lg p-2 text-green-300">
                                         <IconShieldCheck className="w-5 h-5 sm:w-6 sm:h-6" />
                                         <p className="text-sm font-medium sm:text-base hidden sm:inline">Verified Providers</p>
                                     </div>
 
-                                    <div className="flex flex-row items-center gap-1 border border-gray-200/20 rounded-lg p-2 text-green-300">
+                                    <div className="flex flex-row items-center gap-1 border border-gray-200 rounded-lg p-2 text-green-300">
                                         <IconLock className="w-5 h-5 sm:w-6 sm:h-6" />
                                         <p className="text-sm font-medium sm:text-base hidden sm:inline">Insured Services</p>
                                     </div>
 
-                                    <div className="flex flex-row items-center gap-1 border border-gray-200/20 rounded-lg p-2 text-green-300">
+                                    <div className="flex flex-row items-center gap-1 border border-gray-200 rounded-lg p-2 text-green-300">
                                         <IconStar className="w-5 h-5 sm:w-6 sm:h-6" />
                                         <p className="text-sm font-medium sm:text-base hidden sm:inline">Satisfaction Guaranteed</p>
                                     </div>
@@ -892,7 +892,7 @@ const ServiceRequestForm: React.FC = () => {
 
                     {/* Request Type Selection */}
                     <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
-                        <div className="px-6 py-4 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/30 dark:to-purple-800/30 border-b border-gray-200 dark:border-gray-700">
+                        <div className="px-6 py-4 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-950 border-b border-gray-200 dark:border-gray-700">
                             <h3 className="font-medium text-gray-800 dark:text-gray-200 flex items-center">
                                 <FontAwesomeIcon icon={faGavel} className="mr-2 text-purple-600 dark:text-purple-400" />
                                 Request Type <span className="text-red-500">*</span>
@@ -902,7 +902,7 @@ const ServiceRequestForm: React.FC = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <label
                                     className={`flex items-center p-4 border ${
-                                        values.request_type === 'instant' ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-300 dark:border-gray-600'
+                                        values.request_type === 'instant' ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-950' : 'border-gray-300 dark:border-gray-600'
                                     } rounded-lg hover:bg-gray-50 dark:hover:bg-gray-750 cursor-pointer transition-all duration-200`}
                                 >
                                     <input
@@ -926,7 +926,7 @@ const ServiceRequestForm: React.FC = () => {
 
                                 <label
                                     className={`flex items-center p-4 border ${
-                                        values.request_type === 'journey' ? 'border-green-500 dark:border-green-400 bg-green-50 dark:bg-green-900/20' : 'border-gray-300 dark:border-gray-600'
+                                        values.request_type === 'journey' ? 'border-green-500 dark:border-green-400 bg-green-50 dark:bg-green-950' : 'border-gray-300 dark:border-gray-600'
                                     } rounded-lg hover:bg-gray-50 dark:hover:bg-gray-750 cursor-pointer transition-all duration-200`}
                                 >
                                     <input
@@ -1050,7 +1050,7 @@ const ServiceRequestForm: React.FC = () => {
                         {/* Map Component - Only show when locations are set */}
                         {formValues.pickup_location && formValues.dropoff_location && (
                             <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
-                                <div className="px-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900/30 dark:to-gray-800/30 border-b border-gray-200 dark:border-gray-700">
+                                <div className="px-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 border-b border-gray-200 dark:border-gray-700">
                                     <h3 className="font-medium text-gray-800 dark:text-gray-200">Route Map</h3>
                                 </div>
                                 <div className="h-[400px] relative">
@@ -1094,7 +1094,7 @@ const ServiceRequestForm: React.FC = () => {
 
                         {/* Quick Actions */}
                         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
-                            <div className="px-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900/30 dark:to-gray-800/30 border-b border-gray-200 dark:border-gray-700">
+                            <div className="px-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 border-b border-gray-200 dark:border-gray-700">
                                 <h3 className="font-medium text-gray-800 dark:text-gray-200">Quick Actions</h3>
                             </div>
                             <div className="p-4 space-y-3">

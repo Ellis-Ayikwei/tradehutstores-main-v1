@@ -114,7 +114,7 @@ const JobStatusOverride: React.FC<JobStatusOverrideProps> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
+          <div className="fixed inset-0 bg-black/60 " />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -128,7 +128,7 @@ const JobStatusOverride: React.FC<JobStatusOverrideProps> = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-2xl ring-1 ring-white/10 transition-all">
+              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-2xl ring-1 ring-gray-200 transition-all">
                 <div className="relative">
                   {/* Header */}
                   <div className="px-6 pt-6">
@@ -148,7 +148,7 @@ const JobStatusOverride: React.FC<JobStatusOverrideProps> = ({
                       </div>
                       <button 
                         onClick={onClose} 
-                        className="p-2 rounded-lg text-gray-500 hover:text-gray-800 hover:bg-black/5 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/10 transition"
+                        className="p-2 rounded-lg text-gray-500 hover:text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-800 transition"
                       >
                         <X className="w-5 h-5" />
                       </button>
@@ -158,7 +158,7 @@ const JobStatusOverride: React.FC<JobStatusOverrideProps> = ({
                   {/* Content */}
                   <div className="px-6 py-5">
                     {/* Job Info */}
-                    <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
                       <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Job Information</h4>
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
@@ -200,7 +200,7 @@ const JobStatusOverride: React.FC<JobStatusOverrideProps> = ({
                                 isSelected
                                   ? `border-${status.color}-500 bg-${status.color}-50 dark:bg-${status.color}-900/20`
                                   : isCurrent
-                                  ? 'border-gray-300 bg-gray-100 dark:bg-gray-700 dark:border-gray-600 cursor-not-allowed opacity-60'
+                                  ? 'border-gray-300 bg-gray-100 dark:bg-gray-700 dark:border-gray-600 cursor-not-allowed'
                                   : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                               }`}
                             >
@@ -262,7 +262,7 @@ const JobStatusOverride: React.FC<JobStatusOverrideProps> = ({
 
                     {/* Warning */}
                     {isStatusChange && (
-                      <div className="mb-6 p-4 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 rounded-lg">
+                      <div className="mb-6 p-4 bg-orange-50 dark:bg-orange-950 border border-orange-200 dark:border-orange-700 rounded-lg">
                         <div className="flex items-start gap-3">
                           <AlertTriangle className="w-5 h-5 text-orange-600 dark:text-orange-400 mt-0.5" />
                           <div>
@@ -280,7 +280,7 @@ const JobStatusOverride: React.FC<JobStatusOverrideProps> = ({
 
                     {/* Error Display */}
                     {error && (
-                      <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg">
+                      <div className="mb-4 p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-700 rounded-lg">
                         <div className="flex items-center gap-2">
                           <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
                           <span className="text-sm text-red-800 dark:text-red-200">{error}</span>
@@ -293,7 +293,7 @@ const JobStatusOverride: React.FC<JobStatusOverrideProps> = ({
                   <div className="px-6 pb-6 flex items-center justify-end gap-3">
                     <button
                       onClick={onClose}
-                      className="px-4 py-2 text-sm rounded-lg border border-gray-300/80 dark:border-gray-700/80 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/10 transition"
+                      className="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                     >
                       Cancel
                     </button>
@@ -301,7 +301,7 @@ const JobStatusOverride: React.FC<JobStatusOverrideProps> = ({
                       onClick={handleOverride}
                       disabled={!canOverride || loading}
                       className={`px-4 py-2 text-sm rounded-lg text-white bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 shadow-md shadow-orange-600/20 flex items-center gap-2 transition ${
-                        !canOverride || loading ? 'opacity-60 cursor-not-allowed' : ''
+                        !canOverride || loading ? 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed' : ''
                       }`}
                     >
                       {loading ? (

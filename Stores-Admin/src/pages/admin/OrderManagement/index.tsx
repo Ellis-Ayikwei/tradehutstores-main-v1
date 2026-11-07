@@ -64,13 +64,13 @@ const FULFILLMENT_STATUS_CONFIG: Record<
     { pill: string; dot: string; Icon: React.FC<{ className?: string }>; label: string }
 > = {
     pending: {
-        pill: 'bg-bid-amber/10 text-bid-amber',
+        pill: 'bg-warning-subtle text-bid-amber',
         dot: 'bg-bid-amber animate-pulse',
         Icon: Clock,
         label: 'Pending',
     },
     processing: {
-        pill: 'bg-tertiary-fixed/50 text-tertiary',
+        pill: 'bg-tertiary-fixed text-tertiary',
         dot: 'bg-tertiary',
         Icon: Package,
         label: 'Processing',
@@ -82,7 +82,7 @@ const FULFILLMENT_STATUS_CONFIG: Record<
         label: 'Shipped',
     },
     delivered: {
-        pill: 'bg-bid-green/10 text-bid-green',
+        pill: 'bg-success-subtle text-bid-green',
         dot: 'bg-bid-green',
         Icon: CheckCircle2,
         label: 'Delivered',
@@ -96,8 +96,8 @@ const FULFILLMENT_STATUS_CONFIG: Record<
 };
 
 const PAYMENT_STATUS_CONFIG: Record<PaymentStatus, { pill: string; label: string }> = {
-    pending: { pill: 'bg-bid-amber/10 text-bid-amber', label: 'Pending' },
-    paid: { pill: 'bg-bid-green/10 text-bid-green', label: 'Paid' },
+    pending: { pill: 'bg-warning-subtle text-bid-amber', label: 'Pending' },
+    paid: { pill: 'bg-success-subtle text-bid-green', label: 'Paid' },
     refunded: { pill: 'bg-surface-container-highest text-on-surface-variant', label: 'Refunded' },
 };
 
@@ -180,7 +180,7 @@ function Pagination({ current, total, perPage, onChange }: PaginationProps) {
     }
 
     return (
-        <div className="px-6 py-4 bg-surface-container-low/20 border-t border-outline-variant/10 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="px-6 py-4 bg-surface-container-low border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
             <p className="text-xs text-on-surface-variant font-medium">
                 Showing {start}–{end} of {total} results
             </p>
@@ -188,7 +188,7 @@ function Pagination({ current, total, perPage, onChange }: PaginationProps) {
                 <button
                     onClick={() => onChange(current - 1)}
                     disabled={current === 1}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container-lowest transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95"
+                    className="w-8 h-8 flex items-center justify-center rounded-lg border border-border text-on-surface-variant hover:bg-surface-container-lowest transition-all disabled:bg-gray-100 disabled:text-gray-400 dark:disabled:bg-gray-800 dark:disabled:text-gray-500 disabled:cursor-not-allowed active:scale-95"
                 >
                     <ChevronLeft className="w-4 h-4" />
                 </button>
@@ -204,7 +204,7 @@ function Pagination({ current, total, perPage, onChange }: PaginationProps) {
                             className={`w-8 h-8 flex items-center justify-center rounded-lg text-xs font-bold transition-all active:scale-95 ${
                                 p === current
                                     ? 'bg-primary-container text-white shadow-sm'
-                                    : 'border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container-lowest'
+                                    : 'border border-border text-on-surface-variant hover:bg-surface-container-lowest'
                             }`}
                         >
                             {p}
@@ -214,7 +214,7 @@ function Pagination({ current, total, perPage, onChange }: PaginationProps) {
                 <button
                     onClick={() => onChange(current + 1)}
                     disabled={current === totalPages}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container-lowest transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95"
+                    className="w-8 h-8 flex items-center justify-center rounded-lg border border-border text-on-surface-variant hover:bg-surface-container-lowest transition-all disabled:bg-gray-100 disabled:text-gray-400 dark:disabled:bg-gray-800 dark:disabled:text-gray-500 disabled:cursor-not-allowed active:scale-95"
                 >
                     <ChevronRight className="w-4 h-4" />
                 </button>
@@ -241,7 +241,7 @@ function RowMenu({ order, onClose }: RowMenuProps) {
     return (
         <div
             ref={ref}
-            className="absolute right-8 top-full z-50 mt-1 min-w-[160px] bg-surface-container-lowest rounded-xl shadow-card-hover border border-outline-variant/20 py-1 animate-fadeIn"
+            className="absolute right-8 top-full z-50 mt-1 min-w-[160px] bg-surface-container-lowest rounded-xl shadow-card-hover border border-border py-1 animate-fadeIn"
         >
             <Link
                 to={`/admin/orders/${order.id}`}
@@ -274,15 +274,15 @@ function BulkBar({ count, onClear }: BulkBarProps) {
                 {count} order{count !== 1 ? 's' : ''} selected
             </span>
             <div className="flex items-center gap-3">
-                <button className="px-4 py-1.5 bg-bid-green text-white rounded-lg text-xs font-bold hover:opacity-90 active:scale-95 transition-all">
+                <button className="px-4 py-1.5 bg-bid-green text-white rounded-lg text-xs font-bold hover:brightness-95 active:scale-95 transition-all">
                     Mark Shipped
                 </button>
-                <button className="px-4 py-1.5 bg-tertiary text-white rounded-lg text-xs font-bold hover:opacity-90 active:scale-95 transition-all">
+                <button className="px-4 py-1.5 bg-tertiary text-white rounded-lg text-xs font-bold hover:brightness-95 active:scale-95 transition-all">
                     Export Selected
                 </button>
                 <button
                     onClick={onClear}
-                    className="p-1.5 hover:bg-white/10 rounded-lg transition-colors active:scale-95"
+                    className="p-1.5 hover:bg-gray-700 rounded-lg transition-colors active:scale-95"
                     title="Clear selection"
                 >
                     <X className="w-4 h-4" />
@@ -438,7 +438,7 @@ const OrderManagement: React.FC = () => {
 
             {/* ── Error Banner ─────────────────────────────────────────────── */}
             {error && (
-                <div className="bg-error-container border border-error/20 text-on-error-container px-4 py-3 rounded-xl flex items-start gap-3">
+                <div className="bg-error-container border border-error-container text-on-error-container px-4 py-3 rounded-xl flex items-start gap-3">
                     <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5 text-error" />
                     <p className="text-sm">{error}</p>
                 </div>
@@ -450,26 +450,26 @@ const OrderManagement: React.FC = () => {
                     label="Today's Orders"
                     value={counts.all}
                     icon={<ShoppingBag className="w-5 h-5 text-primary-container" />}
-                    iconBg="bg-primary-container/10"
+                    iconBg="bg-primary-subtle"
                     accent
                 />
                 <KpiCard
                     label="Total Revenue"
                     value={formatCurrency(totalRevenue)}
                     icon={<TrendingUp className="w-5 h-5 text-bid-green" />}
-                    iconBg="bg-bid-green/10"
+                    iconBg="bg-success-subtle"
                 />
                 <KpiCard
                     label="Fulfillment Rate"
                     value={`${fulfillmentRate}%`}
                     icon={<Truck className="w-5 h-5 text-tertiary" />}
-                    iconBg="bg-tertiary/10"
+                    iconBg="bg-info-subtle"
                 />
                 <KpiCard
                     label="Needs Attention"
                     value={lateOrders}
                     icon={<Clock className="w-5 h-5 text-bid-amber" />}
-                    iconBg="bg-bid-amber/10"
+                    iconBg="bg-warning-subtle"
                 />
             </div>
 
@@ -487,13 +487,13 @@ const OrderManagement: React.FC = () => {
                                 className={`flex-shrink-0 px-4 py-2 rounded-xl text-sm font-bold transition-all whitespace-nowrap active:scale-95 ${
                                     isActive
                                         ? 'bg-surface-container-lowest shadow-card text-primary-container'
-                                        : 'text-on-surface-variant hover:bg-surface-container-lowest/60'
+                                        : 'text-on-surface-variant hover:bg-surface-container-lowest'
                                 }`}
                             >
                                 {tab.label}
                                 {count > 0 && (
                                     <span className={`ml-1.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
-                                        isActive ? 'bg-primary-container/10 text-primary-container' : 'bg-surface-container text-on-surface-variant'
+                                        isActive ? 'bg-primary-subtle text-primary-container' : 'bg-surface-container text-on-surface-variant'
                                     }`}>
                                         {count}
                                     </span>
@@ -504,7 +504,7 @@ const OrderManagement: React.FC = () => {
                 </div>
 
                 {/* Search */}
-                <div className="relative flex items-center bg-surface-container-low px-4 py-2.5 rounded-2xl border border-outline-variant/15 lg:w-72">
+                <div className="relative flex items-center bg-surface-container-low px-4 py-2.5 rounded-2xl border border-border lg:w-72">
                     <Search className="w-4 h-4 text-outline flex-shrink-0" />
                     <input
                         type="text"
@@ -521,10 +521,10 @@ const OrderManagement: React.FC = () => {
                 </div>
 
                 {/* Date range hint */}
-                <div className="hidden lg:flex items-center gap-2 bg-surface-container-low px-4 py-2.5 rounded-2xl border border-outline-variant/15 text-sm text-on-surface-variant cursor-pointer hover:bg-surface-container transition-colors">
+                <div className="hidden lg:flex items-center gap-2 bg-surface-container-low px-4 py-2.5 rounded-2xl border border-border text-sm text-on-surface-variant cursor-pointer hover:bg-surface-container transition-colors">
                     <CalendarDays className="w-4 h-4 text-outline" />
                     <span className="font-medium">Last 30 Days</span>
-                    <ChevronRight className="w-3.5 h-3.5 ml-1 opacity-60" />
+                    <ChevronRight className="w-3.5 h-3.5 ml-1" />
                 </div>
             </div>
 
@@ -536,7 +536,7 @@ const OrderManagement: React.FC = () => {
             {/* ── Orders Table ──────────────────────────────────────────────── */}
             <div className="bg-surface-container-lowest rounded-2xl shadow-card overflow-hidden">
                 {/* Table header row */}
-                <div className="px-6 py-5 flex items-center justify-between border-b border-outline-variant/10">
+                <div className="px-6 py-5 flex items-center justify-between border-b border-border">
                     <div className="flex items-center gap-3">
                         <h3 className="font-headline font-bold text-lg text-on-surface">
                             Active Transactions
@@ -564,31 +564,31 @@ const OrderManagement: React.FC = () => {
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-surface-container-low/30">
+                            <tr className="bg-surface-container-low">
                                 <th className="px-4 py-4 w-10">
                                     <input
                                         type="checkbox"
                                         checked={allPageSelected}
                                         onChange={toggleSelectAll}
-                                        className="rounded border-outline-variant text-primary-container focus:ring-primary-container/20 w-4 h-4 cursor-pointer"
+                                        className="rounded border-outline-variant text-primary-container focus:ring-primary-200 w-4 h-4 cursor-pointer"
                                     />
                                 </th>
                                 {['Order ID', 'Customer', 'Items', 'Total', 'Payment', 'Status', 'Date', 'Actions'].map((h) => (
                                     <th
                                         key={h}
-                                        className="px-6 py-4 text-[10px] uppercase tracking-widest font-black text-on-surface-variant/60 whitespace-nowrap"
+                                        className="px-6 py-4 text-[10px] uppercase tracking-widest font-black text-on-surface-variant whitespace-nowrap"
                                     >
                                         {h}
                                     </th>
                                 ))}
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-outline-variant/10">
+                        <tbody className="divide-y divide-border">
                             {paginated.length === 0 ? (
                                 <tr>
                                     <td colSpan={9} className="px-6 py-16 text-center">
                                         <div className="flex flex-col items-center gap-3 text-on-surface-variant">
-                                            <Package className="w-10 h-10 opacity-30" />
+                                            <Package className="w-10 h-10 text-gray-300" />
                                             <p className="font-medium text-sm">No orders found</p>
                                             {search && (
                                                 <button
@@ -605,8 +605,8 @@ const OrderManagement: React.FC = () => {
                                 paginated.map((order) => (
                                     <tr
                                         key={order.id}
-                                        className={`hover:bg-surface-container-low/20 transition-colors group relative ${
-                                            selectedIds.has(order.id) ? 'bg-primary-container/5' : ''
+                                        className={`hover:bg-surface-container-low transition-colors group relative ${
+                                            selectedIds.has(order.id) ? 'bg-primary-subtle' : ''
                                         }`}
                                     >
                                         {/* Checkbox */}
@@ -615,7 +615,7 @@ const OrderManagement: React.FC = () => {
                                                 type="checkbox"
                                                 checked={selectedIds.has(order.id)}
                                                 onChange={() => toggleRow(order.id)}
-                                                className="rounded border-outline-variant text-primary-container focus:ring-primary-container/20 w-4 h-4 cursor-pointer"
+                                                className="rounded border-outline-variant text-primary-container focus:ring-primary-200 w-4 h-4 cursor-pointer"
                                             />
                                         </td>
 
@@ -709,9 +709,9 @@ const OrderManagement: React.FC = () => {
             {/* ── Contextual Insight Row ────────────────────────────────────── */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Shipping health */}
-                <div className="bg-surface-container-lowest p-6 rounded-2xl shadow-card border border-outline-variant/10">
+                <div className="bg-surface-container-lowest p-6 rounded-2xl shadow-card border border-border">
                     <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 bg-primary-container/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <div className="w-10 h-10 bg-primary-subtle rounded-xl flex items-center justify-center flex-shrink-0">
                             <Truck className="w-5 h-5 text-primary-container" />
                         </div>
                         <h4 className="font-headline font-bold text-on-surface">Shipping Health</h4>
@@ -734,7 +734,7 @@ const OrderManagement: React.FC = () => {
                 {/* Pending attention */}
                 <div className="bg-surface-container-lowest p-6 rounded-2xl shadow-card border-l-4 border-bid-amber">
                     <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 bg-bid-amber/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <div className="w-10 h-10 bg-warning-subtle rounded-xl flex items-center justify-center flex-shrink-0">
                             <Clock className="w-5 h-5 text-bid-amber" />
                         </div>
                         <h4 className="font-headline font-bold text-on-surface">Pending Attention</h4>
@@ -745,7 +745,7 @@ const OrderManagement: React.FC = () => {
                     <div className="flex gap-2">
                         <button
                             onClick={() => setActiveFilter('pending')}
-                            className="flex-1 px-3 py-2 bg-bid-amber/10 text-bid-amber rounded-lg text-xs font-bold hover:bg-bid-amber/20 transition-colors active:scale-95"
+                            className="flex-1 px-3 py-2 bg-warning-subtle text-bid-amber rounded-lg text-xs font-bold hover:bg-warning-100 transition-colors active:scale-95"
                         >
                             View Pending
                         </button>
@@ -760,13 +760,12 @@ const OrderManagement: React.FC = () => {
 
                 {/* Pro insight card */}
                 <div className="bg-on-background text-white p-6 rounded-2xl shadow-card relative overflow-hidden group">
-                    <div className="absolute -right-8 -bottom-8 w-40 h-40 bg-primary opacity-20 blur-[60px] group-hover:opacity-40 transition-opacity pointer-events-none" />
                     <div className="relative z-10 flex flex-col h-full">
-                        <span className="inline-block mb-3 px-3 py-1 bg-primary-container/20 text-primary-container rounded-full text-[10px] font-black tracking-widest uppercase w-fit">
+                        <span className="inline-block mb-3 px-3 py-1 bg-primary-subtle text-primary-container rounded-full text-[10px] font-black tracking-widest uppercase w-fit">
                             Pro Tip
                         </span>
                         <h4 className="font-syne text-lg font-extrabold mb-2">Bulk Label Generator</h4>
-                        <p className="text-white/60 text-sm leading-relaxed mb-5 flex-1">
+                        <p className="text-gray-200 text-sm leading-relaxed mb-5 flex-1">
                             Process up to 50 pending orders at once with automated shipping label generation.
                         </p>
                         <button className="bg-white text-on-surface px-5 py-2.5 rounded-xl font-bold text-sm hover:scale-105 transition-transform active:scale-95 w-fit">

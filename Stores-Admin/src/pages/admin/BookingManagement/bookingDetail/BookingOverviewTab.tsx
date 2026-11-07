@@ -46,50 +46,50 @@ const BookingOverviewTab: React.FC<BookingOverviewTabProps> = ({
             >
                 <div className="p-6 text-white">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                        <div className="bg-blue-800  rounded-xl p-4 border border-gray-200">
                             <div className="flex items-center">
-                                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center mr-3">
+                                <div className="w-10 h-10 rounded-xl bg-blue-700 flex items-center justify-center mr-3">
                                     <IconCurrencyDollar className="text-white w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-white/80">Total Value</p>
+                                    <p className="text-xs text-white">Total Value</p>
                                     <p className="font-semibold text-white text-lg">£{booking.final_price || booking.base_price || 0}</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                        <div className="bg-blue-800  rounded-xl p-4 border border-gray-200">
                             <div className="flex items-center">
-                                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center mr-3">
+                                <div className="w-10 h-10 rounded-xl bg-blue-700 flex items-center justify-center mr-3">
                                     <IconPackage className="text-white w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-white/80">Items</p>
+                                    <p className="text-xs text-white">Items</p>
                                     <p className="font-semibold text-white text-lg">{booking.moving_items?.length || 0}</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                        <div className="bg-blue-800  rounded-xl p-4 border border-gray-200">
                             <div className="flex items-center">
-                                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center mr-3">
+                                <div className="w-10 h-10 rounded-xl bg-blue-700 flex items-center justify-center mr-3">
                                     <IconMapPin className="text-white w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-white/80">Stops</p>
+                                    <p className="text-xs text-white">Stops</p>
                                     <p className="font-semibold text-white text-lg">{booking.stops?.length || 0}</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                        <div className="bg-gray-800  rounded-xl p-4 border border-gray-200">
                             <div className="flex items-center">
-                                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center mr-3">
+                                <div className="w-10 h-10 rounded-xl bg-gray-700 flex items-center justify-center mr-3">
                                     <IconTruck className="text-white w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-white/80">Status</p>
-                                    <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-white/20 text-white border border-white/30">
+                                    <p className="text-xs text-white">Status</p>
+                                    <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-gray-700 text-white border border-gray-200">
                                         {booking.status?.charAt(0).toUpperCase() + booking.status?.slice(1).replace(/_/g, ' ')}
                                     </span>
                                 </div>
@@ -99,34 +99,34 @@ const BookingOverviewTab: React.FC<BookingOverviewTabProps> = ({
 
                     {/* Service Details */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl flex items-center border border-white/20">
+                        <div className="bg-gray-800  p-4 rounded-xl flex items-center border border-gray-200">
                             <IconTruck className="text-white mr-3 w-5 h-5" />
                             <div>
-                                <div className="text-xs text-white/80">Request Type</div>
+                                <div className="text-xs text-white">Request Type</div>
                                 <div className="text-sm font-semibold text-white">{booking.request_type || 'Standard'}</div>
                             </div>
                         </div>
 
-                        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl flex items-center border border-white/20">
+                        <div className="bg-gray-800  p-4 rounded-xl flex items-center border border-gray-200">
                             <IconUser className="text-white mr-3 w-5 h-5" />
                             <div>
-                                <div className="text-xs text-white/80">Service Level</div>
+                                <div className="text-xs text-white">Service Level</div>
                                 <div className="text-sm font-semibold text-white">{booking.service_level || 'Standard'}</div>
                             </div>
                         </div>
 
-                        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl flex items-center border border-white/20">
+                        <div className="bg-gray-800  p-4 rounded-xl flex items-center border border-gray-200">
                             <IconRoute className="text-white mr-3 w-5 h-5" />
                             <div>
-                                <div className="text-xs text-white/80">Distance</div>
+                                <div className="text-xs text-white">Distance</div>
                                 <div className="text-sm font-semibold text-white">{booking.estimated_distance || 0}km</div>
                             </div>
                         </div>
 
-                        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl flex items-center border border-white/20">
+                        <div className="bg-gray-800  p-4 rounded-xl flex items-center border border-gray-200">
                             <IconClock className="text-white mr-3 w-5 h-5" />
                             <div>
-                                <div className="text-xs text-white/80">Est. Duration</div>
+                                <div className="text-xs text-white">Est. Duration</div>
                                 <div className="text-sm font-semibold text-white">{booking.estimated_duration || 'Calculating...'}</div>
                             </div>
                         </div>
@@ -136,21 +136,21 @@ const BookingOverviewTab: React.FC<BookingOverviewTabProps> = ({
                     <div className="flex flex-wrap gap-3">
                         <button
                             onClick={onStatusOverride}
-                            className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 border border-amber-400/30"
+                            className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 border border-amber-200"
                         >
                             <IconBell className="w-4 h-4" />
                             Override Status
                         </button>
                         <button
                             onClick={onPriceAdjustment}
-                            className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 border border-emerald-400/30"
+                            className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 border border-emerald-200"
                         >
                             <IconCurrencyDollar className="w-4 h-4" />
                             Adjust Price
                         </button>
                         <button
                             onClick={onRefund}
-                            className="px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 border border-red-400/30"
+                            className="px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 border border-red-200"
                         >
                             <IconBell className="w-4 h-4" />
                             Process Refund
@@ -158,7 +158,7 @@ const BookingOverviewTab: React.FC<BookingOverviewTabProps> = ({
                         {booking.driver && (
                             <button
                                 onClick={onProviderAssignment}
-                                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 border border-blue-400/30"
+                                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 border border-blue-200"
                             >
                                 <IconTruck className="w-4 h-4" />
                                 Reassign Driver
@@ -166,7 +166,7 @@ const BookingOverviewTab: React.FC<BookingOverviewTabProps> = ({
                         )}
                         <button
                             onClick={onConfirmJob}
-                            className="px-4 py-2 bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 border border-purple-400/30"
+                            className="px-4 py-2 bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 border border-purple-200"
                         >
                             <IconBell className="w-4 h-4" />
                             Confirm as Job
@@ -326,10 +326,10 @@ const BookingOverviewTab: React.FC<BookingOverviewTabProps> = ({
                     )}
 
                     {/* Admin Notes */}
-                    <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl shadow-sm p-6 border border-yellow-200 dark:border-yellow-800">
+                    <div className="bg-yellow-50 dark:bg-yellow-950 rounded-xl shadow-sm p-6 border border-yellow-200 dark:border-yellow-800">
                         <h3 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200 mb-4">Admin Notes</h3>
                         <div className="space-y-3 mb-4">
-                            <div className="text-sm text-yellow-700 dark:text-yellow-300 bg-yellow-100 dark:bg-yellow-800/30 p-3 rounded-lg">
+                            <div className="text-sm text-yellow-700 dark:text-yellow-300 bg-yellow-100 dark:bg-yellow-950 p-3 rounded-lg">
                                 <div className="font-medium">System Note</div>
                                 <div>Booking created automatically from website</div>
                                 <div className="text-xs mt-1">{new Date(booking.created_at).toLocaleString()}</div>

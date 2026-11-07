@@ -183,7 +183,7 @@ const PlacementsTab: React.FC<Props> = ({ onChange }) => {
                 <button
                     type="button"
                     onClick={openCreate}
-                    className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary/90 shadow"
+                    className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary-hover shadow"
                 >
                     <IconPlus size={16} /> New placement
                 </button>
@@ -202,7 +202,7 @@ const PlacementsTab: React.FC<Props> = ({ onChange }) => {
                         <button
                             type="button"
                             onClick={openCreate}
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary/90"
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary-hover"
                         >
                             <IconPlus size={16} /> Create your first placement
                         </button>
@@ -223,7 +223,7 @@ const PlacementsTab: React.FC<Props> = ({ onChange }) => {
                                             className={[
                                                 'shrink-0 p-2.5 rounded-xl transition-colors',
                                                 row.is_active
-                                                    ? 'bg-primary/10 text-primary'
+                                                    ? 'bg-primary-subtle text-primary'
                                                     : 'bg-gray-100 dark:bg-gray-800 text-on-surface-variant',
                                             ].join(' ')}
                                         >
@@ -316,7 +316,7 @@ const PlacementsTab: React.FC<Props> = ({ onChange }) => {
                 <ModalShell
                     title={editingId ? 'Edit placement' : 'New placement'}
                     icon={
-                        <span className="p-2 rounded-lg bg-primary/10 text-primary">
+                        <span className="p-2 rounded-lg bg-primary-subtle text-primary">
                             <IconLayoutGrid size={18} />
                         </span>
                     }

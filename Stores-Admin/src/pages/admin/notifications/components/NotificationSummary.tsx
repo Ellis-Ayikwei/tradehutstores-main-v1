@@ -14,7 +14,7 @@ const NotificationSummary: React.FC<NotificationSummaryProps> = ({ summary }) =>
     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
         <div className="flex items-center">
-          <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+          <div className="p-3 bg-blue-100 dark:bg-blue-950 rounded-lg">
             <Bell className="w-6 h-6 text-blue-600 dark:text-blue-400" />
           </div>
           <div className="ml-4">
@@ -26,7 +26,7 @@ const NotificationSummary: React.FC<NotificationSummaryProps> = ({ summary }) =>
       
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
         <div className="flex items-center">
-          <div className="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
+          <div className="p-3 bg-orange-100 dark:bg-orange-950 rounded-lg">
             <AlertCircle className="w-6 h-6 text-orange-600 dark:text-orange-400" />
           </div>
           <div className="ml-4">
@@ -38,7 +38,7 @@ const NotificationSummary: React.FC<NotificationSummaryProps> = ({ summary }) =>
       
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
         <div className="flex items-center">
-          <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-lg">
+          <div className="p-3 bg-red-100 dark:bg-red-950 rounded-lg">
             <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
           </div>
           <div className="ml-4">
@@ -50,7 +50,7 @@ const NotificationSummary: React.FC<NotificationSummaryProps> = ({ summary }) =>
       
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
         <div className="flex items-center">
-          <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
+          <div className="p-3 bg-green-100 dark:bg-green-950 rounded-lg">
             <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
           </div>
           <div className="ml-4">

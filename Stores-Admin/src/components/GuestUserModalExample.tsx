@@ -88,7 +88,7 @@ const GuestUserModalExample: React.FC = () => {
             </div>
 
             {/* Usage instructions */}
-            <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+            <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
                 <h5 className="font-medium text-blue-900 dark:text-blue-100 mb-2">How it works:</h5>
                 <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
                     <li>• If user is authenticated → Proceed directly</li>

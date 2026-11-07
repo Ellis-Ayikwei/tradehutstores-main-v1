@@ -374,7 +374,7 @@ console.log("the jobs data", jobsData);
 
             {/* Error State */}
             {jobsError && (
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6">
+                <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-xl p-6">
                     <div className="flex items-center gap-3">
                         <IconAlertCircle className="w-6 h-6 text-red-500" />
                         <div>
@@ -407,7 +407,7 @@ console.log("the jobs data", jobsData);
 
                     {/* Stats Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
-                        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-6 border border-blue-100 dark:border-blue-800">
+                        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 rounded-2xl p-6 border border-blue-100 dark:border-blue-800">
                             <div className="flex items-center gap-4">
                                 <div className="p-3 bg-blue-500 rounded-xl">
                                     <IconPackage className="w-6 h-6 text-white" />
@@ -419,7 +419,7 @@ console.log("the jobs data", jobsData);
                             </div>
                         </div>
 
-                        <div className="bg-gradient-to-r from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 rounded-2xl p-6 border border-purple-100 dark:border-purple-800">
+                        <div className="bg-gradient-to-r from-purple-50 to-violet-50 dark:from-purple-950 dark:to-violet-950 rounded-2xl p-6 border border-purple-100 dark:border-purple-800">
                             <div className="flex items-center gap-4">
                                 <div className="p-3 bg-purple-500 rounded-xl">
                                     <IconGavel className="w-6 h-6 text-white" />
@@ -431,7 +431,7 @@ console.log("the jobs data", jobsData);
                             </div>
                         </div>
 
-                        <div className="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-2xl p-6 border border-orange-100 dark:border-orange-800">
+                        <div className="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950 dark:to-amber-950 rounded-2xl p-6 border border-orange-100 dark:border-orange-800">
                             <div className="flex items-center gap-4">
                                 <div className="p-3 bg-orange-500 rounded-xl">
                                     <IconTruck className="w-6 h-6 text-white" />
@@ -443,7 +443,7 @@ console.log("the jobs data", jobsData);
                             </div>
                         </div>
 
-                        <div className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 rounded-2xl p-6 border border-emerald-100 dark:border-emerald-800">
+                        <div className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950 dark:to-green-950 rounded-2xl p-6 border border-emerald-100 dark:border-emerald-800">
                             <div className="flex items-center gap-4">
                                 <div className="p-3 bg-emerald-500 rounded-xl">
                                     <IconCheck className="w-6 h-6 text-white" />
@@ -455,7 +455,7 @@ console.log("the jobs data", jobsData);
                             </div>
                         </div>
 
-                        <div className="bg-gradient-to-r from-cyan-50 to-sky-50 dark:from-cyan-900/20 dark:to-sky-900/20 rounded-2xl p-6 border border-cyan-100 dark:border-cyan-800">
+                        <div className="bg-gradient-to-r from-cyan-50 to-sky-50 dark:from-cyan-950 dark:to-sky-950 rounded-2xl p-6 border border-cyan-100 dark:border-cyan-800">
                             <div className="flex items-center gap-4">
                                 <div className="p-3 bg-cyan-500 rounded-xl">
                                     <IconBolt className="w-6 h-6 text-white" />
@@ -467,7 +467,7 @@ console.log("the jobs data", jobsData);
                             </div>
                         </div>
 
-                        <div className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-2xl p-6 border border-indigo-100 dark:border-indigo-800">
+                        <div className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-950 dark:to-blue-950 rounded-2xl p-6 border border-indigo-100 dark:border-indigo-800">
                             <div className="flex items-center gap-4">
                                 <div className="p-3 bg-indigo-500 rounded-xl">
                                     <IconTarget className="w-6 h-6 text-white" />
@@ -678,10 +678,10 @@ console.log("the jobs data", jobsData);
                                                 <div key={index} className="flex items-center gap-2">
                                                     <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${
                                                         index === 0 
-                                                            ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400' 
+                                                            ? 'bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-400' 
                                                             : index === stops.length - 1
-                                                            ? 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400'
-                                                            : 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400'
+                                                            ? 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400'
+                                                            : 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400'
                                                     }`}>
                                                         {index + 1}
                                                         </div>
@@ -857,7 +857,7 @@ console.log("the jobs data", jobsData);
                                         {/* View Job Details */}
                                         <button
                                             onClick={() => navigate(`/admin/jobs/${job.id}`)}
-                                            className="p-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                                            className="p-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 dark:hover:bg-blue-950 rounded-lg transition-colors"
                                             title="View Details"
                                         >
                                             <Eye className="w-4 h-4" />
@@ -866,7 +866,7 @@ console.log("the jobs data", jobsData);
                                         {/* Assign Provider Button */}
                                         <button
                                             onClick={() => showAssignProvider(job)}
-                                            className="p-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                                            className="p-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 dark:hover:bg-blue-950 rounded-lg transition-colors"
                                             title="Assign Provider"
                                         >
                                             <IconUser className="w-4 h-4" />
@@ -876,7 +876,7 @@ console.log("the jobs data", jobsData);
                                         <button
                                             onClick={() => handleDeleteJob(job.id)}
                                             disabled={deletingJobId === job.id}
-                                            className="p-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors disabled:opacity-50"
+                                            className="p-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg transition-colors disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
                                             title="Delete Job"
                                         >
                                             {deletingJobId === job.id ? (
@@ -981,12 +981,12 @@ console.log("the jobs data", jobsData);
 
             {/* Create Job Modal */}
             {showCreateJobModal && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                <div className="fixed inset-0 bg-black/50  flex items-center justify-center z-50 p-4">
                     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-md w-full border border-gray-200 dark:border-gray-700">
                         {/* Header */}
                         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
+                                <div className="p-2 bg-blue-100 dark:bg-blue-950 rounded-lg">
                                     <IconInfoCircle className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                                 </div>
                                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Create a New Job</h2>
@@ -1001,7 +1001,7 @@ console.log("the jobs data", jobsData);
 
                         {/* Content */}
                         <div className="p-6 space-y-4">
-                            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
+                            <div className="p-4 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-xl">
                                 <div className="flex items-start gap-3">
                                     <IconInfoCircle className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
                                     <div>
@@ -1015,7 +1015,7 @@ console.log("the jobs data", jobsData);
 
                             <div className="space-y-3">
                                 <div className="flex items-start gap-3">
-                                    <div className="w-6 h-6 bg-emerald-100 dark:bg-emerald-900/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <div className="w-6 h-6 bg-emerald-100 dark:bg-emerald-950 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                                         <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">1</span>
                                     </div>
                                     <div>
@@ -1025,7 +1025,7 @@ console.log("the jobs data", jobsData);
                                 </div>
 
                                 <div className="flex items-start gap-3">
-                                    <div className="w-6 h-6 bg-emerald-100 dark:bg-emerald-900/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <div className="w-6 h-6 bg-emerald-100 dark:bg-emerald-950 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                                         <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">2</span>
                                     </div>
                                     <div>
@@ -1035,7 +1035,7 @@ console.log("the jobs data", jobsData);
                                 </div>
 
                                 <div className="flex items-start gap-3">
-                                    <div className="w-6 h-6 bg-emerald-100 dark:bg-emerald-900/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <div className="w-6 h-6 bg-emerald-100 dark:bg-emerald-950 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                                         <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">3</span>
                                     </div>
                                     <div>

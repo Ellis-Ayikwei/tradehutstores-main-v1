@@ -242,7 +242,7 @@ const BookingDetail: React.FC = () => {
                             <button
                                 onClick={handleSave}
                                 disabled={saving}
-                                className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl font-medium hover:from-emerald-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 disabled:opacity-50"
+                                className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl font-medium hover:from-emerald-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
                             >
                                 {saving ? (
                                     <>
@@ -298,7 +298,7 @@ const BookingDetail: React.FC = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="flex items-center gap-4">
-                        <div className="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl">
+                        <div className="p-3 bg-emerald-100 dark:bg-emerald-950 rounded-xl">
                             <IconCurrencyDollar className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
                         </div>
                         <div>
@@ -308,7 +308,7 @@ const BookingDetail: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
+                        <div className="p-3 bg-blue-100 dark:bg-blue-950 rounded-xl">
                             <IconCreditCard className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                         </div>
                         <div>
@@ -318,7 +318,7 @@ const BookingDetail: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
+                        <div className="p-3 bg-purple-100 dark:bg-purple-950 rounded-xl">
                             <IconCalendar className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                         </div>
                         <div>
@@ -334,7 +334,7 @@ const BookingDetail: React.FC = () => {
                 {/* Customer Information */}
                 <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                        <div className="p-2 bg-blue-100 dark:bg-blue-950 rounded-lg">
                             <IconUser className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                         </div>
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Customer Information</h3>
@@ -394,7 +394,7 @@ const BookingDetail: React.FC = () => {
                 {/* Provider Information */}
                 <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                        <div className="p-2 bg-emerald-100 dark:bg-emerald-950 rounded-lg">
                             <IconTruck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                         </div>
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Provider Information</h3>
@@ -428,7 +428,7 @@ const BookingDetail: React.FC = () => {
             {/* Schedule and Location */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
                 <div className="flex items-center gap-3 mb-6">
-                    <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                    <div className="p-2 bg-purple-100 dark:bg-purple-950 rounded-lg">
                         <IconMapPin className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Schedule & Locations</h3>
@@ -512,7 +512,7 @@ const BookingDetail: React.FC = () => {
             {/* Items and Notes */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
                 <div className="flex items-center gap-3 mb-6">
-                    <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
+                    <div className="p-2 bg-amber-100 dark:bg-amber-950 rounded-lg">
                         <IconPackage className="w-5 h-5 text-amber-600 dark:text-amber-400" />
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Items & Notes</h3>

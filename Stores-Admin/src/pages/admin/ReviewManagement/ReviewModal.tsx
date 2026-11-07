@@ -174,7 +174,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
 
                                 <div className="space-y-8 max-h-[70vh] overflow-y-auto pr-2">
                                     {/* Basic Information Section */}
-                                    <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-6">
+                                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
                                         <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Basic Information</h4>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             {/* Provider Selection */}
@@ -224,7 +224,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
                                     </div>
 
                                     {/* Rating Section */}
-                                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6">
+                                    <div className="bg-blue-50 dark:bg-blue-950 rounded-lg p-6">
                                         <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Rating Details</h4>
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                             {/* Overall Rating */}
@@ -338,7 +338,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
                                     </div>
 
                                     {/* Review Content Section */}
-                                    <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-6">
+                                    <div className="bg-green-50 dark:bg-green-950 rounded-lg p-6">
                                         <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Review Content</h4>
                                         
                                         {/* Review Text */}
@@ -384,7 +384,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
                                     </div>
 
                                     {/* Review Settings Section */}
-                                    <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-6">
+                                    <div className="bg-purple-50 dark:bg-purple-950 rounded-lg p-6">
                                         <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Review Settings</h4>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div className="flex items-center space-x-3">

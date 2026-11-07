@@ -161,7 +161,7 @@ const ShippingConfig: React.FC = () => {
                     <button
                         type="button"
                         onClick={addZone}
-                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-primary-container/10 text-primary-container text-xs font-bold uppercase tracking-wider hover:bg-primary-container hover:text-on-primary transition-colors active:scale-95"
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-primary-subtle text-primary-container text-xs font-bold uppercase tracking-wider hover:bg-primary-container hover:text-on-primary transition-colors active:scale-95"
                     >
                         <span className="material-symbols-outlined text-base">add</span>
                         Add zone
@@ -169,7 +169,7 @@ const ShippingConfig: React.FC = () => {
                 }
             >
                 {state.shipping_zones.length === 0 ? (
-                    <div className="bg-surface-container-low rounded-xl border border-dashed border-outline-variant/30 p-8 text-center text-sm text-on-surface-variant">
+                    <div className="bg-surface-container-low rounded-xl border border-dashed border-border p-8 text-center text-sm text-on-surface-variant">
                         No zones yet. Add one to start configuring shipping coverage.
                     </div>
                 ) : (
@@ -183,7 +183,7 @@ const ShippingConfig: React.FC = () => {
                             return (
                                 <div
                                     key={z.id}
-                                    className="bg-surface-container-low rounded-xl border border-outline-variant/10 overflow-hidden"
+                                    className="bg-surface-container-low rounded-xl border border-border overflow-hidden"
                                 >
                                     {/* ── Header row ─────────────────────────────────────── */}
                                     <div className="flex items-center gap-3 p-4">
@@ -207,9 +207,9 @@ const ShippingConfig: React.FC = () => {
                                                     updateZone(z.id, { name: e.target.value })
                                                 }
                                                 placeholder="Zone name"
-                                                className="w-full bg-transparent border-0 p-0 text-sm font-bold text-on-surface focus:outline-none placeholder:text-on-surface-variant/60"
+                                                className="w-full bg-transparent border-0 p-0 text-sm font-bold text-on-surface focus:outline-none placeholder:text-on-surface-variant"
                                             />
-                                            <p className="text-xs text-on-surface-variant opacity-70 truncate">
+                                            <p className="text-xs text-on-surface-variant truncate">
                                                 {intl ? (
                                                     <span className="inline-flex items-center gap-1">
                                                         <Pill tone="blue">International</Pill>
@@ -266,7 +266,7 @@ const ShippingConfig: React.FC = () => {
 
                                     {/* ── Editor (expanded) ──────────────────────────────── */}
                                     {isOpen && (
-                                        <div className="border-t border-outline-variant/10 p-4 space-y-4">
+                                        <div className="border-t border-border p-4 space-y-4">
                                             <Toggle
                                                 label="International — ship to every country"
                                                 description="When on, this zone covers all destinations; per-country selections are ignored."
@@ -278,7 +278,7 @@ const ShippingConfig: React.FC = () => {
                                                 <>
                                                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:justify-between">
                                                         <div className="relative flex-1 max-w-sm">
-                                                            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-60 text-base pointer-events-none">
+                                                            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-base pointer-events-none">
                                                                 search
                                                             </span>
                                                             <input
@@ -291,7 +291,7 @@ const ShippingConfig: React.FC = () => {
                                                                     }))
                                                                 }
                                                                 placeholder="Search countries"
-                                                                className="w-full pl-9 pr-3 py-2 text-sm bg-surface-container-lowest border border-outline-variant/20 rounded-xl text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary-container"
+                                                                className="w-full pl-9 pr-3 py-2 text-sm bg-surface-container-lowest border border-border rounded-xl text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary-container"
                                                             />
                                                         </div>
                                                         <div className="flex items-center gap-2">
@@ -304,7 +304,7 @@ const ShippingConfig: React.FC = () => {
                                                             >
                                                                 Clear all
                                                             </button>
-                                                            <span className="text-on-surface-variant opacity-30">
+                                                            <span className="text-on-surface-variant">
                                                                 ·
                                                             </span>
                                                             <button
@@ -338,7 +338,7 @@ const ShippingConfig: React.FC = () => {
                                                             return (
                                                                 <div key={region}>
                                                                     <div className="flex items-center justify-between mb-2">
-                                                                        <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant opacity-70">
+                                                                        <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
                                                                             {REGION_LABELS[region]}
                                                                         </p>
                                                                         <button
@@ -373,15 +373,15 @@ const ShippingConfig: React.FC = () => {
                                                                                     }
                                                                                     className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-colors active:scale-[0.98] ${
                                                                                         checked
-                                                                                            ? 'bg-primary-container/10 border-primary-container/30'
-                                                                                            : 'bg-surface-container-lowest border-outline-variant/15 hover:border-primary-container/30'
+                                                                                            ? 'bg-primary-subtle border-primary-200'
+                                                                                            : 'bg-surface-container-lowest border-border hover:border-primary-200'
                                                                                     }`}
                                                                                 >
                                                                                     <span
                                                                                         className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 transition-colors ${
                                                                                             checked
                                                                                                 ? 'bg-primary-container border-primary-container'
-                                                                                                : 'border-outline-variant/40'
+                                                                                                : 'border-border'
                                                                                         }`}
                                                                                     >
                                                                                         {checked && (
@@ -396,7 +396,7 @@ const ShippingConfig: React.FC = () => {
                                                                                     <span className="text-sm text-on-surface truncate">
                                                                                         {c.name}
                                                                                     </span>
-                                                                                    <span className="ml-auto font-mono text-[10px] text-on-surface-variant opacity-60">
+                                                                                    <span className="ml-auto font-mono text-[10px] text-on-surface-variant">
                                                                                         {c.code}
                                                                                     </span>
                                                                                 </button>
@@ -415,11 +415,11 @@ const ShippingConfig: React.FC = () => {
                                                 </>
                                             )}
 
-                                            <div className="flex justify-end pt-2 border-t border-outline-variant/10">
+                                            <div className="flex justify-end pt-2 border-t border-border">
                                                 <button
                                                     type="button"
                                                     onClick={() => deleteZone(z.id)}
-                                                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider text-error hover:bg-error-container/40 transition-colors active:scale-95"
+                                                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider text-error hover:bg-error-container transition-colors active:scale-95"
                                                 >
                                                     <span className="material-symbols-outlined text-base">
                                                         delete
@@ -441,9 +441,9 @@ const ShippingConfig: React.FC = () => {
                 title="Delivery methods"
                 description={`Rates display in store base currency (${baseCurrency}).`}
             >
-                <div className="overflow-x-auto rounded-xl border border-outline-variant/10">
+                <div className="overflow-x-auto rounded-xl border border-border">
                     <table className="w-full text-sm">
-                        <thead className="bg-surface-container-low/60">
+                        <thead className="bg-surface-container-low">
                             <tr className="text-left">
                                 <th className="px-4 py-2 text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">
                                     Method
@@ -462,9 +462,9 @@ const ShippingConfig: React.FC = () => {
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-outline-variant/10">
+                        <tbody className="divide-y divide-border">
                             {state.shipping_methods.map((m) => (
-                                <tr key={m.id} className="hover:bg-surface-container-low/40">
+                                <tr key={m.id} className="hover:bg-surface-container-low">
                                     <td className="px-4 py-2.5">
                                         <div className="flex items-center gap-2">
                                             <span className="material-symbols-outlined text-base text-on-surface-variant">
@@ -482,7 +482,7 @@ const ShippingConfig: React.FC = () => {
                                             onChange={(e) =>
                                                 updateMethod(m.id, { rate: Number(e.target.value) })
                                             }
-                                            className="w-24 bg-surface-container-low border border-outline-variant/20 rounded-lg px-2.5 py-1 text-sm font-mono text-on-surface text-right focus:outline-none focus:border-primary-container"
+                                            className="w-24 bg-surface-container-low border border-border rounded-lg px-2.5 py-1 text-sm font-mono text-on-surface text-right focus:outline-none focus:border-primary-container"
                                         />
                                     </td>
                                     <td className="px-4 py-2.5 text-right font-mono text-xs text-on-surface-variant">
@@ -524,7 +524,7 @@ const ShippingConfig: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                     <Field label="Free shipping threshold" hint="Orders at/above this value ship free.">
                         <div className="flex">
-                            <span className="inline-flex items-center px-3 rounded-l-xl bg-surface-container border border-r-0 border-outline-variant/20 text-xs font-mono text-on-surface-variant">
+                            <span className="inline-flex items-center px-3 rounded-l-xl bg-surface-container border border-r-0 border-border text-xs font-mono text-on-surface-variant">
                                 {baseCurrency}
                             </span>
                             <input
@@ -534,7 +534,7 @@ const ShippingConfig: React.FC = () => {
                                 onChange={(e) =>
                                     set('shipping_free_threshold', Number(e.target.value))
                                 }
-                                className="flex-1 bg-surface-container-low border border-outline-variant/20 rounded-r-xl px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:border-primary-container"
+                                className="flex-1 bg-surface-container-low border border-border rounded-r-xl px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:border-primary-container"
                             />
                         </div>
                     </Field>
@@ -590,7 +590,7 @@ const ShippingConfig: React.FC = () => {
                 />
 
                 {error && (
-                    <div className="bg-error-container/40 border border-error/30 text-on-error-container rounded-xl px-4 py-3 text-sm whitespace-pre-wrap">
+                    <div className="bg-error-container border border-error-container text-on-error-container rounded-xl px-4 py-3 text-sm whitespace-pre-wrap">
                         {error}
                     </div>
                 )}

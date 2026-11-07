@@ -241,11 +241,11 @@ const AuditTrail: React.FC = () => {
 
     // Get activity badge color
     const getActivityBadgeColor = (type: string) => {
-        if (type.includes('login') || type.includes('activate')) return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
-        if (type.includes('logout') || type.includes('delete') || type.includes('cancel')) return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
-        if (type.includes('update') || type.includes('modify')) return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
-        if (type.includes('create') || type.includes('register')) return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400';
+        if (type.includes('login') || type.includes('activate')) return 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-400';
+        if (type.includes('logout') || type.includes('delete') || type.includes('cancel')) return 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400';
+        if (type.includes('update') || type.includes('modify')) return 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-400';
+        if (type.includes('create') || type.includes('register')) return 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-400';
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-400';
     };
 
     const columns: ColumnDefinition[] = [
@@ -324,7 +324,7 @@ const AuditTrail: React.FC = () => {
                         setSelectedActivity(item);
                         setShowDetailsModal(true);
                     }}
-                    className="p-2 text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors"
+                    className="p-2 text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 dark:hover:bg-indigo-950 rounded-lg transition-colors"
                     title="View Details"
                 >
                     <IconEye className="w-4 h-4" />
@@ -428,7 +428,7 @@ const AuditTrail: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
                         <div className="flex items-center gap-4">
-                            <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
+                            <div className="p-3 bg-blue-100 dark:bg-blue-950 rounded-xl">
                                 <IconActivity className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                             </div>
                             <div>
@@ -439,7 +439,7 @@ const AuditTrail: React.FC = () => {
                     </div>
                     <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
                         <div className="flex items-center gap-4">
-                            <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
+                            <div className="p-3 bg-green-100 dark:bg-green-950 rounded-xl">
                                 <IconClock className="w-6 h-6 text-green-600 dark:text-green-400" />
                             </div>
                             <div>
@@ -450,7 +450,7 @@ const AuditTrail: React.FC = () => {
                     </div>
                     <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
                         <div className="flex items-center gap-4">
-                            <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
+                            <div className="p-3 bg-purple-100 dark:bg-purple-950 rounded-xl">
                                 <IconUser className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                             </div>
                             <div>
@@ -461,7 +461,7 @@ const AuditTrail: React.FC = () => {
                     </div>
                     <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
                         <div className="flex items-center gap-4">
-                            <div className="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-xl">
+                            <div className="p-3 bg-orange-100 dark:bg-orange-950 rounded-xl">
                                 <IconActivity className="w-6 h-6 text-orange-600 dark:text-orange-400" />
                             </div>
                             <div>
@@ -550,7 +550,7 @@ const AuditTrail: React.FC = () => {
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
                     >
-                        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
+                        <div className="fixed inset-0 bg-black/50 " />
                     </Transition.Child>
 
                     <div className="fixed inset-0 overflow-y-auto">

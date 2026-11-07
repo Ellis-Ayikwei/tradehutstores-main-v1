@@ -93,7 +93,7 @@ const OverridePriceModal: React.FC<OverridePriceModalProps> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
+          <div className="fixed inset-0 bg-black/60 " />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -107,7 +107,7 @@ const OverridePriceModal: React.FC<OverridePriceModalProps> = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-2xl ring-1 ring-white/10 transition-all">
+              <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-2xl ring-1 ring-gray-200 transition-all">
                 <div className="relative">
                   {/* Header */}
                   <div className="px-6 pt-6">
@@ -127,7 +127,7 @@ const OverridePriceModal: React.FC<OverridePriceModalProps> = ({
                       </div>
                       <button 
                         onClick={onClose} 
-                        className="absolute right-0 p-2 rounded-lg text-gray-500 hover:text-gray-800 hover:bg-black/5 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/10 transition"
+                        className="absolute right-0 p-2 rounded-lg text-gray-500 hover:text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-800 transition"
                       >
                         <X className="w-5 h-5" />
                       </button>
@@ -138,7 +138,7 @@ const OverridePriceModal: React.FC<OverridePriceModalProps> = ({
                   <div className="px-6 py-5">
                     {/* Current Price Display */}
                     <div className="mb-6">
-                      <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+                      <div className="p-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-700">
                         <div className="flex items-center gap-2 mb-2">
                           <Calculator className="w-4 h-4 text-blue-600" />
                           <span className="text-sm font-medium text-blue-800 dark:text-blue-200">Current Price</span>
@@ -176,8 +176,8 @@ const OverridePriceModal: React.FC<OverridePriceModalProps> = ({
                       {priceDifference !== 0 && (
                         <div className={`mt-2 p-2 rounded-lg text-sm font-medium ${
                           priceDifference > 0 
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                            : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                            ? 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300'
+                            : 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300'
                         }`}>
                           <div className="flex items-center gap-2">
                             {priceDifference > 0 ? (
@@ -212,7 +212,7 @@ const OverridePriceModal: React.FC<OverridePriceModalProps> = ({
                     </div>
 
                     {/* Warning Notice */}
-                    <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-700">
+                    <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-950 rounded-lg border border-amber-200 dark:border-amber-700">
                       <div className="flex items-start gap-2">
                         <AlertTriangle className="w-16 h-16 text-amber-600 dark:text-amber-400 mt-0.5" />
                         <div>
@@ -229,7 +229,7 @@ const OverridePriceModal: React.FC<OverridePriceModalProps> = ({
 
                     {/* Error Display */}
                     {error && (
-                      <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg">
+                      <div className="mb-4 p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-700 rounded-lg">
                         <div className="flex items-center gap-2">
                           <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
                           <span className="text-sm text-red-800 dark:text-red-200">{error}</span>
@@ -243,7 +243,7 @@ const OverridePriceModal: React.FC<OverridePriceModalProps> = ({
                     <button
                       onClick={onClose}
                       disabled={isSubmitting}
-                      className="px-4 py-2 text-sm rounded-lg border border-gray-300/80 dark:border-gray-700/80 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/10 transition disabled:opacity-50"
+                      className="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
                     >
                       Cancel
                     </button>
@@ -251,7 +251,7 @@ const OverridePriceModal: React.FC<OverridePriceModalProps> = ({
                       onClick={handleSubmit}
                       disabled={isSubmitting || !newPrice || !reason.trim()}
                       className={`px-4 py-2 text-sm rounded-lg text-white bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 shadow-md shadow-emerald-600/20 flex items-center gap-2 transition ${
-                        isSubmitting || !newPrice || !reason.trim() ? 'opacity-60 cursor-not-allowed' : ''
+                        isSubmitting || !newPrice || !reason.trim() ? 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed' : ''
                       }`}
                     >
                       {isSubmitting ? (

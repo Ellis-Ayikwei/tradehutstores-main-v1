@@ -27,42 +27,42 @@ interface StatCardProps {
       const colorMap: {[key: string]: {bg: string, bgDark: string, text: string, textDark: string, border: string}} = {
         blue: {
           bg: 'bg-blue-100', 
-          bgDark: 'dark:bg-blue-900/50',
+          bgDark: 'dark:bg-blue-900',
           text: 'text-blue-500',
           textDark: 'dark:text-blue-400',
           border: 'border-blue-500'
         },
         purple: {
           bg: 'bg-purple-100',
-          bgDark: 'dark:bg-purple-900/50',
+          bgDark: 'dark:bg-purple-900',
           text: 'text-purple-500',
           textDark: 'dark:text-purple-400',
           border: 'border-purple-500'
         },
         green: {
           bg: 'bg-green-100',
-          bgDark: 'dark:bg-green-900/50',
+          bgDark: 'dark:bg-green-900',
           text: 'text-green-500',
           textDark: 'dark:text-green-400',
           border: 'border-green-500'
         },
         yellow: {
           bg: 'bg-yellow-100',
-          bgDark: 'dark:bg-yellow-900/50',
+          bgDark: 'dark:bg-yellow-900',
           text: 'text-yellow-500',
           textDark: 'dark:text-yellow-400',
           border: 'border-yellow-500'
         },
         red: {
           bg: 'bg-red-100',
-          bgDark: 'dark:bg-red-900/50',
+          bgDark: 'dark:bg-red-900',
           text: 'text-red-500',
           textDark: 'dark:text-red-400',
           border: 'border-red-500'
         },
         indigo: {
           bg: 'bg-indigo-100',
-          bgDark: 'dark:bg-indigo-900/50',
+          bgDark: 'dark:bg-indigo-900',
           text: 'text-indigo-500',
           textDark: 'dark:text-indigo-400',
           border: 'border-indigo-500'
@@ -76,10 +76,6 @@ interface StatCardProps {
     
     return (
       <div className="group relative bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 hover:shadow-lg transition-all duration-300 hover:translate-y-[-2px] overflow-hidden" style={{borderLeftColor: `var(--tw-${color}-500)`}}>
-        {/* Decorative background element */}
-        <div className="absolute right-0 top-0 w-20 h-20 opacity-5 transition-all duration-300 group-hover:scale-125">
-          <FontAwesomeIcon icon={icon} className="w-full h-full" />
-        </div>
         
         <div className="flex items-center">
           <div className={`rounded-full ${colors.bg} ${colors.bgDark} p-3 mr-4 transition-all duration-300 group-hover:scale-110`}>

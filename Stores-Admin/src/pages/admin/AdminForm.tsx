@@ -384,7 +384,7 @@ const AdminForm: React.FC = () => {
 
             {/* Success Message */}
             {successMessage && (
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 dark:from-green-900/20 dark:to-emerald-900/20 dark:border-green-800">
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 dark:from-green-950 dark:to-emerald-950 dark:border-green-800">
                     <div className="flex items-center gap-3">
                         <IconCheck className="w-5 h-5 text-green-600 dark:text-green-400" />
                         <span className="text-green-800 dark:text-green-300 font-medium">{successMessage}</span>
@@ -394,7 +394,7 @@ const AdminForm: React.FC = () => {
 
             {/* Permission Error */}
             {permissionsError && (
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
+                <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-xl p-4">
                     <div className="flex items-center gap-3">
                         <IconAlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400" />
                         <span className="text-red-800 dark:text-red-300 font-medium">{permissionsError}</span>
@@ -410,7 +410,7 @@ const AdminForm: React.FC = () => {
                 {/* Personal Information */}
                 <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                        <div className="p-2 bg-emerald-100 dark:bg-emerald-950 rounded-lg">
                             <IconUser className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                         </div>
                         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Personal Information</h2>
@@ -533,7 +533,7 @@ const AdminForm: React.FC = () => {
                 {!isEditing && (
                     <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
+                            <div className="p-2 bg-red-100 dark:bg-red-950 rounded-lg">
                                 <IconShield className="w-5 h-5 text-red-600 dark:text-red-400" />
                             </div>
                             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Account Security</h2>
@@ -599,7 +599,7 @@ const AdminForm: React.FC = () => {
                 {/* Roles and Permissions */}
                 <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                        <div className="p-2 bg-purple-100 dark:bg-purple-950 rounded-lg">
                             <IconUserShield className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                         </div>
                         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Roles & Permissions</h2>
@@ -681,7 +681,7 @@ const AdminForm: React.FC = () => {
                 {/* Account Settings */}
                 <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                        <div className="p-2 bg-blue-100 dark:bg-blue-950 rounded-lg">
                             <IconSettings className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                         </div>
                         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Account Settings</h2>
@@ -800,7 +800,7 @@ const AdminForm: React.FC = () => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl font-medium hover:from-emerald-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                        className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl font-medium hover:from-emerald-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed flex items-center gap-2"
                     >
                         {loading ? (
                             <>

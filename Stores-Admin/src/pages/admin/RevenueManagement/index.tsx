@@ -596,7 +596,7 @@ const RevenueManagement: React.FC = () => {
             {
                 label: 'Monthly Revenue',
                 data: monthlyRevenue,
-                backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                backgroundColor: '#93c5fd',
                 borderColor: 'rgba(59, 130, 246, 1)',
                 borderWidth: 1,
             },
@@ -610,7 +610,7 @@ const RevenueManagement: React.FC = () => {
             {
                 label: 'Revenue by Payment Method',
                 data: paymentMethodValues,
-                backgroundColor: ['rgba(59, 130, 246, 0.5)', 'rgba(16, 185, 129, 0.5)', 'rgba(251, 146, 60, 0.5)'],
+                backgroundColor: ['#93c5fd', '#6ee7b7', '#fdba74'],
                 borderColor: ['rgba(59, 130, 246, 1)', 'rgba(16, 185, 129, 1)', 'rgba(251, 146, 60, 1)'],
                 borderWidth: 1,
             },

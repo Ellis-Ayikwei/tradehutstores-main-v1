@@ -6,7 +6,7 @@ const PushNotifications: React.FC = () => {
     <div className="space-y-6">
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
         <div className="flex items-center space-x-3 mb-4">
-          <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+          <div className="p-2 bg-purple-100 dark:bg-purple-950 rounded-lg">
             <Smartphone className="w-5 h-5 text-purple-600 dark:text-purple-400" />
           </div>
           <div>

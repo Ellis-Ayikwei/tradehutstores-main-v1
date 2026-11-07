@@ -107,7 +107,7 @@ const EditWebhook: React.FC<EditWebhookProps> = ({ webhook, onClose, onSave }) =
 
   return (
     <Dialog open={true} onClose={onClose} className="relative z-50">
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" aria-hidden="true" />
+      <div className="fixed inset-0 bg-black/50 " aria-hidden="true" />
       
       <div className="fixed inset-0 flex items-center justify-center p-4">
         <Dialog.Panel className="w-full max-w-4xl max-h-[90vh] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden">
@@ -326,7 +326,7 @@ const EditWebhook: React.FC<EditWebhookProps> = ({ webhook, onClose, onSave }) =
                       <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Events:</p>
                       <div className="flex flex-wrap gap-1">
                         {formData.supportedEvents.map((event) => (
-                          <span key={event} className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 rounded-full text-xs">
+                          <span key={event} className="px-2 py-1 bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-400 rounded-full text-xs">
                             {event}
                           </span>
                         ))}
@@ -337,7 +337,7 @@ const EditWebhook: React.FC<EditWebhookProps> = ({ webhook, onClose, onSave }) =
                       <button
                         onClick={handleTest}
                         disabled={isTesting}
-                        className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-sm"
+                        className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-sm"
                       >
                         {isTesting ? (
                           <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
@@ -354,7 +354,7 @@ const EditWebhook: React.FC<EditWebhookProps> = ({ webhook, onClose, onSave }) =
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+          <div className="flex items-center justify-between p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
             <div className="flex items-center space-x-2">
               {Object.keys(errors).length > 0 ? (
                 <AlertTriangle className="w-4 h-4 text-orange-500" />
@@ -378,7 +378,7 @@ const EditWebhook: React.FC<EditWebhookProps> = ({ webhook, onClose, onSave }) =
               <button
                 onClick={handleSave}
                 disabled={Object.keys(errors).length > 0}
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed"
               >
                 <Save className="mr-2 h-4 w-4" />
                 {webhook?.id ? 'Update' : 'Create'} Webhook

@@ -83,13 +83,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle, show
             {/* Right side - Hero */}
             <div className="hidden lg:block relative flex-1 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800">
                 {/* Background Pattern */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/90 to-blue-800/90"></div>
-                <div
-                    className="absolute inset-0 opacity-10"
-                    style={{
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                    }}
-                ></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800"></div>
 
                 {/* Content */}
                 <div className="relative z-10 flex flex-col justify-center h-full px-12 py-12">
@@ -100,19 +94,19 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle, show
                         {/* Features */}
                         <div className="space-y-4">
                             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 }} className="flex items-center text-white">
-                                <div className="bg-white/20 rounded-full p-2 mr-4">
+                                <div className="bg-blue-700 rounded-full p-2 mr-4">
                                     <IconShieldCheck className="h-5 w-5" />
                                 </div>
                                 <span>Verified & insured providers</span>
                             </motion.div>
                             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.6 }} className="flex items-center text-white">
-                                <div className="bg-white/20 rounded-full p-2 mr-4">
+                                <div className="bg-blue-700 rounded-full p-2 mr-4">
                                     <IconStar className="h-5 w-5" />
                                 </div>
                                 <span>Top-rated customer service</span>
                             </motion.div>
                             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.7 }} className="flex items-center text-white">
-                                <div className="bg-white/20 rounded-full p-2 mr-4">
+                                <div className="bg-blue-700 rounded-full p-2 mr-4">
                                     <IconTruck className="h-5 w-5" />
                                 </div>
                                 <span>Real-time tracking & updates</span>
@@ -124,17 +118,17 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle, show
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.8 }}
-                            className="mt-12 bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20"
+                            className="mt-12 bg-gray-800  rounded-2xl p-6 border border-gray-200"
                         >
                             <div className="flex items-start">
                                 <div className="flex-shrink-0">
-                                    <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                                    <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center">
                                         <span className="text-white font-semibold">M</span>
                                     </div>
                                 </div>
                                 <div className="ml-4">
-                                    <p className="text-white/90 text-sm italic mb-2">"TradeHut made our office relocation seamless. Professional, reliable, and stress-free!"</p>
-                                    <p className="text-white/70 text-xs">- Maria Johnson, Operations Manager</p>
+                                    <p className="text-white text-sm italic mb-2">"TradeHut made our office relocation seamless. Professional, reliable, and stress-free!"</p>
+                                    <p className="text-gray-200 text-xs">- Maria Johnson, Operations Manager</p>
                                 </div>
                             </div>
                         </motion.div>
@@ -151,7 +145,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle, show
                         repeat: Infinity,
                         ease: 'easeInOut',
                     }}
-                    className="absolute top-1/4 right-12 w-16 h-16 bg-white/10 rounded-full backdrop-blur-sm"
+                    className="absolute top-1/4 right-12 w-16 h-16 bg-gray-800 rounded-full "
                 ></motion.div>
                 <motion.div
                     animate={{
@@ -163,7 +157,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle, show
                         ease: 'easeInOut',
                         delay: 1,
                     }}
-                    className="absolute bottom-1/4 right-24 w-8 h-8 bg-white/20 rounded-full backdrop-blur-sm"
+                    className="absolute bottom-1/4 right-24 w-8 h-8 bg-gray-700 rounded-full "
                 ></motion.div>
             </div>
         </div>

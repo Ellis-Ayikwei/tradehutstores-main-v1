@@ -33,7 +33,7 @@ const Setting = () => {
 
                 <div className="overflow-y-auto overflow-x-hidden perfect-scrollbar h-full">
                     <div className="text-center relative pb-5">
-                        <button type="button" className="absolute top-0 ltr:right-0 rtl:left-0 opacity-30 hover:opacity-100 dark:text-white" onClick={() => setShowCustomizer(false)}>
+                        <button type="button" className="absolute top-0 ltr:right-0 rtl:left-0 text-gray-400 hover:text-gray-900 dark:text-gray-500 dark:hover:text-white" onClick={() => setShowCustomizer(false)}>
                             <IconX className="w-5 h-5" />
                         </button>
 

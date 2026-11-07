@@ -127,9 +127,9 @@ const LocalizationConfig: React.FC = () => {
                                     disabled={isDefault}
                                     className={`flex items-center justify-between p-3 rounded-xl border transition-all active:scale-95 ${
                                         enabled
-                                            ? 'bg-primary-container/10 border-primary-container/30 text-primary-container'
-                                            : 'bg-surface-container-low border-outline-variant/15 text-on-surface hover:border-primary-container/30'
-                                    } ${isDefault ? 'cursor-not-allowed opacity-90' : ''}`}
+                                            ? 'bg-primary-subtle border-primary-200 text-primary-container'
+                                            : 'bg-surface-container-low border-border text-on-surface hover:border-primary-200'
+                                    } ${isDefault ? 'cursor-not-allowed' : ''}`}
                                 >
                                     <span className="text-sm font-bold">{l.label}</span>
                                     {isDefault ? (
@@ -139,7 +139,7 @@ const LocalizationConfig: React.FC = () => {
                                             check_circle
                                         </span>
                                     ) : (
-                                        <span className="material-symbols-outlined text-base opacity-40">
+                                        <span className="material-symbols-outlined text-base">
                                             add
                                         </span>
                                     )}
@@ -255,7 +255,7 @@ const LocalizationConfig: React.FC = () => {
                 </div>
 
                 {error && (
-                    <div className="bg-error-container/40 border border-error/30 text-on-error-container rounded-xl px-4 py-3 text-sm whitespace-pre-wrap">
+                    <div className="bg-error-container border border-error-container text-on-error-container rounded-xl px-4 py-3 text-sm whitespace-pre-wrap">
                         {error}
                     </div>
                 )}

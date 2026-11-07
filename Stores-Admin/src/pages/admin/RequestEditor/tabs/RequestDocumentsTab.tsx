@@ -188,7 +188,7 @@ const RequestDocumentsTab: React.FC<RequestDocumentsTabProps> = ({
                     onDrop={handleDrop}
                     className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                         dragActive
-                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-950'
                             : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
                     }`}
                 >
@@ -264,7 +264,7 @@ const RequestDocumentsTab: React.FC<RequestDocumentsTabProps> = ({
                                         type="button"
                                         onClick={() => handleRemoveSelectedFile(index)}
                                         disabled={uploading}
-                                        className="p-1.5 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors flex-shrink-0"
+                                        className="p-1.5 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg transition-colors flex-shrink-0"
                                         title="Remove file"
                                     >
                                         <IconX className="w-4 h-4" />
@@ -296,7 +296,7 @@ const RequestDocumentsTab: React.FC<RequestDocumentsTabProps> = ({
                                 className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
                             >
                                 <div className="flex items-center gap-4 flex-1 min-w-0">
-                                    <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                                    <div className="p-2 bg-blue-100 dark:bg-blue-950 rounded-lg">
                                         <IconFile className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                                     </div>
                                     <div className="flex-1 min-w-0">
@@ -328,7 +328,7 @@ const RequestDocumentsTab: React.FC<RequestDocumentsTabProps> = ({
                                 <div className="flex items-center gap-2">
                                     <button
                                         onClick={() => handleDownload(document)}
-                                        className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                                        className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950 rounded-lg transition-colors"
                                         title="Download"
                                     >
                                         <IconDownload className="w-4 h-4" />
@@ -336,7 +336,7 @@ const RequestDocumentsTab: React.FC<RequestDocumentsTabProps> = ({
                                     <button
                                         onClick={() => handleDelete(document.id)}
                                         disabled={deleting === document.id}
-                                        className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors disabled:opacity-50"
+                                        className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg transition-colors disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
                                         title="Delete"
                                     >
                                         {deleting === document.id ? (

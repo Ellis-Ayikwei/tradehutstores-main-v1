@@ -253,10 +253,7 @@ const PriceForecastPage: React.FC<PriceForecastPageProps> = ({ priceForecast, re
                 {/* Header Section */}
                 <div className="relative bg-white rounded-xl shadow-sm p-4 sm:p-2 mb-4 sm:mb-8 border border-gray-200 overflow-hidden">
                     {/* Enhanced Background Elements */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-secondary/5 to-primary/5"></div>
-                    <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
-                    <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-secondary/10 rounded-full blur-3xl"></div>
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full blur-3xl opacity-50"></div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary-subtle via-muted to-primary-subtle"></div>
 
                     {/* Content with relative positioning */}
                     <div className="relative z-10">
@@ -264,7 +261,7 @@ const PriceForecastPage: React.FC<PriceForecastPageProps> = ({ priceForecast, re
                             <button onClick={() => onBack()} className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600 flex items-center gap-2">
                                 <IconArrowLeft className="w-6 h-6 text-gray-600" />
                             </button>
-                            <div className="p-3 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-lg backdrop-blur-sm border border-primary/20">
+                            <div className="p-3 bg-gradient-to-br from-primary-subtle to-muted rounded-lg  border border-primary-200">
                                 <CalendarIcon className="w-6 h-6 text-primary" />
                             </div>
                             <div>
@@ -277,7 +274,7 @@ const PriceForecastPage: React.FC<PriceForecastPageProps> = ({ priceForecast, re
                         </div>
 
                         <div className="flex flex-row items-center gap-1 mb-2 text-green-700 w-full">
-                            <div className="flex flex-row items-center gap-1 mb-2 border border-gray-200 rounded-lg p-2 text-green-700 bg-white/50 backdrop-blur-sm">
+                            <div className="flex flex-row items-center gap-1 mb-2 border border-gray-200 rounded-lg p-2 text-green-700 bg-white ">
                                 <IconMoneybagMinus className="w-6 h-6" />
                                 <p className="text-sm font-medium sm:text-base">38% cheaper than average</p>
                             </div>
@@ -338,7 +335,7 @@ const PriceForecastPage: React.FC<PriceForecastPageProps> = ({ priceForecast, re
                                             whileTap={{ scale: 0.98 }}
                                             onClick={() => isAvailable && setSelectedDay(day)}
                                             className={`rounded-lg cursor-pointer transition-colors
-                                                ${isAvailable ? 'hover:bg-gray-50' : 'opacity-50 cursor-not-allowed'}
+                                                ${isAvailable ? 'hover:bg-gray-50' : 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed'}
                                                 ${day.is_weekend ? 'bg-yellow-50' : 'bg-white'}
                                                 ${day.is_holiday ? 'border-2 border-red-200' : 'border border-gray-200'}
                                                 p-1.5
@@ -435,7 +432,7 @@ const PriceForecastPage: React.FC<PriceForecastPageProps> = ({ priceForecast, re
                                                 setSelectedDay(day);
                                             }}
                                             className={`min-h-[90px] p-1.5 rounded-lg cursor-pointer transition-colors
-                                                ${isAvailable ? 'hover:bg-gray-50' : 'opacity-50 cursor-not-allowed'}
+                                                ${isAvailable ? 'hover:bg-gray-50' : 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed'}
                                                 ${day.is_weekend ? 'bg-yellow-50' : 'bg-white'}
                                                 ${day.is_holiday ? 'border-2 border-red-200' : 'border border-gray-200'}
                                             `}
