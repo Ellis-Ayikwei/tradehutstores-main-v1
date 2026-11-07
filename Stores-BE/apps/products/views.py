@@ -21,6 +21,7 @@ from .serializers import (
     InventorySerializer,
     ProductDiscountSerializer,
     ProductKeyFeatureSerializer,
+    list_row_prefetches,
 )
 from apps.wishlist.models import Wishlist, WishlistItem, Favorite
 from .permissions import (
@@ -104,11 +105,35 @@ class ProductViewSet(viewsets.ModelViewSet):
             seller=serializer.instance.seller,
         )
 
+    # Actions that render product cards: compact `variants` + `default_variant` per row.
+    LIST_ROW_ACTIONS = frozenset(
+        {
+            "list",
+            "search",
+            "featured",
+            "new_arrivals",
+            "discounted",
+            "popular",
+            "related",
+            "catalog",
+        }
+    )
+
     def get_queryset(self):
         qs = Product.objects.select_related(
             "category", "sub_category", "brand", "default_variant"
-        ).prefetch_related("variants")
+        )
+        if getattr(self, "action", None) in self.LIST_ROW_ACTIONS:
+            qs = qs.prefetch_related(*list_row_prefetches())
+        else:
+            qs = qs.prefetch_related("variants")
         return visible_products(qs, self.request.user)
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        if getattr(self, "action", None) in self.LIST_ROW_ACTIONS:
+            context["list_variants"] = True
+        return context
 
     @action(detail=False, methods=["get"])
     def search(self, request):

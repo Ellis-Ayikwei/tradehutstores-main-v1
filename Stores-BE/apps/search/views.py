@@ -31,6 +31,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
 from apps.products.models import Product
+from apps.products.serializers import list_row_prefetches
 from apps.products.visibility import visibility_q, visible_products
 
 from .compat import HAS_ELASTICSEARCH, HAS_PGVECTOR
@@ -60,7 +61,7 @@ def _vector_enabled() -> bool:
 def _base_queryset(user=None):
     qs = Product.objects.select_related(
         "category", "sub_category", "brand", "default_variant"
-    ).prefetch_related("variants")
+    ).prefetch_related(*list_row_prefetches())
     return visible_products(qs, user)
 
 

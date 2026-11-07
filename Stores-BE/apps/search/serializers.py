@@ -14,9 +14,14 @@ from decimal import Decimal
 from rest_framework import serializers
 
 from apps.products.models import Product
+from apps.products.serializers import (
+    ListVariantsMixin,
+    product_display_image,
+    product_variant_rows,
+)
 
 
-class SearchProductSerializer(serializers.ModelSerializer):
+class SearchProductSerializer(ListVariantsMixin, serializers.ModelSerializer):
     """
     Frontend-friendly product card payload.
 
@@ -35,6 +40,8 @@ class SearchProductSerializer(serializers.ModelSerializer):
         source="average_rating", max_digits=3, decimal_places=2, read_only=True
     )
     in_stock = serializers.BooleanField(source="available", read_only=True)
+    variants = serializers.SerializerMethodField()
+    default_variant = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -55,6 +62,8 @@ class SearchProductSerializer(serializers.ModelSerializer):
             "brand",
             "condition",
             "in_stock",
+            "variants",
+            "default_variant",
             "created_at",
         )
 
@@ -75,7 +84,7 @@ class SearchProductSerializer(serializers.ModelSerializer):
         return self._image_url(obj)
 
     def _image_url(self, obj: Product) -> str | None:
-        img = obj.display_main_image
+        img = product_display_image(obj)
         if not img:
             return None
         try:
@@ -86,8 +95,10 @@ class SearchProductSerializer(serializers.ModelSerializer):
     def _resolve_price(self, obj: Product) -> Decimal | None:
         if obj.default_variant_id and obj.default_variant and obj.default_variant.price is not None:
             return obj.default_variant.price
-        first = obj.variants.order_by("created_at").first()
-        return first.price if first and first.price is not None else None
+        rows = [v for v in product_variant_rows(obj) if v.price is not None]
+        if rows:
+            return min(rows, key=lambda v: (v.created_at, str(v.pk))).price
+        return None
 
     def get_price(self, obj: Product):
         price = self._resolve_price(obj)

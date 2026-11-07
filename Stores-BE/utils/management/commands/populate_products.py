@@ -1090,6 +1090,13 @@ class Command(BaseCommand):
     VARIATION_THEMES = (
         "single", "color", "size", "material", "capacity", "size-color",
     )
+    # Real (non-placeholder) fallback values when an attribute has no values yet.
+    NEUTRAL_ATTRIBUTE_VALUES = {
+        "Color":    "Black",
+        "Size":     "Medium",
+        "Material": "Cotton",
+        "Capacity": "64GB",
+    }
     PRODUCT_SERIES = (
         "Pro", "Ultra", "Max", "Prime", "Plus",
         "Edge", "Elite", "Core", "Vision", "Air",
@@ -1144,7 +1151,8 @@ class Command(BaseCommand):
         if key not in attr_index:
             attr, _ = Attribute.objects.get_or_create(name=attr_name)
             val, _  = AttributeValue.objects.get_or_create(
-                attribute=attr, value_name=f"Default {attr_name}"
+                attribute=attr,
+                value_name=self.NEUTRAL_ATTRIBUTE_VALUES.get(attr_name, "Original"),
             )
             attr_index[key] = [val]
         return random.choice(attr_index[key])
@@ -1291,10 +1299,20 @@ class Command(BaseCommand):
             price   = base_price + Decimal(str(idx * random.randint(3, 20)))
             v_qty   = max(1, qty - (idx - 1) * random.randint(0, 4))
 
+            attr_vals = self._attribute_values_for_theme(attr_index, theme)
+            # Simple (single-theme) products keep a blank variant name; multi-variant
+            # products are named from their option values, e.g. "Red / Large".
+            if theme == "single" or not attr_vals:
+                variant_name = ""
+            else:
+                variant_name = " / ".join(
+                    av.value_name for av in reversed(attr_vals)
+                )
+
             variant, created = ProductVariant.objects.get_or_create(
                 product=product, sku=sku,
                 defaults={
-                    "name":           f"{product.name} — Variant {idx}",
+                    "name":           variant_name,
                     "price":          price,
                     "quantity":       v_qty,
                     "min_buy_amount": 1,
@@ -1303,7 +1321,6 @@ class Command(BaseCommand):
             if created:
                 created_count += 1
 
-            attr_vals = self._attribute_values_for_theme(attr_index, theme)
             if attr_vals:
                 variant.attribute_values.set(attr_vals)
 

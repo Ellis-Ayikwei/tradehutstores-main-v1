@@ -9,6 +9,7 @@ from django.db.models.functions import Coalesce
 from django.utils import timezone
 
 from apps.products.models import Product
+from apps.products.serializers import list_row_prefetches
 from apps.products.visibility import public_products
 
 from .models import HomepageSection, PopulationRule
@@ -30,9 +31,9 @@ def get_homepage_sections() -> list[HomepageSection]:
 
 
 def _optimize(qs):
-    return qs.select_related("category", "sub_category", "brand", "default_variant").prefetch_related(
-        "variants"
-    )
+    return qs.select_related(
+        "category", "sub_category", "brand", "default_variant"
+    ).prefetch_related(*list_row_prefetches())
 
 
 def _materialize(qs, limit: int) -> list:
