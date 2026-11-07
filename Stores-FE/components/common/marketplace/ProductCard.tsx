@@ -1,16 +1,20 @@
 'use client'
 
-import { useState, type PointerEvent } from 'react'
+import { memo, useMemo, useState, type ReactNode } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { BadgeCheck, Heart, ImageOff, Loader2, ShoppingCart } from 'lucide-react'
+import { BadgeCheck, Heart, ImageOff, Loader2 } from 'lucide-react'
 import { resolveMediaSrc } from '@/lib/mediaUrl'
+import { compareAttributeLabels } from '@/lib/variantLabel'
 import Badge from './Badge'
 import Countdown from './Countdown'
 import PriceTag, { discountPercent } from './PriceTag'
-import { useReserveCardMeta } from './CardMetaContext'
 import RatingStars from './RatingStars'
+import VariantSwatches from './VariantSwatches'
+import { colourGroups, priceSpan, type CardVariant } from './cardVariants'
 import { cx } from './cx'
+
+export type { CardVariant } from './cardVariants'
 
 /** Display shape for a card. Map API rows into this at the call site. */
 export interface MarketplaceProduct {
@@ -18,10 +22,7 @@ export interface MarketplaceProduct {
     title: string
     href: string
     imageUrl?: string | null
-    /**
-     * Extra gallery images (any order; the main image is ignored if repeated). When at least one
-     * other image exists the card crossfades to it on desktop hover. Nothing extra is shown without it.
-     */
+    /** @deprecated Cards no longer swap images on hover; kept so existing mappers still compile. */
     images?: Array<string | null | undefined>
     /** Defaults to the title. */
     imageAlt?: string
@@ -33,18 +34,26 @@ export interface MarketplaceProduct {
     /** Units remaining. 0 renders "Out of stock"; 1-5 renders "Only N left". */
     stockLeft?: number
     freeShipping?: boolean
-    /** e.g. "Arrives Thu, 12 Nov". Shown after "Free delivery" (or alone). */
+    /** e.g. "Mon, Nov 16". Shown after "FREE delivery" (or alone). */
     arrivalText?: string
     verifiedSeller?: boolean
     /** Store name, rendered as "by {sellerName}". Omit when the API does not provide it. */
     sellerName?: string
     /** Short promo label shown on the image, e.g. "Flash deal". */
     badge?: string
-    /** ISO end time; shows a compact countdown on the image and marks the card as a time-limited deal. */
+    /** ISO end time; shows an "Ends in" countdown line and marks the card as a time-limited deal. */
     endsAt?: string
-    /** Pass-through metadata for add-to-cart handlers. Never rendered. */
     brand?: string
     category?: string
+    /** "new" / "used" / "refurbished"; shown as a key spec in list mode. */
+    condition?: string
+    /**
+     * Real variants of the product (see `cardVariantsFromRaw`). When two or more colours exist the card shows
+     * colour swatches that swap image, price and the variant used by Add to cart. Omit when the API has none.
+     */
+    variants?: CardVariant[]
+    /** Id of the default variant (preselected swatch in list mode). Falls back to the first colour. */
+    defaultVariantId?: string
 }
 
 export interface ProductCardProps {
@@ -53,40 +62,34 @@ export interface ProductCardProps {
     formatPrice?: (amount: number) => string
     wishlisted?: boolean
     onToggleWishlist?: (product: MarketplaceProduct) => void
-    onAddToCart?: (product: MarketplaceProduct) => void
+    /** `variant` is the selected swatch's variant when the card has one. */
+    onAddToCart?: (product: MarketplaceProduct, variant?: CardVariant) => void
     addToCartLoading?: boolean
     onCountdownEnd?: (product: MarketplaceProduct) => void
     /** Set true for above-the-fold cards so the image is not lazy-loaded. */
     priority?: boolean
-    /** Tighter padding and type for dense listing grids. */
+    /** Tighter spacing for dense listings. */
     compact?: boolean
-    /** grid = vertical card (default). list = horizontal card with a larger image on the left. */
+    /** grid = borderless vertical card (default). list = full-width row with a divider. */
     variant?: 'grid' | 'list'
     /**
-     * Mark as a real time-limited deal: solid red badge and a claimed progress bar
+     * Mark as a real time-limited deal: solid red image badge and a claimed progress bar
      * (when sold + stock are both known). Defaults to true when `product.endsAt` is set.
      */
     deal?: boolean
-    /**
-     * Grid only. Default true keeps the empty 16px rating/meta row so all cards are equally tall. Set false (or
-     * wrap in `<ProductGrid hasMeta={false}>` / `CardMetaProvider`) when no card in the set has anything to show.
-     */
+    /** @deprecated No longer used (cards have no reserved meta row). */
     reserveMeta?: boolean
-    /** Grid only: show the full-width "Add to cart" pill instead of the compact round icon button. */
+    /** @deprecated Grid cards never show Add to cart; list rows show it whenever `onAddToCart` is set. */
     showCta?: boolean
-    /** Override the image `sizes` attribute (defaults to the standard grid sizes). */
+    /** Override the image `sizes` attribute (defaults to the standard grid sizes). Pass the real column width. */
     sizes?: string
     className?: string
 }
 
-const GRID_SIZES =
-    '(min-width: 1536px) 15vw, (min-width: 1280px) 18vw, (min-width: 1024px) 23vw, (min-width: 640px) 31vw, 48vw'
-const LIST_SIZES = '(min-width: 640px) 140px, 112px'
+const GRID_SIZES = '(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw'
+const LIST_SIZES = '(min-width: 768px) 240px, 160px'
 
-/** A discount below this is shown as plain red text in the price row, not as an image badge. */
-const BADGE_MIN_DISCOUNT = 5
-
-/** True when a card would show a rating or a meta line. Pages use it to set `hasMeta` on a grid/row. */
+/** True when a card would show a rating or a meta line. */
 export function productHasMeta(p: MarketplaceProduct): boolean {
     return Boolean(
         (p.rating ?? 0) > 0 ||
@@ -108,16 +111,19 @@ export function compactCount(n: number): string {
 const BUTTON_FOCUS =
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-primary-400 dark:focus-visible:ring-offset-zinc-900'
 
-/** Mouse hover only; touch devices never get a stuck hover state. */
-const FINE_POINTER = '[@media(hover:hover)_and_(pointer:fine)]'
+/** Off-screen cards skip layout and paint (up to 80 per page). The size hint keeps the scrollbar steady. */
+const SKIP_OFFSCREEN_GRID = '[content-visibility:auto] [contain-intrinsic-size:200px_340px]'
+const SKIP_OFFSCREEN_LIST = '[content-visibility:auto] [contain-intrinsic-size:600px_200px]'
 
-/**
- * On hover-capable desktop screens the round cart button is faded out until the card is hovered or
- * focused. It stays in the layout and in the tab order, so keyboard users can always reach it.
- */
-const HOVER_REVEAL = `${FINE_POINTER}:opacity-0 ${FINE_POINTER}:group-hover:opacity-100 ${FINE_POINTER}:group-focus-within:opacity-100 ${FINE_POINTER}:focus-visible:opacity-100`
+const LINK_CLS =
+    'outline-none after:absolute after:inset-0 after:content-[""] hover:text-primary-700 hover:underline dark:hover:text-primary-400 focus-visible:after:ring-2 focus-visible:after:ring-primary-700 dark:focus-visible:after:ring-primary-400'
 
-export default function ProductCard({
+interface Spec {
+    label: string
+    value: string
+}
+
+function ProductCard({
     product,
     formatPrice,
     wishlisted = false,
@@ -129,8 +135,6 @@ export default function ProductCard({
     compact = false,
     variant = 'grid',
     deal,
-    showCta = false,
-    reserveMeta = true,
     sizes,
     className,
 }: ProductCardProps) {
@@ -138,7 +142,6 @@ export default function ProductCard({
         title,
         href,
         imageUrl,
-        images,
         imageAlt,
         price,
         originalPrice,
@@ -152,81 +155,98 @@ export default function ProductCard({
         sellerName,
         badge,
         endsAt,
+        brand,
+        category,
+        condition,
+        variants,
+        defaultVariantId,
     } = product
 
-    const reserveFromGrid = useReserveCardMeta()
-    const [imgFailed, setImgFailed] = useState(false)
-    const [hoverReady, setHoverReady] = useState(false)
-
     const isList = variant === 'list'
-    const pct = discountPercent(price, originalPrice)
-    const src = resolveMediaSrc(imageUrl)
-    const secondRaw = (images ?? []).map(i => resolveMediaSrc(i)).find(s => s && s !== src)
-    const secondSrc = secondRaw || ''
-    const outOfStock = stockLeft === 0
-    const lowStock = stockLeft !== undefined && stockLeft > 0 && stockLeft <= 5
+
+    // ── Variant swatches ──────────────────────────────────────────────────────
+    const groups = useMemo(() => colourGroups(variants), [variants])
+    const defaultKey = useMemo(() => {
+        const d = defaultVariantId ? groups.find(g => g.variants.some(v => v.id === defaultVariantId)) : undefined
+        return (d ?? groups[0])?.key ?? null
+    }, [groups, defaultVariantId])
+    // Grid starts with nothing selected (range price, main photo, like Amazon); the list row starts on the default colour.
+    const [picked, setPicked] = useState<string | null>(null)
+    const selectedKey = picked ?? (isList ? defaultKey : null)
+    const group = groups.find(g => g.key === selectedKey) ?? null
+    const selected: CardVariant | null = group?.lead ?? null
+    const needsOptions = Boolean(group && group.variants.length > 1)
+
+    let shownPrice = price
+    let shownOriginal = originalPrice
+    let maxPrice: number | undefined
+    if (group) {
+        const span = priceSpan(group.variants)
+        shownPrice = span.min
+        if (span.max > span.min) {
+            maxPrice = span.max
+            shownOriginal = undefined
+        } else {
+            shownOriginal = group.lead.originalPrice
+        }
+    } else if (groups.length > 0 && variants) {
+        const span = priceSpan(variants)
+        if (span.max > span.min) {
+            shownPrice = span.min
+            maxPrice = span.max
+            shownOriginal = undefined
+        }
+    }
+
+    const [failedSrc, setFailedSrc] = useState<string | null>(null)
+    const src = resolveMediaSrc(selected?.imageUrl || imageUrl)
+    const imgFailed = failedSrc === src
+
+    const stock = selected?.stock !== undefined ? selected.stock : stockLeft
+    const outOfStock = stock === 0
+    const lowStock = stock !== undefined && stock > 0 && stock <= 5
+    const pct = maxPrice === undefined ? discountPercent(shownPrice, shownOriginal) : 0
     const isDeal = deal ?? Boolean(endsAt)
 
-    // One red rectangle on the image: custom label wins; otherwise the discount (deals, or >= 5%).
-    const pctBadge = !badge && pct > 0 && (isDeal || pct >= BADGE_MIN_DISCOUNT)
+    // Image badge: only a custom label or a real time-limited deal. Everything else shows "-23%" next to the price.
+    const pctBadge = !badge && pct > 0 && isDeal
     const imageBadgeText = badge ?? (pctBadge ? `-${pct}%` : undefined)
     const inlineDiscount = pct > 0 && !pctBadge
 
     const showProgress =
-        isDeal && soldCount !== undefined && stockLeft !== undefined && stockLeft > 0 && soldCount + stockLeft > 0
-    const progressPct = showProgress ? Math.min(100, Math.round((soldCount / (soldCount + stockLeft)) * 100)) : 0
+        isDeal && soldCount !== undefined && stock !== undefined && stock > 0 && soldCount + stock > 0
+    const progressPct = showProgress ? Math.min(100, Math.round((soldCount / (soldCount + stock)) * 100)) : 0
     const showSoldText = soldCount !== undefined && soldCount > 0
-    // Every image fills the same square box the same way, whatever the photo's own ratio.
-    const fit = 'object-cover object-center'
+    const imageSizes = sizes ?? (isList ? LIST_SIZES : GRID_SIZES)
+    const hasRating = rating !== undefined && rating > 0
 
-    const onPointerEnter =
-        secondSrc && !hoverReady
-            ? (e: PointerEvent<HTMLElement>) => {
-                  if (e.pointerType === 'mouse') setHoverReady(true)
-              }
-            : undefined
+    // ── Pieces ───────────────────────────────────────────────────────────────
 
     const stage = (
         <div
             className={cx(
                 'relative shrink-0 overflow-hidden bg-zinc-100 dark:bg-zinc-800',
-                isList
-                    ? 'min-h-28 w-28 self-stretch rounded-l-[7px] sm:min-h-[140px] sm:w-[140px]'
-                    : 'aspect-square w-full rounded-t-[7px]'
+                isList ? 'h-40 w-40 md:h-60 md:w-60' : 'aspect-square w-full rounded-md'
             )}
         >
             {src && !imgFailed ? (
-                <div
+                <Image
+                    src={src}
+                    alt={imageAlt ?? title}
+                    fill
+                    sizes={imageSizes}
+                    quality={75}
+                    priority={priority}
+                    loading={priority ? undefined : 'lazy'}
+                    onError={() => setFailedSrc(src)}
                     className={cx(
-                        'absolute inset-0 transition-transform duration-300 ease-out motion-reduce:transition-none',
-                        `${FINE_POINTER}:group-hover:scale-[1.03] motion-reduce:group-hover:scale-100`
+                        'object-contain object-center mix-blend-multiply dark:mix-blend-normal',
+                        isList ? 'p-3' : 'p-2',
+                        outOfStock && 'grayscale'
                     )}
-                >
-                    <Image
-                        src={src}
-                        alt={imageAlt ?? title}
-                        fill
-                        sizes={sizes ?? (isList ? LIST_SIZES : GRID_SIZES)}
-                        priority={priority}
-                        loading={priority ? undefined : 'lazy'}
-                        onError={() => setImgFailed(true)}
-                        className={cx(fit, outOfStock && 'opacity-60 grayscale')}
-                    />
-                    {secondSrc && hoverReady && !outOfStock ? (
-                        <Image
-                            src={secondSrc}
-                            alt=""
-                            fill
-                            sizes={sizes ?? (isList ? LIST_SIZES : GRID_SIZES)}
-                            className={cx(
-                                fit,
-                                `bg-zinc-100 opacity-0 transition-opacity duration-300 dark:bg-zinc-800 ${FINE_POINTER}:group-hover:opacity-100`
-                            )}
-                        />
-                    ) : null}
-                </div>
+                />
             ) : (
-                <div className="flex h-full w-full items-center justify-center text-zinc-400 dark:text-zinc-500">
+                <div className="flex h-full w-full items-center justify-center text-zinc-500 dark:text-zinc-400">
                     <ImageOff className="h-8 w-8" aria-hidden="true" />
                     <span className="sr-only">No image available</span>
                 </div>
@@ -235,20 +255,11 @@ export default function ProductCard({
             {imageBadgeText ? (
                 <Badge
                     variant={isDeal || pctBadge ? 'danger' : 'dark'}
-                    className="pointer-events-none absolute left-2 top-2 rounded-md font-bold"
+                    radius="sm"
+                    className="pointer-events-none absolute left-1.5 top-1.5"
                 >
                     {imageBadgeText}
                 </Badge>
-            ) : null}
-
-            {endsAt && !outOfStock ? (
-                <div className="pointer-events-none absolute bottom-1.5 left-1.5">
-                    <Countdown
-                        endsAt={endsAt}
-                        variant="compact"
-                        onEnd={onCountdownEnd ? () => onCountdownEnd(product) : undefined}
-                    />
-                </div>
             ) : null}
 
             {outOfStock ? (
@@ -264,188 +275,129 @@ export default function ProductCard({
                     aria-pressed={wishlisted}
                     aria-label={wishlisted ? `Remove ${title} from wishlist` : `Add ${title} to wishlist`}
                     className={cx(
-                        'absolute right-0.5 top-0.5 z-10 flex h-11 w-11 items-center justify-center rounded-full',
+                        'absolute right-1.5 top-1.5 z-10 flex h-8 w-8 items-center justify-center rounded-md border border-zinc-200 bg-white text-zinc-700 before:absolute before:-inset-1.5 before:content-[""] hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800',
                         BUTTON_FOCUS
                     )}
                 >
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-zinc-700 shadow transition-colors hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800">
-                        <Heart
-                            className={cx(
-                                'h-[18px] w-[18px]',
-                                wishlisted ? 'fill-red-600 text-red-600 dark:fill-red-400 dark:text-red-400' : ''
-                            )}
-                            aria-hidden="true"
-                        />
-                    </span>
+                    <Heart
+                        className={cx(
+                            'h-4 w-4',
+                            wishlisted ? 'fill-red-600 text-red-600 dark:fill-red-400 dark:text-red-400' : ''
+                        )}
+                        aria-hidden="true"
+                    />
                 </button>
             ) : null}
         </div>
     )
 
-    const priceEl = (
-        <PriceTag
-            price={price}
-            originalPrice={originalPrice}
-            formatPrice={formatPrice}
-            size="md"
-            showDiscount={inlineDiscount}
-            stacked={!isList}
-        />
-    )
-
-    const titleEl = (
-        <h3
-            className={cx(
-                'font-normal text-zinc-800 dark:text-zinc-100',
-                isList
-                    ? 'text-sm leading-snug sm:text-base'
-                    : cx(
-                          'line-clamp-2 h-9 text-[13px] leading-[18px]',
-                          !compact && 'sm:h-10 sm:text-sm sm:leading-5'
-                      )
-            )}
-        >
-            <Link
-                href={href}
-                className={cx(
-                    isList && 'line-clamp-2',
-                    'outline-none after:absolute after:inset-0 after:rounded-lg after:content-[""] hover:text-primary-700 hover:underline dark:hover:text-primary-400',
-                    'focus-visible:after:ring-2 focus-visible:after:ring-primary-700 dark:focus-visible:after:ring-primary-400'
-                )}
-            >
+    const titleEl = isList ? (
+        <h3 className="line-clamp-3 text-base font-normal leading-6 text-zinc-900 dark:text-zinc-100">
+            <Link href={href} className={LINK_CLS}>
+                {title}
+            </Link>
+        </h3>
+    ) : (
+        <h3 className="line-clamp-4 text-sm font-normal leading-5 text-sky-800 dark:text-sky-400">
+            <Link href={href} className={LINK_CLS}>
                 {title}
             </Link>
         </h3>
     )
 
-    const hasRating = rating !== undefined && rating > 0
-    // List only. In the grid the rating shares the single meta row below.
-    const ratingEl =
-        isList && hasRating ? (
-            <div className="flex items-center overflow-hidden">
-                <RatingStars rating={rating as number} count={reviewCount} countTone="link" />
-            </div>
-        ) : null
-
-    const progressBar = showProgress ? (
-        <div
-            role="progressbar"
-            aria-valuenow={progressPct}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-label={`${progressPct}% claimed`}
-            className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-700"
-        >
-            <div
-                className={cx(
-                    'h-full rounded-full',
-                    progressPct >= 80 ? 'bg-red-600 dark:bg-red-500' : 'bg-orange-500 dark:bg-orange-400'
-                )}
-                style={{ width: `${progressPct}%` }}
+    const ratingEl = hasRating ? (
+        <div className="flex items-center">
+            <RatingStars
+                rating={rating as number}
+                count={reviewCount}
+                countTone="link"
+                showValue={isList}
+                bracketed={isList}
+                className="shrink-0 text-sm"
             />
         </div>
     ) : null
 
-    const metaBase = 'text-xs leading-4 text-zinc-600 dark:text-zinc-400'
-    const lowStockCls =
-        'font-semibold ' +
-        (stockLeft !== undefined && stockLeft <= 3
-            ? 'text-red-700 dark:text-red-400'
-            : 'text-amber-700 dark:text-amber-400')
+    const socialEl = showSoldText ? (
+        <p className="text-sm leading-5 text-zinc-600 dark:text-zinc-400">{compactCount(soldCount as number)} sold</p>
+    ) : null
+
+    const priceEl = (
+        <PriceTag
+            price={shownPrice}
+            maxPrice={maxPrice}
+            originalPrice={maxPrice === undefined ? shownOriginal : undefined}
+            formatPrice={formatPrice}
+            layout="amazon"
+            size={isList ? 'md' : 'sm'}
+            showDiscount={inlineDiscount}
+        />
+    )
+
+    const progressBar = showProgress ? (
+        <div className="flex items-center gap-1.5 text-xs leading-4 text-zinc-600 dark:text-zinc-400">
+            <div
+                role="progressbar"
+                aria-valuenow={progressPct}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label={`${progressPct}% claimed`}
+                className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-700"
+            >
+                <div
+                    className={cx(
+                        'h-full rounded-full',
+                        progressPct >= 80 ? 'bg-red-600 dark:bg-red-500' : 'bg-orange-500 dark:bg-orange-400'
+                    )}
+                    style={{ width: `${progressPct}%` }}
+                />
+            </div>
+        </div>
+    ) : null
+
+    const countdownEl =
+        endsAt && !outOfStock ? (
+            <div className="truncate">
+                <Countdown
+                    endsAt={endsAt}
+                    variant="inline"
+                    label="Ends in"
+                    onEnd={onCountdownEnd ? () => onCountdownEnd(product) : undefined}
+                    className="!text-xs !leading-4 text-red-600 dark:text-red-400"
+                />
+            </div>
+        ) : null
+
+    // Delivery / stock / seller lines: real data only.
+    const sizeCls = isList ? 'text-sm leading-5' : 'text-xs leading-4'
     const verifiedIcon = verifiedSeller ? (
         <span className="inline-flex shrink-0 items-center gap-0.5 font-medium text-emerald-700 dark:text-emerald-400">
             <BadgeCheck className="h-3.5 w-3.5" aria-hidden="true" />
             {sellerName ? <span className="sr-only">Verified seller</span> : 'Verified seller'}
         </span>
     ) : null
-
-    // Grid: one truncated line. Segments are real data only, joined with a middle dot.
-    const metaSegments: Array<{ key: string; node: React.ReactNode }> = []
-    if (lowStock) metaSegments.push({ key: 'low', node: <span className={lowStockCls}>Only {stockLeft} left</span> })
-    if (freeShipping || arrivalText) {
-        metaSegments.push({
-            key: 'ship',
-            node: (
-                <>
-                    {freeShipping ? (
-                        <span className="font-medium text-zinc-800 dark:text-zinc-200">Free delivery</span>
-                    ) : null}
-                    {freeShipping && arrivalText ? ' ' : null}
-                    {arrivalText ? <span>{arrivalText}</span> : null}
-                </>
-            ),
-        })
-    }
-    if (showSoldText) metaSegments.push({ key: 'sold', node: <span>{compactCount(soldCount as number)} sold</span> })
-    if (metaSegments.length === 0 && (sellerName || verifiedSeller)) {
-        metaSegments.push({
-            key: 'seller',
-            node: (
-                <>
-                    {sellerName ? <span>by {sellerName}</span> : null}
-                    {sellerName && verifiedSeller ? ' ' : null}
-                    {verifiedIcon}
-                </>
-            ),
-        })
-    }
-
-    const progressEl = isList && progressBar ? <div className="flex">{progressBar}</div> : null
-
-    // Grid: ONE h-4 row = stars + count, then " · ", then the meta text (truncates first). A deal with known
-    // stock + sold shows the claimed bar + "N sold" instead. The row is reserved (even when empty) unless the
-    // card (`reserveMeta`) or its grid/row (CardMetaProvider) opts out; if it has content it always renders.
-    const hasRow = hasRating || metaSegments.length > 0 || Boolean(progressBar)
-    const gridMeta =
-        !hasRow && !(reserveMeta && reserveFromGrid) ? null : progressBar ? (
-            <div className={cx('flex h-4 items-center gap-1.5', metaBase)}>
-                {progressBar}
-                {showSoldText ? (
-                    <span className="shrink-0 whitespace-nowrap">{compactCount(soldCount as number)} sold</span>
-                ) : null}
-            </div>
-        ) : (
-            <div className={cx('flex h-4 items-center overflow-hidden whitespace-nowrap', metaBase)}>
-                {hasRating ? (
-                    <span className="shrink-0">
-                        <RatingStars rating={rating as number} count={reviewCount} countTone="link" />
-                    </span>
-                ) : null}
-                {hasRating && metaSegments.length > 0 ? (
-                    <span aria-hidden="true" className="mx-1 shrink-0">
-                        &middot;
-                    </span>
-                ) : null}
-                {metaSegments.length > 0 ? (
-                    <span className="min-w-0 truncate">
-                        {metaSegments.map((seg, i) => (
-                            <span key={seg.key}>
-                                {i > 0 ? <span aria-hidden="true"> &middot; </span> : null}
-                                {seg.node}
-                            </span>
-                        ))}
-                    </span>
-                ) : null}
-            </div>
-        )
-
-    // List: roomier, one fact per line.
-    const hasListLines = freeShipping || arrivalText || lowStock || showSoldText || sellerName || verifiedSeller
-    const listMeta = hasListLines ? (
-        <div className={cx('space-y-0.5', metaBase)}>
+    const hasDeliveryLines = freeShipping || arrivalText || lowStock || sellerName || verifiedSeller
+    const deliveryEl = hasDeliveryLines ? (
+        <div className={cx('space-y-0.5 text-zinc-700 dark:text-zinc-300', sizeCls)}>
             {freeShipping || arrivalText ? (
                 <p>
-                    {freeShipping ? (
-                        <span className="font-semibold text-zinc-800 dark:text-zinc-200">Free delivery</span>
-                    ) : null}
+                    {freeShipping ? 'FREE delivery' : null}
                     {freeShipping && arrivalText ? ' ' : null}
-                    {arrivalText ? <span>{arrivalText}</span> : null}
+                    {arrivalText ? <span className="font-bold">{arrivalText}</span> : null}
                 </p>
             ) : null}
-            {lowStock ? <p className={lowStockCls}>Only {stockLeft} left</p> : null}
-            {showSoldText ? <p>{compactCount(soldCount as number)} sold</p> : null}
+            {lowStock ? (
+                <p
+                    className={cx(
+                        'font-medium',
+                        (stock as number) <= 3 ? 'text-red-700 dark:text-red-400' : 'text-amber-700 dark:text-amber-400'
+                    )}
+                >
+                    Only {stock} left
+                </p>
+            ) : null}
             {sellerName || verifiedSeller ? (
-                <p className="flex items-center gap-1 truncate">
+                <p className="flex items-center gap-1 text-zinc-600 dark:text-zinc-400">
                     {sellerName ? <span className="truncate">by {sellerName}</span> : null}
                     {verifiedIcon}
                 </p>
@@ -453,88 +405,125 @@ export default function ProductCard({
         </div>
     ) : null
 
-    const canAdd = Boolean(onAddToCart) && !outOfStock
-    const cartIcon = addToCartLoading ? (
-        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-    ) : (
-        <ShoppingCart className="h-4 w-4" aria-hidden="true" />
-    )
-
-    const ctaPill = canAdd ? (
-        <button
-            type="button"
-            onClick={() => onAddToCart?.(product)}
-            disabled={addToCartLoading}
-            aria-label={`Add ${title} to cart`}
-            className={cx(
-                'relative z-10 inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-full bg-primary-700 px-4 text-sm font-semibold text-white transition-colors hover:bg-primary-800 disabled:cursor-not-allowed disabled:bg-zinc-300 disabled:text-zinc-700 dark:disabled:bg-zinc-700 dark:disabled:text-zinc-200 sm:h-9',
-                BUTTON_FOCUS
-            )}
-        >
-            {cartIcon}
-            Add to cart
-        </button>
-    ) : null
-
-    const cartIconBtn =
-        canAdd && !isList && !showCta ? (
-            <button
-                type="button"
-                onClick={() => onAddToCart?.(product)}
-                disabled={addToCartLoading}
-                aria-label={`Add ${title} to cart`}
-                className={cx(
-                    'relative z-10 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-700 text-white transition-[background-color,opacity] before:absolute before:-inset-[2px] before:rounded-full before:content-[""] hover:bg-primary-800 disabled:cursor-not-allowed disabled:bg-zinc-300 disabled:text-zinc-700 dark:disabled:bg-zinc-700 dark:disabled:text-zinc-200',
-                    BUTTON_FOCUS,
-                    HOVER_REVEAL
-                )}
-            >
-                {cartIcon}
-            </button>
+    const swatchesEl =
+        groups.length > 0 ? (
+            <VariantSwatches
+                groups={groups}
+                selectedKey={selectedKey}
+                onSelect={setPicked}
+                label={`Colour options for ${title}`}
+                className="-ml-0.5"
+            />
         ) : null
 
-    return (
-        <article
-            onPointerEnter={onPointerEnter}
-            className={cx(
-                'group relative min-w-0 rounded-lg border border-zinc-200 bg-white transition-[border-color,box-shadow] hover:border-zinc-300 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700',
-                isList ? 'flex' : 'flex h-full flex-col',
-                className
-            )}
-        >
-            {stage}
+    // ── List-only pieces ──────────────────────────────────────────────────────
 
-            {isList ? (
-                <div
-                    className={cx(
-                        'flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:gap-4',
-                        compact ? 'p-2 sm:p-2.5' : 'p-2.5 sm:p-3'
-                    )}
-                >
-                    <div className="min-w-0 flex-1 space-y-1">
+    const specs = useMemo<Spec[]>(() => {
+        if (!isList) return []
+        const out: Spec[] = []
+        const seen = new Set<string>()
+        const add = (label: string, value: string | undefined | null) => {
+            const v = (value ?? '').trim()
+            const k = label.trim().toLowerCase()
+            if (!v || seen.has(k)) return
+            seen.add(k)
+            out.push({ label, value: v })
+        }
+        // Variant attributes only when that variant is unambiguous: a chosen swatch, or a product with one variant.
+        const source = selected ?? (variants?.length === 1 ? variants[0] : null)
+        for (const a of [...(source?.attributes ?? [])].sort((x, y) => compareAttributeLabels(x.label, y.label))) {
+            add(a.label, a.value)
+        }
+        add('Brand', brand)
+        add('Condition', condition)
+        add('Category', category)
+        return out.slice(0, 4)
+    }, [isList, selected, variants, brand, condition, category])
+
+    const specsEl =
+        specs.length > 0 ? (
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm leading-5 2xl:grid-cols-4">
+                {specs.map(s => (
+                    <div key={s.label} className="min-w-0">
+                        <dt className="truncate text-zinc-600 dark:text-zinc-400">{s.label}</dt>
+                        <dd className="break-words font-bold capitalize text-zinc-900 dark:text-zinc-100">{s.value}</dd>
+                    </div>
+                ))}
+            </dl>
+        ) : null
+
+    const ctaCls =
+        'relative z-10 inline-flex h-11 w-full max-w-xs items-center justify-center gap-1.5 rounded-full bg-primary-700 px-4 text-sm font-medium text-white hover:bg-primary-800 md:h-9 disabled:cursor-not-allowed disabled:bg-zinc-300 disabled:text-zinc-700 dark:disabled:bg-zinc-700 dark:disabled:text-zinc-200'
+    const ctaEl = !onAddToCart ? null : needsOptions ? (
+        <Link href={href} className={cx(ctaCls, BUTTON_FOCUS)}>
+            Select options
+        </Link>
+    ) : (
+        <button
+            type="button"
+            onClick={() => onAddToCart(product, selected ?? undefined)}
+            disabled={addToCartLoading || outOfStock}
+            aria-label={`Add ${title} to cart`}
+            className={cx(ctaCls, BUTTON_FOCUS)}
+        >
+            {addToCartLoading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : null}
+            {outOfStock ? 'Unavailable' : addToCartLoading ? 'Adding' : 'Add to cart'}
+        </button>
+    )
+
+    // ── Layouts ───────────────────────────────────────────────────────────────
+
+    if (isList) {
+        return (
+            <article
+                className={cx(
+                    'relative flex min-w-0 gap-3 border-b border-zinc-200 dark:border-zinc-800 sm:gap-4',
+                    compact ? 'py-2' : 'py-3',
+                    SKIP_OFFSCREEN_LIST,
+                    className
+                )}
+            >
+                {stage}
+                <div className="grid min-w-0 flex-1 content-start gap-y-2 md:grid-cols-2 md:gap-x-8 2xl:grid-cols-[minmax(0,360px)_minmax(0,1fr)]">
+                    <div className="min-w-0 space-y-1 md:col-span-2">
+                        {brand ? <p className="truncate text-base font-bold leading-6 text-zinc-900 dark:text-zinc-100">{brand}</p> : null}
                         {titleEl}
                         {ratingEl}
+                        {socialEl}
+                    </div>
+                    <div className="min-w-0 space-y-1 md:col-start-1">
                         {priceEl}
-                        {progressEl}
-                        {listMeta}
+                        {progressBar}
+                        {countdownEl}
                     </div>
-                    {ctaPill ? (
-                        <div className="mt-1 sm:mt-0 sm:flex sm:w-44 sm:shrink-0 sm:flex-col sm:justify-end">
-                            {ctaPill}
-                        </div>
-                    ) : null}
-                </div>
-            ) : (
-                <div className={cx('flex min-w-0 flex-col gap-1', compact ? 'p-2 sm:p-2.5' : 'p-2.5 sm:p-3')}>
-                    <div className="flex h-10 items-center justify-between gap-2">
-                        <div className="min-w-0 flex-1">{priceEl}</div>
-                        {cartIconBtn}
+                    {specsEl ? <div className="min-w-0 md:col-start-2 md:row-span-2 md:row-start-2">{specsEl}</div> : null}
+                    <div className="min-w-0 space-y-2 md:col-start-1">
+                        {deliveryEl}
+                        {ctaEl}
+                        {swatchesEl}
                     </div>
-                    {titleEl}
-                    {gridMeta}
-                    {showCta && ctaPill ? <div className="pt-1">{ctaPill}</div> : null}
                 </div>
-            )}
+            </article>
+        )
+    }
+
+    const gridBits: ReactNode[] = [ratingEl, socialEl, priceEl, progressBar, deliveryEl, countdownEl, swatchesEl].filter(Boolean)
+
+    return (
+        <article className={cx('relative min-w-0 self-start pb-2', SKIP_OFFSCREEN_GRID, className)}>
+            {stage}
+            <div className="mt-2 space-y-1">
+                {titleEl}
+                {gridBits.map((node, i) => (
+                    <div key={i}>{node}</div>
+                ))}
+            </div>
         </article>
     )
 }
+
+/**
+ * Memoised: cards re-render only when their own props change. Parents must pass a stable `product` object
+ * (useMemo the converted list) and stable callbacks; see CommerceProductCard for the connected version.
+ */
+export default memo(ProductCard)

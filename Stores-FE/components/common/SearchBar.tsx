@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
-import { Search, Camera, Clock, X, ArrowRight, Tag } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+import { Search, Camera, X, ChevronDown } from 'lucide-react'
 import ImageSearchModal from './ImageSearchModal'
 import {
     autocomplete as autocompleteApi,
@@ -13,366 +13,413 @@ import {
 } from '@/lib/searchClient'
 import { useCurrency } from '@/contexts/CurrencyContext'
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
 interface SearchBarProps {
-    variant?: 'hero' | 'navbar'
+    /** Category names for the left select segment (lg and up only). Empty hides it. */
+    categories?: string[]
+    /** Prefill (e.g. the `q` param on /search). Re-syncs when it changes. */
+    initialQuery?: string
+    /** Where a submit goes: the /search results page (default) or the product listing deep-link. */
+    target?: 'products' | 'search'
     className?: string
 }
 
-interface Suggestion {
-    type: 'trending' | 'recent' | 'category' | 'suggestion'
-    label: string
-    category?: string
-}
+type Row =
+    | { id: string; kind: 'recent'; label: string }
+    | { id: string; kind: 'suggestion'; label: string }
+    | { id: string; kind: 'product'; hit: AutocompleteHit }
 
-function highlightMatch(text: string, query: string) {
-    const idx = text.toLowerCase().indexOf(query.toLowerCase())
-    if (idx === -1) return <span>{text}</span>
+const rowBase =
+    'flex min-h-[44px] w-full items-center gap-3 px-3 text-left text-sm text-zinc-900 dark:text-zinc-100 lg:min-h-[40px]'
+const rowActive = 'bg-zinc-100 dark:bg-zinc-800'
+const groupLabel = 'px-3 pb-1 pt-2 text-xs font-semibold text-zinc-600 dark:text-zinc-400'
+
+function Match({ text, query }: { text: string; query: string }) {
+    const q = query.trim()
+    const idx = q ? text.toLowerCase().indexOf(q.toLowerCase()) : -1
+    if (idx === -1) return <>{text}</>
     return (
-        <span>
+        <>
             {text.slice(0, idx)}
-            <span className="font-bold text-orange-500">{text.slice(idx, idx + query.length)}</span>
-            {text.slice(idx + query.length)}
-        </span>
+            <span className="font-bold">{text.slice(idx, idx + q.length)}</span>
+            {text.slice(idx + q.length)}
+        </>
     )
 }
 
-// ─── Dropdown ─────────────────────────────────────────────────────────────────
-
-function SearchDropdown({ query, recent, suggestions, hits, loading, onSelect, onSelectProduct, onRemoveRecent, variant }: {
-    query: string
-    recent: string[]
-    suggestions: Suggestion[]
-    hits: AutocompleteHit[]
-    loading: boolean
-    onSelect: (label: string) => void
-    onSelectProduct: (hit: AutocompleteHit) => void
-    onRemoveRecent: (label: string) => void
-    variant: 'hero' | 'navbar'
-}) {
-    const { formatDisplayPrice } = useCurrency()
-    const hasQuery = query.trim().length > 0
-
-    const row = `flex items-center gap-3 w-full px-4 py-2.5 text-left hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors group cursor-pointer`
-
-    return (
-        <div
-            className={`absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-[300] ${variant === 'navbar' ? 'max-h-[420px]' : 'max-h-[480px]'} overflow-y-auto`}
-            style={{ animation: 'dropIn 0.15s cubic-bezier(0.16,1,0.3,1) forwards' }}
-        >
-            {/* Live suggestions */}
-            {hasQuery && (
-                suggestions.length > 0 ? (
-                    <div className="py-1.5">
-                        <p className="px-4 pt-1 pb-1.5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-600">
-                            {loading ? 'Searching…' : 'Suggestions'}
-                        </p>
-                        {suggestions.map((s, i) => (
-                            <button key={i} className={row} onClick={() => onSelect(s.label)}>
-                                <Search className="h-3.5 w-3.5 text-gray-400 shrink-0" />
-                                <span className="flex-1 text-sm text-gray-800 dark:text-gray-200 truncate">{highlightMatch(s.label, query)}</span>
-                                {s.category && (
-                                    <span className="shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-orange-50 dark:bg-orange-900/30 text-orange-500">{s.category}</span>
-                                )}
-                                <ArrowRight className="h-3.5 w-3.5 text-gray-300 dark:text-gray-700 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            </button>
-                        ))}
-                    </div>
-                ) : (
-                    <div className="px-4 py-6 text-center text-sm text-gray-400 dark:text-gray-600">
-                        {loading ? 'Searching…' : `No suggestions for “${query}”`}
-                        <p className="text-xs mt-1">Press Enter to search anyway</p>
-                    </div>
-                )
-            )}
-
-            {/* Real product hits */}
-            {hasQuery && hits.length > 0 && (
-                <div className="border-t border-gray-100 dark:border-gray-800 py-1.5">
-                    <p className="px-4 pt-1 pb-1.5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-600">Top products</p>
-                    {hits.map((p) => (
-                        <button key={p.id} type="button" className={row} onClick={() => onSelectProduct(p)}>
-                            {p.image ? (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img src={p.image} alt="" className="h-8 w-8 rounded object-cover shrink-0" />
-                            ) : (
-                                <div className="h-8 w-8 rounded bg-gray-100 dark:bg-gray-800 shrink-0" />
-                            )}
-                            <span className="flex-1 text-sm text-gray-800 dark:text-gray-200 truncate">{p.name}</span>
-                            {typeof p.price === 'number' && (
-                                <span className="shrink-0 text-xs font-semibold text-gray-700 dark:text-gray-300">
-                                    {formatDisplayPrice(p.price ?? 0)}
-                                </span>
-                            )}
-                        </button>
-                    ))}
-                </div>
-            )}
-
-            {/* Default: recent + trending */}
-            {!hasQuery && (
-                <>
-                    {recent.length > 0 && (
-                        <div className="py-1.5 border-b border-gray-100 dark:border-gray-800">
-                            <p className="px-4 pt-1 pb-1.5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-600">Recent Searches</p>
-                            {recent.map((r, i) => (
-                                <div key={i} className={`${row} pr-2`}>
-                                    <button className="flex items-center gap-3 flex-1 min-w-0" onClick={() => onSelect(r)}>
-                                        <Clock className="h-3.5 w-3.5 text-gray-400 shrink-0" />
-                                        <span className="text-sm text-gray-700 dark:text-gray-300 truncate">{r}</span>
-                                    </button>
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); onRemoveRecent(r) }}
-                                        className="ml-2 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-gray-600 transition-colors shrink-0"
-                                    >
-                                        <X className="h-3 w-3" />
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-
-                    <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50">
-                        <p className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-600 mb-2">Popular Categories</p>
-                        <div className="flex flex-wrap gap-1.5">
-                            {['Electronics', 'Fashion', 'Home', 'Sports', 'Beauty', 'Automotive'].map(cat => (
-                                <button
-                                    key={cat}
-                                    onClick={() => onSelect(cat)}
-                                    className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-orange-400 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-all"
-                                >
-                                    <Tag className="h-2.5 w-2.5" /> {cat}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                </>
-            )}
-        </div>
-    )
-}
-
-// ─── SearchBar ────────────────────────────────────────────────────────────────
-
-export default function SearchBar({ variant = 'hero', className = '' }: SearchBarProps) {
-    const [query, setQuery] = useState('')
-    const [open, setOpen] = useState(false)
-    const [recent, setRecent] = useState<string[]>([])
-    const [imageModalOpen, setImageModalOpen] = useState(false)
-    const [apiSuggestions, setApiSuggestions] = useState<Suggestion[]>([])
-    const [apiHits, setApiHits] = useState<AutocompleteHit[]>([])
-    const [loading, setLoading] = useState(false)
-    const wrapperRef = useRef<HTMLDivElement>(null)
-    const inputRef = useRef<HTMLInputElement>(null)
+/**
+ * The one search component (header, /search, anywhere else).
+ *
+ * Spec: 1px zinc-300 / zinc-700 border, rounded-md, primary 2px focus ring, solid
+ * white / zinc-900 field, optional category select as a left segment, solid
+ * primary-700 submit segment on the right (magnifier only). 44px high on mobile,
+ * 40px from lg. Autocomplete + recent searches + image search.
+ */
+export default function SearchBar({
+    categories = [],
+    initialQuery = '',
+    target = 'search',
+    className = '',
+}: SearchBarProps) {
     const router = useRouter()
+    const pathname = usePathname()
+    const { formatDisplayPrice } = useCurrency()
+    const listId = useId()
 
-    useEffect(() => { setRecent(getRecentSearches()) }, [])
+    const [query, setQuery] = useState(initialQuery)
+    const [category, setCategory] = useState('')
+    const [open, setOpen] = useState(false)
+    const [active, setActive] = useState(-1)
+    const [recent, setRecent] = useState<string[]>([])
+    const [suggestions, setSuggestions] = useState<string[]>([])
+    const [hits, setHits] = useState<AutocompleteHit[]>([])
+    const [loading, setLoading] = useState(false)
+    const [imageOpen, setImageOpen] = useState(false)
+
+    const wrapRef = useRef<HTMLDivElement>(null)
+    const inputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
-        function handler(e: MouseEvent) {
-            if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) setOpen(false)
+        setQuery(initialQuery)
+    }, [initialQuery])
+
+    // On /search, mirror the URL (`q`, `category`) so the header shows the current search,
+    // including after back/forward. window.location is used instead of useSearchParams so
+    // the header does not force a Suspense boundary on every statically rendered page.
+    const categoriesKey = categories.join('\u0001')
+    useEffect(() => {
+        if (pathname !== '/search') return
+        const names = categoriesKey ? categoriesKey.split('\u0001') : []
+        const sync = () => {
+            const params = new URLSearchParams(window.location.search)
+            setQuery(params.get('q') ?? '')
+            const cat = params.get('category') ?? ''
+            setCategory(cat && names.includes(cat) ? cat : '')
         }
-        document.addEventListener('mousedown', handler)
-        return () => document.removeEventListener('mousedown', handler)
+        sync()
+        window.addEventListener('popstate', sync)
+        return () => window.removeEventListener('popstate', sync)
+    }, [pathname, categoriesKey])
+
+    useEffect(() => {
+        setRecent(getRecentSearches())
     }, [])
 
-    // Debounced autocomplete — empty when the API returns nothing.
     useEffect(() => {
-        const trimmed = query.trim()
-        if (trimmed.length < 2) {
-            setApiSuggestions([])
-            setApiHits([])
+        function onDown(e: MouseEvent) {
+            if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpen(false)
+        }
+        document.addEventListener('mousedown', onDown)
+        return () => document.removeEventListener('mousedown', onDown)
+    }, [])
+
+    // Debounced autocomplete (>= 2 chars). searchClient swallows network errors.
+    useEffect(() => {
+        const q = query.trim()
+        if (q.length < 2) {
+            setSuggestions([])
+            setHits([])
             setLoading(false)
             return
         }
         setLoading(true)
+        let cancelled = false
         const handle = setTimeout(async () => {
-            const result = await autocompleteApi(trimmed)
-            const remoteSuggestions: Suggestion[] = (result.suggestions ?? []).map((s) => ({
-                type: 'suggestion',
-                label: s,
-            }))
-            const remoteHits = result.products ?? []
-
-            // Dedupe by lowercase label.
+            const res = await autocompleteApi(q)
+            if (cancelled) return
             const seen = new Set<string>()
-            const merged: Suggestion[] = []
-            for (const s of remoteSuggestions) {
-                const key = s.label.toLowerCase()
+            const unique: string[] = []
+            for (const s of res.suggestions ?? []) {
+                const key = s.toLowerCase()
                 if (seen.has(key)) continue
                 seen.add(key)
-                merged.push(s)
-                if (merged.length >= 8) break
+                unique.push(s)
+                if (unique.length >= 6) break
             }
-            setApiSuggestions(merged)
-            setApiHits(remoteHits)
+            setSuggestions(unique)
+            setHits((res.products ?? []).slice(0, 4))
             setLoading(false)
         }, 220)
-        return () => clearTimeout(handle)
+        return () => {
+            cancelled = true
+            clearTimeout(handle)
+        }
     }, [query])
 
-    const navigate = useCallback((q: string) => {
-        const t = q.trim()
-        if (!t) return
-        saveRecentSearch(t)
-        setRecent(getRecentSearches())
-        setOpen(false)
-        setQuery(t)
-        router.push(`/products?search=${encodeURIComponent(t)}`)
-    }, [router])
+    const hasQuery = query.trim().length > 0
 
-    const navigateToProduct = useCallback((hit: AutocompleteHit) => {
-        const id = String(hit.id ?? '').trim()
-        if (!id) return
-        setOpen(false)
-        router.push(`/products/${encodeURIComponent(id)}`)
-    }, [router])
+    const rows = useMemo<Row[]>(() => {
+        if (!hasQuery) return recent.map((label) => ({ id: `r-${label}`, kind: 'recent', label }))
+        return [
+            ...suggestions.map((label): Row => ({ id: `s-${label}`, kind: 'suggestion', label })),
+            ...hits.map((hit): Row => ({ id: `p-${hit.id}`, kind: 'product', hit })),
+        ]
+    }, [hasQuery, recent, suggestions, hits])
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter') navigate(query)
-        if (e.key === 'Escape') { setOpen(false); inputRef.current?.blur() }
+    useEffect(() => {
+        setActive(-1)
+    }, [rows])
+
+    const go = useCallback(
+        (raw: string) => {
+            const q = raw.trim()
+            if (!q && !category) return
+            if (q) {
+                saveRecentSearch(q)
+                setRecent(getRecentSearches())
+                setQuery(q)
+            }
+            setOpen(false)
+            inputRef.current?.blur()
+            const params = new URLSearchParams()
+            if (target === 'search') {
+                if (q) params.set('q', q)
+                if (category) params.set('category', category)
+                router.push(`/search?${params.toString()}`)
+                return
+            }
+            if (q) params.set('search', q)
+            if (category) params.set('category', category)
+            router.push(`/products?${params.toString()}`)
+        },
+        [category, router, target]
+    )
+
+    const goProduct = useCallback(
+        (hit: AutocompleteHit) => {
+            const id = String(hit.id ?? '').trim()
+            if (!id) return
+            setOpen(false)
+            router.push(`/products/${encodeURIComponent(id)}`)
+        },
+        [router]
+    )
+
+    const choose = (row: Row) => {
+        if (row.kind === 'product') goProduct(row.hit)
+        else go(row.label)
     }
 
-    const handleRemoveRecent = (q: string) => {
-        removeRecentSearch(q)
-        setRecent(getRecentSearches())
+    const showPanel = open && (rows.length > 0 || (hasQuery && loading))
+    const activeId = active >= 0 && rows[active] ? `${listId}-${active}` : undefined
+    const firstProduct = rows.findIndex((r) => r.kind === 'product')
+
+    const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Escape') {
+            setOpen(false)
+            inputRef.current?.blur()
+            return
+        }
+        if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && rows.length > 0) {
+            e.preventDefault()
+            setOpen(true)
+            const step = e.key === 'ArrowDown' ? 1 : -1
+            setActive((i) => (i + step + rows.length + (i === -1 && step === -1 ? 1 : 0)) % rows.length)
+        }
     }
-
-    // ── Navbar ─────────────────────────────────────────────────────────────
-
-    if (variant === 'navbar') {
-        return (
-            <>
-                <style>{`@keyframes dropIn { from{opacity:0;transform:translateY(6px) scale(0.98)} to{opacity:1;transform:translateY(0) scale(1)} }`}</style>
-
-                <div ref={wrapperRef} className={`relative flex-1 max-w-2xl ${className}`}>
-                    <div className="flex items-center gap-2">
-                        <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                            <input
-                                ref={inputRef}
-                                type="text"
-                                value={query}
-                                onChange={e => setQuery(e.target.value)}
-                                onFocus={() => setOpen(true)}
-                                onKeyDown={handleKeyDown}
-                                placeholder="Search products, brands, categories…"
-                                className="w-full pl-9 pr-8 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent text-gray-900 dark:text-white dark:bg-gray-800 placeholder-gray-400 transition-shadow"
-                            />
-                            {query && (
-                                <button onClick={() => { setQuery(''); inputRef.current?.focus() }} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
-                                    <X className="h-3.5 w-3.5" />
-                                </button>
-                            )}
-                        </div>
-
-                        {/* Camera — opens modal */}
-                        <button
-                            onClick={() => setImageModalOpen(true)}
-                            title="Search by image"
-                            className="shrink-0 p-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20 text-gray-500 hover:text-orange-500 transition-all"
-                        >
-                            <Camera className="h-4 w-4" />
-                        </button>
-
-                        <button
-                            onClick={() => navigate(query)}
-                            className="shrink-0 px-4 py-2 bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm flex items-center gap-1.5"
-                        >
-                            <Search className="h-3.5 w-3.5" />
-                            <span className="hidden sm:inline">Search</span>
-                        </button>
-                    </div>
-
-                    {open && (
-                        <SearchDropdown
-                            query={query}
-                            recent={recent}
-                            suggestions={apiSuggestions}
-                            hits={apiHits}
-                            loading={loading}
-                            onSelect={navigate}
-                            onSelectProduct={navigateToProduct}
-                            onRemoveRecent={handleRemoveRecent}
-                            variant="navbar"
-                        />
-                    )}
-                </div>
-
-                <ImageSearchModal open={imageModalOpen} onClose={() => setImageModalOpen(false)} />
-            </>
-        )
-    }
-
-    // ── Hero ────────────────────────────────────────────────────────────────
 
     return (
-        <>
-            <style>{`@keyframes dropIn { from{opacity:0;transform:translateY(6px) scale(0.98)} to{opacity:1;transform:translateY(0) scale(1)} }`}</style>
-
-            <div ref={wrapperRef} className={`relative ${className}`}>
-                <div className="mb-3">
-                    <label className="block text-left text-gray-700 dark:text-gray-300 font-semibold mb-3 text-sm">
-                        What are you looking for?
-                    </label>
-
-                    <div className="flex flex-row gap-2 sm:gap-2.5">
-                        <div className="relative flex-1">
-                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                            <input
-                                ref={inputRef}
-                                type="text"
-                                value={query}
-                                onChange={e => setQuery(e.target.value)}
-                                onFocus={() => setOpen(true)}
-                                onKeyDown={handleKeyDown}
-                                placeholder="Search products, brands, categories…"
-                                className="w-full pl-10 pr-9 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent text-gray-900 dark:text-white dark:bg-gray-800 placeholder-gray-400 text-sm shadow-sm transition-shadow"
-                            />
-                            {query && (
-                                <button onClick={() => { setQuery(''); inputRef.current?.focus() }} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
-                                    <X className="h-3.5 w-3.5" />
-                                </button>
-                            )}
-                        </div>
-
-                        {/* Camera — opens modal */}
-                        <button
-                            onClick={() => setImageModalOpen(true)}
-                            title="Search by image"
-                            className="h-12 px-4 rounded-xl border-2 border-gray-300 dark:border-gray-600 hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20 text-gray-500 hover:text-orange-500 transition-all flex items-center justify-center gap-2 text-sm font-semibold shrink-0 group"
+        <div ref={wrapRef} className={`relative w-full ${className}`}>
+            <form
+                role="search"
+                onSubmit={(e) => {
+                    e.preventDefault()
+                    const row = active >= 0 ? rows[active] : undefined
+                    if (row) choose(row)
+                    else go(query)
+                }}
+                className="flex h-11 w-full items-stretch overflow-hidden rounded-md border border-zinc-300 bg-white focus-within:border-primary-600 focus-within:ring-2 focus-within:ring-primary-600 dark:border-zinc-700 dark:bg-zinc-900 lg:h-10"
+            >
+                {categories.length > 0 && (
+                    <div className="relative hidden shrink-0 border-r border-zinc-300 bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 lg:block">
+                        <select
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                            aria-label="Search category"
+                            className="h-full w-24 cursor-pointer appearance-none truncate bg-zinc-100 pl-3 pr-7 text-sm text-zinc-800 outline-none dark:bg-zinc-800 dark:text-zinc-200 xl:w-40"
                         >
-                            <Camera className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                            <span className="hidden sm:inline">Image</span>
-                        </button>
-
-                        <button
-                            onClick={() => navigate(query)}
-                            className="h-12 px-7 rounded-xl bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-bold text-sm transition-colors shadow-lg shadow-orange-200 dark:shadow-none flex items-center justify-center gap-2 shrink-0"
-                        >
-                            <Search className="h-4 w-4" />
-                            Search
-                        </button>
+                            <option value="">All categories</option>
+                            {categories.map((name) => (
+                                <option key={name} value={name}>
+                                    {name}
+                                </option>
+                            ))}
+                        </select>
+                        <ChevronDown
+                            className="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-600 dark:text-zinc-400"
+                            aria-hidden
+                        />
                     </div>
-                </div>
-
-                {open && (
-                    <SearchDropdown
-                        query={query}
-                        recent={recent}
-                        suggestions={apiSuggestions}
-                        hits={apiHits}
-                        loading={loading}
-                        onSelect={navigate}
-                        onSelectProduct={navigateToProduct}
-                        onRemoveRecent={handleRemoveRecent}
-                        variant="hero"
-                    />
                 )}
-            </div>
 
-            <ImageSearchModal open={imageModalOpen} onClose={() => setImageModalOpen(false)} />
-        </>
+                <input
+                    ref={inputRef}
+                    type="search"
+                    inputMode="search"
+                    enterKeyHint="search"
+                    autoComplete="off"
+                    role="combobox"
+                    aria-expanded={showPanel}
+                    aria-controls={showPanel ? listId : undefined}
+                    aria-activedescendant={activeId}
+                    aria-autocomplete="list"
+                    value={query}
+                    onChange={(e) => {
+                        setQuery(e.target.value)
+                        setOpen(true)
+                    }}
+                    onFocus={() => setOpen(true)}
+                    onKeyDown={onKeyDown}
+                    placeholder="Search products and brands"
+                    aria-label="Search products"
+                    className="min-w-0 flex-1 bg-white px-3 text-base text-zinc-900 placeholder:text-zinc-500 outline-none dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-400 lg:text-sm [&::-webkit-search-cancel-button]:hidden"
+                />
+
+                {query && (
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setQuery('')
+                            inputRef.current?.focus()
+                        }}
+                        aria-label="Clear search"
+                        className="flex w-9 shrink-0 items-center justify-center text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+                    >
+                        <X className="h-4 w-4" aria-hidden />
+                    </button>
+                )}
+
+                <button
+                    type="button"
+                    onClick={() => setImageOpen(true)}
+                    aria-label="Search by image"
+                    className="flex w-10 shrink-0 items-center justify-center text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+                >
+                    <Camera className="h-5 w-5" aria-hidden />
+                </button>
+
+                <button
+                    type="submit"
+                    aria-label="Search"
+                    className="flex w-12 shrink-0 items-center justify-center bg-primary-700 text-white hover:bg-primary-800 active:bg-primary-900 lg:w-14"
+                >
+                    <Search className="h-5 w-5" aria-hidden />
+                </button>
+            </form>
+
+            {showPanel && (
+                <div
+                    id={listId}
+                    role="listbox"
+                    aria-label="Search suggestions"
+                    className="absolute left-0 right-0 top-full z-[300] mt-1 max-h-[min(70vh,420px)] overflow-y-auto rounded-md border border-zinc-300 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-900"
+                >
+                    {rows.length === 0 && (
+                        <p className="px-3 py-3 text-sm text-zinc-600 dark:text-zinc-400">Searching…</p>
+                    )}
+
+                    {rows.map((row, i) => {
+                        const selected = i === active
+                        const header =
+                            i === 0 && row.kind === 'recent' ? (
+                                <p className={groupLabel}>Recent searches</p>
+                            ) : i === firstProduct && i > 0 ? (
+                                <p className={`${groupLabel} border-t border-zinc-200 dark:border-zinc-800`}>Products</p>
+                            ) : i === 0 && row.kind === 'product' ? (
+                                <p className={groupLabel}>Products</p>
+                            ) : null
+
+                        if (row.kind === 'recent') {
+                            return (
+                                <div key={row.id}>
+                                    {header}
+                                    <div
+                                        id={`${listId}-${i}`}
+                                        role="option"
+                                        aria-selected={selected}
+                                        onMouseEnter={() => setActive(i)}
+                                        className={`flex items-center ${selected ? rowActive : ''}`}
+                                    >
+                                        <button
+                                            type="button"
+                                            onClick={() => go(row.label)}
+                                            className={`${rowBase} min-w-0 flex-1`}
+                                        >
+                                            <span className="truncate">{row.label}</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                removeRecentSearch(row.label)
+                                                setRecent(getRecentSearches())
+                                            }}
+                                            aria-label={`Remove ${row.label} from recent searches`}
+                                            className="flex h-11 w-11 shrink-0 items-center justify-center text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 lg:h-10"
+                                        >
+                                            <X className="h-4 w-4" aria-hidden />
+                                        </button>
+                                    </div>
+                                </div>
+                            )
+                        }
+
+                        if (row.kind === 'suggestion') {
+                            return (
+                                <div key={row.id}>
+                                    {header}
+                                    <button
+                                        type="button"
+                                        id={`${listId}-${i}`}
+                                        role="option"
+                                        aria-selected={selected}
+                                        onMouseEnter={() => setActive(i)}
+                                        onClick={() => go(row.label)}
+                                        className={`${rowBase} ${selected ? rowActive : ''}`}
+                                    >
+                                        <span className="min-w-0 flex-1 truncate">
+                                            <Match text={row.label} query={query} />
+                                        </span>
+                                    </button>
+                                </div>
+                            )
+                        }
+
+                        const p = row.hit
+                        return (
+                            <div key={row.id}>
+                                {header}
+                                <button
+                                    type="button"
+                                    id={`${listId}-${i}`}
+                                    role="option"
+                                    aria-selected={selected}
+                                    onMouseEnter={() => setActive(i)}
+                                    onClick={() => goProduct(p)}
+                                    className={`${rowBase} ${selected ? rowActive : ''}`}
+                                >
+                                    {p.image ? (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img
+                                            src={p.image}
+                                            alt=""
+                                            className="h-9 w-9 shrink-0 rounded bg-zinc-100 object-contain dark:bg-zinc-800"
+                                        />
+                                    ) : (
+                                        <span className="h-9 w-9 shrink-0 rounded bg-zinc-100 dark:bg-zinc-800" />
+                                    )}
+                                    <span className="min-w-0 flex-1 truncate">{p.name}</span>
+                                    {typeof p.price === 'number' && (
+                                        <span className="shrink-0 font-mono text-xs font-semibold tabular-nums text-zinc-800 dark:text-zinc-200">
+                                            {formatDisplayPrice(p.price)}
+                                        </span>
+                                    )}
+                                </button>
+                            </div>
+                        )
+                    })}
+                </div>
+            )}
+
+            <ImageSearchModal open={imageOpen} onClose={() => setImageOpen(false)} />
+        </div>
     )
 }

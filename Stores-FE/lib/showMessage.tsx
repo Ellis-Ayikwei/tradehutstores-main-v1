@@ -1,7 +1,6 @@
 import { notification } from 'antd';
 
 const showMessage = (msg = '', type: 'success' | 'error' | 'info' | 'warning' = 'success') => {
-    console.log('showMessage called with:', msg, type);
     const titles = {
         success: 'Success',
         error: 'Error',

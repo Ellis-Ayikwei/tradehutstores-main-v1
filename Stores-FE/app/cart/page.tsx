@@ -50,7 +50,7 @@ function LineRow({ line, quantity, busy, formatPrice, onQuantity, onRemove, onSa
         )
 
     return (
-        <li className={`flex gap-3 py-3 transition-opacity sm:gap-4 sm:py-4 ${busy ? 'opacity-60' : ''}`} aria-busy={busy}>
+        <li className={`flex gap-3 py-3 sm:gap-4 sm:py-4 ${busy ? 'pointer-events-none' : ''}`} aria-busy={busy}>
             <Link
                 href={line.href}
                 aria-label={line.name}
@@ -62,7 +62,7 @@ function LineRow({ line, quantity, busy, formatPrice, onQuantity, onRemove, onSa
                         alt={line.name}
                         fill
                         sizes="(min-width: 640px) 120px, 88px"
-                        className={`object-contain p-1.5 ${line.outOfStock ? 'opacity-60 grayscale' : ''}`}
+                        className={`object-contain p-1.5 ${line.outOfStock ? 'grayscale' : ''}`}
                     />
                 ) : (
                     <span className="flex h-full w-full items-center justify-center text-zinc-400 dark:text-zinc-500">
@@ -191,7 +191,7 @@ function CheckoutCard({
             : 0
 
     return (
-        <div className={`${CARD} p-3 sm:p-4 lg:sticky lg:top-40`}>
+        <div className={`${CARD} p-3 sm:p-4 lg:sticky lg:top-28`}>
             {freeShippingThreshold !== null ? (
                 <div className="mb-3">
                     {qualifiesForFreeShipping ? (

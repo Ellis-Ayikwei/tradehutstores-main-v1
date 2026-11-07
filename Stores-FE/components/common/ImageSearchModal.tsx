@@ -262,20 +262,14 @@ export default function ImageSearchModal({ open, onClose }: ImageSearchModalProp
                     to   { opacity: 1; transform: scale(1) translateY(0); }
                 }
                 @keyframes spin { to { transform: rotate(360deg); } }
-                @keyframes shimmer {
-                    0%   { background-position: -200% 0; }
-                    100% { background-position:  200% 0; }
-                }
                 .progress-shimmer {
-                    background: linear-gradient(90deg, #f97316 0%, #fb923c 40%, #fdba74 60%, #f97316 100%);
-                    background-size: 200% 100%;
-                    animation: shimmer 1.2s linear infinite;
+                    background: #ea580c;
                 }
             `}</style>
 
             {/* ── Backdrop ── */}
             <div
-                className="fixed inset-0 z-[500] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+                className="fixed inset-0 z-[500] bg-black/50 flex items-center justify-center p-4"
                 onClick={(e) => { if (e.target === e.currentTarget) handleClose() }}
             >
                 {/* ── Modal ── */}
@@ -286,9 +280,7 @@ export default function ImageSearchModal({ open, onClose }: ImageSearchModalProp
                     {/* Header */}
                     <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-gray-100 dark:border-gray-800">
                         <div className="flex items-center gap-2.5">
-                            <div className="p-2 rounded-xl bg-orange-50 dark:bg-orange-900/30">
-                                <Camera className="h-5 w-5 text-orange-500" />
-                            </div>
+                            <Camera className="h-5 w-5 text-orange-600 dark:text-orange-400" />
                             <div>
                                 <h2 className="text-base font-bold text-gray-900 dark:text-white leading-tight">Search by Image</h2>
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Upload, capture or paste a link</p>
@@ -349,7 +341,7 @@ export default function ImageSearchModal({ open, onClose }: ImageSearchModalProp
 
                                         {/* Searching overlay */}
                                         {state === 'searching' && (
-                                            <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center gap-3">
+                                            <div className="absolute inset-0 bg-zinc-900 flex flex-col items-center justify-center gap-3">
                                                 <Loader2 className="h-8 w-8 text-white animate-spin" />
                                                 <p className="text-white text-sm font-semibold">Analyzing image…</p>
                                             </div>
@@ -357,7 +349,7 @@ export default function ImageSearchModal({ open, onClose }: ImageSearchModalProp
 
                                         {/* Done overlay */}
                                         {state === 'done' && (
-                                            <div className="absolute inset-0 bg-emerald-500/80 flex flex-col items-center justify-center gap-2">
+                                            <div className="absolute inset-0 bg-emerald-700 flex flex-col items-center justify-center gap-2">
                                                 <CheckCircle2 className="h-10 w-10 text-white" />
                                                 <p className="text-white text-sm font-bold">Found matches!</p>
                                             </div>
@@ -365,10 +357,10 @@ export default function ImageSearchModal({ open, onClose }: ImageSearchModalProp
 
                                         {/* File info badge */}
                                         {file && state === 'previewing' && (
-                                            <div className="absolute bottom-2 left-2 right-2 flex items-center gap-2 bg-black/60 backdrop-blur-sm rounded-lg px-3 py-2">
-                                                <ImageIcon className="h-3.5 w-3.5 text-white/70 shrink-0" />
-                                                <span className="text-xs text-white/90 truncate flex-1">{file.name}</span>
-                                                <span className="text-xs text-white/60 shrink-0">{formatBytes(file.size)}</span>
+                                            <div className="absolute bottom-2 left-2 right-2 flex items-center gap-2 bg-zinc-900 rounded-lg px-3 py-2">
+                                                <ImageIcon className="h-3.5 w-3.5 text-zinc-300 shrink-0" />
+                                                <span className="text-xs text-white truncate flex-1">{file.name}</span>
+                                                <span className="text-xs text-zinc-300 shrink-0">{formatBytes(file.size)}</span>
                                             </div>
                                         )}
 
@@ -379,7 +371,7 @@ export default function ImageSearchModal({ open, onClose }: ImageSearchModalProp
                                                     href={preview}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="p-1.5 bg-black/50 backdrop-blur-sm rounded-lg text-white/80 hover:text-white transition-colors"
+                                                    className="p-1.5 bg-zinc-900 hover:bg-zinc-700 rounded-lg text-white transition-colors"
                                                     title="View full size"
                                                 >
                                                     <ZoomIn className="h-3.5 w-3.5" />
@@ -406,7 +398,7 @@ export default function ImageSearchModal({ open, onClose }: ImageSearchModalProp
 
                                 {/* Error */}
                                 {state === 'error' && (
-                                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm">
+                                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-50 dark:bg-red-900 text-red-700 dark:text-red-100 text-sm">
                                         <AlertCircle className="h-4 w-4 shrink-0" />
                                         {errorMsg}
                                     </div>
@@ -445,11 +437,11 @@ export default function ImageSearchModal({ open, onClose }: ImageSearchModalProp
                                     onClick={() => fileRef.current?.click()}
                                     className={`relative cursor-pointer rounded-xl border-2 border-dashed transition-all py-10 flex flex-col items-center gap-3
                                         ${dragOver
-                                            ? 'border-orange-400 bg-orange-50 dark:bg-orange-900/20 scale-[1.01]'
-                                            : 'border-gray-200 dark:border-gray-700 hover:border-orange-300 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                                            ? 'border-orange-400 bg-orange-50 dark:bg-orange-950 scale-[1.01]'
+                                            : 'border-gray-200 dark:border-gray-700 hover:border-orange-300 hover:bg-gray-50 dark:hover:bg-gray-800'
                                         }`}
                                 >
-                                    <div className={`p-4 rounded-2xl transition-colors ${dragOver ? 'bg-orange-100 dark:bg-orange-900/40' : 'bg-gray-100 dark:bg-gray-800'}`}>
+                                    <div className={`p-4 rounded-2xl transition-colors ${dragOver ? 'bg-orange-100 dark:bg-orange-950' : 'bg-gray-100 dark:bg-gray-800'}`}>
                                         <Upload className={`h-7 w-7 transition-colors ${dragOver ? 'text-orange-500' : 'text-gray-400'}`} />
                                     </div>
                                     <div className="text-center">
@@ -471,7 +463,7 @@ export default function ImageSearchModal({ open, onClose }: ImageSearchModalProp
 
                                 {/* Error */}
                                 {errorMsg && (
-                                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm">
+                                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-50 dark:bg-red-900 text-red-700 dark:text-red-100 text-sm">
                                         <AlertCircle className="h-4 w-4 shrink-0" />
                                         {errorMsg}
                                     </div>
@@ -480,7 +472,7 @@ export default function ImageSearchModal({ open, onClose }: ImageSearchModalProp
                                 {/* Browse button */}
                                 <button
                                     onClick={() => fileRef.current?.click()}
-                                    className="w-full py-2.5 rounded-xl border-2 border-orange-200 dark:border-orange-800 text-orange-500 font-semibold text-sm hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors"
+                                    className="w-full py-2.5 rounded-xl border-2 border-orange-200 dark:border-orange-800 text-orange-500 font-semibold text-sm hover:bg-orange-50 dark:hover:bg-orange-950 transition-colors"
                                 >
                                     Browse files
                                 </button>
@@ -516,7 +508,7 @@ export default function ImageSearchModal({ open, onClose }: ImageSearchModalProp
 
                                     {/* Loading overlay */}
                                     {!cameraReady && !cameraError && (
-                                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-white/70">
+                                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-zinc-300">
                                             <Loader2 className="h-8 w-8 animate-spin" />
                                             <p className="text-sm">Starting camera…</p>
                                         </div>
@@ -526,7 +518,7 @@ export default function ImageSearchModal({ open, onClose }: ImageSearchModalProp
                                     {cameraError && (
                                         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center">
                                             <AlertCircle className="h-8 w-8 text-red-400" />
-                                            <p className="text-sm text-white/80">{cameraError}</p>
+                                            <p className="text-sm text-zinc-200">{cameraError}</p>
                                             <button
                                                 onClick={startCamera}
                                                 className="px-4 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold transition-colors"
@@ -541,7 +533,7 @@ export default function ImageSearchModal({ open, onClose }: ImageSearchModalProp
                                 <button
                                     onClick={capturePhoto}
                                     disabled={!cameraReady}
-                                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 active:bg-orange-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-sm transition-colors shadow-lg shadow-orange-200 dark:shadow-none"
+                                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 active:bg-orange-700 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500 text-white font-bold text-sm transition-colors shadow-lg shadow-orange-200 dark:shadow-none"
                                 >
                                     <Camera className="h-5 w-5" />
                                     Capture Photo
@@ -584,7 +576,7 @@ export default function ImageSearchModal({ open, onClose }: ImageSearchModalProp
                                 <button
                                     onClick={loadFromUrl}
                                     disabled={!urlInput.trim()}
-                                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 active:bg-orange-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-sm transition-colors shadow-lg shadow-orange-200 dark:shadow-none"
+                                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 active:bg-orange-700 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500 text-white font-bold text-sm transition-colors shadow-lg shadow-orange-200 dark:shadow-none"
                                 >
                                     <Search className="h-4 w-4" />
                                     Load & Search

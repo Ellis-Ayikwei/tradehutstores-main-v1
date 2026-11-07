@@ -27,7 +27,7 @@ export default function AuctionGallery({ images, alt, dimmed = false }: AuctionG
                         fill
                         priority
                         sizes="(min-width: 1280px) 40vw, (min-width: 1024px) 45vw, 100vw"
-                        className={`object-contain p-3 sm:p-4 ${dimmed ? 'opacity-70 grayscale' : ''}`}
+                        className={`object-contain p-3 sm:p-4 ${dimmed ? 'grayscale' : ''}`}
                     />
                 ) : (
                     <div className="flex h-full w-full flex-col items-center justify-center gap-1 text-zinc-500 dark:text-zinc-400">

@@ -20,6 +20,7 @@ import BidPanel, {
 } from '@/components/Auctions/BidPanel'
 import { useAuctionState } from '@/hooks/useAuctionState'
 import { parseIso } from '@/hooks/useServerClock'
+import { isGenericVariantName } from '@/lib/variantLabel'
 import {
     fetchAuction,
     formatMoney,
@@ -105,7 +106,9 @@ export default function AuctionDetailPage() {
     const images = imageUrls(auction)
     const seller = auction.seller
     const sellerRating = Number(seller.rating ?? 0)
-    const attributes = auction.variant?.attributes ?? []
+    const attributes = (auction.variant?.attributes ?? []).filter(a => !isGenericVariantName(a.value))
+    // The attribute rows below already spell out Colour/Size etc., so only a real (non-placeholder) name earns an 'Item' row.
+    const itemLabel = auction.variant?.name && !isGenericVariantName(auction.variant.name) ? auction.variant.name.trim() : null
 
     const facts: Array<[string, string]> = [
         ['Starting bid', formatMoney(auction.starting_price, auction.currency)],
@@ -114,7 +117,7 @@ export default function AuctionDetailPage() {
         ...(auction.buy_now_available && auction.buy_now_price ? ([['Buy now price', formatMoney(auction.buy_now_price, auction.currency)]] as Array<[string, string]>) : []),
         [status === 'scheduled' ? 'Starts' : 'Ends', formatDate(status === 'scheduled' ? auction.starts_at : auction.ends_at)],
         ...(auction.product?.category?.name ? ([['Category', auction.product.category.name]] as Array<[string, string]>) : []),
-        ...(auction.variant?.name ? ([['Item', auction.variant.name]] as Array<[string, string]>) : []),
+        ...(itemLabel ? ([['Item', itemLabel]] as Array<[string, string]>) : []),
         ...attributes.map(a => [a.name, a.value] as [string, string]),
         ...(auction.variant?.sku ? ([['SKU', auction.variant.sku]] as Array<[string, string]>) : []),
     ]
@@ -201,7 +204,7 @@ export default function AuctionDetailPage() {
                     <BidHistory auctionId={auction.id} currency={auction.currency} bidCount={auction.bid_count} initialBids={detail.recent_bids} />
                 </div>
 
-                <aside className="hidden self-start lg:sticky lg:top-36 lg:block">
+                <aside className="hidden self-start lg:sticky lg:top-28 lg:block">
                     <BidPanel auction={bidAuction} onState={applyState} onRefresh={refresh} />
                 </aside>
             </div>

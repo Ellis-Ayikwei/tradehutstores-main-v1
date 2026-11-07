@@ -1,3 +1,4 @@
+import type { CardVariant } from '@/components/common/marketplace/cardVariants'
 /**
  * Shapes used by the public seller store page.
  *
@@ -41,6 +42,9 @@ export interface StoreProduct {
     /** 0 renders "Sold out". Undefined when the API did not report stock. */
     stockLeft?: number
     createdAt: string | null
+    /** Real variants when the row carries them (enables colour swatches on cards). */
+    variants?: CardVariant[]
+    defaultVariantId?: string
 }
 
 export interface StoreData {

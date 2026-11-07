@@ -25,7 +25,7 @@ function StarRatingPicker({
           type="button"
           disabled={disabled}
           onClick={() => onChange(n)}
-          className="p-0.5 rounded-md hover:bg-neutral-200/80 dark:hover:bg-neutral-700/80 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 disabled:opacity-50"
+          className="p-0.5 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 disabled:cursor-not-allowed"
         >
           <Star
             className={`${sizeClass} ${
@@ -120,7 +120,7 @@ export default function WriteReviewModal({
             type="button"
             disabled={submitting}
             onClick={close}
-            className="p-2 rounded-lg text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors disabled:opacity-50"
+            className="p-2 rounded-lg text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors disabled:cursor-not-allowed disabled:text-neutral-400"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
@@ -146,7 +146,7 @@ export default function WriteReviewModal({
             onChange={(e) => setComment(e.target.value)}
             disabled={submitting}
             placeholder="What did you think of this product?"
-            className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-950 px-4 py-3 text-sm text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-y min-h-[100px] disabled:opacity-60"
+            className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-950 px-4 py-3 text-sm text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-y min-h-[100px] disabled:cursor-not-allowed disabled:bg-zinc-100 disabled:text-zinc-500 dark:disabled:bg-zinc-900 dark:disabled:text-zinc-500"
           />
         </div>
         {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
@@ -155,7 +155,7 @@ export default function WriteReviewModal({
             type="button"
             disabled={submitting}
             onClick={close}
-            className="px-5 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-600 text-neutral-800 dark:text-neutral-200 font-semibold text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors disabled:opacity-50"
+            className="px-5 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-600 text-neutral-800 dark:text-neutral-200 font-semibold text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
           >
             Cancel
           </button>
@@ -163,7 +163,7 @@ export default function WriteReviewModal({
             type="button"
             disabled={submitting}
             onClick={handleSubmit}
-            className="px-5 py-2.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm shadow-md disabled:opacity-50"
+            className="px-5 py-2.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm shadow-md disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
           >
             {submitting ? 'Submitting…' : 'Submit review'}
           </button>

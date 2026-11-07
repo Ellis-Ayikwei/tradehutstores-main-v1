@@ -88,7 +88,7 @@ export default function QuoteCard({ quote: q, highlight, awardable, onAward }: P
 
     return (
         <article
-            className={`rounded-xl border bg-white dark:bg-zinc-900 p-2.5 sm:p-3 ${q.status === 'accepted' ? 'border-green-700 dark:border-green-500' : 'border-zinc-200 dark:border-zinc-800'} ${inactive ? 'opacity-80' : ''}`}
+            className={`rounded-xl border bg-white dark:bg-zinc-900 p-2.5 sm:p-3 ${q.status === 'accepted' ? 'border-green-700 dark:border-green-500' : 'border-zinc-200 dark:border-zinc-800'} ${inactive ? '!bg-zinc-50 dark:!bg-zinc-950' : ''}`}
         >
             <header className="flex items-start justify-between gap-2">
                 <div className="min-w-0">

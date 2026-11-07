@@ -36,7 +36,7 @@ export default function CollapsibleSection({
   }
 
   return (
-    <section id={id} className={`scroll-mt-40 border-t border-zinc-200 dark:border-zinc-800 ${className}`}>
+    <section id={id} className={`scroll-mt-28 border-t border-zinc-200 dark:border-zinc-800 ${className}`}>
       <h2 className="m-0">
         <button
           type="button"

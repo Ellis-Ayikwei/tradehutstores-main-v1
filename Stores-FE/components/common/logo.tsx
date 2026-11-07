@@ -26,7 +26,6 @@ import Image from 'next/image'
 const Logo = () =>{
     const { theme, toggleTheme } = useTheme()
 
-    console.log("the theme context", theme)
 
 const dark = theme && theme.toLowerCase().trim() === 'dark';
 

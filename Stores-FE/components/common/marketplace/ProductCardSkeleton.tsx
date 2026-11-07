@@ -1,57 +1,59 @@
+import { memo } from 'react'
 import { cx } from './cx'
 
 export interface ProductCardSkeletonProps {
     /** Match the variant of the cards being loaded. */
     variant?: 'grid' | 'list'
     compact?: boolean
-    /** Grid only: omit the rating/meta row (use when the loaded cards will drop it too). */
+    /** @deprecated No longer used. */
     hideMeta?: boolean
+    /** @deprecated No longer used (grid cards have no Add to cart). */
+    showCta?: boolean
     className?: string
 }
 
-const BONE = 'rounded bg-zinc-200 dark:bg-zinc-800'
+const BONE = 'rounded-sm bg-zinc-200 dark:bg-zinc-800'
 
 /**
- * Mirrors ProductCard's fixed anatomy so nothing shifts on load:
- * square image, then price block h-10, title h-9 (sm:h-10), one rating+meta row h-4, gap-1.
+ * Same geometry as ProductCard: grid = square grey stage, then title / rating / price lines (no box);
+ * list = 160px (240px md) stage beside text lines, separated by a divider.
  */
-export default function ProductCardSkeleton({ variant = 'grid', compact = false, hideMeta = false, className }: ProductCardSkeletonProps) {
-    const isList = variant === 'list'
-    const shell = 'rounded-lg border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900'
-
-    if (isList) {
+function ProductCardSkeleton({ variant = 'grid', compact = false, className }: ProductCardSkeletonProps) {
+    if (variant === 'list') {
         return (
-            <div aria-hidden="true" className={cx('flex animate-pulse', shell, className)}>
-                <div className="min-h-28 w-28 shrink-0 self-stretch rounded-l-[7px] bg-zinc-200 dark:bg-zinc-800 sm:min-h-[140px] sm:w-[140px]" />
-                <div className={cx('min-w-0 flex-1 space-y-2', compact ? 'p-2 sm:p-2.5' : 'p-2.5 sm:p-3')}>
-                    <div className={cx('h-4 w-11/12', BONE)} />
-                    <div className={cx('h-4 w-2/3', BONE)} />
-                    <div className={cx('h-3.5 w-28', BONE)} />
-                    <div className={cx('h-6 w-32', BONE)} />
-                    <div className={cx('h-3 w-40', BONE)} />
+            <div
+                aria-hidden="true"
+                className={cx(
+                    'flex gap-3 border-b border-zinc-200 motion-safe:animate-pulse dark:border-zinc-800 sm:gap-4',
+                    compact ? 'py-2' : 'py-3',
+                    className
+                )}
+            >
+                <div className="h-40 w-40 shrink-0 bg-zinc-200 dark:bg-zinc-800 md:h-60 md:w-60" />
+                <div className="min-w-0 flex-1 space-y-2">
+                    <div className={cx('h-5 w-24', BONE)} />
+                    <div className={cx('h-5 w-11/12', BONE)} />
+                    <div className={cx('h-5 w-2/3', BONE)} />
+                    <div className={cx('h-4 w-32', BONE)} />
+                    <div className={cx('h-7 w-28', BONE)} />
+                    <div className={cx('h-4 w-40', BONE)} />
+                    <div className="h-11 w-full max-w-xs rounded-full bg-zinc-200 dark:bg-zinc-800 md:h-9" />
                 </div>
             </div>
         )
     }
 
     return (
-        <div aria-hidden="true" className={cx('flex h-full animate-pulse flex-col', shell, className)}>
-            <div className="aspect-square w-full rounded-t-[7px] bg-zinc-200 dark:bg-zinc-800" />
-            <div className={cx('flex flex-col gap-1', compact ? 'p-2 sm:p-2.5' : 'p-2.5 sm:p-3')}>
-                <div className="flex h-10 flex-col justify-center gap-1">
-                    <div className={cx('h-5 w-24', BONE)} />
-                    <div className={cx('h-3 w-16', BONE)} />
-                </div>
-                <div className={cx('flex h-9 flex-col justify-center gap-1.5', !compact && 'sm:h-10')}>
-                    <div className={cx('h-3.5 w-11/12', BONE)} />
-                    <div className={cx('h-3.5 w-2/3', BONE)} />
-                </div>
-                {hideMeta ? null : (
-                    <div className="flex h-4 items-center">
-                        <div className={cx('h-3 w-28', BONE)} />
-                    </div>
-                )}
+        <div aria-hidden="true" className={cx('self-start pb-2 motion-safe:animate-pulse', className)}>
+            <div className="aspect-square w-full rounded-md bg-zinc-200 dark:bg-zinc-800" />
+            <div className="mt-2 space-y-1.5">
+                <div className={cx('h-4 w-11/12', BONE)} />
+                <div className={cx('h-4 w-3/4', BONE)} />
+                <div className={cx('h-4 w-28', BONE)} />
+                <div className={cx('h-6 w-24', BONE)} />
             </div>
         </div>
     )
 }
+
+export default memo(ProductCardSkeleton)

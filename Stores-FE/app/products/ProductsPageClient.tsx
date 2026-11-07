@@ -16,24 +16,22 @@ import {
 } from 'lucide-react'
 import { AppDispatch, RootState } from '@/store'
 import { fetchProducts } from '@/store/productSlice'
-import { addToCart } from '@/store/cartSlice'
-import { addToWishlist, removeFromWishlist } from '@/store/wishListSlice'
 import MainLayout from '@/components/Layouts/MainLayout'
 import Pagination from '@/components/common/Pagination'
 import {
-    ProductCard,
     ProductCardSkeleton,
     ProductGrid,
     productHasMeta,
+    cardVariantsFromRaw,
 } from '@/components/common/marketplace'
 import type { MarketplaceProduct } from '@/components/common/marketplace'
+import { CommerceProductCard } from '@/components/Products/ProductCard'
 import ProductFilters, {
     FilterState,
     DEFAULT_FILTERS,
     countActiveFilters,
 } from '@/components/Products/ProductFilters'
 import { useCurrency } from '@/contexts/CurrencyContext'
-import { wishlistItemProductId } from '@/lib/wishlistUtils'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -48,6 +46,8 @@ const SORT_OPTIONS = [
 const PAGE_SIZES = [20, 40, 80]
 const DEFAULT_PAGE_SIZE = 40
 const SKELETON_COUNT = 10
+/** Columns beside the filter rail: 2 / 3 / 4 (lg) / 5 (xl). */
+const LISTING_SIZES = '(min-width: 1280px) 16vw, (min-width: 1024px) 19vw, (min-width: 640px) 33vw, 50vw'
 
 const FOCUS_RING =
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 dark:focus-visible:ring-offset-gray-950'
@@ -87,6 +87,9 @@ interface CatalogProduct {
     seller_name?: string | null
     estimated_delivery?: string | null
     arrival_text?: string | null
+    /** Not served by /products/catalog/ yet; when present (BE-PRD-2) the card shows colour swatches. */
+    variants?: unknown
+    default_variant?: string | { id?: string } | null
 }
 
 /** Finite non-negative number, or undefined when the row does not carry the field. */
@@ -131,6 +134,10 @@ function toCardProduct(p: CatalogProduct): MarketplaceProduct {
         arrivalText: optionalText(p.arrival_text) ?? optionalText(p.estimated_delivery),
         brand: p.brand ?? undefined,
         category: p.category ?? undefined,
+        condition: optionalText(p.condition),
+        variants: cardVariantsFromRaw(p.variants, { discountPct: num(p.discount_percentage) }),
+        defaultVariantId:
+            typeof p.default_variant === 'string' ? p.default_variant : (p.default_variant?.id ?? undefined),
     }
 }
 
@@ -302,10 +309,7 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
 export default function ProductsPageClient() {
     const dispatch = useDispatch<AppDispatch>()
     const searchParams = useSearchParams()
-    const { formatDisplayPrice } = useCurrency()
     const { allProducts, isUpdating } = useSelector((state: RootState) => state.products)
-    const cartId = useSelector((state: RootState) => state.cart.cart.id)
-    const wishlistItems = useSelector((state: RootState) => state.wishlist.wishlist.items)
 
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
     const [sortBy, setSortBy] = useState('featured')
@@ -316,7 +320,6 @@ export default function ProductsPageClient() {
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
     const [fetched, setFetched] = useState(false)
     const [loadFailed, setLoadFailed] = useState(false)
-    const [addingId, setAddingId] = useState<string | null>(null)
 
     const catalog = allProducts as unknown as CatalogProduct[]
 
@@ -484,63 +487,10 @@ export default function ProductsPageClient() {
 
     const activeCount = countActiveFilters(filters, maxProductPrice)
 
-    // ── Cart + wishlist actions (same thunks the old card used) ────────────────
-    const wishlistByProduct = useMemo(() => {
-        const map = new Map<string, string>()
-        ;((wishlistItems ?? []) as { id?: string; product?: unknown }[]).forEach(row => {
-            const pid = wishlistItemProductId(row)
-            if (pid && row.id) map.set(pid, String(row.id))
-        })
-        return map
-    }, [wishlistItems])
-
-    const catalogById = useMemo(() => {
-        const map = new Map<string, CatalogProduct>()
-        catalog.forEach(p => map.set(String(p.id), p))
-        return map
-    }, [catalog])
-
-    const handleToggleWishlist = useCallback(
-        (product: MarketplaceProduct) => {
-            const id = String(product.id)
-            const entryId = wishlistByProduct.get(id)
-            if (entryId) {
-                dispatch(removeFromWishlist({ wishlistItemId: entryId })).catch(() => undefined)
-                return
-            }
-            dispatch(addToWishlist({ product_id: id })).catch(() => undefined)
-        },
-        [dispatch, wishlistByProduct]
-    )
-
-    const handleAddToCart = useCallback(
-        (product: MarketplaceProduct) => {
-            const id = String(product.id)
-            const source = catalogById.get(id)
-            setAddingId(id)
-            dispatch(
-                addToCart({
-                    cart_id: cartId || undefined,
-                    product_id: id,
-                    quantity: 1,
-                    product: {
-                        id,
-                        name: product.title,
-                        price: String(product.originalPrice ?? product.price),
-                        final_price: String(product.price),
-                        main_product_image: source?.main_product_image ?? undefined,
-                        image: source?.main_product_image ?? undefined,
-                        brand: source?.brand,
-                        category: source?.category,
-                    },
-                })
-            )
-                .unwrap()
-                .catch(() => undefined)
-                .finally(() => setAddingId(null))
-        },
-        [dispatch, cartId, catalogById]
-    )
+    // Cards own their wishlist/cart wiring (CommerceProductCard): this page does not subscribe to the cart or
+    // wishlist, and converts the visible rows to card props once per page/filter change, not once per render.
+    const cardProducts = useMemo(() => paginatedProducts.map(toCardProduct), [paginatedProducts])
+    const gridHasMeta = useMemo(() => cardProducts.some(productHasMeta), [cardProducts])
 
     // ── Derived view state ────────────────────────────────────────────────────
     const isLoading = (isUpdating || !fetched) && catalog.length === 0 && !loadFailed
@@ -708,38 +658,21 @@ export default function ProductsPageClient() {
                             ) : paginatedProducts.length > 0 ? (
                                 <>
                                     {viewMode === 'grid' ? (
-                                        <ProductGrid layout="listing" hasMeta={paginatedProducts.some(p => productHasMeta(toCardProduct(p)))}>
-                                            {paginatedProducts.map((p, i) => {
-                                                const card = toCardProduct(p)
-                                                return (
-                                                    <ProductCard
-                                                        key={p.id}
-                                                        product={card}
-                                                        compact
-                                                        priority={i < 4}
-                                                        formatPrice={formatDisplayPrice}
-                                                        wishlisted={wishlistByProduct.has(String(p.id))}
-                                                        onToggleWishlist={handleToggleWishlist}
-                                                        onAddToCart={handleAddToCart}
-                                                        addToCartLoading={addingId === String(p.id)}
-                                                    />
-                                                )
-                                            })}
+                                        <ProductGrid layout="listing" hasMeta={gridHasMeta}>
+                                            {cardProducts.map((card, i) => (
+                                                <CommerceProductCard
+                                                    key={card.id}
+                                                    product={card}
+                                                    compact
+                                                    priority={i < 4}
+                                                    sizes={LISTING_SIZES}
+                                                />
+                                            ))}
                                         </ProductGrid>
                                     ) : (
                                         <div className="space-y-2">
-                                            {paginatedProducts.map(p => (
-                                                <ProductCard
-                                                    key={p.id}
-                                                    variant="list"
-                                                    compact
-                                                    product={toCardProduct(p)}
-                                                    formatPrice={formatDisplayPrice}
-                                                    wishlisted={wishlistByProduct.has(String(p.id))}
-                                                    onToggleWishlist={handleToggleWishlist}
-                                                    onAddToCart={handleAddToCart}
-                                                    addToCartLoading={addingId === String(p.id)}
-                                                />
+                                            {cardProducts.map(card => (
+                                                <CommerceProductCard key={card.id} variant="list" compact product={card} />
                                             ))}
                                         </div>
                                     )}

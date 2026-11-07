@@ -8,7 +8,7 @@ import { SELLER_DASHBOARD_URL } from '@/lib/sellerOnboardingApi'
 // Shared by TopNav (search category select + mobile drawer) and SubNav (mega popover).
 
 export type NavSubcategory = { name: string; count: number }
-export type NavCategory = { name: string; icon: string; subcategories: NavSubcategory[] }
+export type NavCategory = { name: string; subcategories: NavSubcategory[] }
 
 /** Event used by SubNav's mobile rail to open the drawer rendered by TopNav. */
 export const OPEN_NAV_DRAWER_EVENT = 'th:open-nav-drawer'
@@ -17,15 +17,12 @@ export function openNavDrawer(): void {
     if (typeof window !== 'undefined') window.dispatchEvent(new Event(OPEN_NAV_DRAWER_EVENT))
 }
 
-const CATEGORY_ICONS = ['📱', '👔', '🏠', '⚽', '💄', '🎮', '📚', '🚗', '🛠️', '📦']
-
 export function useNavCategories(): { categories: NavCategory[]; loading: boolean; error: boolean } {
     const { categories: rows, loading, error } = useCatalogCategories()
     const categories = useMemo(
         (): NavCategory[] =>
-            rows.map((row, index) => ({
+            rows.map((row) => ({
                 name: row.name,
-                icon: CATEGORY_ICONS[index % CATEGORY_ICONS.length],
                 subcategories: row.subcategories,
             })),
         [rows]

@@ -142,7 +142,7 @@ function AddressCard({
           <h3 className="font-headline font-bold text-lg md:text-xl text-on-surface leading-tight">
             {addr.recipient}
             {addr.label !== "home" && (
-              <span className="text-on-surface-variant/50 font-normal ml-2 text-base">
+              <span className="text-on-surface-variant font-normal ml-2 text-base">
                 — {addressLabel(addr)}
               </span>
             )}
@@ -157,14 +157,14 @@ function AddressCard({
             </p>
             <p>{addr.country}</p>
             {addr.landmark && (
-              <p className="text-on-surface-variant/60 text-xs italic">
+              <p className="text-on-surface-variant text-xs italic">
                 Near {addr.landmark}
               </p>
             )}
           </div>
 
           {/* Phone */}
-          <div className="mt-4 flex items-center gap-1.5 text-on-surface/60">
+          <div className="mt-4 flex items-center gap-1.5 text-on-surface-variant">
             <Phone className="w-4 h-4" />
             <span className="font-mono text-sm tracking-tight">{addr.phone}</span>
           </div>
@@ -172,7 +172,7 @@ function AddressCard({
       </div>
 
       {/* Action row — always visible on touch, hover-reveal on desktop */}
-      <div className="mt-6 pt-5 border-t border-outline-variant/20 flex items-center gap-3 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-200">
+      <div className="mt-6 pt-5 border-t border-outline-variant dark:border-zinc-700 flex items-center gap-3 lg:opacity-0 lg:group-hover:opacity-100 lg:focus-within:opacity-100 transition-opacity duration-200">
         <button
           onClick={() => onEdit(addr)}
           className="text-sm font-bold text-primary flex items-center gap-1 hover:underline active:scale-95 transition-transform py-1"
@@ -181,7 +181,7 @@ function AddressCard({
           Edit
         </button>
 
-        <div className="h-4 w-px bg-outline-variant/30" />
+        <div className="h-4 w-px bg-outline-variant dark:bg-zinc-700" />
 
         <button
           onClick={() => onDelete(addr.id)}
@@ -195,7 +195,7 @@ function AddressCard({
           <div className="ml-auto">
             <button
               onClick={() => onSetDefault(addr.id)}
-              className="text-xs font-bold text-on-surface-variant/60 hover:text-primary transition-colors py-1 active:scale-95"
+              className="text-xs font-bold text-on-surface-variant hover:text-primary transition-colors py-1 active:scale-95"
             >
               Make Default
             </button>
@@ -213,7 +213,7 @@ function AddNewTile({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="group border-2 border-dashed border-outline-variant/30 rounded-2xl p-8 flex flex-col items-center justify-center gap-4 hover:border-primary/40 hover:bg-surface-container-low transition-all duration-300 min-h-[240px] w-full active:scale-95"
+      className="group border-2 border-dashed border-outline-variant dark:border-zinc-700 rounded-2xl p-8 flex flex-col items-center justify-center gap-4 hover:border-primary hover:bg-surface-container-low transition-all duration-300 min-h-[240px] w-full active:scale-95"
     >
       <div className="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center group-hover:scale-110 transition-transform">
         <Plus className="w-7 h-7 text-primary" />
@@ -261,7 +261,7 @@ function AddressDrawer({
     <>
       {/* Overlay */}
       <div
-        className="fixed inset-0 bg-inverse-surface/40 z-modal backdrop-blur-sm"
+        className="fixed inset-0 bg-black/50 z-modal"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -274,7 +274,7 @@ function AddressDrawer({
         className="fixed right-0 top-0 h-full w-full sm:w-[480px] bg-surface-container-lowest z-modal shadow-xl overflow-y-auto"
       >
         {/* Drawer header */}
-        <div className="sticky top-0 bg-surface-container-lowest/90 backdrop-blur-sm border-b border-outline-variant/20 px-6 py-5 flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-surface-container-lowest border-b border-outline-variant dark:border-zinc-700 px-6 py-5 flex items-center justify-between z-10">
           <h2 className="font-headline font-bold text-xl text-on-surface">
             {isEditing ? "Edit Address" : "Add New Address"}
           </h2>
@@ -305,8 +305,8 @@ function AddressDrawer({
                     onClick={() => onChange("label", type)}
                     className={`flex-1 flex flex-col items-center gap-2 py-3 rounded-xl border-2 transition-all active:scale-95 ${
                       active
-                        ? "border-primary bg-primary/5 text-primary"
-                        : "border-outline-variant/30 text-on-surface-variant hover:border-primary/30"
+                        ? "border-primary bg-primary-50 text-primary-700"
+                        : "border-outline-variant dark:border-zinc-700 text-on-surface-variant hover:border-primary"
                     }`}
                   >
                     <IconComponent className="w-5 h-5" />
@@ -328,7 +328,7 @@ function AddressDrawer({
                 value={form.customLabel}
                 onChange={(e) => onChange("customLabel", e.target.value)}
                 placeholder="e.g. Studio, Warehouse"
-                className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline/60 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
+                className="w-full bg-surface-container-low border border-outline-variant dark:border-zinc-700 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary-300 transition"
               />
             </div>
           )}
@@ -343,7 +343,7 @@ function AddressDrawer({
               value={form.recipient}
               onChange={(e) => onChange("recipient", e.target.value)}
               placeholder="Full name"
-              className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline/60 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
+              className="w-full bg-surface-container-low border border-outline-variant dark:border-zinc-700 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary-300 transition"
             />
           </div>
 
@@ -357,7 +357,7 @@ function AddressDrawer({
               value={form.phone}
               onChange={(e) => onChange("phone", e.target.value)}
               placeholder="Enter phone number"
-              className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline/60 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
+              className="w-full bg-surface-container-low border border-outline-variant dark:border-zinc-700 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary-300 transition"
             />
           </div>
 
@@ -371,7 +371,7 @@ function AddressDrawer({
               value={form.country}
               onChange={(e) => onChange("country", e.target.value)}
               placeholder="Country"
-              className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline/60 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
+              className="w-full bg-surface-container-low border border-outline-variant dark:border-zinc-700 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary-300 transition"
             />
           </div>
 
@@ -386,7 +386,7 @@ function AddressDrawer({
                 value={form.region}
                 onChange={(e) => onChange("region", e.target.value)}
                 placeholder="Region"
-                className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline/60 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
+                className="w-full bg-surface-container-low border border-outline-variant dark:border-zinc-700 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary-300 transition"
               />
             </div>
             <div>
@@ -398,7 +398,7 @@ function AddressDrawer({
                 value={form.city}
                 onChange={(e) => onChange("city", e.target.value)}
                 placeholder="City"
-                className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline/60 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
+                className="w-full bg-surface-container-low border border-outline-variant dark:border-zinc-700 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary-300 transition"
               />
             </div>
           </div>
@@ -413,7 +413,7 @@ function AddressDrawer({
               value={form.street}
               onChange={(e) => onChange("street", e.target.value)}
               placeholder="Street address"
-              className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline/60 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
+              className="w-full bg-surface-container-low border border-outline-variant dark:border-zinc-700 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary-300 transition"
             />
           </div>
 
@@ -421,7 +421,7 @@ function AddressDrawer({
           <div>
             <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1.5 block">
               Apt / Suite / Floor{" "}
-              <span className="text-outline/60 normal-case tracking-normal font-medium">
+              <span className="text-outline normal-case tracking-normal font-medium">
                 (optional)
               </span>
             </label>
@@ -430,7 +430,7 @@ function AddressDrawer({
               value={form.street2}
               onChange={(e) => onChange("street2", e.target.value)}
               placeholder="Apartment, suite, floor"
-              className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline/60 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
+              className="w-full bg-surface-container-low border border-outline-variant dark:border-zinc-700 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary-300 transition"
             />
           </div>
 
@@ -439,7 +439,7 @@ function AddressDrawer({
             <div>
               <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1.5 block">
                 Landmark{" "}
-                <span className="text-outline/60 normal-case tracking-normal font-medium">
+                <span className="text-outline normal-case tracking-normal font-medium">
                   (optional)
                 </span>
               </label>
@@ -448,7 +448,7 @@ function AddressDrawer({
                 value={form.landmark}
                 onChange={(e) => onChange("landmark", e.target.value)}
                 placeholder="Nearby landmark"
-                className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline/60 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
+                className="w-full bg-surface-container-low border border-outline-variant dark:border-zinc-700 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary-300 transition"
               />
             </div>
             <div>
@@ -460,23 +460,23 @@ function AddressDrawer({
                 value={form.postalCode}
                 onChange={(e) => onChange("postalCode", e.target.value)}
                 placeholder="Postal code"
-                className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline/60 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
+                className="w-full bg-surface-container-low border border-outline-variant dark:border-zinc-700 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary-300 transition"
               />
             </div>
           </div>
         </div>
 
         {/* Drawer footer */}
-        <div className="sticky bottom-0 bg-surface-container-lowest/90 backdrop-blur-sm border-t border-outline-variant/20 px-6 py-5 flex gap-3">
+        <div className="sticky bottom-0 bg-surface-container-lowest border-t border-outline-variant dark:border-zinc-700 px-6 py-5 flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 py-3 rounded-xl border border-outline-variant/30 text-on-surface-variant font-bold text-sm hover:bg-surface-container-low transition-all active:scale-95"
+            className="flex-1 py-3 rounded-xl border border-outline-variant dark:border-zinc-700 text-on-surface-variant font-bold text-sm hover:bg-surface-container-low transition-all active:scale-95"
           >
             Cancel
           </button>
           <button
             onClick={onSubmit}
-            className="flex-1 py-3 primary-gradient text-on-primary font-bold text-sm rounded-xl shadow-card hover:shadow-card-hover transition-all active:scale-95"
+            className="flex-1 py-3 bg-primary-700 hover:bg-primary-800 text-on-primary font-bold text-sm rounded-xl shadow-card hover:shadow-card-hover transition-all active:scale-95"
           >
             {isEditing ? "Save Changes" : "Add Address"}
           </button>
@@ -503,7 +503,7 @@ function DeleteConfirmDialog({
   return (
     <>
       <div
-        className="fixed inset-0 bg-inverse-surface/40 z-modal backdrop-blur-sm"
+        className="fixed inset-0 bg-black/50 z-modal"
         onClick={onCancel}
         aria-hidden="true"
       />
@@ -527,13 +527,13 @@ function DeleteConfirmDialog({
         <div className="flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 py-3 rounded-xl border border-outline-variant/30 text-on-surface-variant font-bold text-sm hover:bg-surface-container-low transition-all active:scale-95"
+            className="flex-1 py-3 rounded-xl border border-outline-variant dark:border-zinc-700 text-on-surface-variant font-bold text-sm hover:bg-surface-container-low transition-all active:scale-95"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 py-3 rounded-xl bg-error text-on-error font-bold text-sm hover:opacity-90 transition-all active:scale-95"
+            className="flex-1 py-3 rounded-xl bg-error text-on-error font-bold text-sm hover:bg-red-900 transition-all active:scale-95"
           >
             Remove
           </button>
@@ -665,7 +665,7 @@ export default function SavedAddressesPage() {
                 </div>
                 <button
                   onClick={openAddDrawer}
-                  className="inline-flex items-center gap-2 primary-gradient text-on-primary px-5 py-3 rounded-xl font-bold shadow-card hover:shadow-card-hover transition-all active:scale-95 whitespace-nowrap flex-shrink-0"
+                  className="inline-flex items-center gap-2 bg-primary-700 hover:bg-primary-800 text-on-primary px-5 py-3 rounded-xl font-bold shadow-card hover:shadow-card-hover transition-all active:scale-95 whitespace-nowrap flex-shrink-0"
                 >
                   <MapPin className="w-4 h-4" />
                   Add New Address

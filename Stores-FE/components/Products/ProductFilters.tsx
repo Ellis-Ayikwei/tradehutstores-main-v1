@@ -662,7 +662,7 @@ export default function ProductFilters({
 
             <aside
                 aria-label="Product filters"
-                className="hidden w-60 shrink-0 flex-col self-start overflow-hidden rounded-lg border border-gray-200 bg-white lg:sticky lg:top-36 lg:flex lg:max-h-[calc(100vh-10rem)] xl:w-64 dark:border-gray-700 dark:bg-gray-900"
+                className="hidden w-60 shrink-0 flex-col self-start overflow-hidden rounded-lg border border-gray-200 bg-white lg:sticky lg:top-28 lg:flex lg:max-h-[calc(100vh-8rem)] xl:w-64 dark:border-gray-700 dark:bg-gray-900"
             >
                 {renderContent(false)}
             </aside>

@@ -227,7 +227,7 @@ export default function AccountShell({ children }: { children: ReactNode }) {
                     <div className="mx-auto max-w-screen-2xl px-4 pb-24 pt-4 md:px-6 md:pt-6 lg:px-8 lg:pb-12">
                         <div className="flex flex-col gap-4 md:gap-6 lg:flex-row lg:gap-8">
                             <aside className="hidden w-64 shrink-0 lg:block">
-                                <div className="sticky top-40 flex max-h-[calc(100vh-11rem)] flex-col rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900">
+                                <div className="sticky top-28 flex max-h-[calc(100vh-8rem)] flex-col rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900">
                                     <h2 className="px-3 pb-2 pt-1 font-syne text-lg font-bold text-gray-900 dark:text-white">
                                         My account
                                     </h2>

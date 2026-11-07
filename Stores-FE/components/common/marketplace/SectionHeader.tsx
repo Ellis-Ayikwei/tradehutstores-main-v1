@@ -39,7 +39,7 @@ export default function SectionHeader({
             {href ? (
                 <Link
                     href={href}
-                    className="inline-flex min-h-[44px] shrink-0 items-center gap-0.5 rounded-lg px-2 text-sm font-semibold text-primary-700 hover:text-primary-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 dark:text-primary-400 dark:hover:text-primary-300 dark:focus-visible:ring-primary-400"
+                    className="inline-flex min-h-[44px] shrink-0 items-center gap-0.5 rounded-md px-2 text-sm font-semibold text-primary-700 hover:text-primary-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 dark:text-primary-400 dark:hover:text-primary-300 dark:focus-visible:ring-primary-400"
                 >
                     {actionLabel}
                     <ChevronRight className="h-4 w-4" aria-hidden="true" />

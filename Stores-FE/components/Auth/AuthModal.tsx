@@ -338,7 +338,7 @@ export default function AuthModal({ open, onClose, initialMode = 'auto' }: Props
             aria-modal="true"
             aria-labelledby="auth-modal-title"
             tabIndex={-1}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200"
             onClick={onClose}
             onKeyDown={(e) => {
                 if (e.key === 'Escape') onClose()
@@ -586,14 +586,14 @@ export default function AuthModal({ open, onClose, initialMode = 'auto' }: Props
 
                     {/* Error footer */}
                     {error && (
-                        <div className="px-3 py-2 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-xs">
+                        <div className="px-3 py-2 rounded-lg border border-red-300 bg-red-100 text-red-900 dark:border-red-800 dark:bg-red-900 dark:text-red-100 text-xs">
                             {error}
                         </div>
                     )}
                 </div>
 
                 {/* Footer */}
-                <div className="px-6 py-3 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-100 dark:border-gray-800 text-[11px] text-gray-500 dark:text-gray-500 text-center">
+                <div className="px-6 py-3 bg-gray-50 dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 text-[11px] text-gray-500 dark:text-gray-500 text-center">
                     By continuing you agree to TradeHut&rsquo;s Terms & Privacy Policy.
                 </div>
             </div>
@@ -619,7 +619,7 @@ function Primary({
             type="button"
             onClick={onClick}
             disabled={disabled}
-            className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 active:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition"
+            className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 active:bg-orange-700 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500 text-white text-sm font-semibold transition"
         >
             {busy ? <Loader2 className="animate-spin" size={16} /> : children}
         </button>
@@ -641,9 +641,9 @@ function Choice({
         <button
             type="button"
             onClick={onClick}
-            className="w-full flex items-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-800 hover:border-orange-400 hover:bg-orange-50/50 dark:hover:bg-orange-900/10 transition text-left"
+            className="w-full flex items-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-800 hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-gray-800 transition text-left"
         >
-            <div className="h-10 w-10 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-500 flex items-center justify-center shrink-0">
+            <div className="h-10 w-10 rounded-lg bg-orange-100 dark:bg-gray-800 text-orange-700 dark:text-orange-400 flex items-center justify-center shrink-0">
                 {icon}
             </div>
             <div className="flex-1 min-w-0">

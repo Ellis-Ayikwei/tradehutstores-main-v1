@@ -1,139 +1,146 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import { Globe, ChevronDown, Check } from 'lucide-react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { ChevronDown, Check } from 'lucide-react'
 import { useCurrency } from '@/contexts/CurrencyContext'
 import { CURRENCY_META } from '@/lib/storeCurrency'
+import PickerSheet from '@/components/Navigation/PickerSheet'
 
-type Variant = 'compact' | 'inline' | 'panel'
-type Align = 'left' | 'right'
+type Variant = 'strip' | 'header' | 'panel'
 
 interface CurrencyPickerProps {
     /**
-     * compact – pill button with symbol + code (top utility bar)
-     * inline  – outlined select-like row (Navbar desktop)
-     * panel   – full-width touchable button (Navbar mobile menu)
+     * strip  - "<code> v" text button in the mobile/tablet strip; opens a bottom sheet
+     * header - two-line block in the desktop header row; opens an anchored dropdown
+     * panel  - full-width bordered button in the mobile drawer; opens a bottom sheet
      */
     variant?: Variant
-    /** Anchor side for the popover. Use 'left' when the trigger sits at the left
-     *  edge of the screen so the popover doesn't clip off-screen. */
-    align?: Align
     className?: string
 }
 
 const FALLBACK = ['GHS', 'USD', 'EUR', 'GBP', 'NGN', 'KES']
 
-export default function CurrencyPicker({
-    variant = 'compact',
-    align = 'right',
-    className = '',
-}: CurrencyPickerProps) {
+export default function CurrencyPicker({ variant = 'header', className = '' }: CurrencyPickerProps) {
     const { currency, setCurrency, enabledDisplayCurrencies, baseCurrency } = useCurrency()
     const options =
-        enabledDisplayCurrencies && enabledDisplayCurrencies.length > 0
-            ? enabledDisplayCurrencies
-            : FALLBACK
+        enabledDisplayCurrencies && enabledDisplayCurrencies.length > 0 ? enabledDisplayCurrencies : FALLBACK
 
     const [open, setOpen] = useState(false)
     const ref = useRef<HTMLDivElement>(null)
+    const close = useCallback(() => setOpen(false), [])
 
+    // Dropdown only: close on outside click / Escape.
     useEffect(() => {
-        function handler(e: MouseEvent) {
+        if (!open || variant !== 'header') return
+        function onDown(e: MouseEvent) {
             if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
         }
-        if (open) document.addEventListener('mousedown', handler)
-        return () => document.removeEventListener('mousedown', handler)
-    }, [open])
+        function onKey(e: KeyboardEvent) {
+            if (e.key === 'Escape') setOpen(false)
+        }
+        document.addEventListener('mousedown', onDown)
+        document.addEventListener('keydown', onKey)
+        return () => {
+            document.removeEventListener('mousedown', onDown)
+            document.removeEventListener('keydown', onKey)
+        }
+    }, [open, variant])
 
     const activeMeta = CURRENCY_META[currency] ?? { symbol: currency, label: currency }
+    const label = `Currency: ${activeMeta.label}`
 
-    // ── Trigger styles per variant ───────────────────────────────────────────
-    const triggerClass =
-        variant === 'compact'
-            ? 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-xs font-medium text-gray-700 dark:text-white whitespace-nowrap'
-            : variant === 'inline'
-            ? 'flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-sm font-medium text-gray-700 dark:text-gray-200'
-            : 'w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
-
-    // ── Popover position per variant ─────────────────────────────────────────
-    const panelClass =
-        variant === 'panel'
-            ? 'absolute left-0 right-0 top-full mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 py-1.5 z-[200] overflow-hidden'
-            : `absolute ${align === 'left' ? 'left-0' : 'right-0'} top-full mt-2 w-64 max-w-[calc(100vw-1.5rem)] bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 py-1.5 z-[200] overflow-hidden`
+    const body = (
+        <div role="listbox" aria-label="Display currency" className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+            {options.map((code) => {
+                const meta = CURRENCY_META[code] ?? { symbol: code, label: code }
+                const isActive = code === currency
+                return (
+                    <button
+                        key={code}
+                        type="button"
+                        role="option"
+                        aria-selected={isActive}
+                        onClick={() => {
+                            setCurrency(code)
+                            setOpen(false)
+                        }}
+                        className={`flex min-h-[44px] w-full items-center gap-3 px-4 text-left text-sm text-zinc-900 hover:bg-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800 ${
+                            isActive ? 'bg-zinc-100 font-semibold dark:bg-zinc-800' : ''
+                        }`}
+                    >
+                        <span className="w-12 shrink-0 font-mono text-sm font-bold">{meta.symbol}</span>
+                        <span className="shrink-0 font-semibold">{code}</span>
+                        <span className="min-w-0 flex-1 truncate text-zinc-600 dark:text-zinc-400">{meta.label}</span>
+                        {code === baseCurrency && (
+                            <span className="shrink-0 text-xs text-zinc-600 dark:text-zinc-400">Store currency</span>
+                        )}
+                        {isActive && <Check className="h-4 w-4 shrink-0 text-primary-700 dark:text-primary-400" aria-hidden />}
+                    </button>
+                )
+            })}
+        </div>
+    )
 
     return (
         <div ref={ref} className={`relative ${className}`}>
-            <button
-                type="button"
-                onClick={() => setOpen((v) => !v)}
-                aria-haspopup="listbox"
-                aria-expanded={open}
-                aria-label={`Currency: ${activeMeta.label}`}
-                className={triggerClass}
-            >
-                <Globe className="h-3.5 w-3.5 shrink-0 text-gray-500 dark:text-white" />
-                <span className="font-mono text-[11px] font-bold tracking-wider text-gray-900 dark:text-white">
-                    {activeMeta.symbol}
-                </span>
-                <span className="font-semibold text-gray-900 dark:text-white">{currency}</span>
-                <ChevronDown
-                    className={`h-3 w-3 text-gray-400 dark:text-white/70 transition-transform duration-200 ${
-                        open ? 'rotate-180' : ''
-                    } ${variant === 'panel' ? 'ml-auto' : ''}`}
-                />
-            </button>
-
-            {open && (
-                <div
-                    role="listbox"
-                    className={panelClass}
-                    style={{ animation: 'dropIn 0.15s cubic-bezier(0.16,1,0.3,1) forwards' }}
+            {variant === 'strip' && (
+                <button
+                    type="button"
+                    onClick={() => setOpen(true)}
+                    aria-haspopup="dialog"
+                    aria-label={label}
+                    className="flex h-11 items-center gap-1 pl-2 text-xs font-bold text-zinc-900 dark:text-white"
                 >
-                    <p className="px-3 pt-1 pb-1.5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-500">
-                        Display currency
-                    </p>
-                    <div className="max-h-72 overflow-y-auto">
-                        {options.map((code) => {
-                            const meta = CURRENCY_META[code] ?? { symbol: code, label: code }
-                            const isActive = code === currency
-                            const isBase = code === baseCurrency
-                            return (
-                                <button
-                                    key={code}
-                                    role="option"
-                                    aria-selected={isActive}
-                                    onClick={() => {
-                                        setCurrency(code)
-                                        setOpen(false)
-                                    }}
-                                    className={`w-full flex items-center gap-3 px-3 py-2 text-sm transition-colors ${
-                                        isActive
-                                            ? 'bg-orange-50 dark:bg-orange-950 text-orange-600 dark:text-orange-400 font-semibold'
-                                            : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
-                                    }`}
-                                >
-                                    <span className="font-mono text-sm font-bold w-10 text-left">
-                                        {meta.symbol}
-                                    </span>
-                                    <span className="font-semibold">{code}</span>
-                                    <span className="text-xs text-gray-400 dark:text-gray-500 truncate">
-                                        {meta.label}
-                                    </span>
-                                    <span className="ml-auto flex items-center gap-1.5">
-                                        {isBase && (
-                                            <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300">
-                                                Base
-                                            </span>
-                                        )}
-                                        {isActive && (
-                                            <Check className="h-3.5 w-3.5 text-orange-500" />
-                                        )}
-                                    </span>
-                                </button>
-                            )
-                        })}
+                    {currency}
+                    <ChevronDown className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                </button>
+            )}
+
+            {variant === 'header' && (
+                <button
+                    type="button"
+                    onClick={() => setOpen((v) => !v)}
+                    aria-haspopup="listbox"
+                    aria-expanded={open}
+                    aria-label={label}
+                    className="flex h-11 items-center gap-1 rounded-md px-2 text-left text-zinc-900 hover:bg-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800"
+                >
+                    <span className="flex flex-col leading-tight">
+                        <span className="text-xs text-zinc-600 dark:text-zinc-400">Currency</span>
+                        <span className="text-sm font-bold">{currency}</span>
+                    </span>
+                    <ChevronDown className="mt-3 h-3.5 w-3.5 shrink-0" aria-hidden />
+                </button>
+            )}
+
+            {variant === 'panel' && (
+                <button
+                    type="button"
+                    onClick={() => setOpen(true)}
+                    aria-haspopup="dialog"
+                    aria-label={label}
+                    className="flex min-h-[44px] w-full items-center gap-2 rounded-md border border-zinc-300 bg-white px-3 text-left text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                >
+                    <span className="min-w-0 flex-1 truncate">
+                        Currency <span className="font-bold">{currency}</span>
+                    </span>
+                    <ChevronDown className="h-4 w-4 shrink-0" aria-hidden />
+                </button>
+            )}
+
+            {variant === 'header' ? (
+                open && (
+                    <div className="absolute right-0 top-full z-[200] mt-1 flex max-h-96 w-64 flex-col overflow-hidden rounded-md border border-zinc-300 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+                        <p className="shrink-0 border-b border-zinc-200 px-4 py-2 text-xs font-semibold text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
+                            Display currency
+                        </p>
+                        {body}
                     </div>
-                </div>
+                )
+            ) : (
+                <PickerSheet open={open} onClose={close} title="Display currency">
+                    {body}
+                </PickerSheet>
             )}
         </div>
     )

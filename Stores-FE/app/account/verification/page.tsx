@@ -117,7 +117,7 @@ export default function VerificationPage() {
         <Info className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
         <div className="min-w-0">
           <p className="text-sm font-semibold">Verification status is coming to your account</p>
-          <p className="mt-0.5 text-sm leading-relaxed opacity-90">
+          <p className="mt-0.5 text-sm leading-relaxed">
             Document upload and live status are not available in your account yet. Below is what we
             check and why. If you need to be verified now, contact support.
           </p>

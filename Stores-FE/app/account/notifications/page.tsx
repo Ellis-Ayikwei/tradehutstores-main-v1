@@ -78,7 +78,7 @@ export default function NotificationsPage() {
                 type="button"
                 onClick={() => void mutate()}
                 disabled={isValidating}
-                className={`${BTN_SECONDARY} disabled:opacity-60`}
+                className={`${BTN_SECONDARY} disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500`}
               >
                 <RefreshCw
                   className={`h-4 w-4${isValidating ? " animate-spin" : ""}`}

@@ -44,7 +44,7 @@ const DEADLINE_DAYS = [2, 3, 7, 14, 30, 45]
 const STALE_CODES = ['already_awarded', 'rfq_not_awardable', 'award_window_closed', 'quote_not_available', 'quote_expired', 'invalid_state', 'not_editable']
 
 const BTN_BASE =
-    'inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg px-4 text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 dark:focus-visible:ring-primary-400 disabled:opacity-60'
+    'inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg px-4 text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 dark:focus-visible:ring-primary-400 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500'
 const BTN_PRIMARY = `${BTN_BASE} bg-primary-700 text-white hover:bg-primary-800`
 const BTN_SECONDARY = `${BTN_BASE} border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800`
 const BTN_DANGER = `${BTN_BASE} border border-red-300 dark:border-red-700 bg-white dark:bg-zinc-900 text-red-800 dark:text-red-100 hover:bg-red-50 dark:hover:bg-red-950`

@@ -99,9 +99,6 @@ module.exports = {
                     green:  '#00C48C',
                     red:    '#FF4757',
                     amber:  '#FFB800',
-                    'green-bg': 'rgba(0, 196, 140, 0.12)',
-                    'red-bg':   'rgba(255, 71, 87, 0.12)',
-                    'amber-bg': 'rgba(255, 184, 0, 0.12)',
                 },
 
                 // ── Reverse Marketplace ──
@@ -130,51 +127,37 @@ module.exports = {
                 success: {
                     DEFAULT: '#00B96B',
                     light:   '#E6FAF2',
-                    'dark-light': 'rgba(0, 185, 107, 0.15)',
                 },
                 danger: {
                     DEFAULT: '#FF3B30',
                     light:   '#FFF0EF',
-                    'dark-light': 'rgba(255, 59, 48, 0.15)',
                 },
                 warning: {
                     DEFAULT: '#FF9500',
                     light:   '#FFF8EB',
-                    'dark-light': 'rgba(255, 149, 0, 0.15)',
                 },
                 info: {
                     DEFAULT: '#0A84FF',
                     light:   '#E5F3FF',
-                    'dark-light': 'rgba(10, 132, 255, 0.15)',
                 },
 
                 // ── Legacy aliases (keep for backward compat) ──
                 secondary: {
                     DEFAULT: '#805dca',
                     light: '#ebe4f7',
-                    'dark-light': 'rgb(128 93 202 / 15%)',
                 },
                 dark: {
                     DEFAULT: '#3b3f5c',
                     light: '#eaeaec',
-                    'dark-light': 'rgba(59,63,92,.15)',
                 },
                 black: {
                     DEFAULT: '#0e1726',
                     light: '#e3e4eb',
-                    'dark-light': 'rgba(14,23,38,.15)',
                 },
                 white: {
                     DEFAULT: '#ffffff',
                     light: '#e0e6ed',
                     dark: '#888ea8',
-                },
-
-                // ── Glass / Frosted ──
-                glass: {
-                    light: 'rgba(255, 255, 255, 0.08)',
-                    dark:  'rgba(0, 0, 0, 0.20)',
-                    border: 'rgba(255, 255, 255, 0.12)',
                 },
 
                 // ── Social brand colors (used by invite/share buttons) ──
@@ -219,11 +202,6 @@ module.exports = {
             },
 
             boxShadow: {
-                // Brand glow
-                'glow-sm': '0 0 10px rgba(245, 98, 15, 0.40)',
-                glow:      '0 0 15px rgba(245, 98, 15, 0.45)',
-                'glow-lg': '0 0 25px rgba(245, 98, 15, 0.50)',
-
                 // Bid states
                 'bid-win':  '0 0 0 2px #00C48C, 0 4px 16px rgba(0,196,140,0.25)',
                 'bid-lose': '0 0 0 2px #FF4757, 0 4px 16px rgba(255,71,87,0.20)',
@@ -234,17 +212,9 @@ module.exports = {
                 lg:  '0 10px 32px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.06)',
                 xl:  '0 20px 48px rgba(0,0,0,0.12), 0 8px 16px rgba(0,0,0,0.08)',
 
-                // Glass
-                glass: '0 8px 32px 0 rgba(31, 38, 135, 0.20)',
-
                 // Card elevation (warm 38,24,19 base)
                 card:       '0 4px 20px 0 rgba(38,24,19,0.04), 0 1px 2px 0 rgba(38,24,19,0.02)',
                 'card-hover':'0 12px 32px 0 rgba(38,24,19,0.08)',
-            },
-
-            backdropBlur: {
-                glass: '12px',
-                xs:    '4px',
             },
 
             backgroundImage: {
@@ -261,7 +231,6 @@ module.exports = {
 
             animation: {
                 // Brand
-                'glow':         'glow 2s ease-in-out infinite alternate',
                 'float':        'float 3s ease-in-out infinite',
                 'gradient-x':   'gradient-x 15s ease infinite',
                 'gradient-y':   'gradient-y 15s ease infinite',

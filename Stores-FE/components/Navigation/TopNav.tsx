@@ -32,7 +32,7 @@ import { useTheme } from '@/contexts/ThemeContext'
 import Logo from '../common/logo'
 import CurrencyPicker from '@/components/Navigation/CurrencyPicker'
 import ShipToPicker from '@/components/Navigation/ShipToPicker'
-import HeaderSearch from '@/components/Navigation/HeaderSearch'
+import SearchBar from '@/components/common/SearchBar'
 import MobileDrawer from '@/components/Navigation/MobileDrawer'
 import { OPEN_NAV_DRAWER_EVENT, useNavCategories, useSellerNav } from '@/components/Navigation/navData'
 import SellerNavLink, { SellerNavBadge } from '@/components/seller-onboarding/SellerNavLink'
@@ -46,7 +46,7 @@ function NavBadge({ count, children }: { count: number; children: React.ReactNod
         <span className="relative inline-flex">
             {children}
             {count > 0 && (
-                <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-orange-500 text-white text-[10px] font-extrabold leading-none ring-2 ring-white dark:ring-gray-950 pointer-events-none">
+                <span className="pointer-events-none absolute -right-2 -top-2 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary-700 px-1 text-xs font-bold leading-none text-white ring-2 ring-white dark:ring-zinc-950">
                     {label}
                 </span>
             )}
@@ -72,11 +72,34 @@ const PROFILE_MENU = [
 ] as const
 
 const iconBtn =
-    'flex h-11 w-11 items-center justify-center rounded-md text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors'
+    'flex h-11 w-11 items-center justify-center rounded-md text-zinc-800 hover:bg-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800'
+
+const textBtn =
+    'flex h-11 items-center gap-1.5 rounded-md px-2 text-zinc-900 hover:bg-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800'
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function TopNav() {
+/**
+ * Row 3 (below lg): deliver-to + currency, 44px tap targets inside a 32px strip.
+ * Rendered by MainLayout in normal flow (it scrolls away with the page); hidden at lg+
+ * where both pickers live in the header row.
+ */
+export function TopNavStrip() {
+    return (
+        <div className="bg-zinc-100 dark:bg-zinc-800 lg:hidden">
+            <div className="mx-auto flex h-8 max-w-screen-2xl items-center justify-between gap-3 px-3 sm:px-4">
+                <ShipToPicker variant="strip" className="min-w-0 flex-1" />
+                <CurrencyPicker variant="strip" className="shrink-0" />
+            </div>
+        </div>
+    )
+}
+
+/**
+ * Rows 1-2 (logo / actions / search) plus the single mobile drawer.
+ * The sticky wrapper in MainLayout supplies the solid background and bottom border.
+ */
+export function TopNavMain() {
     const [profileOpen, setProfileOpen] = useState(false)
     const [drawerOpen, setDrawerOpen] = useState(false)
     const [mounted, setMounted] = useState(false)
@@ -158,6 +181,8 @@ export default function TopNav() {
         return () => document.removeEventListener('keydown', onKey)
     }, [profileOpen])
 
+    const menuLink = 'flex min-h-[44px] items-center gap-3 px-3 py-2 text-sm text-zinc-800 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800'
+
     // Auth state is client-only (cookie/redux), so gate on `mounted` to keep
     // server and first client render identical.
     const accountControl =
@@ -169,35 +194,34 @@ export default function TopNav() {
                     aria-expanded={profileOpen}
                     aria-haspopup="menu"
                     aria-label="Account menu"
-                    className="flex h-11 items-center gap-1.5 rounded-md px-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    className={textBtn}
                 >
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-500 text-[11px] font-extrabold text-white">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-700 text-xs font-bold text-white lg:hidden">
                         {initials}
                     </span>
-                    <span className="hidden lg:flex flex-col items-start leading-tight">
-                        <span className="text-[10px] text-gray-500 dark:text-gray-400">Hello,</span>
-                        <span className="max-w-[88px] truncate text-xs font-bold text-gray-900 dark:text-white">{displayName}</span>
+                    <span className="hidden flex-col items-start leading-tight lg:flex">
+                        <span className="max-w-[96px] truncate text-xs text-zinc-600 dark:text-zinc-400">Hello, {displayName}</span>
+                        <span className="flex items-center gap-0.5 text-sm font-bold">
+                            Account &amp; lists
+                            <ChevronDown className={`h-3.5 w-3.5 shrink-0 ${profileOpen ? 'rotate-180' : ''}`} aria-hidden />
+                        </span>
                     </span>
-                    <ChevronDown
-                        className={`hidden lg:block h-3 w-3 shrink-0 text-gray-400 transition-transform duration-200 ${profileOpen ? 'rotate-180' : ''}`}
-                    />
                 </button>
 
                 {profileOpen && (
                     <div
-                        className="absolute top-full right-0 mt-2 w-64 max-w-[calc(100vw-1rem)] max-h-[min(70vh,520px)] overflow-y-auto bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 py-1.5 z-[200]"
-                        style={{ animation: 'dropIn 0.15s cubic-bezier(0.16,1,0.3,1) forwards' }}
+                        className="absolute right-0 top-full z-[200] mt-1 max-h-[min(70vh,520px)] w-64 max-w-[calc(100vw-1.5rem)] overflow-y-auto rounded-md border border-zinc-300 bg-white py-1 shadow-sm dark:border-zinc-700 dark:bg-zinc-900"
                         role="menu"
                     >
-                        <div className="px-3 pt-1 pb-2 border-b border-gray-100 dark:border-gray-700">
-                            <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{displayName}</p>
+                        <div className="border-b border-zinc-200 px-3 pb-2 pt-1 dark:border-zinc-800">
+                            <p className="truncate text-sm font-bold text-zinc-900 dark:text-zinc-100">{displayName}</p>
                             {displayEmail ? (
-                                <p className="text-[11px] text-gray-500 dark:text-gray-400 truncate mt-0.5">{displayEmail}</p>
+                                <p className="mt-0.5 truncate text-xs text-zinc-600 dark:text-zinc-400">{displayEmail}</p>
                             ) : null}
                             <Link
                                 href="/account"
                                 onClick={() => setProfileOpen(false)}
-                                className="mt-2 flex min-h-[44px] items-center justify-center text-xs font-semibold rounded-md bg-orange-50 dark:bg-orange-950 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900 transition-colors"
+                                className="flex min-h-[44px] items-center text-sm font-semibold text-primary-700 hover:underline dark:text-primary-400"
                             >
                                 Account overview
                             </Link>
@@ -205,42 +229,41 @@ export default function TopNav() {
                         <SellerNavLink
                             item={sellerNav}
                             onClick={() => setProfileOpen(false)}
-                            className="flex min-h-[44px] items-center gap-3 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                            className={`${menuLink} font-semibold`}
                         >
-                            <Store className="h-4 w-4 shrink-0 text-orange-500" />
+                            <Store className="h-4 w-4 shrink-0" aria-hidden />
                             <span>{sellerNav.label}</span>
                             {sellerNav.badge ? <SellerNavBadge text={sellerNav.badge} /> : null}
                         </SellerNavLink>
-                        <p className="px-3 pt-2 pb-1 text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-500">
+                        <p className="border-t border-zinc-200 px-3 pb-1 pt-2 text-xs font-semibold text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
                             Your account
                         </p>
-                        {PROFILE_MENU.map(({ href, label, icon: Icon }) => (
-                            <Link
-                                key={href}
-                                href={href}
-                                onClick={() => setProfileOpen(false)}
-                                role="menuitem"
-                                className={`flex min-h-[44px] items-center gap-3 px-3 py-2 text-sm transition-colors
-                                    ${pathname === href || pathname.startsWith(`${href}/`)
-                                        ? 'bg-orange-50 dark:bg-orange-950 text-orange-600 dark:text-orange-400 font-semibold'
-                                        : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
-                                    }`}
-                            >
-                                <Icon className="h-4 w-4 shrink-0 text-gray-500 dark:text-gray-400" />
-                                <span>{label}</span>
-                            </Link>
-                        ))}
-                        <div className="mt-1 pt-1 border-t border-gray-100 dark:border-gray-700">
+                        {PROFILE_MENU.map(({ href, label, icon: Icon }) => {
+                            const current = pathname === href || pathname.startsWith(`${href}/`)
+                            return (
+                                <Link
+                                    key={href}
+                                    href={href}
+                                    onClick={() => setProfileOpen(false)}
+                                    role="menuitem"
+                                    className={`${menuLink} ${current ? 'bg-zinc-100 font-semibold dark:bg-zinc-800' : ''}`}
+                                >
+                                    <Icon className="h-4 w-4 shrink-0 text-zinc-600 dark:text-zinc-400" aria-hidden />
+                                    <span>{label}</span>
+                                </Link>
+                            )
+                        })}
+                        <div className="mt-1 border-t border-zinc-200 pt-1 dark:border-zinc-800">
                             <button
                                 type="button"
                                 role="menuitem"
-                                className="flex min-h-[44px] w-full items-center gap-3 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
+                                className="flex min-h-[44px] w-full items-center gap-3 px-3 py-2 text-sm text-red-700 hover:bg-zinc-100 dark:text-red-400 dark:hover:bg-zinc-800"
                                 onClick={() => {
                                     setProfileOpen(false)
                                     handleSignOut()
                                 }}
                             >
-                                <LogOut className="h-4 w-4 shrink-0" />
+                                <LogOut className="h-4 w-4 shrink-0" aria-hidden />
                                 Sign out
                             </button>
                         </div>
@@ -248,92 +271,87 @@ export default function TopNav() {
                 )}
             </div>
         ) : (
-            <Link
-                href="/auth/login"
-                aria-label="Sign in"
-                className="flex h-11 items-center gap-1.5 rounded-md px-2.5 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            >
-                <User className="h-5 w-5 shrink-0" />
-                <span className="hidden lg:flex flex-col items-start leading-tight">
-                    <span className="text-[10px] text-gray-500 dark:text-gray-400">Hello, guest</span>
-                    <span className="text-xs font-bold">Sign in</span>
+            <Link href="/auth/login" aria-label="Sign in" className={textBtn}>
+                <User className="h-6 w-6 shrink-0 lg:hidden" aria-hidden />
+                <span className="hidden flex-col items-start leading-tight lg:flex">
+                    <span className="text-xs text-zinc-600 dark:text-zinc-400">Hello, sign in</span>
+                    <span className="text-sm font-bold">Account &amp; lists</span>
                 </span>
             </Link>
         )
 
-    const cartLink = (
-        <Link
-            href="/cart"
-            className="flex h-11 items-center gap-1.5 rounded-md px-2.5 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            aria-label={`Cart (${cartCount} items)`}
-        >
-            <NavBadge count={cartCount}>
-                <ShoppingCart className="h-6 w-6" />
-            </NavBadge>
-            <span className="hidden lg:inline text-xs font-bold">Cart</span>
-        </Link>
-    )
-
     return (
-        <div className="bg-white text-gray-800 border-b border-gray-200 dark:bg-gray-950 dark:text-white dark:border-gray-800">
-            <div className="max-w-screen-2xl mx-auto px-2 sm:px-6">
-                {/* ── Row 1: menu, logo, (desktop search), actions ── */}
-                <div className="flex items-center gap-1 sm:gap-2 min-h-[56px] min-w-0">
-                    <button
-                        type="button"
-                        onClick={() => setDrawerOpen(true)}
-                        aria-label="Open menu"
-                        aria-haspopup="dialog"
-                        aria-expanded={drawerOpen}
-                        className={`${iconBtn} lg:hidden shrink-0`}
-                    >
-                        <Menu className="h-6 w-6" />
-                    </button>
+        <div className="bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
+            {/*
+              Rows 1-2 share one flex-wrap container so the single SearchBar moves with CSS only:
+              below md  -> row 1: menu, logo, actions; row 2: search (full width)
+              md        -> one row: menu, logo, search (flex-1), actions
+              lg+       -> one row: logo, deliver to, search, currency, theme, account, orders, cart
+            */}
+            <div className="mx-auto flex max-w-screen-2xl flex-wrap items-center gap-x-1 px-3 sm:px-4 md:gap-x-2 lg:h-16 lg:flex-nowrap lg:gap-x-3 lg:px-6">
+                <button
+                    type="button"
+                    onClick={() => setDrawerOpen(true)}
+                    aria-label="Open menu"
+                    aria-haspopup="dialog"
+                    aria-expanded={drawerOpen}
+                    className={`${iconBtn} order-1 -ml-2 my-0.5 shrink-0 lg:hidden`}
+                >
+                    <Menu className="h-6 w-6" aria-hidden />
+                </button>
 
-                    <div className="shrink-0 w-[96px] sm:w-[110px] lg:w-auto">
-                        <Logo />
-                    </div>
-
-                    {/* Desktop search with category select */}
-                    <div className="hidden lg:block flex-1 min-w-0 mx-3 max-w-3xl">
-                        <HeaderSearch categories={categoryNames} />
-                    </div>
-
-                    <div className="flex items-center gap-0.5 ml-auto min-w-0 shrink-0">
-                        {/* Ship-to + currency (drawer on mobile/tablet) */}
-                        <div className="hidden lg:flex items-center">
-                            <ShipToPicker variant="compact" align="right" className="shrink-0" />
-                            <CurrencyPicker variant="compact" align="right" className="shrink-0" />
-                            <div className="h-5 w-px bg-gray-200 dark:bg-gray-700 mx-1 shrink-0" />
-                        </div>
-
-                        <button
-                            type="button"
-                            onClick={toggleTheme}
-                            aria-label="Toggle theme"
-                            className={`${iconBtn} hidden lg:flex`}
-                        >
-                            {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-                        </button>
-
-                        <Link
-                            href="/account/wishlist"
-                            className={`${iconBtn} hidden sm:flex`}
-                            aria-label={`Wishlist (${wishlistCount} items)`}
-                        >
-                            <NavBadge count={wishlistCount}>
-                                <Heart className="h-5 w-5" />
-                            </NavBadge>
-                        </Link>
-
-                        {accountControl}
-                        {cartLink}
-                    </div>
+                <div className="order-2 my-0.5 flex h-11 w-[100px] shrink-0 items-center sm:w-[110px] [&_img]:h-8 [&_img]:w-auto lg:[&_img]:h-9">
+                    <Logo />
                 </div>
 
-                {/* ── Row 2 (below lg): full-width search ── */}
-                <div className="lg:hidden pb-2">
-                    <HeaderSearch categories={[]} />
+                <div className="order-3 hidden shrink-0 lg:block">
+                    <ShipToPicker variant="header" />
+                </div>
+
+                <div className="order-6 mb-1.5 w-full md:order-4 md:my-0.5 md:w-auto md:min-w-0 md:flex-1 lg:my-0 lg:max-w-3xl">
+                    <SearchBar categories={categoryNames} />
+                </div>
+
+                <div className="order-5 my-0.5 ml-auto flex shrink-0 items-center gap-0.5 lg:my-0">
+                    <div className="hidden lg:block">
+                        <CurrencyPicker variant="header" />
+                    </div>
+
+                    <button
+                        type="button"
+                        onClick={toggleTheme}
+                        aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                        className={`${iconBtn} hidden lg:flex`}
+                    >
+                        {theme === 'dark' ? <Sun className="h-5 w-5" aria-hidden /> : <Moon className="h-5 w-5" aria-hidden />}
+                    </button>
+
+                    <Link
+                        href="/account/wishlist"
+                        className={`${iconBtn} hidden sm:flex lg:hidden xl:flex`}
+                        aria-label={`Wishlist (${wishlistCount} items)`}
+                    >
+                        <NavBadge count={wishlistCount}>
+                            <Heart className="h-5 w-5" aria-hidden />
+                        </NavBadge>
+                    </Link>
+
+                    {accountControl}
+
+                    <Link href="/account/orders" className={`${textBtn} hidden text-sm font-bold xl:flex`}>
+                        Orders
+                    </Link>
+
+                    <Link
+                        href="/cart"
+                        className={`${textBtn} px-2.5`}
+                        aria-label={`Cart (${cartCount} items)`}
+                    >
+                        <NavBadge count={cartCount}>
+                            <ShoppingCart className="h-6 w-6" aria-hidden />
+                        </NavBadge>
+                        <span className="hidden text-sm font-bold xl:inline">Cart</span>
+                    </Link>
                 </div>
             </div>
 
@@ -350,14 +368,16 @@ export default function TopNav() {
                 theme={theme}
                 onToggleTheme={toggleTheme}
             />
+        </div>
+    )
+}
 
-            {/* Keyframe shared by the account menu, pickers and search panel */}
-            <style>{`
-                @keyframes dropIn {
-                    from { opacity: 0; transform: translateY(6px) scale(0.97); }
-                    to   { opacity: 1; transform: translateY(0) scale(1); }
-                }
-            `}</style>
+/** Back-compat: the full header (rows 1-3) as one block with its own bottom border. */
+export default function TopNav() {
+    return (
+        <div className="border-b border-zinc-200 dark:border-zinc-800">
+            <TopNavMain />
+            <TopNavStrip />
         </div>
     )
 }

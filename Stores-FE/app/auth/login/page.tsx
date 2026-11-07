@@ -125,7 +125,7 @@ export default function LoginPage() {
             disabled
             title="Coming soon"
             aria-label={`${label} sign-in (coming soon)`}
-            className="flex h-12 items-center justify-center gap-2 rounded-lg border border-zinc-300 bg-white text-sm font-medium text-zinc-700 opacity-60"
+            className="flex h-12 items-center justify-center gap-2 rounded-lg border border-zinc-300 bg-zinc-100 text-sm font-medium text-zinc-500 cursor-not-allowed dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-500"
           >
             <Icon size={18} aria-hidden />
             <span className="hidden sm:inline">{label}</span>

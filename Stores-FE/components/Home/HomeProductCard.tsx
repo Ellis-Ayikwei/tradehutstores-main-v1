@@ -1,8 +1,9 @@
 'use client'
 
-import { ProductCard, ProductCardSkeleton } from '@/components/common/marketplace'
+import { memo, useMemo } from 'react'
+import { ProductCardSkeleton } from '@/components/common/marketplace'
 import type { MarketplaceProduct } from '@/components/common/marketplace'
-import { useCardCommerce } from '@/components/Products/ProductCard'
+import { CommerceProductCard } from '@/components/Products/ProductCard'
 import type { HomeProduct } from './homeProduct'
 
 /** Maps the normalised home product into the shared card shape. Only real data is passed through. */
@@ -20,33 +21,26 @@ export function toMarketplaceProduct(p: HomeProduct): MarketplaceProduct {
         stockLeft: p.stock ?? undefined,
         freeShipping: p.freeShipping === true ? true : undefined,
         brand: p.brand || undefined,
+        variants: p.variants,
+        defaultVariantId: p.defaultVariantId,
     }
 }
 
-/** Homepage grid card: the shared marketplace card wired to cart and wishlist. */
-export default function HomeProductCard({
+/** Homepage grid card: the shared marketplace card wired to cart and wishlist. Memoised on the product row. */
+function HomeProductCard({
     product,
-    sizes = '(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 17vw',
+    sizes = '(min-width: 1024px) 17vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, 50vw',
     priority = false,
 }: {
     product: HomeProduct
     sizes?: string
     priority?: boolean
 }) {
-    const commerce = useCardCommerce()
-    return (
-        <ProductCard
-            product={toMarketplaceProduct(product)}
-            sizes={sizes}
-            priority={priority}
-            formatPrice={commerce.formatPrice}
-            wishlisted={commerce.isWishlisted(product.id)}
-            onToggleWishlist={commerce.onToggleWishlist}
-            onAddToCart={commerce.onAddToCart}
-            addToCartLoading={commerce.isAdding(product.id)}
-        />
-    )
+    const card = useMemo(() => toMarketplaceProduct(product), [product])
+    return <CommerceProductCard product={card} sizes={sizes} priority={priority} />
 }
+
+export default memo(HomeProductCard)
 
 export function HomeProductCardSkeleton() {
     return <ProductCardSkeleton />

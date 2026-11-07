@@ -24,9 +24,11 @@ const nextConfig = {
   //   assets land on Cloudflare's CDN automatically.
 
   images: {
-    // next/image is mostly disabled on the edge — this is a fallback config.
-    // For R2-served imagery prefer plain <img> with the public R2 hostname,
-    // OR set NEXT_PUBLIC_IMAGE_HOST and use it as a CDN prefix.
+    // The default optimiser (/_next/image) is not used: see lib/imageLoader.ts. Images are served straight from
+    // the API/R2/CDN, or through Cloudflare Image Transformations when NEXT_PUBLIC_IMAGE_TRANSFORM_BASE is set.
+    loader: 'custom',
+    loaderFile: './lib/imageLoader.ts',
+    // Kept for any component that opts back into a built-in loader; the custom loader ignores them.
     remotePatterns: [
       apiMediaRemotePattern(),
       { protocol: 'http', hostname: '127.0.0.1', pathname: '/**' },

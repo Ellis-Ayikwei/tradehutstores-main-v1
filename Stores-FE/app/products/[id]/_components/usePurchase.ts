@@ -7,14 +7,17 @@ import type { AppDispatch, RootState } from '@/store'
 import { addToCart } from '@/store/cartSlice'
 import { addToWishlist, removeFromWishlist } from '@/store/wishListSlice'
 import { wishlistItemProductId } from '@/lib/wishlistUtils'
+import { variantDisplayLabel, variantHasChoice } from '@/lib/variantLabel'
 import { round2 } from './pdpUtils'
 import {
-  findVariantForSelections,
-  isVariantInStock,
-  nextSelections,
-  parseVariationThemeAxes,
-  variantsMatchThemeAxes,
-} from './variantUtils'
+  buildAxisModel,
+  findVariantByAxes,
+  initialSelections,
+  pickInitialVariant,
+  selectAxisOption,
+  type AxisModel,
+} from './variantAxes'
+import { flatVariantLabels, isVariantInStock, parseVariationThemeAxes } from './variantUtils'
 import type { PdpProduct, PdpVariant, PriceInfo, StockInfo } from './types'
 
 export type ShowToast = (msg: string, type: 'success' | 'error') => void
@@ -22,24 +25,37 @@ export type ShowToast = (msg: string, type: 'success' | 'error') => void
 const MAX_QTY = 10
 
 export interface PurchaseModel {
-  themeAxes: string[] | null
-  useAxisPicker: boolean
+  /** 'axes' = Amazon-style attribute rows from real attribute values; 'flat' = name chips; 'none' = nothing to show. */
+  mode: 'axes' | 'flat' | 'none'
+  axisModel: AxisModel
   selections: Record<string, string>
   selectedVariant: PdpVariant | null
-  /** Variants exist but none is chosen yet. */
+  /** More than one variant that really differs, so the buyer has a choice to make. */
+  hasChoice: boolean
+  /** A real choice exists and the selection is incomplete. */
   needsVariant: boolean
+  /** Name of the first axis still unselected ('Colour'), for the red 'Select Colour' hint. */
+  missingAxis: string | null
+  /** 'Colour: Red · Size: M' (or a flat name / 'Option 2'), or null (never a placeholder like "Default"). */
+  selectedLabel: string | null
   price: PriceInfo
   stock: StockInfo
   quantity: number
   maxQuantity: number
   adding: boolean
   wishlisted: boolean
-  selectAxis: (axis: string, value: string) => void
-  selectVariant: (variant: PdpVariant | null) => void
+  selectAxis: (axisKey: string, value: string) => void
+  selectVariant: (variant: PdpVariant) => void
   setQuantity: (n: number) => void
   addToCart: () => void
   buyNow: () => void
   toggleWishlist: () => void
+}
+
+interface UserPick {
+  productId: string
+  selections?: Record<string, string>
+  variantId?: string
 }
 
 export function usePurchase(product: PdpProduct, showToast: ShowToast): PurchaseModel {
@@ -48,33 +64,61 @@ export function usePurchase(product: PdpProduct, showToast: ShowToast): Purchase
   const cartId = useSelector((s: RootState) => s.cart.cart.id)
   const wishlistItems = useSelector((s: RootState) => s.wishlist.wishlist.items)
 
-  const themeAxes = useMemo(() => parseVariationThemeAxes(product.variation_theme), [product.variation_theme])
-  const useAxisPicker = useMemo(
-    () => Boolean(themeAxes && product.variants.length > 0 && variantsMatchThemeAxes(product.variants, themeAxes)),
-    [themeAxes, product.variants]
-  )
+  const variants = product.variants
 
-  const [selections, setSelections] = useState<Record<string, string>>({})
-  const [flatVariantId, setFlatVariantId] = useState<string | null>(
-    !useAxisPicker && product.variants.length === 1 ? product.variants[0].id : null
+  const axisModel = useMemo(
+    () => buildAxisModel(variants, parseVariationThemeAxes(product.variation_theme)),
+    [variants, product.variation_theme]
   )
+  const hasAxes = axisModel.axes.length > 0
+  const flatChoice = useMemo(() => !hasAxes && variantHasChoice(variants), [hasAxes, variants])
+  const hasChoice = hasAxes ? variants.length > 1 && axisModel.axes.some(a => a.options.length > 1) : flatChoice
+  const mode: PurchaseModel['mode'] = hasAxes ? 'axes' : flatChoice ? 'flat' : 'none'
+
+  // Start on the default (else first in-stock) variant so price, stock, images and Add to cart work immediately.
+  const initial = useMemo(
+    () => ({
+      selections: initialSelections(axisModel, variants, product.default_variant_id),
+      variantId: pickInitialVariant(variants, product.default_variant_id)?.id,
+    }),
+    [axisModel, variants, product.default_variant_id]
+  )
+  const [pick, setPick] = useState<UserPick | null>(null)
+  const own = pick && pick.productId === product.id ? pick : null
+  const selections = own?.selections ?? initial.selections
+  const flatVariantId = own?.variantId ?? initial.variantId
+
   const [quantity, setQuantityState] = useState(1)
   const [adding, setAdding] = useState(false)
 
   const selectedVariant = useMemo<PdpVariant | null>(() => {
-    if (product.variants.length === 0) return null
-    if (useAxisPicker && themeAxes) {
-      if (!themeAxes.every(ax => Boolean(selections[ax]))) return null
-      return findVariantForSelections(product.variants, themeAxes, selections)
+    if (variants.length === 0) return null
+    if (hasAxes) {
+      return findVariantByAxes(axisModel, variants, selections) ?? (hasChoice ? null : variants[0])
     }
-    return product.variants.find(v => v.id === flatVariantId) ?? null
-  }, [product.variants, useAxisPicker, themeAxes, selections, flatVariantId])
+    if (!hasChoice) return variants[0]
+    return variants.find(v => v.id === flatVariantId) ?? null
+  }, [variants, hasAxes, axisModel, selections, hasChoice, flatVariantId])
+
+  const selectedLabel = useMemo<string | null>(() => {
+    if (!selectedVariant) return null
+    const real = variantDisplayLabel(selectedVariant)
+    if (real || !hasChoice) return real
+    return flatVariantLabels(variants)[selectedVariant.id] ?? null
+  }, [selectedVariant, hasChoice, variants])
 
   const selectAxis = useCallback(
-    (axis: string, value: string) => setSelections(prev => nextSelections(product.variants, prev, axis, value)),
-    [product.variants]
+    (axisKey: string, value: string) => {
+      const idx = axisModel.axes.findIndex(a => a.key === axisKey)
+      if (idx === -1) return
+      setPick({
+        productId: product.id,
+        selections: selectAxisOption(axisModel, variants, selections, idx, value),
+      })
+    },
+    [axisModel, variants, selections, product.id]
   )
-  const selectVariant = useCallback((v: PdpVariant | null) => setFlatVariantId(v ? v.id : null), [])
+  const selectVariant = useCallback((v: PdpVariant) => setPick({ productId: product.id, variantId: v.id }), [product.id])
 
   // ── price ────────────────────────────────────────────────────────────────
   const price = useMemo<PriceInfo>(() => {
@@ -115,7 +159,8 @@ export function usePurchase(product: PdpProduct, showToast: ShowToast): Purchase
 
   const setQuantity = useCallback((n: number) => setQuantityState(Math.min(Math.max(1, n), maxQuantity)), [maxQuantity])
 
-  const needsVariant = product.variants.length > 0 && !selectedVariant
+  const needsVariant = hasChoice && !selectedVariant
+  const missingAxis = needsVariant ? (axisModel.axes.find(a => !selections[a.key])?.name ?? null) : null
 
   // ── wishlist ─────────────────────────────────────────────────────────────
   const existingWishlistItem = (wishlistItems ?? []).find(
@@ -151,7 +196,7 @@ export function usePurchase(product: PdpProduct, showToast: ShowToast): Purchase
 
   const guardVariant = useCallback((): boolean => {
     if (needsVariant) {
-      showToast('Please select an option first', 'error')
+      showToast(missingAxis ? `Please select ${missingAxis}` : 'Please select an option first', 'error')
       document.getElementById('pdp-variants')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       return false
     }
@@ -160,7 +205,7 @@ export function usePurchase(product: PdpProduct, showToast: ShowToast): Purchase
       return false
     }
     return true
-  }, [needsVariant, selectedVariant, showToast])
+  }, [needsVariant, missingAxis, selectedVariant, showToast])
 
   const handleAddToCart = useCallback(() => {
     if (adding || !guardVariant()) return
@@ -189,11 +234,14 @@ export function usePurchase(product: PdpProduct, showToast: ShowToast): Purchase
   }, [guardVariant, product.id, quantity, selectedVariant, router])
 
   return {
-    themeAxes,
-    useAxisPicker,
+    mode,
+    axisModel,
     selections,
     selectedVariant,
+    hasChoice,
     needsVariant,
+    missingAxis,
+    selectedLabel,
     price,
     stock,
     quantity,

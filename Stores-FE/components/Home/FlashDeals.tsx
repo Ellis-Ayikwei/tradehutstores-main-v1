@@ -22,8 +22,8 @@ export default function FlashDeals() {
     if (loading) {
         return (
             <section aria-label="Flash deals" className={`${HOME_CONTAINER} mt-4`}>
-                <div className="overflow-hidden rounded-2xl bg-gradient-to-r from-red-600 to-orange-500 p-3 sm:p-4">
-                    <div className="mb-3 h-7 w-48 animate-pulse rounded bg-orange-300" />
+                <div className="overflow-hidden rounded-2xl bg-red-700 p-3 sm:p-4">
+                    <div className="mb-3 h-7 w-48 animate-pulse rounded bg-red-500" />
                     <div className="-mx-3 flex gap-2 overflow-hidden px-3 sm:mx-0 sm:px-0">
                         {[0, 1, 2, 3, 4, 5].map((i) => (
                             <div key={i} className="w-40 shrink-0 sm:w-44 lg:w-48">
@@ -48,7 +48,7 @@ export default function FlashDeals() {
 
     return (
         <section aria-label="Flash deals" className={`${HOME_CONTAINER} mt-4`}>
-            <div className="overflow-hidden rounded-2xl bg-gradient-to-r from-red-600 via-red-500 to-orange-500 p-3 sm:p-4">
+            <div className="overflow-hidden rounded-2xl bg-red-700 p-3 sm:p-4">
                 <div className="mb-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
                     <div className="flex min-w-0 items-center gap-2">
                         <Zap className="h-5 w-5 shrink-0 fill-yellow-300 text-yellow-300" aria-hidden />

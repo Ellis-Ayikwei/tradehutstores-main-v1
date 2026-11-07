@@ -1,7 +1,7 @@
 'use client'
 
 import PromoBar from '@/components/Navigation/PromoBar'
-import TopNav from '@/components/Navigation/TopNav'
+import { TopNavMain, TopNavStrip } from '@/components/Navigation/TopNav'
 import SubNav from '@/components/Navigation/SubNav'
 import Footer from './Footer'
 import { AdModal, AdSlot } from '@/components/Ads'
@@ -56,12 +56,25 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
     return (
         <div className="min-h-screen flex flex-col bg-white dark:bg-gray-950">
-            <div className="sticky top-0 z-50">
-                <PromoBar />
-                <TopNav />
-                <SubNav />
+            {/* Promo scrolls away at every breakpoint (renders nothing when no ad is live). */}
+            <PromoBar />
+            {/*
+              Pinned block, and the element directly before <main> (components/seller/StoreTabs
+              measures main.previousElementSibling).
+                below lg: rows 1-2 only (logo/actions + search, about 92px)
+                lg+:      header row (64px) + desktop SubNav (44px)
+            */}
+            <div
+                data-site-header
+                className="sticky top-0 z-50 border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950"
+            >
+                <TopNavMain />
+                <SubNav placement="sticky" />
             </div>
             <main className="flex-grow">
+                {/* Below lg these scroll away with the page; both are display:none at lg+. */}
+                <TopNavStrip />
+                <SubNav placement="inline" />
                 {children}
             </main>
             {/* Footer banner placement — admin-managed; renders nothing if no live ad. */}

@@ -40,7 +40,6 @@ import {
   Paperclip,
   X,
   ShieldCheck,
-  PlusCircle,
   Headphones,
   MessageSquare,
   Send,
@@ -152,17 +151,17 @@ const STATUS_CONFIG: Record<
 > = {
   open: {
     label: "Open",
-    classes: "bg-primary/10 text-primary",
+    classes: "bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-100",
     dot: "bg-primary",
   },
   in_review: {
     label: "In Review",
-    classes: "bg-bid-amber/10 text-bid-amber",
+    classes: "bg-amber-100 text-amber-900 dark:bg-amber-900 dark:text-amber-100",
     dot: "bg-bid-amber animate-pulse",
   },
   resolved: {
     label: "Resolved",
-    classes: "bg-bid-green/10 text-bid-green",
+    classes: "bg-green-100 text-green-900 dark:bg-green-900 dark:text-green-100",
     dot: "bg-bid-green",
   },
   escalated: {
@@ -207,7 +206,7 @@ function StepIndicator({
             {i > 0 && (
               <div
                 className={`hidden sm:block flex-1 h-0.5 mx-2 transition-colors duration-300 ${
-                  isDone ? "bg-primary" : "bg-outline-variant/30"
+                  isDone ? "bg-primary" : "bg-outline-variant dark:bg-zinc-700"
                 }`}
               />
             )}
@@ -218,8 +217,8 @@ function StepIndicator({
                   isActive
                     ? "bg-primary text-on-primary shadow-card"
                     : isDone
-                    ? "bg-primary/15 text-primary"
-                    : "bg-surface-container text-on-surface-variant"
+                    ? "bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-100"
+                    : "bg-surface-container text-on-surface-variant dark:bg-zinc-800 dark:text-zinc-300"
                 }`}
               >
                 {isDone ? (
@@ -233,8 +232,8 @@ function StepIndicator({
                   isActive
                     ? "text-primary"
                     : isDone
-                    ? "text-primary/60"
-                    : "text-on-surface-variant/50"
+                    ? "text-primary-700"
+                    : "text-on-surface-variant"
                 }`}
               >
                 {label}
@@ -292,8 +291,8 @@ function Step1({
                 onClick={() => setSelectedOrder(order.id)}
                 className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 active:scale-[0.99] ${
                   isSelected
-                    ? "border-primary bg-primary/5"
-                    : "border-outline-variant/20 bg-surface-container-lowest hover:border-primary/30 hover:bg-surface-container-low"
+                    ? "border-primary dark:border-primary-400 bg-primary-50 dark:bg-zinc-800"
+                    : "border-outline-variant dark:border-zinc-700 bg-surface-container-lowest hover:border-primary hover:bg-surface-container-low"
                 }`}
               >
                 <div className="flex items-start justify-between gap-3">
@@ -353,8 +352,8 @@ function Step1({
                 onClick={() => setSelectedReason(r.value)}
                 className={`flex items-center gap-3 p-4 rounded-xl border-2 text-left transition-all duration-200 active:scale-[0.98] ${
                   isSelected
-                    ? "border-primary bg-primary/5"
-                    : "border-outline-variant/20 bg-surface-container-lowest hover:border-primary/30 hover:bg-surface-container-low"
+                    ? "border-primary dark:border-primary-400 bg-primary-50 dark:bg-zinc-800"
+                    : "border-outline-variant dark:border-zinc-700 bg-surface-container-lowest hover:border-primary hover:bg-surface-container-low"
                 }`}
               >
                 <div
@@ -368,7 +367,7 @@ function Step1({
                 </div>
                 <span
                   className={`font-bold text-sm transition-colors ${
-                    isSelected ? "text-primary" : "text-on-surface"
+                    isSelected ? "text-primary-700" : "text-on-surface"
                   }`}
                 >
                   {r.label}
@@ -384,7 +383,7 @@ function Step1({
         <button
           onClick={onNext}
           disabled={!canProceed}
-          className="inline-flex items-center gap-2 bg-primary text-on-primary px-8 py-3 rounded-xl font-bold shadow-card hover:shadow-card-hover transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:shadow-card"
+          className="inline-flex items-center gap-2 bg-primary text-on-primary px-8 py-3 rounded-xl font-bold shadow-card hover:shadow-card-hover transition-all active:scale-95 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500 disabled:hover:shadow-card"
         >
           Continue
           <ArrowRight className="w-4 h-4" />
@@ -445,12 +444,12 @@ function Step2({
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="e.g. I received the item on Oct 18 but found significant damage to the lens element that was not disclosed in the listing description or photos..."
-            className="w-full px-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant/20 text-on-surface text-sm placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 resize-none transition-all font-body min-h-[120px] md:min-h-[160px]"
+            className="w-full px-4 py-3 rounded-xl bg-surface-container-low border border-outline-variant dark:border-zinc-700 text-on-surface text-sm placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary resize-none transition-all font-body min-h-[120px] md:min-h-[160px]"
           />
           <p
             className={`text-xs mt-1.5 text-right ${
               description.trim().length < 20
-                ? "text-on-surface-variant/50"
+                ? "text-on-surface-variant"
                 : "text-secondary-green"
             }`}
           >
@@ -477,8 +476,8 @@ function Step2({
                   onClick={() => setDesiredResolution(opt.value)}
                   className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 active:scale-[0.99] ${
                     isSelected
-                      ? "border-primary bg-primary/5"
-                      : "border-outline-variant/20 bg-surface-container-lowest hover:border-primary/30 hover:bg-surface-container-low"
+                      ? "border-primary dark:border-primary-400 bg-primary-50 dark:bg-zinc-800"
+                      : "border-outline-variant dark:border-zinc-700 bg-surface-container-lowest hover:border-primary hover:bg-surface-container-low"
                   }`}
                 >
                   <div className="flex items-start gap-3">
@@ -496,7 +495,7 @@ function Step2({
                     <div>
                       <p
                         className={`font-bold text-sm ${
-                          isSelected ? "text-primary" : "text-on-surface"
+                          isSelected ? "text-primary-700" : "text-on-surface"
                         }`}
                       >
                         {opt.label}
@@ -528,7 +527,7 @@ function Step2({
           {/* Trigger button / drop zone */}
           <button
             onClick={() => setUploadModalOpen(true)}
-            className="w-full border-2 border-dashed border-outline-variant/30 rounded-2xl p-8 md:p-10 flex flex-col items-center justify-center text-center group hover:border-primary/40 hover:bg-surface-container-low transition-all"
+            className="w-full border-2 border-dashed border-outline-variant dark:border-zinc-700 rounded-2xl p-8 md:p-10 flex flex-col items-center justify-center text-center group hover:border-primary hover:bg-surface-container-low transition-all"
           >
             <div className="w-14 h-14 bg-surface-container-low rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <Upload className="w-7 h-7 text-primary" />
@@ -577,7 +576,7 @@ function Step2({
         <div className="flex justify-between pt-2">
           <button
             onClick={onBack}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm text-on-surface-variant border border-outline-variant/30 hover:bg-surface-container-low transition-all active:scale-95"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm text-on-surface-variant border border-outline-variant dark:border-zinc-700 hover:bg-surface-container-low transition-all active:scale-95"
           >
             <ArrowLeft className="w-4 h-4" />
             Back
@@ -585,7 +584,7 @@ function Step2({
           <button
             onClick={onNext}
             disabled={!canProceed}
-            className="inline-flex items-center gap-2 bg-primary text-on-primary px-8 py-3 rounded-xl font-bold shadow-card hover:shadow-card-hover transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:shadow-card"
+            className="inline-flex items-center gap-2 bg-primary text-on-primary px-8 py-3 rounded-xl font-bold shadow-card hover:shadow-card-hover transition-all active:scale-95 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500 disabled:hover:shadow-card"
           >
             Review Dispute
             <ArrowRight className="w-4 h-4" />
@@ -642,8 +641,8 @@ function Step3({
   if (submitted) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center space-y-6">
-        <div className="w-20 h-20 rounded-full bg-bid-green/10 flex items-center justify-center">
-          <CheckCircle className="w-10 h-10 text-bid-green" />
+        <div className="w-20 h-20 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
+          <CheckCircle className="w-10 h-10 text-green-700 dark:text-green-300" />
         </div>
         <div>
           <h3 className="font-headline font-extrabold text-2xl text-on-surface mb-2">
@@ -699,7 +698,7 @@ function Step3({
       {/* Summary card */}
       <div className="bg-surface-container-low rounded-2xl p-6 space-y-5">
         {/* Order */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-5 border-b border-outline-variant/15">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-5 border-b border-outline-variant dark:border-zinc-700">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center flex-shrink-0">
               <ShoppingBag className="w-5 h-5 text-on-surface-variant" />
@@ -727,7 +726,7 @@ function Step3({
             <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-on-surface-variant mb-1">
               Dispute Reason
             </p>
-            <span className="inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1.5 rounded-lg text-sm font-bold">
+            <span className="inline-flex items-center gap-2 bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-100 px-3 py-1.5 rounded-lg text-sm font-bold">
               <ReasonIcon className="w-4 h-4" />
               {reasonLabel}
             </span>
@@ -747,7 +746,7 @@ function Step3({
           <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-on-surface-variant mb-2">
             Issue Description
           </p>
-          <p className="text-sm text-on-surface-variant leading-relaxed bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/15">
+          <p className="text-sm text-on-surface-variant leading-relaxed bg-surface-container-lowest rounded-xl p-4 border border-outline-variant dark:border-zinc-700">
             {description}
           </p>
         </div>
@@ -762,7 +761,7 @@ function Step3({
               {evidenceFiles.map((f, i) => (
                 <span
                   key={i}
-                  className="inline-flex items-center gap-1.5 bg-surface-container-lowest px-3 py-1.5 rounded-lg text-xs font-medium text-on-surface border border-outline-variant/15"
+                  className="inline-flex items-center gap-1.5 bg-surface-container-lowest px-3 py-1.5 rounded-lg text-xs font-medium text-on-surface border border-outline-variant dark:border-zinc-700"
                 >
                   <Paperclip className="w-3 h-3 text-secondary-green" />
                   {f.name}
@@ -774,7 +773,7 @@ function Step3({
       </div>
 
       {/* Escrow notice */}
-      <div className="flex items-start gap-4 p-5 bg-surface-container-low rounded-2xl border border-secondary-green/20">
+      <div className="flex items-start gap-4 p-5 bg-surface-container-low rounded-2xl border border-secondary-green">
         <ShieldCheck className="w-6 h-6 text-secondary-green flex-shrink-0 mt-0.5" />
         <div>
           <p className="font-bold text-on-surface text-sm mb-0.5">
@@ -791,14 +790,14 @@ function Step3({
       <div className="flex justify-between pt-2">
         <button
           onClick={onBack}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm text-on-surface-variant border border-outline-variant/30 hover:bg-surface-container-low transition-all active:scale-95"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm text-on-surface-variant border border-outline-variant dark:border-zinc-700 hover:bg-surface-container-low transition-all active:scale-95"
         >
           <ArrowLeft className="w-4 h-4" />
           Back
         </button>
         <button
           onClick={onSubmit}
-          className="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primary-container text-on-primary px-8 py-3 rounded-xl font-bold shadow-card hover:shadow-card-hover transition-all active:scale-95"
+          className="inline-flex items-center gap-2 bg-primary-700 hover:bg-primary-800 text-on-primary px-8 py-3 rounded-xl font-bold shadow-card hover:shadow-card-hover transition-all active:scale-95"
         >
           <Gavel className="w-4 h-4" />
           Submit Dispute
@@ -816,7 +815,7 @@ function DisputesList() {
     <div className="space-y-4">
       {DEMO_DISPUTES.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <Gavel className="w-16 h-16 text-outline/40 mb-4" />
+          <Gavel className="w-16 h-16 text-outline mb-4" />
           <h4 className="font-headline font-bold text-lg text-on-surface mb-1">
             No disputes yet
           </h4>
@@ -927,13 +926,6 @@ export default function DisputesPage() {
 
   function handleSubmitDispute() {
     // TODO: POST /api/disputes/ with { orderId, reason, description, desiredResolution, evidenceFiles }
-    console.log("Submitting dispute:", {
-      orderId: selectedOrderId,
-      reason: selectedReason,
-      description,
-      desiredResolution,
-      evidenceFileCount: evidenceFiles.length,
-    });
     setSubmitted(true);
   }
 
@@ -948,7 +940,7 @@ export default function DisputesPage() {
               {/* Page header */}
               <div className="mb-8 md:mb-12">
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest bg-primary/10 text-primary px-2.5 py-1 rounded">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-100 px-2.5 py-1 rounded">
                     Resolution Center
                   </span>
                   <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
@@ -971,9 +963,6 @@ export default function DisputesPage() {
                 className="bg-surface-container-lowest rounded-3xl shadow-card p-6 md:p-8 mb-10 md:mb-14"
               >
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <PlusCircle className="w-5 h-5 text-primary" />
-                  </div>
                   <div>
                     <h2 className="font-headline font-bold text-lg text-on-surface leading-tight">
                       Raise a New Dispute
@@ -1034,7 +1023,7 @@ export default function DisputesPage() {
                       </p>
                     </div>
                     {/* Divider */}
-                    <div className="flex-1 mx-6 h-px bg-outline-variant/20" />
+                    <div className="flex-1 mx-6 h-px bg-outline-variant dark:bg-zinc-700" />
                   </div>
                   <DisputesList />
                 </>
@@ -1050,7 +1039,7 @@ export default function DisputesPage() {
                   Our live support agents are available to help clarify the
                   dispute process or answer procedural questions.
                 </p>
-                <button className="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primary-container text-on-primary px-8 py-4 rounded-xl font-headline font-bold tracking-wide shadow-card hover:shadow-card-hover transition-all active:scale-[0.98]">
+                <button className="inline-flex items-center gap-2 bg-primary-700 hover:bg-primary-800 text-on-primary px-8 py-4 rounded-xl font-headline font-bold tracking-wide shadow-card hover:shadow-card-hover transition-all active:scale-[0.98]">
                   <MessageSquare className="w-5 h-5" />
                   Open Live Support Chat
                 </button>

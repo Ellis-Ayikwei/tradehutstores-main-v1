@@ -63,7 +63,7 @@ export default function BuyerCentralPage() {
         <MainLayout>
             <div className="min-h-screen bg-surface text-on-surface">
                 <div className="max-w-screen-2xl mx-auto px-4 md:px-8 py-10 md:py-14">
-                    <section className="rounded-3xl border border-outline-variant/20 bg-gradient-to-r from-surface-container-lowest via-surface-container-low to-surface-container p-6 md:p-10 mb-8">
+                    <section className="rounded-3xl border border-outline-variant dark:border-zinc-700 bg-surface-container-low p-6 md:p-10 mb-8">
                         <p className="text-[11px] font-black uppercase tracking-[0.16em] text-primary mb-3">
                             Buyer Operations Hub
                         </p>
@@ -83,7 +83,7 @@ export default function BuyerCentralPage() {
                             </Link>
                             <Link
                                 href="/help"
-                                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-outline-variant/30 text-sm font-semibold text-on-surface-variant hover:text-primary hover:border-primary/40 transition-colors"
+                                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-outline-variant dark:border-zinc-700 text-sm font-semibold text-on-surface-variant hover:text-primary hover:border-primary transition-colors"
                             >
                                 Get Buyer Help
                             </Link>
@@ -99,7 +99,7 @@ export default function BuyerCentralPage() {
                                     <Link
                                         key={action.title}
                                         href={action.href}
-                                        className="group rounded-2xl border border-outline-variant/20 bg-surface-container-lowest p-5 hover:border-primary/30 hover:shadow-card transition-all"
+                                        className="group rounded-2xl border border-outline-variant dark:border-zinc-700 bg-surface-container-lowest p-5 hover:border-primary hover:shadow-card transition-all"
                                     >
                                         <div className="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center mb-3">
                                             <Icon className="h-5 w-5 text-primary" />
@@ -122,7 +122,7 @@ export default function BuyerCentralPage() {
                             return (
                                 <div
                                     key={item.title}
-                                    className="rounded-2xl border border-outline-variant/20 bg-surface-container-lowest p-5"
+                                    className="rounded-2xl border border-outline-variant dark:border-zinc-700 bg-surface-container-lowest p-5"
                                 >
                                     <div className="flex items-center gap-2 mb-2">
                                         <Icon className="h-4 w-4 text-primary" />
@@ -134,7 +134,7 @@ export default function BuyerCentralPage() {
                         })}
                     </section>
 
-                    <section className="rounded-2xl border border-outline-variant/20 bg-surface-container-lowest p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <section className="rounded-2xl border border-outline-variant dark:border-zinc-700 bg-surface-container-lowest p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
                             <h3 className="font-bold text-lg mb-1">Need support with a purchase?</h3>
                             <p className="text-sm text-on-surface-variant">

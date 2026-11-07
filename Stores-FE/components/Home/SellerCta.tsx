@@ -1,18 +1,15 @@
 import Link from 'next/link'
-import { ArrowRight, Store } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { HOME_CONTAINER } from './HomeSection'
 
 export default function SellerCta() {
     return (
         <section aria-label="Sell on TradeHut" className={`${HOME_CONTAINER} mt-8 pb-8`}>
-            <div className="flex flex-col items-start gap-4 overflow-hidden rounded-2xl bg-gradient-to-r from-neutral-900 via-neutral-800 to-orange-600 p-5 text-white sm:flex-row sm:items-center sm:justify-between sm:p-8">
+            <div className="flex flex-col items-start gap-4 overflow-hidden rounded-2xl bg-neutral-900 p-5 text-white sm:flex-row sm:items-center sm:justify-between sm:p-8">
                 <div className="flex items-start gap-4">
-                    <span className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-full bg-neutral-700 sm:flex">
-                        <Store className="h-6 w-6" aria-hidden />
-                    </span>
                     <div>
                         <h2 className="font-syne text-xl font-bold sm:text-2xl">Sell on TradeHut</h2>
-                        <p className="mt-1 max-w-xl text-sm text-white/80">
+                        <p className="mt-1 max-w-xl text-sm text-neutral-200">
                             Open your store, list products, run auctions and answer RFQs. Reach buyers across the
                             marketplace.
                         </p>

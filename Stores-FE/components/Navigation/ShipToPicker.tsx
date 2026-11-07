@@ -1,45 +1,49 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { MapPin, ChevronDown, Check, Search } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { MapPin, ChevronDown, Check } from 'lucide-react'
 import { useShipTo } from '@/contexts/ShipToContext'
 import { COUNTRY_META } from '@/lib/storeCurrency'
+import PickerSheet from '@/components/Navigation/PickerSheet'
 
-type Variant = 'compact' | 'panel'
-type Align = 'left' | 'right'
+type Variant = 'strip' | 'header' | 'panel'
 
 interface ShipToPickerProps {
     /**
-     * compact – pill button with flag + "Ship to <CC>" (top utility bar)
-     * panel   – full-width touchable button (Navbar mobile menu)
+     * strip  - "Deliver to <country>" text button in the mobile/tablet strip; opens a bottom sheet
+     * header - two-line block in the desktop header row; opens an anchored dropdown
+     * panel  - full-width bordered button in the mobile drawer; opens a bottom sheet
      */
     variant?: Variant
-    /** Anchor side for the popover. Use 'left' when the trigger sits at the left
-     *  edge of the screen so the popover doesn't clip off-screen. */
-    align?: Align
     className?: string
 }
 
-export default function ShipToPicker({
-    variant = 'compact',
-    align = 'right',
-    className = '',
-}: ShipToPickerProps) {
-    const { country, setCountry, shippableCountries, countryName, countryFlag } = useShipTo()
+export default function ShipToPicker({ variant = 'header', className = '' }: ShipToPickerProps) {
+    const { country, setCountry, shippableCountries, countryName } = useShipTo()
 
     const [open, setOpen] = useState(false)
     const [query, setQuery] = useState('')
     const ref = useRef<HTMLDivElement>(null)
+    const close = useCallback(() => setOpen(false), [])
 
+    // Dropdown only: close on outside click / Escape.
     useEffect(() => {
-        function handler(e: MouseEvent) {
+        if (!open || variant !== 'header') return
+        function onDown(e: MouseEvent) {
             if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
         }
-        if (open) document.addEventListener('mousedown', handler)
-        return () => document.removeEventListener('mousedown', handler)
-    }, [open])
+        function onKey(e: KeyboardEvent) {
+            if (e.key === 'Escape') setOpen(false)
+        }
+        document.addEventListener('mousedown', onDown)
+        document.addEventListener('keydown', onKey)
+        return () => {
+            document.removeEventListener('mousedown', onDown)
+            document.removeEventListener('keydown', onKey)
+        }
+    }, [open, variant])
 
-    // Reset the search field whenever the popover closes so reopening starts fresh.
+    // Start fresh each time it reopens.
     useEffect(() => {
         if (!open) setQuery('')
     }, [open])
@@ -47,105 +51,117 @@ export default function ShipToPicker({
     const rows = useMemo(() => {
         const q = query.trim().toLowerCase()
         return shippableCountries
-            .map((code) => ({ code, ...(COUNTRY_META[code] ?? { name: code, flag: '🌍' }) }))
-            .filter(
-                (c) =>
-                    !q || c.code.toLowerCase().includes(q) || c.name.toLowerCase().includes(q)
-            )
+            .map((code) => ({ code, name: COUNTRY_META[code]?.name ?? code }))
+            .filter((c) => !q || c.code.toLowerCase().includes(q) || c.name.toLowerCase().includes(q))
             .sort((a, b) => a.name.localeCompare(b.name))
     }, [shippableCountries, query])
 
-    const triggerClass =
-        variant === 'compact'
-            ? 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-xs font-medium text-gray-700 dark:text-white whitespace-nowrap'
-            : 'w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
+    const body = (
+        <div className="flex min-h-0 flex-1 flex-col">
+            <div className="shrink-0 border-b border-zinc-200 p-3 dark:border-zinc-800">
+                <input
+                    type="search"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search country"
+                    aria-label="Search country"
+                    autoFocus={variant === 'header'}
+                    className="h-11 w-full rounded-md border border-zinc-300 bg-white px-3 text-base text-zinc-900 placeholder:text-zinc-500 focus:border-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-600 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-400 lg:h-10 lg:text-sm"
+                />
+            </div>
+            <div role="listbox" aria-label="Delivery country" className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+                {rows.length === 0 && (
+                    <p className="px-4 py-4 text-sm text-zinc-600 dark:text-zinc-400">No countries match.</p>
+                )}
+                {rows.map((c) => {
+                    const isActive = c.code === country
+                    return (
+                        <button
+                            key={c.code}
+                            type="button"
+                            role="option"
+                            aria-selected={isActive}
+                            onClick={() => {
+                                setCountry(c.code)
+                                setOpen(false)
+                            }}
+                            className={`flex min-h-[44px] w-full items-center gap-3 px-4 text-left text-sm text-zinc-900 hover:bg-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800 ${
+                                isActive ? 'bg-zinc-100 font-semibold dark:bg-zinc-800' : ''
+                            }`}
+                        >
+                            <span className="min-w-0 flex-1 truncate">{c.name}</span>
+                            <span className="font-mono text-xs text-zinc-600 dark:text-zinc-400">{c.code}</span>
+                            {isActive && <Check className="h-4 w-4 shrink-0 text-primary-700 dark:text-primary-400" aria-hidden />}
+                        </button>
+                    )
+                })}
+            </div>
+        </div>
+    )
 
-    const panelClass =
-        variant === 'panel'
-            ? 'absolute left-0 right-0 top-full mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 z-[200] overflow-hidden'
-            : `absolute ${align === 'left' ? 'left-0' : 'right-0'} top-full mt-2 w-72 max-w-[calc(100vw-1.5rem)] bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 z-[200] overflow-hidden`
+    const label = `Deliver to ${countryName}`
 
     return (
         <div ref={ref} className={`relative ${className}`}>
-            <button
-                type="button"
-                onClick={() => setOpen((v) => !v)}
-                aria-haspopup="listbox"
-                aria-expanded={open}
-                aria-label={`Ship to ${countryName}`}
-                className={triggerClass}
-            >
-                <MapPin className="h-3.5 w-3.5 shrink-0 text-gray-500 dark:text-white" />
-                {variant === 'compact' && (
-                    <span className="hidden lg:inline text-gray-400 dark:text-white/70">
-                        Ship to
-                    </span>
-                )}
-                <span className="text-base leading-none">{countryFlag}</span>
-                <span className="font-semibold text-gray-900 dark:text-white">{country}</span>
-                <ChevronDown
-                    className={`h-3 w-3 text-gray-400 dark:text-white/70 transition-transform duration-200 ${
-                        open ? 'rotate-180' : ''
-                    } ${variant === 'panel' ? 'ml-auto' : ''}`}
-                />
-            </button>
-
-            {open && (
-                <div
-                    role="listbox"
-                    className={panelClass}
-                    style={{ animation: 'dropIn 0.15s cubic-bezier(0.16,1,0.3,1) forwards' }}
+            {variant === 'strip' && (
+                <button
+                    type="button"
+                    onClick={() => setOpen(true)}
+                    aria-haspopup="dialog"
+                    aria-label={label}
+                    className="flex h-11 w-full min-w-0 items-center gap-1.5 text-left text-xs text-zinc-700 dark:text-zinc-200"
                 >
-                    <div className="px-3 pt-3 pb-2 border-b border-gray-100 dark:border-gray-700">
-                        <p className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-500 mb-2">
-                            Deliver to
-                        </p>
-                        <div className="relative">
-                            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400 pointer-events-none" />
-                            <input
-                                type="search"
-                                value={query}
-                                onChange={(e) => setQuery(e.target.value)}
-                                placeholder="Search country"
-                                autoFocus
-                                className="w-full pl-8 pr-2 py-1.5 text-sm bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md text-gray-700 dark:text-gray-200 placeholder:text-gray-400 focus:outline-none focus:border-orange-400"
-                            />
-                        </div>
+                    <MapPin className="h-4 w-4 shrink-0" aria-hidden />
+                    <span className="min-w-0 truncate">
+                        Deliver to <span className="font-bold text-zinc-900 dark:text-white">{countryName}</span>
+                    </span>
+                    <ChevronDown className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                </button>
+            )}
+
+            {variant === 'header' && (
+                <button
+                    type="button"
+                    onClick={() => setOpen((v) => !v)}
+                    aria-haspopup="listbox"
+                    aria-expanded={open}
+                    aria-label={label}
+                    className="flex h-11 items-center gap-1 rounded-md px-2 text-left text-zinc-900 hover:bg-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800"
+                >
+                    <MapPin className="h-5 w-5 shrink-0" aria-hidden />
+                    <span className="flex flex-col leading-tight">
+                        <span className="text-xs text-zinc-600 dark:text-zinc-400">Deliver to</span>
+                        <span className="max-w-[110px] truncate text-sm font-bold">{countryName}</span>
+                    </span>
+                </button>
+            )}
+
+            {variant === 'panel' && (
+                <button
+                    type="button"
+                    onClick={() => setOpen(true)}
+                    aria-haspopup="dialog"
+                    aria-label={label}
+                    className="flex min-h-[44px] w-full items-center gap-2 rounded-md border border-zinc-300 bg-white px-3 text-left text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                >
+                    <MapPin className="h-4 w-4 shrink-0" aria-hidden />
+                    <span className="min-w-0 flex-1 truncate">
+                        Deliver to <span className="font-bold">{countryName}</span>
+                    </span>
+                    <ChevronDown className="h-4 w-4 shrink-0" aria-hidden />
+                </button>
+            )}
+
+            {variant === 'header' ? (
+                open && (
+                    <div className="absolute left-0 top-full z-[200] mt-1 flex max-h-96 w-72 flex-col overflow-hidden rounded-md border border-zinc-300 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+                        {body}
                     </div>
-                    <div className="max-h-72 overflow-y-auto py-1.5">
-                        {rows.length === 0 && (
-                            <p className="px-3 py-4 text-sm text-gray-500 dark:text-gray-400 text-center">
-                                No countries match.
-                            </p>
-                        )}
-                        {rows.map((c) => {
-                            const isActive = c.code === country
-                            return (
-                                <button
-                                    key={c.code}
-                                    role="option"
-                                    aria-selected={isActive}
-                                    onClick={() => {
-                                        setCountry(c.code)
-                                        setOpen(false)
-                                    }}
-                                    className={`w-full flex items-center gap-3 px-3 py-2 text-sm transition-colors ${
-                                        isActive
-                                            ? 'bg-orange-50 dark:bg-orange-950 text-orange-600 dark:text-orange-400 font-semibold'
-                                            : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
-                                    }`}
-                                >
-                                    <span className="text-xl leading-none">{c.flag}</span>
-                                    <span className="flex-1 text-left truncate">{c.name}</span>
-                                    <span className="font-mono text-[11px] text-gray-400 dark:text-gray-500">
-                                        {c.code}
-                                    </span>
-                                    {isActive && <Check className="h-3.5 w-3.5 text-orange-500" />}
-                                </button>
-                            )
-                        })}
-                    </div>
-                </div>
+                )
+            ) : (
+                <PickerSheet open={open} onClose={close} title="Deliver to">
+                    {body}
+                </PickerSheet>
             )}
         </div>
     )

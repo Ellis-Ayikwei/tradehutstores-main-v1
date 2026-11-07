@@ -44,7 +44,7 @@ export default function HomeCountdown({
         tone === 'dark'
             ? 'bg-white text-neutral-900'
             : 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900'
-    const text = tone === 'dark' ? 'text-white/90' : 'text-neutral-600 dark:text-neutral-300'
+    const text = tone === 'dark' ? 'text-white' : 'text-neutral-600 dark:text-neutral-300'
 
     const parts = [...(days > 0 ? [`${days}d`] : []), pad(h), pad(m), pad(s)]
 

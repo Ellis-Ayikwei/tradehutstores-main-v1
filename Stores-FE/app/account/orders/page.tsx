@@ -83,7 +83,7 @@ const STATUS_CONFIG: Record<
   processing: {
     label: "Processing",
     dot: "bg-tertiary",
-    badge: "bg-tertiary-container/20 text-tertiary",
+    badge: "bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-100",
   },
   shipped: {
     label: "Shipped",
@@ -98,7 +98,7 @@ const STATUS_CONFIG: Record<
   returned: {
     label: "Returned",
     dot: "bg-bid-amber",
-    badge: "bg-bid-amber/10 text-bid-amber",
+    badge: "bg-amber-100 text-amber-900 dark:bg-amber-900 dark:text-amber-100",
   },
   cancelled: {
     label: "Cancelled",
@@ -130,7 +130,7 @@ function OrderRow({ order }: { order: Order }) {
   return (
     <>
       {/* Desktop table row (md+) */}
-      <tr className="hidden md:table-row group hover:bg-surface-container-low/30 dark:hover:bg-gray-800/40 transition-colors">
+      <tr className="hidden md:table-row group hover:bg-surface-container-low dark:hover:bg-gray-800 transition-colors">
         <td className="px-6 py-6 lg:px-8">
           <span className="font-mono text-sm font-bold text-primary dark:text-orange-400">
             {order.reference}
@@ -248,7 +248,7 @@ function EmptyState({ status }: { status: OrderStatus }) {
     <tr>
       <td colSpan={6}>
         <div className="flex flex-col items-center justify-center py-24 text-center">
-          <ShoppingBag className="w-16 h-16 text-outline/40 mb-6" strokeWidth={1} />
+          <ShoppingBag className="w-16 h-16 text-outline mb-6" strokeWidth={1} />
           <h3 className="font-headline font-bold text-xl text-on-surface mb-2">
             No {label} found
           </h3>
@@ -330,7 +330,7 @@ export default function MyOrdersPage() {
 
               {fetchError && (
                 <div
-                  className="mb-4 rounded-xl border border-error/30 bg-error-container/20 dark:bg-red-950/30 px-4 py-3 text-sm text-on-error-container dark:text-red-200"
+                  className="mb-4 rounded-xl border border-red-300 bg-red-100 dark:border-red-800 dark:bg-red-900 px-4 py-3 text-sm text-red-900 dark:text-red-100"
                   role="alert"
                 >
                   {fetchError}
@@ -344,7 +344,7 @@ export default function MyOrdersPage() {
               )}
 
               {/* Filters bar — sticky at lg+ below the site header (matches the sidebar offset) */}
-              <div className="z-10 bg-white dark:bg-gray-900 pt-2 pb-3 -mx-4 px-4 md:-mx-0 md:px-0 mb-4 lg:sticky lg:top-40">
+              <div className="z-10 bg-white dark:bg-gray-900 pt-2 pb-3 -mx-4 px-4 md:-mx-0 md:px-0 mb-4 lg:sticky lg:top-28">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                 {/* Status tabs */}
                 <div className="flex items-center gap-1 bg-surface-container-low p-1.5 rounded-xl overflow-x-auto no-scrollbar flex-shrink-0">
@@ -359,8 +359,8 @@ export default function MyOrdersPage() {
                           whitespace-nowrap transition-all duration-200 active:scale-95
                           ${
                             isActive
-                              ? "bg-surface-container-lowest shadow-sm text-primary"
-                              : "text-on-surface-variant hover:bg-surface-container-lowest/50"
+                              ? "bg-surface-container-lowest shadow-sm text-primary-700"
+                              : "text-on-surface-variant hover:bg-surface-container-lowest"
                           }
                         `}
                       >
@@ -368,7 +368,7 @@ export default function MyOrdersPage() {
                         {tabCount(tab.value) > 0 && (
                           <span
                             className={`ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full text-[9px] font-black
-                              ${isActive ? "bg-primary/10 text-primary" : "bg-surface-container text-on-surface-variant"}`}
+                              ${isActive ? "bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-100" : "bg-surface-container text-on-surface-variant"}`}
                           >
                             {tabCount(tab.value)}
                           </span>
@@ -393,20 +393,20 @@ export default function MyOrdersPage() {
               <div className="bg-surface-container-lowest dark:bg-gray-900 dark:border dark:border-gray-800 rounded-3xl shadow-card overflow-hidden">
                 <table className="w-full text-left border-collapse">
                   <thead className="hidden md:table-header-group">
-                    <tr className="bg-surface-container-low/50">
-                      <th className="px-6 py-5 lg:px-8 text-[10px] uppercase tracking-[0.2em] font-black text-on-surface-variant/60">
+                    <tr className="bg-surface-container-low">
+                      <th className="px-6 py-5 lg:px-8 text-[10px] uppercase tracking-[0.2em] font-black text-on-surface-variant">
                         Order ID
                       </th>
-                      <th className="px-6 py-5 lg:px-8 text-[10px] uppercase tracking-[0.2em] font-black text-on-surface-variant/60">
+                      <th className="px-6 py-5 lg:px-8 text-[10px] uppercase tracking-[0.2em] font-black text-on-surface-variant">
                         Date
                       </th>
-                      <th className="px-6 py-5 lg:px-8 text-[10px] uppercase tracking-[0.2em] font-black text-on-surface-variant/60">
+                      <th className="px-6 py-5 lg:px-8 text-[10px] uppercase tracking-[0.2em] font-black text-on-surface-variant">
                         Status
                       </th>
-                      <th className="px-6 py-5 lg:px-8 text-[10px] uppercase tracking-[0.2em] font-black text-on-surface-variant/60">
+                      <th className="px-6 py-5 lg:px-8 text-[10px] uppercase tracking-[0.2em] font-black text-on-surface-variant">
                         Items
                       </th>
-                      <th className="px-6 py-5 lg:px-8 text-[10px] uppercase tracking-[0.2em] font-black text-on-surface-variant/60 text-right">
+                      <th className="px-6 py-5 lg:px-8 text-[10px] uppercase tracking-[0.2em] font-black text-on-surface-variant text-right">
                         Total
                       </th>
                       <th className="px-6 py-5 lg:px-8" />
@@ -425,13 +425,13 @@ export default function MyOrdersPage() {
 
                 {/* Pagination */}
                 {filteredOrders.length > 0 && (
-                  <div className="px-6 py-6 lg:px-8 bg-surface-container-low/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <p className="text-xs font-bold text-on-surface-variant/60 uppercase tracking-widest">
+                  <div className="px-6 py-6 lg:px-8 bg-surface-container-low flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">
                       Showing {filteredOrders.length} of {filteredOrders.length} orders
                     </p>
                     <div className="flex items-center gap-2">
                       <button
-                        className="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-lowest shadow-sm opacity-50 cursor-not-allowed"
+                        className="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container text-outline shadow-sm cursor-not-allowed"
                         disabled
                         aria-label="Previous page"
                       >
@@ -464,18 +464,18 @@ export default function MyOrdersPage() {
               {/* Contextual insight cards */}
               <div className="mt-10 md:mt-12 grid grid-cols-1 gap-6">
                 {/* Support card */}
-                <div className="bg-surface-container-low p-8 rounded-3xl flex flex-col justify-between border border-primary/5">
+                <div className="bg-surface-container-low p-8 rounded-3xl flex flex-col justify-between border border-primary-200">
                   <div>
                     <Headphones className="text-primary mb-4 w-6 h-6" />
                     <h4 className="font-syne font-bold text-lg mb-2">Need Help?</h4>
-                    <p className="text-xs text-on-surface-variant/70 leading-relaxed mb-6">
+                    <p className="text-xs text-on-surface-variant leading-relaxed mb-6">
                       Call or WhatsApp us on 024 813 8722 for help with order
                       tracking or disputes.
                     </p>
                   </div>
                   <a
                     href="tel:+233248138722"
-                    className="min-h-[44px] text-primary font-bold text-[10px] uppercase tracking-[0.2em] flex items-center gap-2 group/btn hover:opacity-70 transition-opacity active:scale-95"
+                    className="min-h-[44px] text-primary font-bold text-[10px] uppercase tracking-[0.2em] flex items-center gap-2 group/btn hover:underline transition-colors active:scale-95"
                   >
                     Call 024 813 8722
                     <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />

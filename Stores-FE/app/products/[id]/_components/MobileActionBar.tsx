@@ -10,6 +10,13 @@ export default function MobileActionBar({ purchase }: { purchase: PurchaseModel 
   const unavailable = !purchase.stock.inStock
   return (
     <div className="sticky bottom-0 z-40 -mx-3 border-t border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900 pb-[env(safe-area-inset-bottom)] sm:-mx-4 lg:hidden">
+      {purchase.needsVariant ? (
+        <p className="truncate px-3 pt-1.5 text-xs font-medium text-red-600 dark:text-red-400 sm:px-4">
+          {purchase.missingAxis ? `Select ${purchase.missingAxis}` : 'Select an option'}
+        </p>
+      ) : purchase.selectedLabel ? (
+        <p className="truncate px-3 pt-1.5 text-xs text-zinc-700 dark:text-zinc-300 sm:px-4">{purchase.selectedLabel}</p>
+      ) : null}
       <div className="flex h-14 items-center gap-2 px-3 sm:px-4">
         <button
           type="button"

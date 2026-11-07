@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { memo, type ReactNode } from 'react'
 import { cx } from './cx'
 
 export type BadgeVariant = 'neutral' | 'primary' | 'success' | 'danger' | 'warning' | 'info' | 'dark'
@@ -8,6 +8,8 @@ export interface BadgeProps {
     children: ReactNode
     variant?: BadgeVariant
     size?: BadgeSize
+    /** Corner radius. `sm` gives the small flat rectangle used on product images. Default `md`. */
+    radius?: 'sm' | 'md'
     /** Optional leading icon (lucide icon element; rendered aria-hidden). */
     icon?: ReactNode
     className?: string
@@ -28,11 +30,14 @@ const SIZES: Record<BadgeSize, string> = {
     md: 'px-2.5 py-1 text-xs leading-4 gap-1.5',
 }
 
-export default function Badge({ children, variant = 'neutral', size = 'sm', icon, className }: BadgeProps) {
+const RADIUS = { sm: 'rounded-sm', md: 'rounded-md' } as const
+
+function Badge({ children, variant = 'neutral', size = 'sm', radius = 'md', icon, className }: BadgeProps) {
     return (
         <span
             className={cx(
-                'inline-flex items-center rounded-md font-semibold whitespace-nowrap',
+                'inline-flex items-center font-semibold whitespace-nowrap',
+                RADIUS[radius],
                 VARIANTS[variant],
                 SIZES[size],
                 className
@@ -47,3 +52,5 @@ export default function Badge({ children, variant = 'neutral', size = 'sm', icon
         </span>
     )
 }
+
+export default memo(Badge)

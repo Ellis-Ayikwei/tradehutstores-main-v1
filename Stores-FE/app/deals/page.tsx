@@ -84,7 +84,7 @@ export default function DealsPage() {
           {loading ? (
             <ProductGrid layout="dense">
               {Array.from({ length: 12 }).map((_, i) => (
-                <ProductCardSkeleton key={i} />
+                <ProductCardSkeleton key={i} showCta={false} />
               ))}
             </ProductGrid>
           ) : null}

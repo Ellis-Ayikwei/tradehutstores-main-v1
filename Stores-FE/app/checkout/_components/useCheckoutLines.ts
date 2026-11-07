@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux'
 import type { RootState } from '@/store'
 import axiosInstance from '@/lib/axiosInstance'
 import { resolveMediaSrc } from '@/lib/mediaUrl'
+import { variantDisplayLabel, type LabelableVariant } from '@/lib/variantLabel'
 import { fetchOrder, moneyToNumber, toCheckoutError } from '@/lib/checkoutApi'
 import type { OrderDetail } from '@/lib/checkoutApi'
 import { normaliseCartLine } from './cartLines'
@@ -134,7 +135,7 @@ export function useCheckoutLines({ mode, productId, variantId, qtyParam, orderId
                     imageSrc: resolveMediaSrc(image),
                     unit: buyNowUnitPrice(product, variant),
                     quantity,
-                    variantText: variant ? (str(variant.name) ?? str(variant.sku)) : undefined,
+                    variantText: (variant ? variantDisplayLabel(variant as LabelableVariant) : null) ?? undefined,
                     soldBy: str(product.store_name),
                 }
                 if (!cancelled) setRemote({ status: 'ready', error: null, lines: [line], order: null })
@@ -175,7 +176,7 @@ export function useCheckoutLines({ mode, productId, variantId, qtyParam, orderId
                     imageSrc: resolveMediaSrc(item.image ?? ''),
                     unit: moneyToNumber(item.unit_price) ?? undefined,
                     quantity: Math.max(1, Number(item.quantity) || 1),
-                    variantText: item.sku || undefined,
+                    // Order rows carry only a SKU, which is not buyer-facing; no variant label is shown until the API sends one.
                     soldBy: order.seller?.business_name,
                 }))
                 setRemote({ status: 'ready', error: null, lines, order })

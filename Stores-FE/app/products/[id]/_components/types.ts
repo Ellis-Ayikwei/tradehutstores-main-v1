@@ -18,7 +18,7 @@ export interface PdpVariant {
   price: string
   quantity: number | null
   primary_image: string | null
-  /** Optional per-variant gallery (not returned by the API today; supported if it appears). */
+  /** Per-variant gallery (image URLs), built from the product image rows' `product_variant` FK; first = lead. */
   images?: unknown[]
   attribute_values: PdpAttributeValue[]
 }
@@ -40,8 +40,12 @@ export interface PdpProduct {
   pricing_currency: string
   main_product_image: string
   images: string[]
+  /** Product-level pictures not tied to any variant (shared shots); shown for every variant. */
+  shared_images: string[]
   variants: PdpVariant[]
   variation_theme: string
+  /** `Product.default_variant` id, used to preselect the variant on load. */
+  default_variant_id: string | null
   average_rating: number
   total_reviews: number
   inventory_level: number | null

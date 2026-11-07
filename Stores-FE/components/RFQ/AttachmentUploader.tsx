@@ -17,7 +17,7 @@ import {
 const HINT = `Up to ${RFQ_LIMITS.attachmentsMax} files, 10 MB each. PDF, PNG, JPEG or WebP.`
 
 const ADD_BTN =
-    'inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 text-sm font-semibold text-zinc-800 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 focus-within:ring-2 focus-within:ring-primary-700 dark:focus-within:ring-primary-400 disabled:opacity-60'
+    'inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 text-sm font-semibold text-zinc-800 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 focus-within:ring-2 focus-within:ring-primary-700 dark:focus-within:ring-primary-400 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500'
 
 function FileIcon({ name }: { name: string }) {
     const Icon = /\.(png|jpe?g|webp)$/i.test(name) ? ImageIcon : FileText
@@ -81,7 +81,7 @@ export default function AttachmentUploader({ files, onChange, disabled }: QueueP
                                 disabled={disabled}
                                 onClick={() => onChange(files.filter((_, idx) => idx !== i))}
                                 aria-label={`Remove ${f.name}`}
-                                className="-mr-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 dark:focus-visible:ring-primary-400 disabled:opacity-60"
+                                className="-mr-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 dark:focus-visible:ring-primary-400 disabled:cursor-not-allowed disabled:text-zinc-400 dark:disabled:text-zinc-600"
                             >
                                 <Trash2 className="h-4 w-4" aria-hidden="true" />
                             </button>
@@ -89,7 +89,7 @@ export default function AttachmentUploader({ files, onChange, disabled }: QueueP
                     ))}
                 </ul>
             ) : null}
-            <label className={`${ADD_BTN} w-full cursor-pointer sm:w-auto ${disabled || files.length >= RFQ_LIMITS.attachmentsMax ? 'pointer-events-none opacity-60' : ''}`}>
+            <label className={`${ADD_BTN} w-full cursor-pointer sm:w-auto ${disabled || files.length >= RFQ_LIMITS.attachmentsMax ? 'pointer-events-none !bg-zinc-200 !text-zinc-500 dark:!bg-zinc-800 dark:!text-zinc-500' : ''}`}>
                 <Paperclip className="h-4 w-4" aria-hidden="true" />
                 {files.length > 0 ? 'Add more files' : 'Attach files (optional)'}
                 <input
@@ -186,7 +186,7 @@ export function AttachmentManager({ rfqId, attachments, editable, onChanged }: M
                                     disabled={busy}
                                     onClick={() => remove(a)}
                                     aria-label={`Remove ${a.filename}`}
-                                    className="-mr-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 dark:focus-visible:ring-primary-400 disabled:opacity-60"
+                                    className="-mr-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 dark:focus-visible:ring-primary-400 disabled:cursor-not-allowed disabled:text-zinc-400 dark:disabled:text-zinc-600"
                                 >
                                     <Trash2 className="h-4 w-4" aria-hidden="true" />
                                 </button>
@@ -198,7 +198,7 @@ export function AttachmentManager({ rfqId, attachments, editable, onChanged }: M
             {editable ? (
                 <>
                     <label
-                        className={`${ADD_BTN} cursor-pointer ${busy || attachments.length >= RFQ_LIMITS.attachmentsMax ? 'pointer-events-none opacity-60' : ''}`}
+                        className={`${ADD_BTN} cursor-pointer ${busy || attachments.length >= RFQ_LIMITS.attachmentsMax ? 'pointer-events-none !bg-zinc-200 !text-zinc-500 dark:!bg-zinc-800 dark:!text-zinc-500' : ''}`}
                     >
                         {busy ? (
                             <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />

@@ -49,6 +49,7 @@ export default function ProductDetail({ product, related, seller, onReviewAdded 
   )
 
   const purchase = usePurchase(product, showToast)
+  const [previewSrc, setPreviewSrc] = useState<string | null>(null)
   const { selectedVariant } = purchase
 
   useEffect(() => {
@@ -60,12 +61,15 @@ export default function ProductDetail({ product, related, seller, onReviewAdded 
     })
   }, [product.id, product.name, product.main_product_image, product.images, product.final_price])
 
-  const galleryImages = useMemo(() => {
-    const variantList = toImageList(selectedVariant?.images)
-    const base = variantList.length > 0 ? variantList : product.images
-    const lead = selectedVariant?.primary_image
-    return lead ? [lead, ...base.filter(src => src !== lead)] : base
-  }, [product.images, selectedVariant])
+  // Amazon-style rail: the selected variant's own pictures, then the shared (variant-less) shots.
+  // Other variants' pictures appear only when that option is selected. No own pictures: shared, then all.
+  const { galleryImages, galleryLead } = useMemo(() => {
+    const own = toImageList(selectedVariant?.images)
+    const lead = own[0] ?? selectedVariant?.primary_image ?? null
+    const ownAll = [...(lead ? [lead] : []), ...own]
+    const base = ownAll.length > 0 || product.shared_images.length > 0 ? product.shared_images : product.images
+    return { galleryImages: [...new Set([...ownAll, ...base])], galleryLead: lead }
+  }, [product.images, product.shared_images, selectedVariant])
 
   const rows = useMemo(() => detailRows(product, selectedVariant), [product, selectedVariant])
 
@@ -129,8 +133,9 @@ export default function ProductDetail({ product, related, seller, onReviewAdded 
 
       <div className="lg:grid lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)_260px] lg:gap-6 xl:grid-cols-[minmax(0,5fr)_minmax(0,4fr)_320px]">
         <Gallery
-          key={selectedVariant?.id ?? 'base'}
+          key={galleryLead ?? 'base'}
           images={galleryImages}
+          previewSrc={previewSrc}
           alt={product.name}
           wishlisted={purchase.wishlisted}
           onToggleWishlist={purchase.toggleWishlist}
@@ -211,12 +216,14 @@ export default function ProductDetail({ product, related, seller, onReviewAdded 
 
           <VariantSelector
             product={product}
-            useAxisPicker={purchase.useAxisPicker}
-            themeAxes={purchase.themeAxes}
+            mode={purchase.mode}
+            axisModel={purchase.axisModel}
+            hasChoice={purchase.hasChoice}
             selections={purchase.selections}
             selectedVariant={purchase.selectedVariant}
             onSelectAxis={purchase.selectAxis}
             onSelectVariant={purchase.selectVariant}
+            onPreviewImage={setPreviewSrc}
             discountPct={purchase.price.discountPct}
           />
 

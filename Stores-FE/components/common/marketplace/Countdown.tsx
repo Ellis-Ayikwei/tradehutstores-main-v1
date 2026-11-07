@@ -51,12 +51,19 @@ function Chip({ value, unit, tone }: { value: string; unit: string; tone: 'dark'
     return (
         <span
             className={cx(
-                'flex min-w-[44px] flex-col items-center rounded-lg px-2 py-1.5',
+                'flex min-w-[44px] flex-col items-center rounded-md px-2 py-1.5',
                 tone === 'light' ? 'bg-white text-zinc-900' : 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900'
             )}
         >
             <span className="font-mono text-lg font-bold leading-none tabular-nums sm:text-xl">{value}</span>
-            <span className="mt-1 text-[10px] font-medium uppercase leading-none tracking-wide opacity-80">{unit}</span>
+            <span
+                className={cx(
+                    'mt-1 text-[11px] font-medium leading-none',
+                    tone === 'light' ? 'text-zinc-600' : 'text-zinc-300 dark:text-zinc-600'
+                )}
+            >
+                {unit}
+            </span>
         </span>
     )
 }

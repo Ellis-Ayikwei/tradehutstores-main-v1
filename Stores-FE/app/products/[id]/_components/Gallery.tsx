@@ -6,6 +6,8 @@ import PdpImage from './PdpImage'
 
 interface GalleryProps {
   images: string[]
+  /** Hover preview (desktop): shown in the main stage without changing the selection. */
+  previewSrc?: string | null
   alt: string
   wishlisted: boolean
   onToggleWishlist: () => void
@@ -88,7 +90,7 @@ function Lightbox({
   )
 }
 
-export default function Gallery({ images, alt, wishlisted, onToggleWishlist }: GalleryProps) {
+export default function Gallery({ images, previewSrc, alt, wishlisted, onToggleWishlist }: GalleryProps) {
   const [active, setActive] = useState(0)
   const [lightbox, setLightbox] = useState(false)
   const slider = useRef<HTMLDivElement>(null)
@@ -179,7 +181,7 @@ export default function Gallery({ images, alt, wishlisted, onToggleWishlist }: G
       >
         <div ref={zoomRef} className="absolute inset-0 transition-transform duration-150 ease-out hover:scale-[1.8]">
           <PdpImage
-            src={images[safeActive]}
+            src={previewSrc ?? images[safeActive]}
             alt={alt}
             sizes="(min-width: 1280px) 520px, 40vw"
             priority

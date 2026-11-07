@@ -144,14 +144,14 @@ export default function PromoCodeInput({
                                 placeholder="ENTER CODE"
                                 disabled={loading}
                                 aria-label="Promo code"
-                                className="w-full pl-9 pr-4 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl text-xs font-bold text-zinc-900 dark:text-white uppercase placeholder:text-zinc-400 placeholder:normal-case focus:border-zinc-900 dark:focus:border-zinc-400 focus:outline-none transition-colors disabled:opacity-50"
+                                className="w-full pl-9 pr-4 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl text-xs font-bold text-zinc-900 dark:text-white uppercase placeholder:text-zinc-400 placeholder:normal-case focus:border-zinc-900 dark:focus:border-zinc-400 focus:outline-none transition-colors disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
                             />
                         </div>
                         <button
                             type="button"
                             onClick={handleApply}
                             disabled={loading || !input.trim()}
-                            className="px-5 py-3 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-xs font-black uppercase tracking-widest hover:bg-zinc-700 dark:hover:bg-zinc-100 disabled:opacity-40 disabled:pointer-events-none transition-all flex items-center gap-2 flex-shrink-0"
+                            className="px-5 py-3 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-xs font-black uppercase tracking-widest hover:bg-zinc-700 dark:hover:bg-zinc-100 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500 disabled:pointer-events-none transition-all flex items-center gap-2 flex-shrink-0"
                         >
                             {loading ? <Loader2 size={14} className="animate-spin" /> : 'Apply'}
                         </button>

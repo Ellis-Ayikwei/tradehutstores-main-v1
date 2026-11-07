@@ -1,4 +1,5 @@
 import { resolveMediaSrc } from '@/lib/mediaUrl'
+import { cardVariantsFromRaw, type CardVariant } from '@/components/common/marketplace/cardVariants'
 
 /**
  * Loose product shape returned by the various catalog endpoints
@@ -23,6 +24,9 @@ export interface HomeProduct {
     /** true = free shipping, false = paid shipping, null = unknown. */
     freeShipping: boolean | null
     brand: string
+    /** Real variants when the row carries them (enables colour swatches on cards). */
+    variants?: CardVariant[]
+    defaultVariantId?: string
 }
 
 function toNum(value: unknown): number | null {
@@ -83,6 +87,13 @@ export function normalizeProduct(raw: RawProduct | null | undefined): HomeProduc
         stock: firstNum(raw, ['stock', 'stock_quantity', 'quantity']),
         freeShipping,
         brand: typeof raw.brand === 'string' ? raw.brand : '',
+        variants: cardVariantsFromRaw(raw.variants, { discountPct: toNum(raw.discount_percentage) ?? 0 }),
+        defaultVariantId:
+            typeof raw.default_variant === 'string'
+                ? raw.default_variant
+                : typeof (raw.default_variant as { id?: unknown } | null)?.id === 'string'
+                  ? ((raw.default_variant as { id: string }).id)
+                  : undefined,
     }
 }
 

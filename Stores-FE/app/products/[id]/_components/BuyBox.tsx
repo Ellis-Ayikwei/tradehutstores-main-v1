@@ -86,12 +86,21 @@ export default function BuyBox({ product, purchase, seller }: BuyBoxProps) {
   return (
     <aside
       aria-label="Buy box"
-      className="hidden space-y-3 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-4 lg:sticky lg:top-40 lg:block lg:self-start"
+      className="hidden space-y-3 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-4 lg:sticky lg:top-28 lg:block lg:self-start"
     >
       <PriceBlock info={purchase.price} size="md" />
+      {purchase.selectedLabel ? (
+        <p className="truncate text-sm text-zinc-700 dark:text-zinc-300" title={purchase.selectedLabel}>
+          {purchase.selectedLabel}
+        </p>
+      ) : null}
       <DeliveryLine freeShipping={product.free_shipping} />
       <StockLine stock={purchase.stock} />
-      {purchase.needsVariant ? <p className="text-sm text-zinc-600 dark:text-zinc-400">Select an option to continue.</p> : null}
+      {purchase.needsVariant ? (
+        <p className="text-sm font-medium text-red-600 dark:text-red-400">
+          {purchase.missingAxis ? `Select ${purchase.missingAxis}` : 'Select an option to continue.'}
+        </p>
+      ) : null}
       <QuantitySelect purchase={purchase} id="pdp-qty-desktop" />
 
       <div className="space-y-2">

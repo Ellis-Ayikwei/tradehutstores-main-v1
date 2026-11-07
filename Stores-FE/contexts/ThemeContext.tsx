@@ -1,8 +1,16 @@
 'use client'
 
-import { createContext, useCallback, useContext, useLayoutEffect, useState } from 'react'
+import { createContext, useCallback, useContext, useMemo, useSyncExternalStore } from 'react'
+import {
+    THEME_STORAGE_KEY,
+    applyResolvedTheme,
+    readDomTheme,
+    readStoredPreference,
+    resolvePreference,
+    type ResolvedTheme,
+} from '@/lib/theme.config'
 
-type Theme = 'light' | 'dark'
+type Theme = ResolvedTheme
 
 interface ThemeContextType {
     theme: Theme
@@ -11,38 +19,48 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
-function resolveTheme(): Theme {
-    if (typeof window === 'undefined') return 'light'
-    const saved = localStorage.getItem('theme') as Theme | null
-    if (saved === 'light' || saved === 'dark') return saved
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+/*
+ * The inline boot script in app/layout.tsx has already put `dark`/`light` on <html> before first paint.
+ * This provider only MIRRORS that state (the DOM class is the source of truth) and never re-applies a
+ * default on mount, so there is no second repaint or flip after hydration.
+ */
+const listeners = new Set<() => void>()
+
+function subscribe(cb: () => void) {
+    listeners.add(cb)
+    const onStorage = (e: StorageEvent) => {
+        if (e.key === THEME_STORAGE_KEY || e.key === null) {
+            applyResolvedTheme(resolvePreference(readStoredPreference()))
+            cb()
+        }
+    }
+    window.addEventListener('storage', onStorage)
+    return () => {
+        listeners.delete(cb)
+        window.removeEventListener('storage', onStorage)
+    }
 }
 
-function applyDomTheme(theme: Theme): void {
-    const root = document.documentElement
-    root.classList.remove('light', 'dark')
-    root.classList.add(theme)
-    localStorage.setItem('theme', theme)
-}
+const getSnapshot = (): Theme => readDomTheme()
+const getServerSnapshot = (): Theme => 'light'
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-    const [theme, setTheme] = useState<Theme>('light')
-
-    useLayoutEffect(() => {
-        const resolved = resolveTheme()
-        setTheme(resolved)
-        applyDomTheme(resolved)
-    }, [])
+    const theme = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
 
     const toggleTheme = useCallback(() => {
-        setTheme((prev) => {
-            const next = prev === 'light' ? 'dark' : 'light'
-            applyDomTheme(next)
-            return next
-        })
+        const next: Theme = readDomTheme() === 'dark' ? 'light' : 'dark'
+        applyResolvedTheme(next)
+        try {
+            localStorage.setItem(THEME_STORAGE_KEY, next)
+        } catch {
+            /* storage unavailable: still toggles for this session */
+        }
+        listeners.forEach((l) => l())
     }, [])
 
-    return <ThemeContext.Provider value={{ theme, toggleTheme }}>{children}</ThemeContext.Provider>
+    const value = useMemo(() => ({ theme, toggleTheme }), [theme, toggleTheme])
+
+    return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
 }
 
 export function useTheme() {

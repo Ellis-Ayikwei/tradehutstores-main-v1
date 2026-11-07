@@ -200,6 +200,8 @@ export default function StoreProducts({ storeId, storeName, products, productsEr
                                         rating: p.rating,
                                         reviewCount: p.reviewCount,
                                         stockLeft: p.stockLeft,
+                                        variants: p.variants,
+                                        defaultVariantId: p.defaultVariantId,
                                     }
                                     return <ProductCard key={p.id} product={card} formatPrice={formatDisplayPrice} priority={i < 4} />
                                 })}

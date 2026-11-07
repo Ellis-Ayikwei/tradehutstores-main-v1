@@ -22,6 +22,7 @@ interface LocalCartItem {
         id: string
         name: string
         price: string | number
+        attribute_values?: Array<{ attribute_name?: string | null; value_name?: string | null }>
     }
 }
 
@@ -269,8 +270,7 @@ const cartSlice = createSlice({
             variant?: any
         }>) => {
             const { product_id, quantity, product_variant_id, product, variant } = action.payload
-            console.log("adding to local state")
-            
+
             // Check if item already exists (same product and variant)
             const existingItemIndex = state.cart.items.findIndex(
                 (item: any) => 
@@ -303,6 +303,8 @@ const cartSlice = createSlice({
                         id: variant.id,
                         name: variant.name,
                         price: variant.price,
+                        // Lets the cart show 'Colour: Red' for variants whose raw name is blank or a placeholder.
+                        attribute_values: variant.attribute_values,
                     } : undefined,
                 }
                 state.cart.items.push(newItem as any)

@@ -20,7 +20,7 @@ export default function SellerStoreLoading() {
                 <div className="h-11 rounded-lg bg-gray-200 dark:bg-gray-800 sm:h-10" />
                 <ProductGrid>
                     {Array.from({ length: 10 }, (_, i) => (
-                        <ProductCardSkeleton key={i} />
+                        <ProductCardSkeleton key={i} showCta={false} />
                     ))}
                 </ProductGrid>
             </div>

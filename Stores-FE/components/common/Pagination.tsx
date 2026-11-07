@@ -58,7 +58,7 @@ export default function Pagination({
                 <button
                     onClick={() => onChange(current - 1)}
                     disabled={current === 1}
-                    className={`${baseBtnClassName} border border-neutral-200 dark:border-neutral-600 text-neutral-600 dark:text-neutral-400 hover:border-orange-500 dark:hover:border-orange-400 hover:text-orange-600 dark:hover:text-orange-400 disabled:opacity-40 disabled:cursor-not-allowed`}
+                    className={`${baseBtnClassName} border border-neutral-200 dark:border-neutral-600 text-neutral-600 dark:text-neutral-400 hover:border-orange-500 dark:hover:border-orange-400 hover:text-orange-600 dark:hover:text-orange-400 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500`}
                     aria-label="Previous page"
                 >
                     <ChevronLeft className="h-4 w-4" />
@@ -83,7 +83,7 @@ export default function Pagination({
                 <button
                     onClick={() => onChange(current + 1)}
                     disabled={current === totalPages}
-                    className={`${baseBtnClassName} border border-neutral-200 dark:border-neutral-600 text-neutral-600 dark:text-neutral-400 hover:border-orange-500 dark:hover:border-orange-400 hover:text-orange-600 dark:hover:text-orange-400 disabled:opacity-40 disabled:cursor-not-allowed`}
+                    className={`${baseBtnClassName} border border-neutral-200 dark:border-neutral-600 text-neutral-600 dark:text-neutral-400 hover:border-orange-500 dark:hover:border-orange-400 hover:text-orange-600 dark:hover:text-orange-400 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500`}
                     aria-label="Next page"
                 >
                     <ChevronRight className="h-4 w-4" />

@@ -139,7 +139,7 @@ export function DesktopSummary({
     notices?: ReactNode
 }) {
     return (
-        <aside aria-label="Order summary" className={`${CARD} hidden space-y-3 p-4 lg:sticky lg:top-40 lg:block`}>
+        <aside aria-label="Order summary" className={`${CARD} hidden space-y-3 p-4 lg:sticky lg:top-28 lg:block`}>
             <PlaceOrderButton place={place} />
             <Blocker text={place.blocker} />
             <LegalText />

@@ -72,7 +72,7 @@ export default function AdTopBar({ slug = 'homepage-top-bar', fallback = null }:
         >
             <div className="mx-auto flex h-9 max-w-screen-2xl items-center gap-2 px-3 sm:px-6">
                 <span
-                    className={`shrink-0 text-[11px] leading-4 ${colors ? 'opacity-70' : 'text-zinc-500'}`}
+                    className={`shrink-0 text-[11px] leading-4 ${colors ? '' : 'text-zinc-500'}`}
                 >
                     Sponsored
                 </span>

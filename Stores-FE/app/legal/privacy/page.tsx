@@ -39,7 +39,7 @@ export default function PrivacyPolicyPage() {
         <main className="max-w-4xl mx-auto pt-24 px-4 md:px-6 pb-8 md:pb-12 flex flex-col lg:flex-row gap-8 lg:gap-16 lg:max-w-screen-xl">
 
           {/* ── Sticky TOC sidebar (lg+) ── */}
-          <aside className="hidden lg:flex flex-col lg:sticky lg:top-24 lg:h-[calc(100vh-6rem)] overflow-y-auto no-scrollbar w-72 p-6 gap-2 bg-surface-container-low rounded-xl shadow-card shrink-0">
+          <aside className="hidden lg:flex flex-col lg:sticky lg:top-28 lg:h-[calc(100vh-7rem)] overflow-y-auto no-scrollbar w-72 p-6 gap-2 bg-surface-container-low rounded-xl shadow-card shrink-0">
             <div className="mb-6 px-2">
               <h3 className="font-syne font-bold text-on-surface text-lg">
                 Table of Contents
@@ -145,8 +145,8 @@ export default function PrivacyPolicyPage() {
                 ))}
               </div>
 
-              <div className="bg-surface-container-lowest/50 backdrop-blur-sm p-5 md:p-6 rounded-xl">
-                <h3 className="text-xs font-mono uppercase tracking-tighter text-on-surface-variant/70 mb-4">
+              <div className="bg-surface-container-lowest p-5 md:p-6 rounded-xl">
+                <h3 className="text-xs font-mono uppercase tracking-tighter text-on-surface-variant mb-4">
                   Technical Specification
                 </h3>
                 <ul className="space-y-4 font-body text-on-surface-variant">
@@ -211,8 +211,7 @@ export default function PrivacyPolicyPage() {
 
             {/* Visual break */}
             <div className="relative h-56 md:h-64 overflow-hidden rounded-2xl group">
-              <div className="absolute inset-0 bg-surface-container" aria-hidden />
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/40 to-transparent flex items-center p-8 md:p-12">
+              <div className="absolute inset-0 bg-primary-700 flex items-center p-8 md:p-12">
                 <h3 className="text-on-primary font-syne text-2xl md:text-3xl font-bold max-w-xs">
                   Engineered for absolute trust.
                 </h3>
@@ -256,7 +255,7 @@ export default function PrivacyPolicyPage() {
 
             {/* 5. Security Measures */}
             <section
-              className="scroll-mt-28 p-6 md:p-8 border-2 border-primary/10 rounded-2xl bg-surface-container-lowest"
+              className="scroll-mt-28 p-6 md:p-8 border-2 border-primary-200 rounded-2xl bg-surface-container-lowest"
               id="security"
             >
               <div className="mb-6 md:mb-8 flex items-center gap-4">
@@ -306,7 +305,7 @@ export default function PrivacyPolicyPage() {
                     Call or WhatsApp us on 024 813 8722.
                   </p>
                 </div>
-                <a href="tel:+233248138722" className="shrink-0 bg-tertiary text-on-tertiary px-6 md:px-8 py-3 rounded-md font-bold hover:opacity-90 active:scale-95 transition-all flex items-center gap-2">
+                <a href="tel:+233248138722" className="shrink-0 bg-tertiary text-on-tertiary px-6 md:px-8 py-3 rounded-md font-bold hover:bg-on-tertiary-fixed-variant active:scale-95 transition-all flex items-center gap-2">
                   <Headphones className="w-4 h-4" />
                   Call 024 813 8722
                 </a>
@@ -321,8 +320,8 @@ export default function PrivacyPolicyPage() {
             </div>
 
             {/* Cross-links */}
-            <div className="pt-8 border-t border-outline-variant/15">
-              <p className="text-xs uppercase tracking-widest text-on-surface-variant/60 font-bold mb-4">
+            <div className="pt-8 border-t border-outline-variant dark:border-zinc-700">
+              <p className="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-4">
                 Related Legal Documents
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
@@ -365,7 +364,7 @@ export default function PrivacyPolicyPage() {
                 <Link
                   key={href}
                   href={href}
-                  className="font-body text-xs text-on-surface-variant/70 hover:text-on-surface transition-colors"
+                  className="font-body text-xs text-on-surface-variant hover:text-on-surface transition-colors"
                 >
                   {label}
                 </Link>

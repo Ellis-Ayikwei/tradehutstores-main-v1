@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import i18next from 'i18next'
-import themeConfig from '@/lib/theme.config'
+import themeConfig, { THEME_STORAGE_KEY, applyResolvedTheme, readStoredPreference, resolvePreference } from '@/lib/theme.config'
 
 const defaultState = {
     isDarkMode: false,
@@ -51,14 +51,15 @@ const getInitialState = () => {
     }
 
     return {
-        theme: localStorage.getItem('theme') || themeConfig.theme,
+        // Theme preference: only 'dark' / 'system' are honoured from storage, anything else is light.
+        theme: readStoredPreference() as string,
         menu: localStorage.getItem('menu') || themeConfig.menu,
         layout: localStorage.getItem('layout') || themeConfig.layout,
         rtlClass: localStorage.getItem('rtlClass') || themeConfig.rtlClass,
         animation: localStorage.getItem('animation') || themeConfig.animation,
         navbar: localStorage.getItem('navbar') || themeConfig.navbar,
         locale: localStorage.getItem('i18nextLng') || themeConfig.locale,
-        isDarkMode: false,
+        isDarkMode: resolvePreference(readStoredPreference()) === 'dark',
         sidebar: localStorage.getItem('sidebar') || defaultState.sidebar,
         semidark: localStorage.getItem('semidark') || themeConfig.semidark,
         languageList: defaultState.languageList,
@@ -73,28 +74,18 @@ const themeConfigSlice = createSlice({
     reducers: {
         toggleTheme(state, { payload }) {
             payload = payload || state.theme
-            if (typeof window !== 'undefined') {
-                localStorage.setItem('theme', payload)
-            }
+            if (payload !== 'dark' && payload !== 'system') payload = 'light'
             state.theme = payload
-            if (payload === 'light') {
-                state.isDarkMode = false
-            } else if (payload === 'dark') {
-                state.isDarkMode = true
-            } else if (payload === 'system') {
-                if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    state.isDarkMode = true
-                } else {
-                    state.isDarkMode = false
-                }
-            }
+            state.isDarkMode = typeof window !== 'undefined' ? resolvePreference(payload) === 'dark' : payload === 'dark'
 
             if (typeof window !== 'undefined') {
-                if (state.isDarkMode) {
-                    document.querySelector('body')?.classList.add('dark')
-                } else {
-                    document.querySelector('body')?.classList.remove('dark')
+                try {
+                    localStorage.setItem(THEME_STORAGE_KEY, payload)
+                } catch {
+                    /* storage unavailable */
                 }
+                // <html> is the single source of truth (no body.dark).
+                applyResolvedTheme(state.isDarkMode ? 'dark' : 'light')
             }
         },
         toggleMenu(state, { payload }) {

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import Script from 'next/script'
 import '@/styles/globals.css'
+import { THEME_BOOT_SCRIPT, THEME_COLOR_LIGHT } from '@/lib/theme.config'
 import StoreProvider from '@/providers/StoreProvider'
 import AuthProvider from '@/providers/AuthProvider'
 import { AuthModalProvider } from '@/providers/AuthModalProvider'
@@ -24,10 +24,12 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" suppressHydrationWarning>
+            <head>
+                <meta name="theme-color" content={THEME_COLOR_LIGHT} />
+                {/* Blocking, synchronous: applies the stored theme (default light) before first paint. */}
+                <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
+            </head>
             <body className={inter.className} suppressHydrationWarning>
-                <Script id="theme-boot" strategy="beforeInteractive">
-                    {`(function(){try{var t=localStorage.getItem('theme');var r=document.documentElement;r.classList.remove('light','dark');if(t==='dark'){r.classList.add('dark');return;}if(t==='light'){r.classList.add('light');return;}if(window.matchMedia('(prefers-color-scheme: dark)').matches)r.classList.add('dark');else r.classList.add('light');}catch(e){}})();`}
-                </Script>
                 <ThemeProvider>
                     <StoreProvider>
                         <AuthProvider>

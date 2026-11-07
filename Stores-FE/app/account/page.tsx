@@ -157,12 +157,12 @@ function ErrorBanner({ message, onRetry }: { message: string; onRetry: () => voi
       <AlertCircle className="h-5 w-5 shrink-0" aria-hidden="true" />
       <div className="min-w-0 flex-1">
         <p className="text-sm font-semibold">We could not load some of your account details.</p>
-        <p className="break-words text-xs opacity-80">{message}</p>
+        <p className="break-words text-xs">{message}</p>
       </div>
       <button
         type="button"
         onClick={onRetry}
-        className={`min-h-[44px] shrink-0 rounded-lg border border-red-300 bg-white px-4 text-sm font-semibold text-red-800 hover:bg-red-100 dark:border-red-800 dark:bg-transparent dark:text-red-200 ${FOCUS}`}
+        className={`min-h-[44px] shrink-0 rounded-lg border border-red-300 bg-white px-4 text-sm font-semibold text-red-800 hover:bg-red-100 dark:border-red-800 dark:bg-red-900 dark:text-red-100 ${FOCUS}`}
       >
         Try again
       </button>

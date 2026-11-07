@@ -49,7 +49,7 @@ export default function PromoField({ applied, onApply, onRemove, disabled = fals
                     onClick={onRemove}
                     disabled={disabled}
                     aria-label={`Remove promo code ${applied.code}`}
-                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full hover:bg-white disabled:opacity-60 dark:hover:bg-zinc-800 sm:h-9 sm:w-9 ${FOCUS}`}
+                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full hover:bg-white disabled:cursor-not-allowed disabled:text-zinc-400 dark:disabled:text-zinc-600 dark:hover:bg-zinc-800 sm:h-9 sm:w-9 ${FOCUS}`}
                 >
                     <X className="h-4 w-4" aria-hidden="true" />
                 </button>

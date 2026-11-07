@@ -11,7 +11,7 @@ interface WatchButtonProps {
     title: string
     isWatching: boolean
     onChange?: (watching: boolean) => void
-    /** icon: 44px tap target with a 32px chip, for cards. button: full-width labelled button, for the bid panel. */
+    /** icon: 32px bordered square (44px tap target via ::before), for cards. button: full-width labelled button, for the bid panel. */
     variant?: 'icon' | 'button'
     className?: string
 }
@@ -86,11 +86,9 @@ export default function WatchButton({
             onClick={toggle}
             aria-pressed={watching}
             aria-label={label}
-            className={`flex h-11 w-11 items-center justify-center rounded-full ${FOCUS} ${className}`}
+            className={`${/(absolute|fixed|sticky)/.test(className) ? '' : 'relative '}flex h-8 w-8 items-center justify-center rounded-md border border-zinc-200 bg-white text-zinc-700 before:absolute before:-inset-1.5 before:content-[''] hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800 ${FOCUS} ${className}`}
         >
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-zinc-700 shadow transition-colors hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800">
-                <Heart className={`h-[18px] w-[18px] ${watching ? HEART_ON : ''}`} aria-hidden="true" />
-            </span>
+            <Heart className={`h-4 w-4 ${watching ? HEART_ON : ''}`} aria-hidden="true" />
         </button>
     )
 }

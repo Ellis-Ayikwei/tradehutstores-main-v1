@@ -53,7 +53,8 @@ function normalizeVariant(raw: unknown): PdpVariant | null {
   const primary = str(r.primary_image) ?? str(r.primaryImage)
   return {
     id: String(r.id),
-    name: str(r.name) ?? str(r.sku) ?? `Variant ${r.id}`,
+    // Keep the seller's raw name (may be a placeholder such as "Default"); buyer text goes through variantDisplayLabel.
+    name: str(r.name) ?? '',
     sku: str(r.sku),
     price: String(num(r.price) ?? 0),
     quantity: num(r.quantity),
@@ -85,6 +86,25 @@ export function toImageList(raw: unknown): string[] {
   return [...new Set(out)]
 }
 
+/** Product image rows carry a `product_variant` FK; group them per variant (main image first). */
+function variantImageMap(raw: unknown): Record<string, string[]> {
+  const out: Record<string, string[]> = {}
+  if (!Array.isArray(raw)) return out
+  const rows = raw
+    .map(asRecord)
+    .filter((r): r is Raw => r !== null && r.product_variant != null && r.product_variant !== '')
+    .map((r, i) => ({ r, i }))
+    .sort((a, b) => Number(b.r.is_main === true) - Number(a.r.is_main === true) || a.i - b.i)
+  for (const { r } of rows) {
+    const url = imageEntryUrl(r)
+    if (!url) continue
+    const key = String(r.product_variant)
+    const list = out[key] ?? (out[key] = [])
+    if (!list.includes(url)) list.push(url)
+  }
+  return out
+}
+
 function keyFeatures(v: unknown): string[] {
   if (!Array.isArray(v)) return []
   const out: string[] = []
@@ -101,9 +121,11 @@ export function normalizeProduct(
   imagesRaw: unknown = [],
   reviews: MappedReview[] = []
 ): PdpProduct {
+  const variantImages = variantImageMap(imagesRaw)
   const variants = list(variantsRaw)
     .map(normalizeVariant)
     .filter((v): v is PdpVariant => v !== null)
+    .map(v => (variantImages[v.id]?.length ? { ...v, images: variantImages[v.id] } : v))
 
   const price = num(raw.primary_variant_price) ?? num(variants[0]?.price) ?? num(raw.price) ?? 0
   const discount = Math.min(99, Math.max(0, num(raw.discount_percentage) ?? 0))
@@ -136,8 +158,10 @@ export function normalizeProduct(
     pricing_currency: str(raw.pricing_currency) ?? 'GHS',
     main_product_image: main,
     images,
+    shared_images: toImageList(Array.isArray(imagesRaw) ? imagesRaw.filter(r => { const o = asRecord(r); return !o || o.product_variant == null || o.product_variant === '' }) : []),
     variants,
     variation_theme: str(raw.variation_theme) ?? 'single',
+    default_variant_id: raw.default_variant != null && raw.default_variant !== '' ? String(asRecord(raw.default_variant)?.id ?? raw.default_variant) : null,
     average_rating: num(raw.average_rating) ?? 0,
     total_reviews: num(raw.total_reviews) ?? 0,
     inventory_level: num(raw.inventory_level),

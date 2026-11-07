@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { variantRealAttributes } from '@/lib/variantLabel'
 import { aboutBullets, titleCase } from './pdpUtils'
 import type { PdpProduct, PdpVariant, SellerInfo } from './types'
 import { SellerLine, DeliveryLine } from './BuyBox'
@@ -22,9 +23,7 @@ export function detailRows(product: PdpProduct, variant: PdpVariant | null): Arr
   if (product.category) rows.push(['Category', product.category])
   if (product.sub_category) rows.push(['Sub-category', product.sub_category])
   if (variant) {
-    for (const a of variant.attribute_values) {
-      if (a.attribute_name && a.value_name) rows.push([titleCase(a.attribute_name), a.value_name])
-    }
+    for (const a of variantRealAttributes(variant)) rows.push([a.label, a.value])
   }
   const sku = variant?.sku ?? product.sku
   if (sku) rows.push(['SKU', sku])

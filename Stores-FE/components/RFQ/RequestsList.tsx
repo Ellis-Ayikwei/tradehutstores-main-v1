@@ -95,7 +95,7 @@ export default function RequestsList() {
     useEffect(() => setMounted(true), [])
 
     const signedIn = mounted && isAuthenticated
-    const { data, error, isLoading, isValidating, mutate } = useSWR(
+    const { data, error, isLoading, mutate } = useSWR(
         signedIn ? ['rfq-list', status, page] : null,
         () => listRequests({ status, page }),
         { keepPreviousData: true }
@@ -209,7 +209,7 @@ export default function RequestsList() {
                             <span>Posted</span>
                             <span>Status</span>
                         </div>
-                        <ul className={`divide-y divide-zinc-200 dark:divide-zinc-800 ${isValidating ? 'opacity-70' : ''}`}>
+                        <ul className={`divide-y divide-zinc-200 dark:divide-zinc-800 `}>
                             {rows.map((r) => (
                                 <li key={r.id}>
                                     <RowLink r={r} />
@@ -222,7 +222,7 @@ export default function RequestsList() {
                                     type="button"
                                     disabled={!data.previous}
                                     onClick={() => setPage((p) => Math.max(1, p - 1))}
-                                    className="inline-flex min-h-[44px] items-center gap-1 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 text-sm font-semibold text-zinc-800 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 dark:focus-visible:ring-primary-400 disabled:opacity-50"
+                                    className="inline-flex min-h-[44px] items-center gap-1 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 text-sm font-semibold text-zinc-800 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 dark:focus-visible:ring-primary-400 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
                                 >
                                     <ChevronLeft className="h-4 w-4" aria-hidden="true" />
                                     Previous
@@ -234,7 +234,7 @@ export default function RequestsList() {
                                     type="button"
                                     disabled={!data.next}
                                     onClick={() => setPage((p) => p + 1)}
-                                    className="inline-flex min-h-[44px] items-center gap-1 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 text-sm font-semibold text-zinc-800 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 dark:focus-visible:ring-primary-400 disabled:opacity-50"
+                                    className="inline-flex min-h-[44px] items-center gap-1 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 text-sm font-semibold text-zinc-800 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 dark:focus-visible:ring-primary-400 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
                                 >
                                     Next
                                     <ChevronRight className="h-4 w-4" aria-hidden="true" />

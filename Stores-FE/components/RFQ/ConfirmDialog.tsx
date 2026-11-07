@@ -122,7 +122,7 @@ export default function ConfirmDialog({
                         type="button"
                         onClick={onClose}
                         disabled={busy}
-                        className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 text-sm font-semibold text-zinc-800 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 dark:focus-visible:ring-primary-400 disabled:opacity-60"
+                        className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 text-sm font-semibold text-zinc-800 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 dark:focus-visible:ring-primary-400 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
                     >
                         {cancelLabel}
                     </button>
@@ -130,7 +130,7 @@ export default function ConfirmDialog({
                         type="button"
                         onClick={onConfirm}
                         disabled={busy}
-                        className={`inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg px-4 text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 dark:focus-visible:ring-primary-400 disabled:opacity-60 ${confirmCls}`}
+                        className={`inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg px-4 text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 dark:focus-visible:ring-primary-400 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500 ${confirmCls}`}
                     >
                         {busy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : null}
                         {confirmLabel}

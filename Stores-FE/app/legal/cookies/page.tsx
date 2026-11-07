@@ -65,9 +65,9 @@ export default function CookiePolicyPage() {
         <main className="max-w-4xl mx-auto pt-24 px-4 md:px-6 pb-8 md:pb-12 flex flex-col lg:flex-row gap-8 lg:gap-16 lg:max-w-screen-xl">
 
           {/* ── Sticky TOC sidebar (lg+) ── */}
-          <aside className="hidden lg:flex flex-col lg:sticky lg:top-24 lg:h-[calc(100vh-6rem)] overflow-y-auto no-scrollbar w-72 p-6 gap-2 bg-surface-container-low rounded-xl shadow-card shrink-0">
+          <aside className="hidden lg:flex flex-col lg:sticky lg:top-28 lg:h-[calc(100vh-7rem)] overflow-y-auto no-scrollbar w-72 p-6 gap-2 bg-surface-container-low rounded-xl shadow-card shrink-0">
             <div className="mb-6 px-2">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/60 mb-1">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">
                 Legal Center
               </p>
               <h3 className="font-syne font-bold text-on-surface text-lg">
@@ -139,7 +139,7 @@ export default function CookiePolicyPage() {
                   What Are Cookies?
                 </h2>
               </div>
-              <div className="p-6 md:p-8 rounded-xl bg-surface-container-lowest shadow-card border border-outline-variant/15">
+              <div className="p-6 md:p-8 rounded-xl bg-surface-container-lowest shadow-card border border-outline-variant dark:border-zinc-700">
                 <p className="font-body text-base md:text-lg text-on-surface-variant leading-relaxed">
                   Cookies are small text files stored on your device that allow
                   us to &ldquo;remember&rdquo; you. In the context of TradeHut,
@@ -167,7 +167,7 @@ export default function CookiePolicyPage() {
                 {cookieCategories.map(({ Icon, iconFill, title, description, token }) => (
                   <div
                     key={title}
-                    className="p-6 bg-surface-container-lowest rounded-xl shadow-card border border-outline-variant/15"
+                    className="p-6 bg-surface-container-lowest rounded-xl shadow-card border border-outline-variant dark:border-zinc-700"
                   >
                     <div className="flex items-center gap-3 mb-4">
                       <Icon
@@ -213,7 +213,7 @@ export default function CookiePolicyPage() {
                 </p>
 
                 {/* Info callout */}
-                <div className="flex items-start gap-4 p-5 md:p-6 bg-surface-container-high rounded-lg border border-outline-variant/15">
+                <div className="flex items-start gap-4 p-5 md:p-6 bg-surface-container-high rounded-lg border border-outline-variant dark:border-zinc-700">
                   <Info className="w-5 h-5 text-tertiary mt-0.5 shrink-0" />
                   <p className="text-sm text-on-surface-variant">
                     Disabling &ldquo;Essential&rdquo; cookies will prevent you
@@ -238,23 +238,15 @@ export default function CookiePolicyPage() {
 
             {/* Visual accent block */}
             <div className="relative h-52 md:h-64 overflow-hidden rounded-2xl">
-              <div className="absolute inset-0 bg-surface-container" aria-hidden />
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/40 to-transparent flex items-center p-8 md:p-12">
+              <div className="absolute inset-0 bg-primary-700 flex items-center p-8 md:p-12">
                 <h3 className="text-on-primary font-syne text-2xl md:text-3xl font-bold max-w-xs">
                   Transparency built into every session.
                 </h3>
               </div>
-              {/* Decorative icon */}
-              <div
-                className="absolute -right-8 -bottom-8 opacity-10 select-none pointer-events-none"
-                aria-hidden
-              >
-                <Cookie className="w-40 h-40" />
-              </div>
             </div>
 
             {/* CTA footer */}
-            <footer className="mt-16 md:mt-20 pt-10 md:pt-12 border-t border-outline-variant/20 flex flex-col items-center text-center">
+            <footer className="mt-16 md:mt-20 pt-10 md:pt-12 border-t border-outline-variant dark:border-zinc-700 flex flex-col items-center text-center">
               <h3 className="font-syne text-xl md:text-2xl font-bold mb-4 text-on-surface">
                 Questions about our cookie practices?
               </h3>
@@ -270,8 +262,8 @@ export default function CookiePolicyPage() {
             </footer>
 
             {/* Cross-links to the other two legal docs */}
-            <div className="pt-8 border-t border-outline-variant/15">
-              <p className="text-xs uppercase tracking-widest text-on-surface-variant/60 font-bold mb-4">
+            <div className="pt-8 border-t border-outline-variant dark:border-zinc-700">
+              <p className="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-4">
                 Related Legal Documents
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
@@ -314,7 +306,7 @@ export default function CookiePolicyPage() {
                 <Link
                   key={href}
                   href={href}
-                  className="font-body text-xs text-on-surface-variant/70 hover:text-on-surface transition-colors"
+                  className="font-body text-xs text-on-surface-variant hover:text-on-surface transition-colors"
                 >
                   {label}
                 </Link>

@@ -1,5 +1,6 @@
 import { cache } from 'react'
 import { apiUrl } from '@/lib/config'
+import { cardVariantsFromRaw } from '@/components/common/marketplace/cardVariants'
 import { resolveMediaSrc } from '@/lib/mediaUrl'
 import type { SellerPublic, StoreData, StoreProduct } from './types'
 
@@ -103,6 +104,9 @@ function mapProduct(raw: Record<string, unknown>): StoreProduct | null {
         category: str(raw.category_name),
         stockLeft: raw.available === false ? 0 : stock !== null ? Math.max(0, stock) : undefined,
         createdAt: str(raw.created_at),
+        variants: cardVariantsFromRaw(raw.variants, { discountPct: d }),
+        defaultVariantId:
+            typeof raw.default_variant === 'string' ? raw.default_variant : undefined,
     }
 }
 

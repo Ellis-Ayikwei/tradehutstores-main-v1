@@ -26,7 +26,7 @@ export default function TermsOfServicePage() {
 
           {/* ── Sticky TOC sidebar (lg+) ── */}
           <aside className="hidden lg:block">
-            <div className="lg:sticky lg:top-24 lg:h-[calc(100vh-6rem)] overflow-y-auto no-scrollbar">
+            <div className="lg:sticky lg:top-28 lg:h-[calc(100vh-7rem)] overflow-y-auto no-scrollbar">
               <div className="mb-8">
                 <h3 className="font-syne font-bold text-on-surface text-lg">
                   Table of Contents
@@ -42,7 +42,7 @@ export default function TermsOfServicePage() {
                       'flex items-center gap-3 py-2 pl-4 border-l-4 rounded-r-lg transition-all duration-200 text-sm font-medium',
                       idx === 0
                         ? 'text-primary-container border-primary-container font-bold'
-                        : 'text-on-surface/50 border-transparent hover:bg-surface-container-low hover:text-on-surface group',
+                        : 'text-on-surface-variant border-transparent hover:bg-surface-container-low hover:text-on-surface group',
                     ].join(' ')}
                   >
                     <item.Icon
@@ -67,7 +67,6 @@ export default function TermsOfServicePage() {
             <header className="mb-12 md:mb-16">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container text-primary text-xs font-mono mb-6">
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
                 </span>
                 VERSION P3-26
@@ -142,21 +141,18 @@ export default function TermsOfServicePage() {
                 </h2>
                 <div className="relative overflow-hidden bg-on-surface text-surface p-6 md:p-8 rounded-xl">
                   <div className="relative z-10">
-                    <p className="mb-4 opacity-90">
+                    <p className="mb-4">
                       You are responsible for safeguarding the password that you
                       use to access the Services and for any activities or actions
                       under your password.
                     </p>
-                    <p className="opacity-90">
+                    <p>
                       We encourage you to use &ldquo;strong&rdquo; passwords
                       (passwords that use a combination of upper and lower case
                       letters, numbers and symbols) with your account. TradeHut
                       cannot and will not be liable for any loss or damage arising
                       from your failure to comply with the above.
                     </p>
-                  </div>
-                  <div className="absolute -right-12 -bottom-12 opacity-10 select-none" aria-hidden>
-                    <Lock className="w-48 h-48" />
                   </div>
                 </div>
               </section>
@@ -189,7 +185,7 @@ export default function TermsOfServicePage() {
                   ].map(({ title, body }) => (
                     <div
                       key={title}
-                      className="border border-outline-variant/30 p-5 md:p-6 rounded-lg"
+                      className="border border-outline-variant dark:border-zinc-700 p-5 md:p-6 rounded-lg"
                     >
                       <h4 className="font-bold text-on-surface mb-2 font-syne">
                         {title}
@@ -205,7 +201,7 @@ export default function TermsOfServicePage() {
                 <h2 className="text-2xl md:text-3xl font-bold text-on-surface mb-6 tracking-tight font-syne">
                   5. Limitation of Liability
                 </h2>
-                <p className="mb-4 text-xs uppercase tracking-widest font-bold opacity-60">
+                <p className="mb-4 text-xs uppercase tracking-widest font-bold text-on-surface-variant">
                   Legal Disclaimer
                 </p>
                 <div className="font-mono text-sm bg-surface-container p-6 md:p-8 rounded-lg border-l-4 border-primary leading-relaxed">
@@ -224,7 +220,7 @@ export default function TermsOfServicePage() {
             </div>
 
             {/* CTA footer */}
-            <footer className="mt-20 md:mt-24 pt-10 md:pt-12 border-t border-outline-variant/20 flex flex-col items-center text-center">
+            <footer className="mt-20 md:mt-24 pt-10 md:pt-12 border-t border-outline-variant dark:border-zinc-700 flex flex-col items-center text-center">
               <h3 className="font-syne text-xl md:text-2xl font-bold mb-4 text-on-surface">
                 Have questions about our terms?
               </h3>
@@ -240,8 +236,8 @@ export default function TermsOfServicePage() {
             </footer>
 
             {/* Cross-links to the other two legal docs */}
-            <div className="mt-12 pt-8 border-t border-outline-variant/15">
-              <p className="text-xs uppercase tracking-widest text-on-surface-variant/60 font-bold mb-4">
+            <div className="mt-12 pt-8 border-t border-outline-variant dark:border-zinc-700">
+              <p className="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-4">
                 Related Legal Documents
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
@@ -271,26 +267,26 @@ export default function TermsOfServicePage() {
               <span className="text-on-surface font-black font-syne text-lg">
                 TradeHut
               </span>
-              <p className="font-body text-xs uppercase tracking-widest text-on-surface/60">
+              <p className="font-body text-xs uppercase tracking-widest text-on-surface-variant">
                 &copy; {new Date().getFullYear()} TradeHut. All rights reserved.
               </p>
             </div>
             <div className="flex flex-wrap justify-center gap-6 font-body text-xs uppercase tracking-widest">
               <Link
                 href="/legal/privacy"
-                className="text-on-surface/60 hover:text-primary-container underline underline-offset-4 transition-colors"
+                className="text-on-surface-variant hover:text-primary-container underline underline-offset-4 transition-colors"
               >
                 Privacy Policy
               </Link>
               <Link
                 href="/legal/cookies"
-                className="text-on-surface/60 hover:text-primary-container underline underline-offset-4 transition-colors"
+                className="text-on-surface-variant hover:text-primary-container underline underline-offset-4 transition-colors"
               >
                 Cookie Policy
               </Link>
               <Link
                 href="/trust"
-                className="text-on-surface/60 hover:text-primary-container underline underline-offset-4 transition-colors"
+                className="text-on-surface-variant hover:text-primary-container underline underline-offset-4 transition-colors"
               >
                 Trust &amp; Safety
               </Link>

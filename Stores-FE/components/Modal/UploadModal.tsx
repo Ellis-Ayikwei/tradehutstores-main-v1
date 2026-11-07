@@ -371,7 +371,7 @@ export default function UploadModal({
           <button
             onClick={handleSubmit}
             disabled={entries.length === 0}
-            className={`min-h-[44px] bg-primary-700 text-white px-6 rounded-xl font-bold text-sm hover:bg-primary-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${FOCUS}`}
+            className={`min-h-[44px] bg-primary-700 text-white px-6 rounded-xl font-bold text-sm hover:bg-primary-800 transition-colors disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500 ${FOCUS}`}
           >
             Submit Evidence
           </button>

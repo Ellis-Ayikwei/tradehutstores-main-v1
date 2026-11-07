@@ -117,7 +117,7 @@ export function OptionRow({
                 selected
                     ? 'border-primary-700 bg-primary-50 dark:border-primary-400 dark:bg-zinc-800'
                     : 'border-zinc-200 bg-white hover:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:border-zinc-500'
-            } ${disabled ? 'cursor-not-allowed opacity-60' : ''}`}
+            } ${disabled ? 'cursor-not-allowed !bg-zinc-100 !text-zinc-500 dark:!bg-zinc-800 dark:!text-zinc-500' : ''}`}
         >
             <input
                 type="radio"

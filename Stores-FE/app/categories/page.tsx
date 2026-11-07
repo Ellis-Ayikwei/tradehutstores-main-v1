@@ -81,7 +81,7 @@ export default function CategoriesPage() {
                             {Array.from({ length: 6 }).map((_, i) => (
                                 <div
                                     key={i}
-                                    className="rounded-2xl border border-outline-variant/20 p-5 animate-pulse bg-surface-container-lowest"
+                                    className="rounded-2xl border border-outline-variant dark:border-zinc-700 p-5 animate-pulse bg-surface-container-lowest"
                                 >
                                     <div className="h-5 w-40 bg-surface-container rounded mb-3" />
                                     <div className="space-y-2">
@@ -97,7 +97,7 @@ export default function CategoriesPage() {
                             {categories.map(category => (
                                 <div
                                     key={category.name}
-                                    className="rounded-2xl border border-outline-variant/20 p-5 bg-surface-container-lowest shadow-card"
+                                    className="rounded-2xl border border-outline-variant dark:border-zinc-700 p-5 bg-surface-container-lowest shadow-card"
                                 >
                                     <Link
                                         href={`/products?category=${encodeURIComponent(category.name)}`}

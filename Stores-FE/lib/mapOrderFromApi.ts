@@ -187,7 +187,7 @@ export function mapApiOrderToDetail(o: ApiOrder, currency = 'GHS'): OrderDetailU
         items: items.map((it) => ({
             id: String(it.id),
             name: it.product_name || 'Product',
-            variant: "Standard",
+            variant: "",
             qty: it.quantity,
             unitPrice: num(it.unit_price),
             imageUrl: PLACEHOLDER_IMG,

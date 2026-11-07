@@ -133,7 +133,7 @@ export default function SecuritySettingsPage() {
               type="button"
               onClick={handleSignOut}
               disabled={signingOut}
-              className={`mt-3 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-5 text-sm font-bold text-gray-900 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800 ${FOCUS}`}
+              className={`mt-3 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-5 text-sm font-bold text-gray-900 hover:bg-gray-50 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800 ${FOCUS}`}
             >
               <LogOut className="h-4 w-4" aria-hidden="true" />
               {signingOut ? "Signing out..." : "Sign out"}

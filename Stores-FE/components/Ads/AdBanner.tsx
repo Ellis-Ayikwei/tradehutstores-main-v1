@@ -69,7 +69,7 @@ export default function AdBanner({
             {c.eyebrow ? (
                 <p
                     className={`text-[11px] font-bold uppercase tracking-wide ${
-                        textOnly || colors ? 'opacity-80' : 'text-primary-700'
+                        textOnly || colors ? '' : 'text-primary-700'
                     }`}
                 >
                     {c.eyebrow}
@@ -81,7 +81,7 @@ export default function AdBanner({
                 </h3>
             ) : null}
             {c.subheadline ? (
-                <p className="mt-0.5 hidden line-clamp-2 text-sm leading-snug opacity-80 sm:block">
+                <p className="mt-0.5 hidden line-clamp-2 text-sm leading-snug sm:block">
                     {c.subheadline}
                 </p>
             ) : null}

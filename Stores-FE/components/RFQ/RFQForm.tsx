@@ -322,7 +322,7 @@ export default function RFQForm() {
     const actions = (layout: 'card' | 'bar') => {
         const busy = submitting !== null
         const base =
-            'inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg px-4 text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 dark:focus-visible:ring-primary-400 disabled:opacity-60'
+            'inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg px-4 text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 dark:focus-visible:ring-primary-400 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500'
         if (locked) {
             return (
                 <button type="button" onClick={openSignIn} className={`${base} w-full bg-primary-700 text-white hover:bg-primary-800`}>
@@ -698,7 +698,7 @@ export default function RFQForm() {
                                         type="button"
                                         disabled={form.specs.length >= RFQ_LIMITS.specsMax}
                                         onClick={() => set('specs', [...form.specs, { label: '', value: '' }])}
-                                        className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 text-sm font-semibold text-zinc-800 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 dark:focus-visible:ring-primary-400 disabled:opacity-60"
+                                        className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 text-sm font-semibold text-zinc-800 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 dark:focus-visible:ring-primary-400 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
                                     >
                                         <Plus className="h-4 w-4" aria-hidden="true" />
                                         Add specification
@@ -715,7 +715,7 @@ export default function RFQForm() {
                     </fieldset>
                 </form>
 
-                <aside className="hidden lg:sticky lg:top-40 lg:block">
+                <aside className="hidden lg:sticky lg:top-28 lg:block">
                     <div className="space-y-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4">
                         <h2 className="font-syne text-sm font-bold uppercase tracking-wide text-zinc-900 dark:text-zinc-100">Ready to post?</h2>
                         {actions('card')}

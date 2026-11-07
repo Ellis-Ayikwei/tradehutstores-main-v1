@@ -21,6 +21,7 @@ import { useUserAccountId } from "@/hooks/useUserAccountId";
 import { getMyOrders } from "@/lib/accountApi";
 import { mapApiOrderToDetail } from "@/lib/mapOrderFromApi";
 import renderErrorMessage from "@/utils/renderErrorMessage";
+import { variantDisplayLabel } from "@/lib/variantLabel";
 import {
   ShoppingBag,
   Gavel,
@@ -116,7 +117,7 @@ const STATUS_PILL: Record<
 > = {
   processing: {
     label: "Processing",
-    classes: "bg-tertiary/10 text-tertiary",
+    classes: "bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-100",
   },
   confirmed: {
     label: "Confirmed",
@@ -163,7 +164,7 @@ function OrderTimeline({
     <div className="bg-surface-container-low rounded-3xl p-6 md:p-8 mb-8 md:mb-12 shadow-sm overflow-x-auto no-scrollbar">
       <div className="relative flex justify-between items-start w-full min-w-[360px]">
         {/* Progress bar track */}
-        <div className="absolute top-5 left-0 w-full h-[2px] bg-outline-variant/20">
+        <div className="absolute top-5 left-0 w-full h-[2px] bg-outline-variant dark:bg-zinc-700">
           <div
             className="h-full bg-primary-container transition-all duration-700"
             style={{ width: `${pct}%` }}
@@ -187,7 +188,7 @@ function OrderTimeline({
                     ? "bg-primary-container text-on-primary"
                     : "bg-surface-container-highest text-on-surface-variant"
                   }
-                  ${isActive ? "ring-8 ring-primary-container/10" : ""}
+                  ${isActive ? "ring-4 ring-primary-100 dark:ring-primary-900" : ""}
                 `}
               >
                 {isCompleted ? (
@@ -202,7 +203,7 @@ function OrderTimeline({
                 className={`text-[10px] font-bold uppercase tracking-widest text-center
                   ${isActive ? "text-primary-container" : ""}
                   ${isCompleted ? "text-on-surface" : ""}
-                  ${isPending ? "text-on-surface-variant/60" : ""}
+                  ${isPending ? "text-on-surface-variant" : ""}
                 `}
               >
                 {step.label}
@@ -222,6 +223,8 @@ function LineItem({ item }: { item: OrderLineItem }) {
   const { formatDisplayPrice } = useCurrency();
   const formatAmount = (n: number) => formatDisplayPrice(n);
   const subtotal = item.unitPrice * item.qty;
+  // Placeholder names such as "Standard" / "Default" are never shown to the buyer.
+  const variantLabel = variantDisplayLabel({ name: item.variant });
 
   return (
     <div className="flex gap-4 md:gap-6 group">
@@ -251,9 +254,13 @@ function LineItem({ item }: { item: OrderLineItem }) {
           </span>
         </div>
 
-        <p className="text-sm text-on-surface-variant mb-3 md:mb-4">
-          {item.variant}
-        </p>
+        {variantLabel ? (
+          <p className="text-sm text-on-surface-variant mb-3 md:mb-4">
+            {variantLabel}
+          </p>
+        ) : (
+          <div className="mb-3 md:mb-4" />
+        )}
 
         <div className="flex items-center gap-3 flex-wrap">
           <span className="text-xs font-bold uppercase tracking-tighter bg-surface-container text-on-surface-variant px-3 py-1 rounded-full">
@@ -356,7 +363,7 @@ export default function OrderDetailPage({
 
               {fetchError && (
                 <div
-                  className="mb-4 rounded-xl border border-error/30 bg-error-container/20 dark:bg-red-950/30 px-4 py-3 text-sm text-on-error-container dark:text-red-200"
+                  className="mb-4 rounded-xl border border-red-300 bg-red-100 dark:border-red-800 dark:bg-red-900 px-4 py-3 text-sm text-red-900 dark:text-red-100"
                   role="alert"
                 >
                   {fetchError}
@@ -384,7 +391,7 @@ export default function OrderDetailPage({
                     <span className="font-mono text-base md:text-lg font-bold text-on-surface">
                       {order.reference}
                     </span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-outline-variant/30 flex-shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-outline-variant dark:bg-zinc-700 flex-shrink-0" />
                     <span className="text-sm">Placed on {order.placedDate}</span>
                     <StatusPill status={order.status} />
                   </div>
@@ -428,7 +435,7 @@ export default function OrderDetailPage({
                         <div key={item.id}>
                           <LineItem item={item} />
                           {idx < order.items.length - 1 && (
-                            <div className="mt-6 md:mt-8 border-t border-outline-variant/10" />
+                            <div className="mt-6 md:mt-8 border-t border-outline-variant dark:border-zinc-700" />
                           )}
                         </div>
                       ))}
@@ -446,7 +453,7 @@ export default function OrderDetailPage({
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                         <div>
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/60 mb-1">
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">
                             Tracking Number
                           </p>
                           <p className="font-mono text-sm font-bold text-on-surface">
@@ -455,7 +462,7 @@ export default function OrderDetailPage({
                         </div>
                         {order.carrier && (
                           <div>
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/60 mb-1">
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">
                               Carrier
                             </p>
                             <p className="font-bold text-sm text-on-surface">
@@ -465,7 +472,7 @@ export default function OrderDetailPage({
                         )}
                         {order.estimatedDelivery && (
                           <div>
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/60 mb-1">
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">
                               Est. Delivery
                             </p>
                             <p className="font-bold text-sm text-on-surface">
@@ -478,22 +485,17 @@ export default function OrderDetailPage({
                   )}
 
                   {/* Rate seller card */}
-                  <div className="bg-gradient-to-br from-secondary-container to-surface-container-low rounded-3xl p-6 md:p-8 shadow-card relative overflow-hidden group">
-                    {/* Decorative icon */}
-                    <div className="absolute -right-8 -bottom-8 opacity-10 group-hover:scale-110 transition-transform duration-700 pointer-events-none">
-                      <Star className="w-[120px] h-[120px]" />
-                    </div>
-
+                  <div className="bg-secondary-container rounded-3xl p-6 md:p-8 shadow-card relative overflow-hidden">
                     <div className="relative z-10 max-w-md">
                       <h3 className="font-headline text-xl font-bold mb-2 text-on-secondary-container">
                         Satisfied with your items?
                       </h3>
-                      <p className="text-sm text-on-secondary-container/80 mb-6 leading-relaxed">
+                      <p className="text-sm text-on-secondary-container mb-6 leading-relaxed">
                         Your feedback helps our community of traders find the best
                         sellers. Rate this transaction once delivered.
                       </p>
                       <button
-                        className="px-6 py-3 bg-secondary-green text-on-secondary rounded-xl font-bold flex items-center gap-2 transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-6 py-3 bg-secondary-green text-on-secondary rounded-xl font-bold flex items-center gap-2 transition-transform active:scale-95 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
                         disabled={!order.canReview}
                       >
                         Rate this Seller
@@ -509,7 +511,7 @@ export default function OrderDetailPage({
                 <div className="lg:col-span-4 space-y-6 md:space-y-8">
 
                   {/* Payment summary */}
-                  <div className="bg-surface-container-lowest rounded-3xl p-6 md:p-8 shadow-card border border-outline-variant/10">
+                  <div className="bg-surface-container-lowest rounded-3xl p-6 md:p-8 shadow-card border border-outline-variant dark:border-zinc-700">
                     <h3 className="font-headline text-xl font-bold mb-6">
                       Payment Summary
                     </h3>
@@ -527,7 +529,7 @@ export default function OrderDetailPage({
                         <span className="text-sm">Tax (HST)</span>
                         <span className="font-mono">{formatAmount(order.tax)}</span>
                       </div>
-                      <div className="pt-4 mt-4 border-t border-outline-variant/10 flex justify-between items-center">
+                      <div className="pt-4 mt-4 border-t border-outline-variant dark:border-zinc-700 flex justify-between items-center">
                         <span className="font-bold text-on-surface">Order Total</span>
                         <span className="font-mono text-2xl font-bold text-primary-container">
                           {formatAmount(order.total)}
@@ -539,7 +541,7 @@ export default function OrderDetailPage({
                     <div className="p-4 bg-surface-container rounded-xl flex items-center gap-3">
                       <CreditCard className="w-5 h-5 text-primary-container" />
                       <div className="text-xs">
-                        <p className="font-bold uppercase tracking-tighter opacity-60">
+                        <p className="font-bold uppercase tracking-tighter text-on-surface-variant">
                           Payment Method
                         </p>
                         <p className="text-on-surface font-medium">
@@ -597,14 +599,14 @@ export default function OrderDetailPage({
               </div>
 
               {/* ── Support CTA ── */}
-              <div className="mt-10 md:mt-12 bg-surface-container-low p-6 md:p-8 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border border-primary/5">
+              <div className="mt-10 md:mt-12 bg-surface-container-low p-6 md:p-8 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border border-primary-200">
                 <div className="flex items-start gap-4">
                   <Headphones className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                   <div>
                     <h4 className="font-syne font-bold text-base mb-1">
                       Need Help with This Order?
                     </h4>
-                    <p className="text-xs text-on-surface-variant/70 leading-relaxed">
+                    <p className="text-xs text-on-surface-variant leading-relaxed">
                       Call or WhatsApp us on 024 813 8722 for help with tracking,
                       disputes, or returns.
                     </p>
@@ -612,7 +614,7 @@ export default function OrderDetailPage({
                 </div>
                 <a
                   href="tel:+233248138722"
-                  className="flex-shrink-0 min-h-[44px] text-primary font-bold text-[10px] uppercase tracking-[0.2em] flex items-center gap-2 group/btn hover:opacity-70 transition-all active:scale-95 whitespace-nowrap"
+                  className="flex-shrink-0 min-h-[44px] text-primary font-bold text-[10px] uppercase tracking-[0.2em] flex items-center gap-2 group/btn hover:underline transition-all active:scale-95 whitespace-nowrap"
                 >
                   Call 024 813 8722
                   <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />

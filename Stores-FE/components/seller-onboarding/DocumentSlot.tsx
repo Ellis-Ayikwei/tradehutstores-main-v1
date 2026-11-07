@@ -154,7 +154,7 @@ export default function DocumentSlot({
                     <label
                         htmlFor={inputId}
                         className={`flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-dashed border-gray-300 bg-gray-50 px-3 py-2 text-sm font-semibold text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 ${
-                            disabled ? 'opacity-60' : 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700'
+                            disabled ? 'cursor-not-allowed !bg-gray-200 !text-gray-500 dark:!bg-gray-800 dark:!text-gray-500' : 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700'
                         }`}
                     >
                         <Upload className="h-4 w-4" aria-hidden />

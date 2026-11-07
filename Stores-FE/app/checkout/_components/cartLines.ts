@@ -1,4 +1,5 @@
 import { resolveMediaSrc } from '@/lib/mediaUrl'
+import { variantDisplayLabel, type LabelAttributeValue } from '@/lib/variantLabel'
 
 // Guest carts (redux + localStorage) store rows as `{ id, product: {...}, product_variant_id, quantity }`.
 // The API cart serializer currently returns flat rows (`product` = id, `product_name`); BE-CART-1 will return
@@ -25,7 +26,7 @@ export interface RawCartLine {
     product_variant_id?: string | number | null
     product?: RawProduct | string | number | null
     product_name?: string
-    variant?: { id?: string | number; name?: string } | null
+    variant?: { id?: string | number; name?: string | null; attribute_values?: LabelAttributeValue[] | null } | null
 }
 
 export interface CartLineView {
@@ -90,6 +91,7 @@ export function normaliseCartLine(raw: RawCartLine): CartLineView {
         outOfStock,
         inStock: !outOfStock && (product.available === true || inventory !== undefined),
         soldBy: product.store_name?.trim() || product.seller_name?.trim() || undefined,
-        variantText: raw.variant?.name?.trim() || undefined,
+        // Placeholder names ("Default", "Standard") are hidden; a SKU is never used as a fallback here.
+        variantText: variantDisplayLabel(raw.variant) ?? undefined,
     }
 }
