@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Store, StoreConfig, StoreSettings
+from .models import FeatureFlag, Store, StoreConfig, StoreSettings
 
 
 @admin.register(StoreConfig)
@@ -159,3 +159,11 @@ class StoreAdmin(admin.ModelAdmin):
 class StoreSettingsAdmin(admin.ModelAdmin):
     list_display = ("setting_name", "setting_value", "updated_at")
     search_fields = ("setting_name",)
+
+
+@admin.register(FeatureFlag)
+class FeatureFlagAdmin(admin.ModelAdmin):
+    list_display = ("key", "name", "status", "updated_at")
+    list_filter = ("status",)
+    search_fields = ("key", "name")
+    filter_horizontal = ("beta_users",)

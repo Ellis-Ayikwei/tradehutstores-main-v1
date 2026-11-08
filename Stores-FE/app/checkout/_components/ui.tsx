@@ -27,11 +27,11 @@ export function Spinner({ className = 'h-4 w-4' }: { className?: string }) {
 type Tone = 'error' | 'warning' | 'success' | 'info'
 
 const TONES: Record<Tone, string> = {
-    error: 'border-red-300 bg-red-50 text-red-900 dark:border-red-800 dark:bg-red-950 dark:text-red-100',
-    warning: 'border-amber-300 bg-amber-50 text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-100',
+    error: 'border-red-700 bg-red-600 text-white dark:border-red-600 dark:bg-red-700 dark:text-white',
+    warning: 'border-amber-600 bg-amber-500 text-zinc-950 dark:border-amber-500 dark:bg-amber-600 dark:text-zinc-950',
     success:
-        'border-emerald-300 bg-emerald-50 text-emerald-900 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-100',
-    info: 'border-zinc-300 bg-zinc-50 text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100',
+        'border-emerald-700 bg-emerald-600 text-white dark:border-emerald-600 dark:bg-emerald-700 dark:text-white',
+    info: 'border-zinc-700 bg-zinc-800 text-white dark:border-zinc-600 dark:bg-zinc-800 dark:text-white',
 }
 
 export function Banner({
@@ -61,7 +61,7 @@ export function Banner({
                     type="button"
                     onClick={onDismiss}
                     aria-label="Dismiss message"
-                    className={`-my-1 -mr-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full hover:bg-white dark:hover:bg-zinc-800 sm:h-9 sm:w-9 ${FOCUS}`}
+                    className={`-my-1 -mr-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full hover:bg-black/10 dark:hover:bg-white/10 sm:h-9 sm:w-9 ${FOCUS}`}
                 >
                     <X className="h-4 w-4" aria-hidden="true" />
                 </button>
@@ -115,8 +115,8 @@ export function OptionRow({
         <label
             className={`flex min-h-[44px] cursor-pointer items-start gap-3 rounded-lg border p-3 focus-within:ring-2 focus-within:ring-primary-700 dark:focus-within:ring-primary-400 ${
                 selected
-                    ? 'border-primary-700 bg-primary-50 dark:border-primary-400 dark:bg-zinc-800'
-                    : 'border-zinc-200 bg-white hover:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:border-zinc-500'
+                    ? 'border-primary-700 bg-primary-700 text-white dark:border-primary-400 dark:bg-primary-600 dark:text-white'
+                    : 'border-zinc-200 bg-white hover:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:border-zinc-500 dark:text-zinc-100'
             } ${disabled ? 'cursor-not-allowed !bg-zinc-100 !text-zinc-500 dark:!bg-zinc-800 dark:!text-zinc-500' : ''}`}
         >
             <input
@@ -128,7 +128,7 @@ export function OptionRow({
                 onChange={onSelect}
                 className="mt-1 h-4 w-4 shrink-0 accent-primary-700 focus:outline-none dark:accent-primary-400"
             />
-            <div className="min-w-0 flex-1 text-sm text-zinc-900 dark:text-zinc-100">{children}</div>
+            <div className="min-w-0 flex-1 text-sm">{children}</div>
         </label>
     )
 }

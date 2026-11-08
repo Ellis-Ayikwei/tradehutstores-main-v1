@@ -104,8 +104,8 @@ export function usePurchase(product: PdpProduct, showToast: ShowToast): Purchase
     if (!selectedVariant) return null
     const real = variantDisplayLabel(selectedVariant)
     if (real || !hasChoice) return real
-    return flatVariantLabels(variants)[selectedVariant.id] ?? null
-  }, [selectedVariant, hasChoice, variants])
+    return flatVariantLabels(variants, product.name)[selectedVariant.id] ?? null
+  }, [selectedVariant, hasChoice, variants, product.name])
 
   const selectAxis = useCallback(
     (axisKey: string, value: string) => {

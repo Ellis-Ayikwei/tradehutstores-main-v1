@@ -366,7 +366,7 @@ export default function AddressSection({
             <Banner
                 tone="error"
                 action={
-                    <button type="button" onClick={onRetry} className={`${LINK_BTN} shrink-0 font-semibold`}>
+                    <button type="button" onClick={onRetry} className={`${LINK_BTN} shrink-0 font-semibold text-white hover:text-white-dark`}>
                         Retry
                     </button>
                 }

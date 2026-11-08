@@ -262,6 +262,40 @@ class StoreConfig(BaseModel):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Feature flags: release gating by status, audience and region.
+# Evaluation lives in apps/store/flags.py. Plan: .claude/plans/24-feature-flags.md
+# ─────────────────────────────────────────────────────────────────────────────
+FLAG_STATUS = (
+    ("off", "Off (nobody)"),
+    ("beta", "Beta (staff + beta users)"),
+    ("on", "On (subject to audience/region)"),
+)
+FLAG_AUDIENCES = ("guest", "buyer", "seller", "staff")
+
+
+class FeatureFlag(BaseModel):
+    key = models.SlugField(max_length=64, unique=True)
+    name = models.CharField(max_length=120)
+    description = models.TextField(blank=True, default="")
+    status = models.CharField(max_length=8, choices=FLAG_STATUS, default="off")
+    # [] means everyone / every country.
+    audiences = models.JSONField(default=list, blank=True)
+    countries = models.JSONField(default=list, blank=True)
+    excluded_countries = models.JSONField(default=list, blank=True)
+    beta_users = models.ManyToManyField(
+        "users.User", blank=True, related_name="beta_feature_flags"
+    )
+
+    class Meta:
+        managed = True
+        db_table = "store_feature_flag"
+        ordering = ["key"]
+
+    def __str__(self):
+        return f"{self.key} [{self.status}]"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Per-seller storefront. Unrelated to StoreConfig (which is platform-wide).
 # ─────────────────────────────────────────────────────────────────────────────
 class Store(BaseModel):

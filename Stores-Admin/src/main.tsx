@@ -32,6 +32,7 @@ import { Provider } from 'react-redux';
 import store from './store/index';
 import { ChatProvider } from './contexts/ChatContext';
 import { CurrencyProvider } from './contexts/CurrencyContext';
+import { AntdThemeBridge, mantineTheme } from './theme/legacyThemes';
 import authAxiosInstance from './services/authAxiosInstance';
 
 // Dynamic imports for non-critical paths
@@ -112,19 +113,21 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
         <Suspense>
             <ColorSchemeScript defaultColorScheme="auto" />
-            <MantineProvider withGlobalClasses>
+            <MantineProvider withGlobalClasses theme={mantineTheme}>
                 <ContextMenuProvider zIndex={5000} shadow="md" borderRadius="md">
                     <DatesProvider settings={{ locale: 'en' }}>
                         <Provider store={store}>
-                            <AuthProvider store={authStore}>
-                                <CurrencyProvider>
-                                    <ChatProvider>
-                                        {/* <PersistGate loading={null} persistor={persistor}> */}
-                                        <RouterProvider router={router} />
-                                        {/* </PersistGate> */}
-                                    </ChatProvider>
-                                </CurrencyProvider>
-                            </AuthProvider>
+                            <AntdThemeBridge>
+                                <AuthProvider store={authStore}>
+                                    <CurrencyProvider>
+                                        <ChatProvider>
+                                            {/* <PersistGate loading={null} persistor={persistor}> */}
+                                            <RouterProvider router={router} />
+                                            {/* </PersistGate> */}
+                                        </ChatProvider>
+                                    </CurrencyProvider>
+                                </AuthProvider>
+                            </AntdThemeBridge>
                         </Provider>
                     </DatesProvider>
                 </ContextMenuProvider>

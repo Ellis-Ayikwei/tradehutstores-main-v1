@@ -1193,3 +1193,125 @@ class SellingCategoriesVisibilityTests(PrivateDocsMixin, TestCase):
         with CaptureQueriesContext(connection) as q:
             self.assertEqual(APIClient().get("/tradehut/api/v1/sellers/").json()["count"], 6)
         self.assertLessEqual(len(q), 4)
+
+
+# --------------------------------------------------------------- owner (superuser)
+
+ME = "/tradehut/api/v1/sellers/me/"
+
+
+def set_sellers_flag(status):
+    from apps.store.models import FeatureFlag
+
+    FeatureFlag.objects.update_or_create(
+        key="sellers", defaults={"name": "Sellers", "status": status}
+    )
+
+
+class OwnerAccessTests(TestCase):
+    def client_for(self, user):
+        client = APIClient()
+        client.force_authenticate(user)
+        return client
+
+    def owner(self, email="owner@th.test", **extra):
+        return User.objects.create_superuser(email=email, password="pass12345!", **extra)
+
+    def test_superuser_without_profile_gets_one_idempotently(self):
+        set_sellers_flag("on")
+        owner = self.owner()
+        client = self.client_for(owner)
+        res = client.get(ME)
+        self.assertEqual(res.status_code, 200, res.content)
+        self.assertEqual(SellerProfile.objects.filter(user=owner).count(), 1)
+        profile = SellerProfile.objects.get(user=owner)
+        self.assertEqual(profile.verification_status, "verified")
+        self.assertTrue(profile.is_verified)
+        self.assertTrue(profile.is_active)
+        self.assertTrue(profile.is_accepting_orders)
+        self.assertEqual(profile.commission_rate, 0)
+        self.assertEqual(profile.business_email, owner.email)
+        self.assertTrue(profile.store_slug)
+        self.assertEqual(client.get(ME).status_code, 200)
+        self.assertEqual(SellerProfile.objects.filter(user=owner).count(), 1)
+
+    def test_superuser_provisioned_even_with_flag_off(self):
+        set_sellers_flag("off")
+        owner = self.owner()
+        self.assertEqual(self.client_for(owner).get(ME).status_code, 200)
+        self.assertTrue(SellerProfile.objects.filter(user=owner).exists())
+
+    def test_superuser_provisioned_when_flag_row_missing(self):
+        owner = self.owner()
+        self.assertEqual(self.client_for(owner).get(ME).status_code, 200)
+
+    def test_two_owners_get_distinct_slugs(self):
+        a = self.owner("kofi1@th.test", first_name="Kofi")
+        b = self.owner("kofi2@th.test", first_name="Kofi")
+        for user in (a, b):
+            self.assertEqual(self.client_for(user).get(ME).status_code, 200)
+        slugs = SellerProfile.objects.filter(user__in=[a, b]).values_list("store_slug", flat=True)
+        self.assertEqual(len(set(slugs)), 2)
+        self.assertEqual(
+            SellerProfile.objects.get(user=a).business_name, "Kofi (TradeHut)"
+        )
+
+    def test_ensure_owner_profile_is_idempotent(self):
+        owner = self.owner()
+        first = services.ensure_owner_profile(owner)
+        second = services.ensure_owner_profile(owner)
+        self.assertEqual(first.pk, second.pk)
+        self.assertEqual(SellerProfile.objects.filter(user=owner).count(), 1)
+
+    def test_existing_superuser_profile_is_not_overwritten(self):
+        owner = self.owner()
+        profile = SellerProfile.objects.create(
+            user=owner, business_name="My Shop", verification_status="pending"
+        )
+        set_sellers_flag("off")
+        self.assertEqual(self.client_for(owner).get(ME).status_code, 200)
+        profile.refresh_from_db()
+        self.assertEqual(profile.business_name, "My Shop")
+        self.assertEqual(profile.verification_status, "pending")
+
+    def test_flag_off_staff_non_superuser_still_blocked(self):
+        set_sellers_flag("off")
+        staff = make_user("staff@th.test", is_staff=True)
+        res = self.client_for(staff).get(ME)
+        self.assertEqual(res.status_code, 403)
+        self.assertEqual(res.json()["code"], "feature_disabled")
+
+    def test_flag_off_buyer_blocked(self):
+        set_sellers_flag("off")
+        res = self.client_for(make_user("buyer@th.test")).get(ME)
+        self.assertEqual(res.status_code, 403)
+        self.assertEqual(res.json()["code"], "feature_disabled")
+
+    def test_buyer_without_profile_is_not_a_seller_and_gets_none(self):
+        set_sellers_flag("on")
+        buyer = make_user("buyer2@th.test")
+        res = self.client_for(buyer).get(ME)
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(res.json()["code"], "not_a_seller")
+        self.assertFalse(SellerProfile.objects.filter(user=buyer).exists())
+
+    def test_staff_non_superuser_without_profile_gets_none(self):
+        set_sellers_flag("on")
+        staff = make_user("staff2@th.test", is_staff=True)
+        self.assertEqual(self.client_for(staff).get(ME).status_code, 404)
+        self.assertFalse(SellerProfile.objects.filter(user=staff).exists())
+
+    def test_evaluate_unit(self):
+        from apps.store.flags import evaluate
+        from apps.store.models import FeatureFlag
+
+        off = FeatureFlag(key="x", name="x", status="off")
+        owner = self.owner()
+        staff = make_user("s3@th.test", is_staff=True)
+        self.assertTrue(evaluate(off, owner, "GH"))
+        self.assertTrue(evaluate(None, owner, "GH"))
+        self.assertFalse(evaluate(off, staff, "GH"))
+        self.assertFalse(evaluate(None, staff, "GH"))
+        from django.contrib.auth.models import AnonymousUser
+
+        self.assertFalse(evaluate(off, AnonymousUser(), "GH"))

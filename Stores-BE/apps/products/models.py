@@ -300,15 +300,14 @@ class ProductVariant(BaseModel):
                 ]
             )
         # For other themes, split the variation theme (e.g., "size-color" becomes ["size", "color"])
-        expected_attrs = theme.split("-")
+        expected_attrs = (theme or "").split("-")
         values = []
         for attr in expected_attrs:
             # Try to find the matching AttributeValue for this attribute name (case-insensitive)
             av = self.attribute_values.filter(attribute__name__iexact=attr).first()
             if av:
                 values.append(av.value_name)
-            values = ", ".join(values)
-            return values
+        return ", ".join(values)
 
     @property
     def is_available(self):

@@ -17,4 +17,6 @@ The Kinetic/Stitch redesign has been **cancelled and removed**. Do not reintrodu
 2. Keep fonts: Syne / DM Sans / JetBrains Mono (FE), Charlie (Admin).
 3. Do not touch nav/route components without the user lifting the lock.
 4. No new dependencies without flagging them.
-5. Plans live in `.claude/plans/`; backend Bid/RFQ starting spec: `.claude/design-system/bid-rfq-spec.md`.
+5. **Never read `.env` files** (any app, any method, even names only). Use `.env.example`; ask the user for values and tell them which variables to add.
+6. **Never run DB-touching `manage.py` commands / `pytest` against the remote `DATABASE_URL`** (Railway = live). Use a local `DATABASE_URL` in the same command, or write without running and say so. See AGENTS.md §13.
+7. Plans live in `.claude/plans/`; backend Bid/RFQ starting spec: `.claude/design-system/bid-rfq-spec.md`.

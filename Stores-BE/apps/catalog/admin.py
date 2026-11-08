@@ -1,6 +1,14 @@
 from django.contrib import admin
 
-from .models import Attribute, AttributeValue, Brand, Category, SubCategory, Tag
+from .models import (
+    Attribute,
+    AttributeValue,
+    AttributeValueRequest,
+    Brand,
+    Category,
+    SubCategory,
+    Tag,
+)
 
 
 @admin.register(Category)
@@ -47,3 +55,12 @@ class TagAdmin(admin.ModelAdmin):
     list_display = ("name", "product", "created_at", "updated_at")
     search_fields = ("name", "product__name")
     ordering = ("name",)
+
+@admin.register(AttributeValueRequest)
+class AttributeValueRequestAdmin(admin.ModelAdmin):
+    list_display = ("value_name", "attribute", "status", "requested_by", "seller", "created_on")
+    list_filter = ("status", "attribute")
+    search_fields = ("value_name", "attribute__name", "requested_by__email", "seller__business_name")
+    raw_id_fields = ("requested_by", "seller", "reviewed_by", "created_value")
+    readonly_fields = ("created_on", "reviewed_at")
+    ordering = ("-created_on",)

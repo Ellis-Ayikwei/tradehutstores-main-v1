@@ -248,6 +248,47 @@ def create_seller_application(user, data):
     raise SellerApiError(http.HTTP_409_CONFLICT, "slug_conflict", "Please try submitting again.")
 
 
+def ensure_owner_profile(user):
+    """Give the platform owner (superuser) their own verified store, once.
+
+    Idempotent and race-safe (``get_or_create`` on the one-to-one ``user``). Never
+    touches non-superusers. The store slug comes from ``SellerProfile.save``; if two
+    creates collide on it, retry with a unique suffix like onboarding does.
+    """
+    if not (user and user.is_authenticated and getattr(user, "is_superuser", False)):
+        return None
+    existing = SellerProfile.objects.filter(user=user).first()
+    if existing is not None:
+        return existing
+
+    name = user.get_full_name().strip() or (user.email or "").split("@")[0] or "Owner"
+    defaults = {
+        "business_name": f"{name} (TradeHut)"[:255],
+        "business_email": user.email or None,
+        "verification_status": "verified",
+        "is_verified": True,
+        "verification_date": timezone.now(),
+        "is_active": True,
+        "is_accepting_orders": True,
+        "commission_rate": 0,
+    }
+    for _attempt in range(3):
+        try:
+            with transaction.atomic():
+                profile, created = SellerProfile.objects.get_or_create(user=user, defaults=defaults)
+                if created:
+                    ensure_sellers_group(user)
+            return profile
+        except IntegrityError:
+            existing = SellerProfile.objects.filter(user=user).first()
+            if existing is not None:
+                return existing
+            # Lost a race for the generated store slug: retry with a unique suffix.
+            base = slugify(defaults["business_name"]) or "store"
+            defaults = {**defaults, "store_slug": f"{base}-{uuid.uuid4().hex[:6]}"}
+    raise SellerApiError(http.HTTP_409_CONFLICT, "slug_conflict", "Please try again.")
+
+
 def resubmit_application(profile):
     if profile.verification_status != "rejected":
         raise SellerApiError(

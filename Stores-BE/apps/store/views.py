@@ -14,13 +14,15 @@ Public (storefront — anonymous):
                                                   operational thresholds).
 """
 
+from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from .models import StoreConfig
+from .flags import evaluate_all, resolve_country
+from .models import FeatureFlag, StoreConfig
 from .permissions import StoreConfigAdminPermission
-from .serializers import StoreConfigSerializer
+from .serializers import FeatureFlagSerializer, StoreConfigSerializer
 
 
 @api_view(["GET", "PATCH"])
@@ -127,3 +129,20 @@ def public_store_config_view(request):
             data[k] = float(data[k])
     data["payments_enabled_gateways"] = _public_payment_gateways(config.payments_gateways)
     return Response(data)
+
+
+# ─── Feature flags ─────────────────────────────────────────────────────────────
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def feature_flags_view(request):
+    """Every defined flag, evaluated for the caller (anonymous OK; send the JWT for staff/beta/seller results)."""
+    return Response({"country": resolve_country(request), "flags": evaluate_all(request)})
+
+
+class FeatureFlagViewSet(viewsets.ModelViewSet):
+    """Staff-only management of flags."""
+
+    queryset = FeatureFlag.objects.prefetch_related("beta_users").order_by("key")
+    serializer_class = FeatureFlagSerializer
+    permission_classes = [StoreConfigAdminPermission]
+    pagination_class = None

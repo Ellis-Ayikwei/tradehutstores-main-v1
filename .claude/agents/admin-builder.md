@@ -21,3 +21,5 @@ Return: files changed, typecheck/build results, route to view, deviations, open 
 
 ## Standing content/visual rules
 AGENTS.md §1b applies: use only the official phone (024 813 8722) and location (La Trade Fair, Accra, Ghana); never invent business facts or dummy content (empty states instead); use solid backgrounds — no `bg-*/NN` alpha, `bg-opacity-*` or `backdrop-blur` on icons, avatars, badges, buttons or cards.
+
+**Secrets rule:** never read any `.env` file (Read, Grep, cat, rg, Get-Content — even names only). Use `.env.example`; ask the user for values and tell them which variables to add to their own `.env`.

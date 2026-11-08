@@ -25,3 +25,5 @@ AGENTS.md §1b applies: use only the official phone (024 813 8722) and location 
 
 ## Theme-aware rule
 AGENTS.md §5 "Theme-aware" applies: every Stores-FE surface needs solid light AND dark colours (`dark:` variants). Never ship light-only UI.
+
+**Secrets rule:** never read any `.env` file (Read, Grep, cat, rg, Get-Content — even names only). Use `.env.example`; ask the user for values and tell them which variables to add to their own `.env`.

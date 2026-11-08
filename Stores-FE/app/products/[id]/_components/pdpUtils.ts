@@ -115,6 +115,31 @@ function keyFeatures(v: unknown): string[] {
   return out
 }
 
+const ENTITIES: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' }
+
+/**
+ * Seller descriptions may arrive as HTML. Never inject it: block tags become line breaks, every other tag
+ * (and script/style bodies) is dropped, common entities are decoded, and the result is rendered as plain text.
+ */
+export function plainText(input: string): string {
+  if (!/[<&]/.test(input)) return input
+  return input
+    .replace(/<(script|style)[\s\S]*?<\/\1>/gi, '')
+    .replace(/<\s*br\s*\/?>|<\/(p|div|li|h[1-6]|tr|ul|ol|table)>/gi, '\n')
+    .replace(/<li[^>]*>/gi, '- ')
+    .replace(/<[^>]*>/g, '')
+    .replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, (m, e: string) => {
+      if (e[0] === '#') {
+        const code = e[1].toLowerCase() === 'x' ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10)
+        return Number.isFinite(code) && code > 31 && code < 0x10ffff ? String.fromCodePoint(code) : ''
+      }
+      return ENTITIES[e.toLowerCase()] ?? m
+    })
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
+
 export function normalizeProduct(
   raw: Raw,
   variantsRaw: unknown = [],
@@ -147,9 +172,11 @@ export function normalizeProduct(
     id: String(raw.id),
     name: str(raw.name) ?? 'Unnamed product',
     slug: str(raw.slug),
-    description: str(raw.description) ?? '',
+    description: plainText(str(raw.description) ?? ''),
     category: str(raw.category_name),
     sub_category: str(raw.sub_category_name),
+    category_id: raw.category != null && raw.category !== '' ? String(asRecord(raw.category)?.id ?? raw.category) : null,
+    brand_id: raw.brand != null && raw.brand !== '' ? String(asRecord(raw.brand)?.id ?? raw.brand) : null,
     brand: str(raw.brand_name),
     condition: str(raw.condition),
     price,

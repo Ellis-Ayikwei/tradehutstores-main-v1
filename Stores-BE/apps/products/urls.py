@@ -1,6 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
+from .seller_views import SellerListingsView
 from .views import (
     ProductViewSet,
     ProductVariantViewSet,
@@ -23,5 +24,7 @@ router.register(
 router.register(r"", ProductViewSet, basename="products")
 
 urlpatterns = [
+    # Before the router: its detail route `^<pk>/` would otherwise parse "seller" as an id.
+    path("seller/", SellerListingsView.as_view(), name="seller-listings"),
     path("", include(router.urls)),
 ]

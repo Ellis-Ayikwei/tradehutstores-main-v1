@@ -9,6 +9,8 @@ from .admin_views import (
     SubCategoryAdminViewSet,
 )
 from .views import (
+    AttributeValueRequestAdminViewSet,
+    AttributeValueRequestViewSet,
     AttributeViewSet,
     AttributeValueViewSet,
     BrandViewSet,
@@ -23,6 +25,12 @@ router.register(r"subcategories", SubCategoryViewSet, basename="subcategories")
 router.register(r"brands", BrandViewSet, basename="brands")
 router.register(r"attributes", AttributeViewSet, basename="attributes")
 router.register(r"attribute-values", AttributeValueViewSet, basename="attribute-values")
+# Sellers: request a new attribute value (staff-managed)
+router.register(
+    r"attribute-value-requests",
+    AttributeValueRequestViewSet,
+    basename="attribute-value-requests",
+)
 # Staff admin (Stores-Admin)
 router.register(
     r"admin/categories", CategoryAdminViewSet, basename="catalog-admin-categories"
@@ -39,6 +47,11 @@ router.register(
     r"admin/attribute-values",
     AttributeValueAdminViewSet,
     basename="catalog-admin-attribute-values",
+)
+router.register(
+    r"admin/attribute-value-requests",
+    AttributeValueRequestAdminViewSet,
+    basename="catalog-admin-attribute-value-requests",
 )
 router.register(r"admin/brands", BrandAdminViewSet, basename="catalog-admin-brands")
 

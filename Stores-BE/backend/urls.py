@@ -38,6 +38,8 @@ urlpatterns = [
                 path("customers/", include("apps.customers.urls")),
                 # User endpoints
                 path("users/", include("apps.users.urls")),
+                # Saved delivery addresses (list/create/update/delete + set_default)
+                path("addresses/", include("apps.users.address_urls")),
                 # Notifications endpoints
                 path("notifications/", include("apps.notifications.urls")),
                 # Wishlist/Favorites
@@ -62,14 +64,15 @@ urlpatterns = [
                 path("core/", include("apps.core.urls")),
                 # Marketplace-wide configuration (StoreConfig singleton).
                 path("store/", include("apps.store.urls")),
-                # Orders endpoints (when created)
-                # path("orders/", include("apps.orders.urls")),
+                # Orders endpoints (seller O6-O9 so far; seller/ routes stay first)
+                path("orders/", include("apps.orders.urls")),
                 # Cart endpoints (when created)
                 # path("cart/", include("apps.cart.urls")),
                 # Reviews endpoints (when created)
                 # path("reviews/", include("apps.reviews.urls")),
                 # Payments endpoints (when created)
-                # path("payments/", include("apps.payments.urls")),
+                # Payments (seller balance now; checkout/payouts later share this include)
+                path("", include("apps.payments.urls")),
                 # Shipments endpoints (when created)
                 # path("shipments/", include("apps.shipments.urls")),
                 # Store endpoints (when created)

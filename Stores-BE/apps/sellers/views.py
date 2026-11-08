@@ -9,6 +9,8 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.store.flags import feature_enabled
+
 from . import services, storage
 from .models import SellerDocument, SellerProfile
 from .permissions import IsSeller, IsStaff
@@ -45,7 +47,7 @@ def _public_sellers():
 class SellerOnboardingView(APIView):
     """SE1 - apply to become a seller. Authenticated user, one profile each."""
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, feature_enabled("sellers")]
 
     def post(self, request):
         serializer = SellerOnboardingSerializer(data=request.data)
@@ -61,7 +63,14 @@ class SellerOnboardingView(APIView):
 
 
 class _MyProfileMixin:
-    permission_classes = [IsAuthenticated, IsSeller]
+    permission_classes = [IsAuthenticated, feature_enabled("sellers"), IsSeller]
+
+    def check_permissions(self, request):
+        # The platform owner (superuser) always has a store: create it before IsSeller runs.
+        user = request.user
+        if user and user.is_authenticated and user.is_superuser:
+            services.ensure_owner_profile(user)
+        super().check_permissions(request)
 
     def get_profile(self):
         return _with_documents(

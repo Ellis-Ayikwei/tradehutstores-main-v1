@@ -46,11 +46,28 @@ class ProductVariantInline(admin.StackedInline):
     autocomplete_fields = ("attribute_values",)
 
 
+def _variants_of(product):
+    """Variants of one product only, with what ``ProductVariant.__str__`` needs preloaded.
+
+    Without this, a FK dropdown lists *every* variant of *every* product and runs several
+    queries per option (``__str__`` hits ``product`` and ``attribute_values``).
+    """
+    qs = ProductVariant.objects.select_related("product").prefetch_related(
+        "attribute_values__attribute"
+    )
+    return qs.filter(product=product) if product is not None else qs.none()
+
+
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 1
     fields = ("product_variant", "image", "is_main", "image_type")
     readonly_fields = ("created_at", "updated_at")
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "product_variant":
+            kwargs["queryset"] = _variants_of(getattr(request, "_admin_product", None))
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 class ProductKeyFeatureInline(admin.TabularInline):
@@ -83,15 +100,27 @@ class ProductAdmin(admin.ModelAdmin):
         "total_reviews",
         "created_at",
     )
+    # brand / sub_category filters removed: they load every row on each page view
+    # (brand is still searchable via search_fields).
     list_filter = (
         "variation_theme",
         "status",
         "available",
-        "brand",
         "category",
-        "sub_category",
         "is_product_of_the_month",
     )
+    # Heavy FK dropdowns -> searchable widgets (each target admin defines search_fields).
+    autocomplete_fields = (
+        "category",
+        "sub_category",
+        "brand",
+        "seller",
+        "seller_profile",
+        "store",
+    )
+    list_select_related = ("brand", "category", "sub_category")
+    list_per_page = 50
+    show_full_result_count = False
     search_fields = (
         "name",
         "slug",
@@ -194,6 +223,16 @@ class ProductAdmin(admin.ModelAdmin):
 
     class Media:
         js = ("products/admin/js/product_variation_theme_hint.js",)
+
+    def get_form(self, request, obj=None, **kwargs):
+        # Stash the product so the inline / default_variant dropdowns can scope to it.
+        request._admin_product = obj
+        return super().get_form(request, obj, **kwargs)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "default_variant":
+            kwargs["queryset"] = _variants_of(getattr(request, "_admin_product", None))
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     @admin.display(description="How variants map to attributes")
     def variation_theme_live_hint(self, obj):

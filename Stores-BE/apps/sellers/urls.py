@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views
+from . import stats_views, views
 
 app_name = "sellers"
 
@@ -12,6 +12,7 @@ urlpatterns = [
     path("me/", views.SellerMeView.as_view(), name="me"),
     path("me/resubmit/", views.SellerResubmitView.as_view(), name="me_resubmit"),
     path("me/documents/", views.SellerMyDocumentsView.as_view(), name="me_documents"),
+    path("me/stats/", stats_views.SellerStatsView.as_view(), name="me_stats"),
     path(
         "documents/file/<str:token>/",
         views.SellerDocumentFileView.as_view(),

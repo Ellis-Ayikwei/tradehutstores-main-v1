@@ -1,7 +1,8 @@
 """Private storage for seller KYC documents.
 
-* R2 enabled: a dedicated bucket (``R2_KYC_BUCKET_NAME``) with no public domain
-  and signed, short-lived URLs. Without that variable any use of the storage
+* R2 enabled: the private bucket (``R2_KYC_BUCKET_NAME``, no public domain), under
+  the ``kyc`` folder, with signed, short-lived URLs.
+  Without the bucket variable any use of the storage
   raises ``ImproperlyConfigured`` (never silently the main media bucket).
 * Otherwise: a directory outside ``MEDIA_ROOT`` (``PRIVATE_MEDIA_ROOT`` or
   ``<BASE_DIR>/private_media``) which ``/media/`` never serves. Local access is
@@ -18,6 +19,8 @@ from django.core.files.storage import FileSystemStorage, Storage
 from django.urls import reverse
 
 SIGNED_URL_TTL_SECONDS = 600
+# Folder for KYC files inside the shared private bucket.
+KYC_FOLDER = "kyc"
 _TOKEN_SALT = "sellers.document.file"
 
 
@@ -44,12 +47,20 @@ def private_document_storage():
     if getattr(settings, "USE_R2", False):
         from storages.backends.s3 import S3Storage
 
+        # The private bucket is shared by every private asset; KYC lives in its own folder
+        # (``<R2_KYC_PREFIX>/seller_documents/<seller_id>/<uuid>.<ext>``).
         bucket = config("R2_KYC_BUCKET_NAME", default="").strip()
         if not bucket:
             return KycStorageNotConfigured()
+        # Optional: a separate R2 API token scoped to the private bucket. Falls back to the
+        # main R2 token, which must then also have access to this bucket.
+        access_key = config("R2_PRIVATE_ACCESS_KEY_ID", default="").strip() or None
+        secret_key = config("R2_PRIVATE_SECRET_ACCESS_KEY", default="").strip() or None
         return S3Storage(
             bucket_name=bucket,
-            location="",
+            access_key=access_key,
+            secret_key=secret_key,
+            location=KYC_FOLDER,
             custom_domain=None,
             querystring_auth=True,
             querystring_expire=SIGNED_URL_TTL_SECONDS,

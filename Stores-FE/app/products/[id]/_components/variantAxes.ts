@@ -1,4 +1,4 @@
-import { attributeKey, compareAttributeLabels, isGenericVariantName } from '@/lib/variantLabel'
+import { attributeKey, cleanAttributeName, cleanVariantValue, compareAttributeLabels } from '@/lib/variantLabel'
 import type { PdpAttributeValue, PdpVariant } from './types'
 import { isVariantInStock, swatchFromAttrValue, type VariantSwatch } from './variantUtils'
 
@@ -54,7 +54,7 @@ function compareOptions(axisKey: string, values: string[]): (a: string, b: strin
 function findAttr(variants: PdpVariant[], key: string, value: string): PdpAttributeValue | undefined {
   for (const v of variants)
     for (const a of v.attribute_values)
-      if (attributeKey(a.attribute_name) === key && (a.value_name ?? '').trim() === value) return a
+      if (attributeKey(a.attribute_name) === key && cleanVariantValue(a.value_name) === value) return a
   return undefined
 }
 
@@ -62,9 +62,9 @@ function findAttr(variants: PdpVariant[], key: string, value: string): PdpAttrib
 function realValues(v: PdpVariant): Record<string, { name: string; value: string }> {
   const out: Record<string, { name: string; value: string }> = {}
   for (const a of v.attribute_values) {
-    const name = (a.attribute_name ?? '').trim()
-    const value = (a.value_name ?? '').trim()
-    if (!name || !value || isGenericVariantName(value)) continue
+    const value = cleanVariantValue(a.value_name)
+    if (!value) continue
+    const name = cleanAttributeName(a.attribute_name)
     const key = attributeKey(name)
     if (!out[key]) out[key] = { name, value }
   }

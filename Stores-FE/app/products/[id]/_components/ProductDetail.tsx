@@ -14,9 +14,9 @@ import CollapsibleSection from './CollapsibleSection'
 import Gallery from './Gallery'
 import MobileActionBar from './MobileActionBar'
 import PriceBlock from './PriceBlock'
-import { AboutList, DetailsTable, SellerPolicies, detailRows } from './ProductInfo'
+import { AboutList, DescriptionBody, DetailsList, DetailsTable, SellerPolicies, detailListRows, highlightRows } from './ProductInfo'
 import ProductJsonLd from './ProductJsonLd'
-import RelatedProducts from './RelatedProducts'
+import { BrandSellerRails, DealsRail, RelatedRail } from './PdpRails'
 import Reviews from './Reviews'
 import { toImageList } from './pdpUtils'
 import type { PdpProduct, SellerInfo } from './types'
@@ -71,7 +71,8 @@ export default function ProductDetail({ product, related, seller, onReviewAdded 
     return { galleryImages: [...new Set([...ownAll, ...base])], galleryLead: lead }
   }, [product.images, product.shared_images, selectedVariant])
 
-  const rows = useMemo(() => detailRows(product, selectedVariant), [product, selectedVariant])
+  const highlights = useMemo(() => highlightRows(product, selectedVariant), [product, selectedVariant])
+  const listRows = useMemo(() => detailListRows(product, selectedVariant, seller), [product, selectedVariant, seller])
 
   const jumpToReviews = () => {
     setReviewsOpen(true)
@@ -92,6 +93,9 @@ export default function ProductDetail({ product, related, seller, onReviewAdded 
   }
 
   const hasAbout = product.description.trim() !== '' || product.key_features.length > 0
+  // The long description is its own section only when the About list is fed by key features;
+  // otherwise About already shows the description and repeating it would duplicate the text.
+  const hasDescription = product.description.trim() !== '' && product.key_features.length > 0
 
   return (
     <div className="mx-auto max-w-[1440px] px-3 py-3 sm:px-4 lg:px-6">
@@ -239,9 +243,10 @@ export default function ProductDetail({ product, related, seller, onReviewAdded 
             </button>
           </div>
 
-          {rows.length > 0 ? (
-            <div className="hidden lg:block">
-              <DetailsTable rows={rows} />
+          {highlights.length > 0 ? (
+            <div className="space-y-1.5 border-t border-zinc-200 pt-3 dark:border-zinc-800">
+              <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100">Top highlights</h2>
+              <DetailsTable rows={highlights} />
             </div>
           ) : null}
 
@@ -262,12 +267,20 @@ export default function ProductDetail({ product, related, seller, onReviewAdded 
             <AboutList product={product} />
           </CollapsibleSection>
         ) : null}
-        <CollapsibleSection title="Details" className="lg:hidden">
-          <DetailsTable rows={rows} />
-        </CollapsibleSection>
         <CollapsibleSection title="Seller and policies" className="lg:hidden">
           <SellerPolicies product={product} seller={seller} />
         </CollapsibleSection>
+        {hasDescription ? (
+          <CollapsibleSection id="description" title="Product description" defaultOpen>
+            <DescriptionBody text={product.description} />
+          </CollapsibleSection>
+        ) : null}
+        {listRows.length > 0 ? (
+          <CollapsibleSection id="details" title="Product details">
+            <DetailsList rows={listRows} />
+          </CollapsibleSection>
+        ) : null}
+        <BrandSellerRails product={product} seller={seller} />
         <CollapsibleSection
           id="reviews"
           title={`Customer reviews${product.total_reviews > 0 ? ` (${product.total_reviews.toLocaleString()})` : ''}`}
@@ -280,7 +293,8 @@ export default function ProductDetail({ product, related, seller, onReviewAdded 
 
       <div className="mt-3 space-y-3">
         <AdSlot slug="product-page" aspectClass="aspect-[21/4] md:aspect-[21/3]" rounded="rounded-lg" />
-        <RelatedProducts items={related} category={product.category} />
+        <RelatedRail items={related} category={product.category} />
+        <DealsRail product={product} />
       </div>
 
       <MobileActionBar purchase={purchase} />

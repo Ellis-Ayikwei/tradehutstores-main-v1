@@ -30,6 +30,9 @@ export interface PdpProduct {
   description: string
   category: string | null
   sub_category: string | null
+  /** Category / brand row ids (the catalogue rows carry the same ids), used to find sibling products. */
+  category_id: string | null
+  brand_id: string | null
   brand: string | null
   condition: string | null
   /** Base (list) price in the store pricing currency. */

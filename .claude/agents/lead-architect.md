@@ -26,3 +26,5 @@ Write one plan per phase/slice to `.claude/plans/<phase>-<slug>.md`:
 - Check `git status` before planning BE model work; uncommitted changes exist in `orders` and `users`.
 
 Return: plan path(s), the task list summary, and any user decisions needed.
+
+**Secrets rule:** never read any `.env` file (Read, Grep, cat, rg, Get-Content — even names only). Use `.env.example`; ask the user for values and tell them which variables to add to their own `.env`.

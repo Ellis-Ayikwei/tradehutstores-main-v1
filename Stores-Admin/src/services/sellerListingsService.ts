@@ -276,7 +276,7 @@ interface RawAttributeValue {
     image?: string | null;
 }
 
-/** Values for one option type, or every value when `attributeId` is omitted. Sellers cannot create values (the endpoint is read-only). */
+/** Values for one option type, or every value when `attributeId` is omitted. Sellers cannot create values (the endpoint is read-only); they ask staff via `attributeRequestsService`. */
 export async function fetchAttributeValues(attributeId?: string): Promise<AttributeValueOption[]> {
     const rows = unwrap(await get<RawAttributeValue[] | { results: RawAttributeValue[] }>(sellerListingsApi.attributeValues, attributeId ? { attribute: attributeId } : undefined));
     return rows

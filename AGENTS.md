@@ -136,7 +136,11 @@ Order of value. Don't start a lower tier while a higher tier is broken.
 - **Do not touch** `components/Navigation/*` or route/layout wiring (`app/layout.tsx`) without the user lifting the lock — see §9.
 - Legacy `antd` stays only on pages not yet touched. **Never import antd into a page you rewrite.**
 
-## 6. Admin / Seller rules (Stores-Admin)
+## 6. Admin / Seller rules
+
+> **USER DECISION: the seller dashboard lives in the STOREFRONT (Stores-FE) at `/seller-central`, not in Stores-Admin.** Sellers manage their store (overview, listings + option-types wizard, orders, settings/verification, auctions, RFQ, payouts, disputes) in Stores-FE under `app/seller-central/**`, styled with the storefront rules (§5: Tailwind only, Amazon density, flat solid, theme-aware). Stores-Admin is **staff-only** (seller review queue, catalog value requests, platform ops). Do not add new seller-facing screens to Stores-Admin; the existing `Stores-Admin/src/pages/seller/**` is legacy reference until it is removed. `NEXT_PUBLIC_ADMIN_URL` is no longer needed by the storefront.
+
+### Stores-Admin (staff) specifics
 
 - **shadcn/ui on Tailwind v3** is the component system for every page you build or rewrite. Setup is one task for `admin-builder`, done once, in Phase 0:
   - **Windows is case-insensitive and `src/components/ui/` already has `Button.tsx`, `Card.tsx`, `Tabs.tsx`** — shadcn's `button.tsx`/`card.tsx`/`tabs.tsx` would overwrite them. Install shadcn into **`src/components/shadcn/`** (set `components.json` `aliases.ui` to `@/components/shadcn`). Never edit the legacy `components/ui/*` while pages still import it.
@@ -226,3 +230,5 @@ Still present and **stale**: skills `add-bid-feature` / `add-rfq-feature` refere
 - **Don't** add abstraction layers, feature flags, generic "frameworks", or config for hypothetical needs.
 - **Don't** change fonts, rewrite nav, or touch files outside your assigned ownership.
 - **Don't** mark anything done on a failing build. Say what failed and with what output.
+- **Never run DB-touching `manage.py` commands** (`test`, `migrate`, `shell`, `runserver`, `loaddata`, `flush`, `createsuperuser`, seeds) or `pytest` against the `DATABASE_URL` in `Stores-BE/.env` — it is Railway-hosted and treated as live. Read `manage.py` and the agent files before running anything backend. Set `DATABASE_URL` to a local database in the same command, or write the test/migration without running it and say so. Only the user may approve a run against the remote DB. These commands are in `ask` in `.claude/settings.json`; if a prompt appears, check the DB target before answering.
+- **Never read `.env` files** (`Stores-BE/.env`, `Stores-FE/.env*`, `Stores-Admin/.env*`) — not with Read, Grep, `cat`, `rg`, `Get-Content`, or any other way, not even "just the names". They hold secrets. Read `.env.example` instead; to learn a value, ask the user. When a new variable is needed, add it (commented) to `.env.example` and tell the user the name to put in their own `.env`. Enforced by deny rules in `.claude/settings.json`.

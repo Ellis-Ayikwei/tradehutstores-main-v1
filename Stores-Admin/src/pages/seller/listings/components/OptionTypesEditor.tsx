@@ -1,17 +1,25 @@
-import { useMemo, useState } from 'react';
-import { Check, Plus, X } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Check, Clock, Plus, X } from 'lucide-react';
+import { toast } from 'sonner';
 import useSWR from 'swr';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Card } from '@/components/shadcn/card';
 import { Input } from '@/components/shadcn/input';
 import { Skeleton } from '@/components/shadcn/skeleton';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/shadcn/tooltip';
 import { cn } from '@/lib/utils';
+import { createdValueId, fetchMyValueRequests, type AttributeValueRequest, type RequestValueOutcome } from '@/services/attributeRequestsService';
 import { fetchAttributes, fetchAttributeValues, type AttributeOption } from '@/services/sellerListingsService';
 import type { OptionType, OptionValue } from '../schema';
 import { countCombos, MAX_MATRIX, MAX_OPTION_TYPES, toOptionValue } from './optionUtils';
+import { RequestValueDialog } from './RequestValueDialog';
 
 const SWR_OPTIONS = { revalidateOnFocus: false, shouldRetryOnError: false } as const;
+/** The seller's own requests refresh when they return to the tab, so an approval shows up without a reload. */
+const REQUEST_SWR_OPTIONS = { revalidateOnFocus: true, shouldRetryOnError: false } as const;
+const PENDING_KEY = 'catalog:value-requests:mine:pending';
+const APPROVED_KEY = 'catalog:value-requests:mine:approved';
 
 interface OptionTypesEditorProps {
     types: OptionType[];
@@ -27,6 +35,10 @@ export function OptionTypesEditor({ types, onChange, onUseNames, error }: Option
     const chosen = new Set(types.map((t) => t.attributeId));
     const available = (attributes.data ?? []).filter((a) => !chosen.has(a.id));
     const combos = countCombos(types);
+
+    const pending = useSWR<AttributeValueRequest[]>(PENDING_KEY, () => fetchMyValueRequests('pending'), REQUEST_SWR_OPTIONS);
+    const approved = useSWR<AttributeValueRequest[]>(APPROVED_KEY, () => fetchMyValueRequests('approved'), REQUEST_SWR_OPTIONS);
+    const addPending = (request: AttributeValueRequest) => void pending.mutate((current) => [request, ...(current ?? []).filter((r) => r.id !== request.id)], { revalidate: false });
 
     const addType = (a: AttributeOption) => onChange([...types, { attributeId: a.id, name: a.name, displayType: a.displayType, values: [] }]);
     const removeType = (id: string) => onChange(types.filter((t) => t.attributeId !== id));
@@ -94,7 +106,14 @@ export function OptionTypesEditor({ types, onChange, onUseNames, error }: Option
             </Card>
 
             {types.map((t) => (
-                <ValuesCard key={t.attributeId} type={t} onChange={(values) => setValues(t.attributeId, values)} />
+                <ValuesCard
+                    key={t.attributeId}
+                    type={t}
+                    onChange={(values) => setValues(t.attributeId, values)}
+                    pending={(pending.data ?? []).filter((r) => String(r.attribute.id) === t.attributeId)}
+                    approved={(approved.data ?? []).filter((r) => String(r.attribute.id) === t.attributeId)}
+                    onRequested={addPending}
+                />
             ))}
 
             {combos > MAX_MATRIX ? (
@@ -111,9 +130,54 @@ export function OptionTypesEditor({ types, onChange, onUseNames, error }: Option
     );
 }
 
-function ValuesCard({ type, onChange }: { type: OptionType; onChange: (values: OptionValue[]) => void }) {
+interface ValuesCardProps {
+    type: OptionType;
+    onChange: (values: OptionValue[]) => void;
+    /** This option type's requests waiting for staff. */
+    pending: AttributeValueRequest[];
+    /** This option type's approved requests, used to refetch values when a new one has been added. */
+    approved: AttributeValueRequest[];
+    onRequested: (request: AttributeValueRequest) => void;
+}
+
+function PendingChip({ request }: { request: AttributeValueRequest }) {
+    return (
+        <Tooltip>
+            <TooltipTrigger asChild>
+                <span
+                    tabIndex={0}
+                    className="flex h-8 cursor-default items-center gap-1.5 rounded-full border border-dashed border-border bg-card px-3 text-sm text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    aria-label={`${request.value_name}, pending review. You'll be able to use it once our team approves it.`}
+                >
+                    {request.color_code ? <span className="h-3.5 w-3.5 shrink-0 rounded-full border" style={{ backgroundColor: request.color_code }} aria-hidden="true" /> : null}
+                    {request.value_name} · pending review
+                    <Clock className="h-3.5 w-3.5" aria-hidden="true" />
+                </span>
+            </TooltipTrigger>
+            <TooltipContent>You&apos;ll be able to use it once our team approves it</TooltipContent>
+        </Tooltip>
+    );
+}
+
+function ValuesCard({ type, onChange, pending, approved, onRequested }: ValuesCardProps) {
     const values = useSWR(['catalog:attribute-values', type.attributeId], () => fetchAttributeValues(type.attributeId), SWR_OPTIONS);
     const [search, setSearch] = useState('');
+    const [requestOpen, setRequestOpen] = useState(false);
+    const refetchedFor = useRef(new Set<string>());
+
+    // A request staff approved since this list loaded: refetch once so the new value appears and can be picked.
+    useEffect(() => {
+        if (!values.data) return;
+        const loaded = new Set(values.data.map((v) => v.id));
+        const fresh = approved.filter((r) => {
+            const id = createdValueId(r);
+            return id !== null && !loaded.has(id) && !refetchedFor.current.has(r.id);
+        });
+        if (fresh.length === 0) return;
+        fresh.forEach((r) => refetchedFor.current.add(r.id));
+        void values.mutate();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [approved, values.data]);
 
     // Saved values stay selectable even if the catalog no longer lists them.
     const all = useMemo(() => {
@@ -126,6 +190,31 @@ function ValuesCard({ type, onChange }: { type: OptionType; onChange: (values: O
     const shown = needle ? all.filter((v) => v.label.toLowerCase().includes(needle)) : all;
 
     const toggle = (v: OptionValue) => onChange(selected.has(v.id) ? type.values.filter((x) => x.id !== v.id) : [...type.values, v]);
+    const selectOnly = (v: OptionValue) => {
+        if (!selected.has(v.id)) onChange([...type.values, v]);
+    };
+
+    const handleMatched = (v: OptionValue) => {
+        selectOnly(v);
+        toast.success(`${v.label} already exists — selected it for you`);
+    };
+
+    const handleOutcome = (outcome: RequestValueOutcome) => {
+        if (outcome.kind === 'created') {
+            onRequested(outcome.request);
+            toast.success(`Request sent for ${outcome.request.value_name}. Our team will review it.`);
+        } else if (outcome.kind === 'already_requested') {
+            onRequested(outcome.request);
+            toast.info(`${outcome.request.value_name} is already waiting for review.`);
+        } else {
+            const v = outcome.value;
+            selectOnly({ id: String(v.id), label: v.value_name, colorCode: v.color_code || undefined, image: null });
+            void values.mutate();
+            toast.success(`${v.value_name} already exists — selected it for you`);
+        }
+    };
+
+    const shownPending = needle ? pending.filter((r) => r.value_name.toLowerCase().includes(needle)) : pending;
 
     return (
         <Card className="p-3">
@@ -149,7 +238,7 @@ function ValuesCard({ type, onChange }: { type: OptionType; onChange: (values: O
                         Try again
                     </button>
                 </p>
-            ) : shown.length === 0 ? (
+            ) : shown.length === 0 && shownPending.length === 0 ? (
                 <p className="mt-2 text-sm text-muted-foreground">{all.length === 0 ? `No ${type.name.toLowerCase()} values exist yet.` : 'Nothing matches your search.'}</p>
             ) : (
                 <ul className="mt-2 flex flex-wrap gap-1.5">
@@ -173,10 +262,33 @@ function ValuesCard({ type, onChange }: { type: OptionType; onChange: (values: O
                             </li>
                         );
                     })}
+                    {shownPending.map((r) => (
+                        <li key={`pending-${r.id}`}>
+                            <TooltipProvider delayDuration={150}>
+                                <PendingChip request={r} />
+                            </TooltipProvider>
+                        </li>
+                    ))}
                 </ul>
             )}
 
-            <p className="mt-2 text-xs text-muted-foreground">Can&apos;t find yours? Contact support on 024 813 8722 and we will add it.</p>
+            <p className="mt-2 text-xs text-muted-foreground">
+                Can&apos;t find yours?{' '}
+                <button type="button" className="font-semibold text-foreground underline" onClick={() => setRequestOpen(true)}>
+                    Request a new value
+                </button>
+            </p>
+
+            <RequestValueDialog
+                open={requestOpen}
+                onOpenChange={setRequestOpen}
+                attributeId={type.attributeId}
+                attributeName={type.name}
+                displayType={type.displayType}
+                existing={all}
+                onOutcome={handleOutcome}
+                onMatchedExisting={handleMatched}
+            />
         </Card>
     );
 }

@@ -240,7 +240,7 @@ export default function VariantSelector({
 
   if (!hasChoice) return null
 
-  const labels = flatVariantLabels(variants)
+  const labels = flatVariantLabels(variants, product.name)
   const heading = flatVariantHeading(variants)
   const finalPrice = (v: PdpVariant) => {
     const base = Number(v.price) || 0

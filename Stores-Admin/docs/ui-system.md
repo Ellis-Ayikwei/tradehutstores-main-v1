@@ -35,6 +35,13 @@ The look follows shadcn preset `bbVJxYW` (style `base-maia`, base colour `neutra
 - Charts: `chart-1..5` tokens (`chart-1` = brand orange).
 - Maia's translucent recipes (`bg-input/30`, `bg-destructive/10`, `ring-foreground/10`, backdrop blur) are replaced with the solid equivalents above, per the rule below.
 
+### Legacy theme bridge (until pages are migrated)
+
+Unmigrated pages pick up the same look through:
+- `src/theme/legacyThemes.tsx`: Mantine `mantineTheme` (passed to `MantineProvider` in `main.tsx`) and `AntdThemeBridge` (antd `ConfigProvider`, follows `html.dark`). Brand orange, Charlie, preset radii, pill buttons.
+- The template classes in `src/tailwind.css` (`.panel`, `.btn*`, `.badge`, `.form-input/.form-select/.form-textarea`) now use the shadcn tokens.
+Delete the bridge with the last antd/Mantine page. Note: the stale `@types/antd@0.12` devDependency shadows antd 5 typings, so `tsc` reports false errors on `from 'antd'` imports; the bridge uses `antd/es/*` deep imports to avoid them.
+
 ## Solid surfaces (no translucent / glass backgrounds)
 
 Icon chips, avatars, badges, buttons, cards, chips and nav items use **solid** colours. Never `bg-primary/10`, `bg-white/20`, `bg-black/5`, `bg-opacity-*`, `bg-transparent` chips, `backdrop-blur`, or `border-white/10`-style borders (AGENTS.md section 1b).

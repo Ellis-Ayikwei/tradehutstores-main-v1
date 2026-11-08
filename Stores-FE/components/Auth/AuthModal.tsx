@@ -339,12 +339,12 @@ export default function AuthModal({ open, onClose, initialMode = 'auto' }: Props
             aria-labelledby="auth-modal-title"
             tabIndex={-1}
             className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200"
-            onClick={onClose}
             onKeyDown={(e) => {
                 if (e.key === 'Escape') onClose()
             }}
         >
-            {/* Stop event bubbling so a click inside the panel doesn't close. */}
+            {/* Clicking the backdrop must NOT close the modal (it would discard a half-finished sign-in).
+                Close is explicit: the X button or Escape. */}
             <div
                 role="presentation"
                 className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 duration-300"

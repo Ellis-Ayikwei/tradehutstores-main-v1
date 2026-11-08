@@ -35,6 +35,14 @@ const GENERIC_NAMES = new Set([
   'base',
 ])
 
+/** Attribute words that, on their own, say nothing about the product ("Default Color" -> "Color"). */
+const AXIS_WORD = 'colou?rs?|sizes?|styles?|materials?|capacity|capacities|options?|variants?|types?|titles?|models?|patterns?|finish(?:es)?|editions?|version'
+const BARE_AXIS = new RegExp(`^(?:${AXIS_WORD})$`)
+const STANDARD_AXIS = new RegExp(String.raw`^standard[\s\-_/:]+(?:${AXIS_WORD})$`)
+// Written without \b on purpose: a literal backspace character once slipped into these patterns and made them match nothing.
+const DEFAULT_PREFIX = /^default[\s\-_/:]+(.+)$/i
+const DEFAULT_SUFFIX = /^(.+?)[\s\-_/:]+default$/i
+
 function normalizeName(name: string | null | undefined): string {
   return (name ?? '')
     .toLowerCase()
@@ -44,17 +52,49 @@ function normalizeName(name: string | null | undefined): string {
 }
 
 /**
- * True for placeholder names that tell a buyer nothing ("Default", "Standard", "N/A", blank, and any
- * "Default <thing>" such as "Default Color" / "Default Size"). "One size" is real.
+ * True for placeholder names that tell a buyer nothing ("Default", "Standard", "N/A", blank, and anything that
+ * starts or ends with "default" such as "Default Color", "Default-Black" or "Colour Default"). "One size" is real.
+ * Strict on purpose: callers that cannot clean text hide the whole value. Use `cleanVariantValue` to salvage "Black".
  */
 export function isGenericVariantName(name: string | null | undefined): boolean {
   const n = normalizeName(name)
-  return GENERIC_NAMES.has(n) || /^default/.test(n) || /default$/.test(n)
+  return GENERIC_NAMES.has(n) || STANDARD_AXIS.test(n) || n.startsWith('default') || n.endsWith('default')
+}
+
+/**
+ * Buyer-safe option text for an attribute value, or null when nothing real remains.
+ * 'Default Color' / 'default colour' / 'Default' / 'Standard' / 'Colour: Default' -> null;
+ * 'Default-Black' -> 'Black'; 'Black' and 'One Size' unchanged.
+ */
+export function cleanVariantValue(value: string | null | undefined): string | null {
+  let text = (value ?? '').trim()
+  // 'Colour: Default' / 'Colour: Black': only the part after the label is the value.
+  const colon = text.lastIndexOf(':')
+  if (colon !== -1) text = text.slice(colon + 1).trim()
+  for (let i = 0; i < 4 && text; i++) {
+    const n = normalizeName(text)
+    if (GENERIC_NAMES.has(n) || BARE_AXIS.test(n) || STANDARD_AXIS.test(n)) return null
+    const prefix = DEFAULT_PREFIX.exec(text)
+    const suffix = DEFAULT_SUFFIX.exec(text)
+    if (prefix) text = prefix[1].trim()
+    else if (suffix) text = suffix[1].trim()
+    else if (n.startsWith('default') || n.endsWith('default')) return null
+    else return text
+  }
+  return null
+}
+
+/** Attribute NAME for buyers: 'Default Color' -> 'Color'; a placeholder-only name becomes 'Option'. */
+export function cleanAttributeName(name: string | null | undefined): string {
+  const raw = (name ?? '').trim()
+  const stripped = raw.replace(/^(?:default|standard)[\s\-_/:]+/i, '').replace(/[\s\-_/:]+default$/i, '').trim()
+  if (!stripped || GENERIC_NAMES.has(normalizeName(stripped)) || normalizeName(stripped) === 'default') return 'Option'
+  return stripped
 }
 
 /** Canonical key for an attribute name: 'Color' and 'Colour' are the same axis. */
 export function attributeKey(name: string | null | undefined): string {
-  const k = (name ?? '').trim().toLowerCase()
+  const k = cleanAttributeName(name).toLowerCase()
   return k === 'color' || k === 'colors' || k === 'colours' ? 'colour' : k
 }
 
@@ -75,9 +115,9 @@ export function variantRealAttributes(variant: LabelableVariant): Array<{ label:
 function sortedRealAttributes(variant: LabelableVariant): Array<{ label: string; value: string }> {
   const out: Array<{ label: string; value: string }> = []
   for (const a of variant.attribute_values ?? []) {
-    const value = (a.value_name ?? '').trim()
-    if (!value || isGenericVariantName(value)) continue
-    out.push({ label: (a.attribute_name ?? '').trim() || 'Option', value })
+    const value = cleanVariantValue(a.value_name)
+    if (!value) continue
+    out.push({ label: cleanAttributeName(a.attribute_name), value })
   }
   return out.sort((a, b) => compareAttributeLabels(a.label, b.label))
 }

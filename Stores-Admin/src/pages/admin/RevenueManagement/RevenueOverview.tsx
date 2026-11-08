@@ -1,13 +1,6 @@
-import React from 'react';
-import RevenueManagement from './index';
+import PaymentsLedger from './PaymentsLedger';
 
-/**
- * Revenue Overview Page
- * Shows comprehensive revenue statistics and overview
- */
-const RevenueOverview: React.FC = () => {
-    return <RevenueManagement />;
-};
+/** /admin/revenue/overview — see PaymentsLedger for why the legacy RevenueManagement page is no longer used here. */
+const RevenueOverview = () => <PaymentsLedger view="overview" />;
 
 export default RevenueOverview;
-

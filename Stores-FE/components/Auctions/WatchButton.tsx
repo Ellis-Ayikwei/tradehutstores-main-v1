@@ -86,7 +86,7 @@ export default function WatchButton({
             onClick={toggle}
             aria-pressed={watching}
             aria-label={label}
-            className={`${/(absolute|fixed|sticky)/.test(className) ? '' : 'relative '}flex h-8 w-8 items-center justify-center rounded-md border border-zinc-200 bg-white text-zinc-700 before:absolute before:-inset-1.5 before:content-[''] hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800 ${FOCUS} ${className}`}
+            className={`${/\b(absolute|fixed|sticky)\b/.test(className) ? '' : 'relative '}flex h-8 w-8 items-center justify-center rounded-md border border-zinc-200 bg-white text-zinc-700 before:absolute before:-inset-1.5 before:content-[''] hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800 ${FOCUS} ${className}`}
         >
             <Heart className={`h-4 w-4 ${watching ? HEART_ON : ''}`} aria-hidden="true" />
         </button>

@@ -24,3 +24,5 @@ AGENTS.md §1b applies: use only the official phone (024 813 8722) and location 
 
 ## Database safety
 Never run migrate/test/shell/runserver/loaddata or seed commands against the DATABASE_URL in Stores-BE/.env (Railway-hosted, treated as live) unless the user explicitly asks for that specific command. The manage.py guard is currently disabled by the user, so the rule is yours to keep: always set DATABASE_URL to a local database in the same command (or write tests/migrations without running them and say so). makemigrations (file generation) is fine. Use Stores-BE/.venv (Python 3.11).
+
+**Secrets rule:** never read any `.env` file (Read, Grep, cat, rg, Get-Content — even names only). Use `.env.example`; ask the user for values and tell them which variables to add to their own `.env`.

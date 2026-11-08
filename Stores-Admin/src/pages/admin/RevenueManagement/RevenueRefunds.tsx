@@ -1,13 +1,6 @@
-import React from 'react';
-import RevenueManagement from './index';
+import PaymentsLedger from './PaymentsLedger';
 
-/**
- * Revenue Refunds Page
- * Shows refund transactions and management
- */
-const RevenueRefunds: React.FC = () => {
-    return <RevenueManagement />;
-};
+/** /admin/revenue/refunds — see PaymentsLedger for why the legacy RevenueManagement page is no longer used here. */
+const RevenueRefunds = () => <PaymentsLedger view="refunds" />;
 
 export default RevenueRefunds;
-

@@ -17,3 +17,5 @@ Read `/AGENTS.md` (esp. §7 backend rules and §8 definition of done) and the pl
 
 ## Output
 `APPROVED` or `CHANGES REQUIRED`, then findings ordered by severity, each with file:line, what's wrong, a concrete failing scenario, and the fix. Include command outputs. Don't pad with style nits — flag only what would break launch or violate AGENTS.md.
+
+**Secrets rule:** never read any `.env` file (Read, Grep, cat, rg, Get-Content — even names only). Use `.env.example`; ask the user for values and tell them which variables to add to their own `.env`.

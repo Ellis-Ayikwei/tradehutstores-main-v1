@@ -1,5 +1,5 @@
 import { resolveMediaSrc } from '@/lib/mediaUrl'
-import { isGenericVariantName, variantAxisNames, variantDisplayLabel } from '@/lib/variantLabel'
+import { cleanAttributeName, cleanVariantValue, isGenericVariantName, variantAxisNames, variantDisplayLabel } from '@/lib/variantLabel'
 import type { PdpAttributeValue, PdpVariant } from './types'
 
 const NAMED_COLOR_HEX: Record<string, string> = {
@@ -87,21 +87,29 @@ export function isVariantInStock(v: PdpVariant): boolean {
   return v.quantity == null || v.quantity > 0
 }
 
+/** 'Acme Phone — Variant 2' -> 'Variant 2': the product name is already the page title. */
+function withoutProductName(label: string, productName: string | undefined): string {
+  const p = (productName ?? '').trim().toLowerCase()
+  if (!p || !label.toLowerCase().startsWith(p)) return label
+  const rest = label.slice(p.length).replace(/^[\s—–\-:|,]+/, '').trim()
+  return rest && !isGenericVariantName(rest) ? rest : label
+}
+
 /**
  * Chip label per variant id in flat mode: real label, else a numbered 'Option N' (never "Default").
  * When every variant differs by one attribute only, the chip is just the value ('Red') because the heading names the axis.
  */
-export function flatVariantLabels(variants: PdpVariant[]): Record<string, string> {
+export function flatVariantLabels(variants: PdpVariant[], productName?: string): Record<string, string> {
   const out: Record<string, string> = {}
   const axes = variantAxisNames(variants)
   variants.forEach((v, i) => {
     let label: string | null = null
     if (axes.length === 1) {
-      const hit = v.attribute_values.find(a => (a.attribute_name ?? 'Option').trim() === axes[0] && a.value_name?.trim())
-      const val = hit?.value_name?.trim()
-      if (val && !isGenericVariantName(val)) label = val
+      const hit = v.attribute_values.find(a => cleanAttributeName(a.attribute_name) === axes[0] && cleanVariantValue(a.value_name))
+      label = cleanVariantValue(hit?.value_name)
     }
-    out[v.id] = label ?? variantDisplayLabel(v) ?? `Option ${i + 1}`
+    const named = variantDisplayLabel(v)
+    out[v.id] = label ?? (named ? withoutProductName(named, productName) : null) ?? `Option ${i + 1}`
   })
   return out
 }

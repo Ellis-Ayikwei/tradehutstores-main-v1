@@ -10,7 +10,9 @@ import {
     IconAdjustments,
     IconPalette,
     IconTag,
+    IconInbox,
 } from '@tabler/icons-react';
+import AttributeRequestsPanel, { usePendingValueRequestCount } from './AttributeRequests';
 import IconLoader from '../../../components/Icon/IconLoader';
 import axiosInstance from '../../../services/axiosInstance';
 import {
@@ -28,7 +30,7 @@ import {
     listSubcategories,
 } from '../../../services/catalogAdminService';
 
-const TAB_IDS = ['categories', 'subcategories', 'attributes', 'values', 'brands'] as const;
+const TAB_IDS = ['categories', 'subcategories', 'attributes', 'values', 'brands', 'value-requests'] as const;
 type TabId = (typeof TAB_IDS)[number];
 
 function normalizeTab(raw: string | null): TabId {
@@ -41,6 +43,7 @@ const DISPLAY_TYPES: AttributeDisplayType[] = ['dropdown', 'swatch', 'image', 't
 const CatalogManagement: React.FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const tab = normalizeTab(searchParams.get('tab'));
+    const pendingRequests = usePendingValueRequestCount();
 
     const setTab = (t: TabId) => {
         setSearchParams(t === 'categories' ? {} : { tab: t });
@@ -133,6 +136,7 @@ const CatalogManagement: React.FC = () => {
         { id: 'attributes', label: 'Attributes', icon: IconAdjustments },
         { id: 'values', label: 'Attribute values', icon: IconPalette },
         { id: 'brands', label: 'Brands', icon: IconTag },
+        { id: 'value-requests', label: 'Value requests', icon: IconInbox },
     ];
 
     return (
@@ -158,6 +162,9 @@ const CatalogManagement: React.FC = () => {
                     >
                         <Icon className="w-4 h-4" />
                         {label}
+                        {id === 'value-requests' && pendingRequests !== undefined && pendingRequests > 0 && (
+                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">{pendingRequests}</span>
+                        )}
                     </button>
                 ))}
             </div>
@@ -213,6 +220,7 @@ const CatalogManagement: React.FC = () => {
                             }}
                         />
                     )}
+                    {tab === 'value-requests' && <AttributeRequestsPanel />}
                     {tab === 'brands' && (
                         <BrandsTable
                             rows={brandRows}
