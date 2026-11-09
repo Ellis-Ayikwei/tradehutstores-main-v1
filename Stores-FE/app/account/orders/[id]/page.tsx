@@ -571,11 +571,19 @@ export default function OrderDetailPage({
                           {order.shippingAddress.line2}
                         </p>
                       )}
-                      <p className="text-on-surface-variant text-sm">
-                        {order.shippingAddress.city},{" "}
-                        {order.shippingAddress.state}{" "}
-                        {order.shippingAddress.zip}
-                      </p>
+                      {[
+                        [order.shippingAddress.city, order.shippingAddress.state]
+                          .filter(Boolean)
+                          .join(", ") + (order.shippingAddress.zip ? ` ${order.shippingAddress.zip}` : ""),
+                        order.shippingAddress.country,
+                      ]
+                        .map((line) => line.trim())
+                        .filter(Boolean)
+                        .map((line) => (
+                          <p key={line} className="text-on-surface-variant text-sm">
+                            {line}
+                          </p>
+                        ))}
                       {order.shippingAddress.phone && (
                         <p className="text-on-surface-variant text-sm mt-3">
                           {order.shippingAddress.phone}

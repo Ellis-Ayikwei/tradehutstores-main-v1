@@ -7,7 +7,9 @@ export interface ProductCardSkeletonProps {
     compact?: boolean
     /** @deprecated No longer used. */
     hideMeta?: boolean
-    /** @deprecated No longer used (grid cards have no Add to cart). */
+    /** Reserve room for the Add to cart button (match the cards being loaded). Grid only; list rows always have one. */
+    showAddToCart?: boolean
+    /** @deprecated Use `showAddToCart`. */
     showCta?: boolean
     className?: string
 }
@@ -18,7 +20,7 @@ const BONE = 'rounded-sm bg-zinc-200 dark:bg-zinc-800'
  * Same geometry as ProductCard: grid = square grey stage, then title / rating / price lines (no box);
  * list = 160px (240px md) stage beside text lines, separated by a divider.
  */
-function ProductCardSkeleton({ variant = 'grid', compact = false, className }: ProductCardSkeletonProps) {
+function ProductCardSkeleton({ variant = 'grid', compact = false, showAddToCart, showCta, className }: ProductCardSkeletonProps) {
     if (variant === 'list') {
         return (
             <div
@@ -51,6 +53,7 @@ function ProductCardSkeleton({ variant = 'grid', compact = false, className }: P
                 <div className={cx('h-4 w-3/4', BONE)} />
                 <div className={cx('h-4 w-28', BONE)} />
                 <div className={cx('h-6 w-24', BONE)} />
+                {showAddToCart ?? showCta ? <div className="h-11 w-full max-w-xs rounded-full bg-zinc-200 dark:bg-zinc-800 md:h-9" /> : null}
             </div>
         </div>
     )

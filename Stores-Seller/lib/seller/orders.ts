@@ -61,8 +61,25 @@ export interface OrderAddress {
 
 export interface OrderShipment {
     carrier: string
+    /** Issued by the platform when the order is shipped (e.g. TH7K2M9XQ4PD); sellers never type it. */
     tracking_number: string
     tracking_url?: string | null
+    /** The carrier's own waybill / reference, when there is one. */
+    courier_reference?: string | null
+    service_level?: string | null
+    parcels?: number | null
+    weight_kg?: string | null
+    length_cm?: string | null
+    width_cm?: string | null
+    height_cm?: string | null
+    dispatch_date?: string | null
+    estimated_delivery_date?: string | null
+    contact_name?: string | null
+    contact_phone?: string | null
+    /** Shown to the buyer. */
+    buyer_note?: string | null
+    /** Seller / staff only. */
+    internal_note?: string | null
     shipped_at?: string | null
     delivered_at?: string | null
 }
@@ -91,10 +108,25 @@ export interface SellerOrderDetail extends SellerOrderListRow {
     cancel_reason?: string | null
 }
 
+/** The ship form. There is no tracking number: the platform generates one when the order is shipped. */
 export interface ShipOrderInput {
     carrier: string
-    tracking_number: string
+    service_level?: string
+    /** The carrier's own waybill / reference (optional). */
+    courier_reference?: string
     tracking_url?: string
+    parcels?: number
+    weight_kg?: string
+    length_cm?: string
+    width_cm?: string
+    height_cm?: string
+    /** YYYY-MM-DD */
+    dispatch_date?: string
+    estimated_delivery_date?: string
+    contact_name?: string
+    contact_phone?: string
+    buyer_note?: string
+    internal_note?: string
 }
 
 export interface SellerOrderListParams {
@@ -152,6 +184,10 @@ const CONFLICT_MESSAGES: Record<string, string> = {
     not_cancellable: 'This order can no longer be cancelled. Its status has changed, so it was refreshed.',
     not_cod: 'Only cash on delivery orders can be confirmed this way.',
     not_shipped: 'Delivery can only be confirmed once the order has been shipped.',
+    refund_in_progress: 'This order is being refunded, so it can no longer be shipped.',
+    needs_manual_refund: 'Part of this order was paid in cash or by bank, so it can’t be cancelled here. Please contact support.',
+    gateway_refund_unavailable: 'The refund can’t be sent right now, so the order was not cancelled. Please try again shortly.',
+    refund_window_closed: 'This payment is too old to refund automatically, so the order was not cancelled. Please contact support.',
 }
 
 function isOrderApiError(value: unknown): value is OrderApiError {
@@ -225,15 +261,32 @@ async function post(url: string, body: Record<string, unknown>): Promise<void> {
     }
 }
 
-/** O7. Processing to Shipped. A replay with the same tracking number returns 200. */
+/** O7. Processing to Shipped. The server issues the tracking number. The same request again within 2 minutes returns 200. */
 export function shipSellerOrder(id: string, input: ShipOrderInput): Promise<void> {
-    const body: Record<string, unknown> = { carrier: input.carrier.trim(), tracking_number: input.tracking_number.trim() }
-    const url = input.tracking_url?.trim()
-    if (url) body.tracking_url = url
+    const body: Record<string, unknown> = { carrier: input.carrier.trim() }
+    for (const key of [
+        'service_level',
+        'courier_reference',
+        'tracking_url',
+        'weight_kg',
+        'length_cm',
+        'width_cm',
+        'height_cm',
+        'dispatch_date',
+        'estimated_delivery_date',
+        'contact_name',
+        'contact_phone',
+        'buyer_note',
+        'internal_note',
+    ] as const) {
+        const value = input[key]?.trim()
+        if (value) body[key] = value
+    }
+    if (input.parcels && input.parcels > 0) body.parcels = input.parcels
     return post(sellerOrdersApi.ship(id), body)
 }
 
-/** O8. Processing only. */
+/** O8. Processing only. A gateway-paid order is refunded in full automatically. */
 export function cancelSellerOrder(id: string, reason: string): Promise<void> {
     return post(sellerOrdersApi.cancel(id), { reason: reason.trim() })
 }

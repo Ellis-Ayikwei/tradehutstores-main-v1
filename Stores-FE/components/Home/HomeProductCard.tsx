@@ -31,13 +31,16 @@ function HomeProductCard({
     product,
     sizes = '(min-width: 1024px) 17vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, 50vw',
     priority = false,
+    showAddToCart = false,
 }: {
     product: HomeProduct
     sizes?: string
     priority?: boolean
+    /** Show the Add to cart button on this card. Off on the homepage by default; sections opt in. */
+    showAddToCart?: boolean
 }) {
     const card = useMemo(() => toMarketplaceProduct(product), [product])
-    return <CommerceProductCard product={card} sizes={sizes} priority={priority} />
+    return <CommerceProductCard product={card} sizes={sizes} priority={priority} showAddToCart={showAddToCart} />
 }
 
 export default memo(HomeProductCard)

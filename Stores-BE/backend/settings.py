@@ -237,6 +237,11 @@ CELERY_BEAT_SCHEDULE = {
         "task": "apps.auctions.tasks.settle_pending_orders",
         "schedule": 60.0,
     },
+    # Unpaid Paystack checkouts past their window: settle a missed webhook, else cancel + give the stock back.
+    "orders-expire-checkout-sessions": {
+        "task": "apps.orders.tasks.expire_checkout_sessions",
+        "schedule": 120.0,
+    },
 }
 
 MIDDLEWARE = [
@@ -397,6 +402,8 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760
 APPEND_SLASH = True
 
 REST_FRAMEWORK = {
+    # Prints the reason (code + message) of every 4xx/5xx API response to the server log.
+    "EXCEPTION_HANDLER": "apps.core.exception_handler.api_exception_handler",
     # JWT only for the versioned API. SessionAuthentication was removed: it
     # forces DRF to run Django CSRF checks on unsafe methods whenever a
     # logged-in *session* is present (common with withCredentials), while the
@@ -458,6 +465,9 @@ CORS_ALLOW_HEADERS = [
     "X-CSRFToken",
     "X-Refresh-Token",
     "x-refresh-token",
+    # POST /checkout/ (and other idempotent writes) send this; without it the browser blocks the request.
+    "Idempotency-Key",
+    "idempotency-key",
 ]
 CORS_EXPOSE_HEADERS = [
     "Content-Disposition",
@@ -498,8 +508,16 @@ SIMPLE_JWT = {
 OTP_EXPIRY_MINUTES = 5  # OTP expires in 5 minutes
 OTP_MAX_ATTEMPTS = 3  # Maximum attempts before OTP is locked
 
-# Frontend URL for password reset emails
+# Frontend URL for password reset emails (also where Paystack sends the buyer back after paying)
 FRONTEND_URL = config("FRONTEND_URL", default="http://localhost:3000")
+
+# Paystack (card + mobile money, hosted checkout). Keys are env-only. With no secret key the
+# "Card or mobile money" option is hidden from the storefront and the checkout refuses it.
+PAYSTACK_SECRET_KEY = config("PAYSTACK_SECRET_KEY", default="")
+PAYSTACK_PUBLIC_KEY = config("PAYSTACK_PUBLIC_KEY", default="")
+PAYSTACK_BASE_URL = config("PAYSTACK_BASE_URL", default="https://api.paystack.co")
+# Minutes a buyer has to finish paying before the unpaid order is cancelled and its stock released.
+CHECKOUT_PAYMENT_WINDOW_MINUTES = config("CHECKOUT_PAYMENT_WINDOW_MINUTES", default=30, cast=int)
 
 # Email Configuration (update with your SMTP settings)
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # For development

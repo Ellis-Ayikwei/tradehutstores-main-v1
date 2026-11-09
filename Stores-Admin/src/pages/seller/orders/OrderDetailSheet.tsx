@@ -156,16 +156,11 @@ export function OrderDetailSheet({ orderId, onClose }: OrderDetailSheetProps) {
         const result = await runAction(
             () => shipSellerOrder(orderId, values),
             (d) => {
+                // The tracking number is issued by the server, so it is not invented here: it arrives with the refetch.
                 const at = new Date().toISOString();
-                return {
-                    ...d,
-                    order_status: 'Shipped',
-                    shipped_at: at,
-                    shipments: [{ carrier: values.carrier.trim(), tracking_number: values.tracking_number.trim(), tracking_url: values.tracking_url?.trim() || null, shipped_at: at }],
-                    timeline: d.timeline && d.timeline.length > 0 ? [...d.timeline, { status: 'Shipped', at }] : d.timeline,
-                };
+                return { ...d, order_status: 'Shipped', shipped_at: at, timeline: d.timeline && d.timeline.length > 0 ? [...d.timeline, { status: 'Shipped', at }] : d.timeline };
             },
-            'Order marked as shipped'
+            'Order shipped. Its tracking number is shown under Shipment.'
         );
         if (!result) setShipOpen(false);
         return result;
@@ -177,9 +172,9 @@ export function OrderDetailSheet({ orderId, onClose }: OrderDetailSheetProps) {
             () => cancelSellerOrder(orderId, reason),
             (d) => {
                 const at = new Date().toISOString();
-                return { ...d, order_status: 'Cancelled', cancelled_at: at, cancel_reason: 'seller', timeline: d.timeline && d.timeline.length > 0 ? [...d.timeline, { status: 'Cancelled', at }] : d.timeline };
+                return { ...d, order_status: 'Cancelled', cancelled_at: at, cancel_reason: reason.trim(), timeline: d.timeline && d.timeline.length > 0 ? [...d.timeline, { status: 'Cancelled', at }] : d.timeline };
             },
-            'Order cancelled'
+            order?.payment_status === 'paid' ? 'Order cancelled. The buyer is being refunded in full.' : 'Order cancelled'
         );
         if (!result) setCancelOpen(false);
         return result;
@@ -300,8 +295,26 @@ export function OrderDetailSheet({ orderId, onClose }: OrderDetailSheetProps) {
                                     <ul className="space-y-2">
                                         {order.shipments.map((s, i) => (
                                             <li key={`${s.tracking_number}-${i}`} className="rounded-lg border p-3 text-sm">
-                                                <p className="font-medium text-foreground">{s.carrier}</p>
-                                                <p className="break-all text-muted-foreground">Tracking {s.tracking_number}</p>
+                                                <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Tracking number</p>
+                                                <p className="break-all font-mono text-base font-bold text-primary">{s.tracking_number}</p>
+                                                <p className="mt-1 font-medium text-foreground">
+                                                    {s.carrier}
+                                                    {s.service_level ? <span className="font-normal text-muted-foreground"> · {s.service_level}</span> : null}
+                                                </p>
+                                                {s.courier_reference ? <p className="text-muted-foreground">Courier ref {s.courier_reference}</p> : null}
+                                                {s.parcels || s.weight_kg ? (
+                                                    <p className="text-muted-foreground">{[s.parcels ? `${s.parcels} parcel${s.parcels === 1 ? '' : 's'}` : null, s.weight_kg ? `${s.weight_kg} kg` : null].filter(Boolean).join(' · ')}</p>
+                                                ) : null}
+                                                {s.dispatch_date || s.estimated_delivery_date ? (
+                                                    <p className="text-muted-foreground">
+                                                        {s.dispatch_date ? `Dispatched ${formatDate(s.dispatch_date, false)}` : ''}
+                                                        {s.dispatch_date && s.estimated_delivery_date ? ' · ' : ''}
+                                                        {s.estimated_delivery_date ? `Expected ${formatDate(s.estimated_delivery_date, false)}` : ''}
+                                                    </p>
+                                                ) : null}
+                                                {s.contact_name || s.contact_phone ? <p className="text-muted-foreground">Rider {[s.contact_name, s.contact_phone].filter(Boolean).join(' · ')}</p> : null}
+                                                {s.buyer_note ? <p className="mt-1 text-foreground">Buyer sees: “{s.buyer_note}”</p> : null}
+                                                {s.internal_note ? <p className="text-muted-foreground">Private note: {s.internal_note}</p> : null}
                                                 {s.tracking_url ? (
                                                     <a href={s.tracking_url} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex items-center gap-1 text-primary hover:underline">
                                                         Track parcel
@@ -373,7 +386,19 @@ export function OrderDetailSheet({ orderId, onClose }: OrderDetailSheetProps) {
 
             {order ? (
                 <>
-                    <ShipDialog open={shipOpen} onOpenChange={setShipOpen} orderLabel={label} onSubmit={ship} />
+                    <ShipDialog
+                        open={shipOpen}
+                        onOpenChange={setShipOpen}
+                        orderLabel={label}
+                        context={{
+                            recipient: buyerName(order),
+                            addressLines: addressLines(orderAddress(order)),
+                            phone: orderAddress(order)?.phone ?? null,
+                            itemCount: order.items.reduce((n, i) => n + i.quantity, 0),
+                            cashDue: isCod(order) ? formatMoney(order.total_amount, order.currency) : null,
+                        }}
+                        onSubmit={ship}
+                    />
                     <CancelDialog open={cancelOpen} onOpenChange={setCancelOpen} orderLabel={label} isPaid={order.payment_status === 'paid'} onSubmit={cancel} />
                     <ConfirmCodDialog open={codOpen} onOpenChange={setCodOpen} orderLabel={label} totalLabel={formatMoney(order.total_amount, order.currency)} onConfirm={confirmCod} />
                     <PackingSlip order={order} />

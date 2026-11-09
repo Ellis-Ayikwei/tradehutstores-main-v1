@@ -17,7 +17,7 @@ interface PaymentSectionProps {
 }
 
 export const PAYMENT_LABEL: Record<PaymentMethodId, string> = {
-    paystack: 'Paystack (card or mobile money)',
+    paystack: 'Card or mobile money',
     cod: 'Cash on delivery',
 }
 
@@ -68,10 +68,10 @@ export default function PaymentSection({
                     >
                         <p className="flex items-center gap-2 font-semibold">
                             <CreditCard className="h-4 w-4 shrink-0" aria-hidden="true" />
-                            Paystack
+                            Card or mobile money
                         </p>
                         <p className="text-zinc-600 dark:text-zinc-400">
-                            Pay online securely with Paystack (card or mobile money)
+                            Pay online securely with your bank card or mobile money wallet.
                         </p>
                     </OptionRow>
                 ) : null}
@@ -97,7 +97,7 @@ export default function PaymentSection({
             ) : null}
             {paystack && selected === 'paystack' ? (
                 <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                    You’ll be taken to Paystack to complete your payment.
+                    You’ll be taken to our secure payment page to complete your payment.
                 </p>
             ) : null}
             <div className="flex sm:justify-end">

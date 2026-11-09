@@ -36,6 +36,8 @@ export interface CheckoutBody extends QuoteBody {
 
 export interface QuoteOrder {
     id?: string
+    /** Human order number such as "#04453BC8" (the first 8 characters of the id). */
+    order_number?: string
     seller?: { id: string; business_name: string } | null
     subtotal?: string | number | null
     shipping_cost?: string | number | null
@@ -108,7 +110,11 @@ export interface OrderDetail {
 
 export interface VerifyResult {
     status: string
-    orders: Array<{ id: string; order_status: string; payment_status: string }>
+    /** `paystack` (card or mobile money) or `cod`. */
+    provider?: string
+    currency?: string
+    amount?: string
+    orders: Array<{ id: string; order_number?: string; order_status: string; payment_status: string; total_amount?: string }>
 }
 
 // ---------------------------------------------------------------------------

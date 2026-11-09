@@ -94,10 +94,12 @@ import ProductManagement from '../pages/admin/ProductManagement';
 import ProductDetail from '../pages/admin/ProductManagement/ProductDetail';
 import AddProduct from '../pages/admin/ProductManagement/AddProduct';
 import OrderManagement from '../pages/admin/OrderManagement';
+import OrderDetail from '../pages/admin/OrderManagement/OrderDetail';
 import SearchOpsPage from '../pages/admin/Search';
 import CatalogManagement from '../pages/admin/CatalogManagement';
 import CustomerManagement from '../pages/admin/CustomerManagement';
 import SellerManagement from '../pages/admin/SellerManagement';
+import SellerDetail from '../pages/admin/SellerManagement/SellerDetail';
 import InventoryManagement from '../pages/admin/InventoryManagement';
 import EcommerceDashboard from '../pages/admin/EcommerceDashboard';
 import MerchandisingHomepage from '../pages/admin/MerchandisingHomepage';
@@ -119,6 +121,7 @@ import SellerSettings from '../pages/seller/settings';
 import RevenueOverview from '../pages/admin/RevenueManagement/RevenueOverview';
 import RevenueTransactions from '../pages/admin/RevenueManagement/RevenueTransactions';
 import RevenueRefunds from '../pages/admin/RevenueManagement/RevenueRefunds';
+import AdminPaymentDetail from '../pages/admin/RevenueManagement/PaymentDetail';
 
 const userRole = localStorage.getItem('userRole') || '';
 const isAdmin = userRole === 'ADMIN' || userRole === 'SUPER_ADMIN';
@@ -617,6 +620,15 @@ const routes = [
         layout: 'admin',
     },
     {
+        path: '/admin/orders/:id',
+        element: (
+            <ProtectedRoute allowedGroups={['Administrators', 'Order Managers']}>
+                <OrderDetail />
+            </ProtectedRoute>
+        ),
+        layout: 'admin',
+    },
+    {
         path: '/admin/catalog',
         element: (
             <ProtectedRoute allowedGroups={['Administrators', 'Inventory Managers']}>
@@ -666,6 +678,15 @@ const routes = [
         element: (
             <ProtectedRoute allowedGroups={['Administrators']}>
                 <SellerManagement />
+            </ProtectedRoute>
+        ),
+        layout: 'admin',
+    },
+    {
+        path: '/admin/sellers/:id',
+        element: (
+            <ProtectedRoute allowedGroups={['Administrators']}>
+                <SellerDetail />
             </ProtectedRoute>
         ),
         layout: 'admin',
@@ -931,6 +952,16 @@ const routes = [
         element: (
             <ProtectedRoute allowedGroups={['Administrators','Finance Officers']}>
                 <RevenueRefunds />
+            </ProtectedRoute>
+        ),
+        layout: 'admin',
+    },
+    {
+        // One payment in full: customer, order and items, gateway details, refunds and a timeline.
+        path: '/admin/revenue/payments/:id',
+        element: (
+            <ProtectedRoute allowedGroups={['Administrators','Finance Officers']}>
+                <AdminPaymentDetail />
             </ProtectedRoute>
         ),
         layout: 'admin',

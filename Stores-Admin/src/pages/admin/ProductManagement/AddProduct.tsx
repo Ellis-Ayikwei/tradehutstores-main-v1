@@ -742,6 +742,24 @@ const AddProduct: React.FC = () => {
         setImages(updated);
     };
 
+    // Images already attached to variants (the edit loader files every saved image under its
+    // variant). Shown read-only on the Images tab so that tab isn't misleadingly empty.
+    const variantGalleryRows = variants.flatMap((variant, vIndex) =>
+        (variant.images ?? []).flatMap((img, iIndex) => {
+            const src = img.preview || (typeof img.image === 'string' ? img.image : '');
+            if (!src) return [];
+            return [
+                {
+                    src,
+                    key: String(img.id ?? `v${vIndex}-i${iIndex}`),
+                    label: variant.sku || `Variant ${vIndex + 1}`,
+                    isMain: img.is_main,
+                    imageType: img.image_type,
+                },
+            ];
+        }),
+    );
+
     // Key Features management
     const addKeyFeature = () => {
         setKeyFeatures([...keyFeatures, { name: '' }]);
@@ -1817,10 +1835,41 @@ const AddProduct: React.FC = () => {
                             />
                         </div>
                         <div className="border-t border-gray-200 pt-6">
-                            {images.length === 0 && (
+                            {images.length === 0 && variantGalleryRows.length === 0 && (
                                 <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg flex items-start gap-3">
                                     <IconAlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
                                     <p>No images uploaded yet. Upload images to display them here. Note: Variant-specific images can be added in the Variants tab.</p>
+                                </div>
+                            )}
+
+                            {variantGalleryRows.length > 0 && (
+                                <div className="mb-6">
+                                    <div className="mb-3 flex items-center justify-between">
+                                        <h3 className="text-sm font-semibold text-gray-700">
+                                            Saved images ({variantGalleryRows.length})
+                                        </h3>
+                                        <button
+                                            type="button"
+                                            onClick={() => setActiveTab('variants')}
+                                            className="text-sm font-medium text-primary-600 hover:underline"
+                                        >
+                                            Edit in Variants tab
+                                        </button>
+                                    </div>
+                                    <p className="mb-3 text-xs text-gray-500">
+                                        Every image belongs to a variant, so existing images are managed in the Variants tab.
+                                    </p>
+                                    <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 lg:grid-cols-6">
+                                        {variantGalleryRows.map(({ src, key, label, isMain, imageType }) => (
+                                            <div key={key} className="border border-gray-200 rounded-lg p-2">
+                                                <img src={src} alt="" className="w-full h-24 object-cover rounded mb-2" />
+                                                <p className="truncate text-xs text-gray-700" title={label}>{label}</p>
+                                                <p className="text-xs text-gray-500">
+                                                    {isMain ? 'Main' : imageType}
+                                                </p>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             )}
 

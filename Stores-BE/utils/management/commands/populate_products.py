@@ -9,9 +9,12 @@ Usage:
     python manage.py populate_products
     python manage.py populate_products --no-images
     python manage.py populate_products --dry-run
-    python manage.py populate_products --target 50 --images-per-product 4
+    python manage.py populate_products --per-subcategory 2 --images-per-product 3
+    python manage.py populate_products --rebuild-variants   # re-grid existing seeded products
+    python manage.py populate_products --target 50          # legacy round-robin count
 """
 
+import itertools
 import random
 import time
 import urllib.request
@@ -1085,7 +1088,7 @@ IMAGES_PER_PRODUCT = 5
 class Command(BaseCommand):
     help = "Seed products across all 17 categories / 189 subcategories."
 
-    TARGET_PRODUCTS = 150
+    PER_SUBCATEGORY = 2
 
     VARIATION_THEMES = (
         "single", "color", "size", "material", "capacity", "size-color",
@@ -1096,6 +1099,25 @@ class Command(BaseCommand):
         "Size":     "Medium",
         "Material": "Cotton",
         "Capacity": "64GB",
+    }
+    # Theme -> attribute axes (names match populate_attributes).
+    THEME_AXES = {
+        "color": ["Color"],
+        "size": ["Size"],
+        "material": ["Material"],
+        "capacity": ["Capacity"],
+        "size-color": ["Size", "Color"],
+    }
+    SIZE_LADDER = ("XS", "S", "M", "L", "XL", "XXL", "3XL", "4XL")
+    BASIC_COLORS = ("Black", "White", "Blue", "Red", "Gray", "Green", "Navy", "Pink")
+    APPAREL_SUBCATEGORIES = {
+        "tops", "bottoms", "dresses", "outerwear", "footwear", "activewear",
+        "formalwear", "intimate apparel", "swimwear", "kids' and baby clothing",
+        "maternity wear", "uniforms", "photography apparel",
+    }
+    CAPACITY_SUBCATEGORIES = {
+        "smartphones", "laptops", "gaming laptops", "desktop computers",
+        "memory cards and storage", "refurbished phones", "unlocked phones",
     }
     PRODUCT_SERIES = (
         "Pro", "Ultra", "Max", "Prime", "Plus",
@@ -1135,8 +1157,21 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("--no-images",          action="store_true")
         parser.add_argument("--dry-run",             action="store_true")
-        parser.add_argument("--target",              type=int, default=self.TARGET_PRODUCTS)
+        parser.add_argument(
+            "--per-subcategory", type=int, default=self.PER_SUBCATEGORY,
+            help="Products to seed in EVERY sub-category (default: %(default)s).",
+        )
+        parser.add_argument(
+            "--target", type=int, default=None,
+            help="Legacy: seed this many products round-robin across sub-categories "
+                 "instead of --per-subcategory.",
+        )
         parser.add_argument("--images-per-product",  type=int, default=IMAGES_PER_PRODUCT)
+        parser.add_argument(
+            "--rebuild-variants", action="store_true",
+            help="Delete and re-create the seeded variants of existing products as a "
+                 "proper option grid (their variant images are re-downloaded).",
+        )
 
     # ── Attribute helpers ─────────────────────────────────────────────────────
 
@@ -1157,20 +1192,52 @@ class Command(BaseCommand):
             attr_index[key] = [val]
         return random.choice(attr_index[key])
 
-    def _attribute_values_for_theme(self, attr_index, theme):
-        mapping = {
-            "color":      ["Color"],
-            "size":       ["Size"],
-            "material":   ["Material"],
-            "capacity":   ["Capacity"],
-            "size-color": ["Size", "Color"],
-        }
-        return [self._get_attr_value(attr_index, a) for a in mapping.get(theme, [])]
+    def _theme_for(self, sub_category_name):
+        """Pick a variation theme that makes sense for the sub-category (no XL laptops)."""
+        key = sub_category_name.strip().lower()
+        if key in self.APPAREL_SUBCATEGORIES:
+            return random.choice(("size-color", "size-color", "size", "color"))
+        if key in self.CAPACITY_SUBCATEGORIES:
+            return random.choice(("capacity", "capacity", "color", "capacity"))
+        return random.choice(("single", "color", "material", "color"))
+
+    def _axis_values(self, attr_index, attr_name, count):
+        """`count` DISTINCT values for one axis (sizes are a contiguous run of the ladder)."""
+        pool = attr_index.get(attr_name.lower())
+        if not pool:
+            return [self._get_attr_value(attr_index, attr_name)]
+        by_name = {av.value_name: av for av in pool}
+        if attr_name == "Size":
+            ladder = [by_name[n] for n in self.SIZE_LADDER if n in by_name]
+            if len(ladder) >= 2:
+                count = min(count, len(ladder))
+                start = random.randint(0, len(ladder) - count)
+                return ladder[start:start + count]
+        if attr_name == "Color":
+            basics = [by_name[n] for n in self.BASIC_COLORS if n in by_name]
+            if len(basics) >= 2:
+                pool = basics
+        return random.sample(pool, min(count, len(pool)))
+
+    def _variant_grid(self, attr_index, theme):
+        """Every combination of the theme's axes, e.g. sizes [S, M, L] x colours [Red, Blue].
+
+        A full grid is what lets the PDP show "pick XL, then Red/Blue under it" and the
+        reverse; random per-variant values produced duplicates and holes instead.
+        """
+        axes = self.THEME_AXES.get(theme, [])
+        if not axes:
+            return [[]]
+        per_axis = 3 if len(axes) > 1 else random.randint(2, 4)
+        value_lists = [
+            self._axis_values(attr_index, a, random.randint(2, per_axis)) for a in axes
+        ]
+        return [list(combo) for combo in itertools.product(*value_lists)]
 
     # ── Brand / name helpers ──────────────────────────────────────────────────
 
     def _resolve_brand(self, category):
-        brands = list(Brand.objects.filter(category=category))
+        brands = list(Brand.objects.filter(category=category).order_by("pk"))
         if brands:
             return random.choice(brands)
         brand, _ = Brand.objects.get_or_create(
@@ -1264,7 +1331,7 @@ class Command(BaseCommand):
         name  = self._product_name(brand.name, sub_category.sub_category_name)
         qty   = random.randint(5, 80)
         price = Decimal(str(random.randint(25, 1500)))
-        theme = random.choice(self.VARIATION_THEMES)
+        theme = self._theme_for(sub_category.sub_category_name)
 
         product, created = Product.objects.get_or_create(
             name=name, category=category,
@@ -1288,18 +1355,25 @@ class Command(BaseCommand):
 
         return product, created, theme, qty, price
 
-    def _upsert_variants(self, product, theme, qty, base_price, attr_index):
-        variant_count   = 1 if theme == "single" else random.randint(2, 4)
+    def _upsert_variants(self, product, theme, qty, base_price, attr_index, rebuild=False):
         default_variant = None
         created_count   = 0
         sku_prefix      = f"{slugify(product.name)[:15]}-{product.id}"
 
-        for idx in range(1, variant_count + 1):
+        if rebuild:
+            # Only rows this seeder made (its SKU prefix embeds the product UUID).
+            product.variants.filter(sku__startswith=sku_prefix).delete()
+        elif product.variants.exists():
+            # Never mutate an existing product's variants (would leave stale extras).
+            return product.default_variant or product.variants.first(), 0
+
+        grid = self._variant_grid(attr_index, theme)
+
+        for idx, attr_vals in enumerate(grid, start=1):
             sku     = f"{sku_prefix}-{idx:02d}"
             price   = base_price + Decimal(str(idx * random.randint(3, 20)))
             v_qty   = max(1, qty - (idx - 1) * random.randint(0, 4))
 
-            attr_vals = self._attribute_values_for_theme(attr_index, theme)
             # Simple (single-theme) products keep a blank variant name; multi-variant
             # products are named from their option values, e.g. "Red / Large".
             if theme == "single" or not attr_vals:
@@ -1336,13 +1410,13 @@ class Command(BaseCommand):
     # ── Main ──────────────────────────────────────────────────────────────────
 
     def handle(self, *args, **options):
-        random.seed(42)
         skip_images = options["no_images"]
         dry_run     = options["dry_run"]
-        target      = options["target"]
         images_per  = options["images_per_product"]
 
-        sub_categories = list(SubCategory.objects.select_related("category").all())
+        sub_categories = list(
+            SubCategory.objects.select_related("category").order_by("category__name", "sub_category_name", "pk")
+        )
         if not sub_categories:
             self.stdout.write(self.style.ERROR(
                 "No subcategories found. Run populate_categories first."
@@ -1365,19 +1439,40 @@ class Command(BaseCommand):
 
         attr_index = self._build_attribute_index()
 
+        # (sub-category, slot) pairs: `--per-subcategory` slots in every sub-category,
+        # or the legacy round-robin when `--target` is given.
+        if options["target"]:
+            plan = [
+                (sub_categories[i % len(sub_categories)], i // len(sub_categories))
+                for i in range(options["target"])
+            ]
+        else:
+            plan = [
+                (sc, slot)
+                for sc in sub_categories
+                for slot in range(options["per_subcategory"])
+            ]
+
         try:
             from tqdm import tqdm
-            iterator = tqdm(range(target), desc="Seeding")
+            iterator = tqdm(plan, desc="Seeding")
         except ImportError:
-            iterator = range(target)
+            iterator = plan
 
         products_created = 0
         variants_created = 0
         images_saved     = 0
 
-        for i in iterator:
-            sub_cat  = sub_categories[i % len(sub_categories)]
+        for sub_cat, slot in iterator:
+            # Seed per (sub-category, slot) so names/themes/variants are identical on every
+            # run -> re-running finds the same products instead of creating duplicates.
+            random.seed(f"{sub_cat.pk}:{slot}")
             category = sub_cat.category
+            if category is None:
+                self.stdout.write(self.style.WARNING(
+                    f"  skip '{sub_cat.sub_category_name}': no category"
+                ))
+                continue
             brand    = self._resolve_brand(category)
 
             if dry_run:
@@ -1393,7 +1488,8 @@ class Command(BaseCommand):
                 products_created += 1
 
             default_variant, v_created = self._upsert_variants(
-                product, theme, qty, price, attr_index
+                product, theme, qty, price, attr_index,
+                rebuild=options["rebuild_variants"],
             )
             variants_created += v_created
 

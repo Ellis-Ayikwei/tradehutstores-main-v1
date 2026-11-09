@@ -2,7 +2,7 @@
  * Payment methods — /account/payment-methods
  *
  * Static by design: TradeHut never stores card or wallet details.
- * Payment is collected by Paystack at checkout, so there is nothing to add,
+ * Payment is collected by the payment gateway at checkout, so there is nothing to add,
  * edit or remove here (and no card, expiry or CVC fields).
  */
 
@@ -31,8 +31,8 @@ const STEPS: { Icon: LucideIcon; title: string; body: string }[] = [
   },
   {
     Icon: Lock,
-    title: "Pay securely with Paystack",
-    body: "Your payment details go straight to Paystack. TradeHut never sees or stores them.",
+    title: "Pay securely by card or mobile money",
+    body: "Your card or wallet details go straight to our secure payment partner. TradeHut never sees or stores them. Or pay cash when your order arrives.",
   },
   {
     Icon: ReceiptText,
@@ -92,7 +92,7 @@ export default function PaymentMethodsPage() {
             </Badge>
           </div>
           <p className="mt-1 text-sm leading-relaxed text-emerald-900 dark:text-emerald-200">
-            Payment is handled securely by Paystack at checkout; no cards are stored.
+            Card and mobile money payments are handled securely at checkout; no cards are stored.
           </p>
         </div>
       </section>

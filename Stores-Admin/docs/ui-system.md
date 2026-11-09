@@ -76,7 +76,7 @@ Warm-surface/bid colours in `tailwind.config.cjs`: `surface`, `surface-container
 
 CSS in `src/tailwind.css`: `.glass-header`, `.primary-gradient`, `.no-scrollbar`, `.material-symbols-outlined` plus the Google Material Symbols `@import`.
 
-Users: `components/Layouts/{Header,Sidebar}.tsx`, `components/Layouts/Header/CurrencySwitcher.tsx`, `pages/admin/{EcommerceDashboard,CreateListing,SellerProfile,MerchandisingHomepage}.tsx`, `pages/admin/OrderManagement/`, `pages/admin/configurations/**`, `pages/admin/AdsManagement/**`, `pages/admin/PromosManagement/**`, `pages/admin/Search/`.
+Users: `components/Layouts/{Header,Sidebar}.tsx`, `components/Layouts/Header/CurrencySwitcher.tsx`, `pages/admin/{EcommerceDashboard,CreateListing,SellerProfile,MerchandisingHomepage}.tsx`, `pages/admin/configurations/**`, `pages/admin/AdsManagement/**`, `pages/admin/PromosManagement/**`, `pages/admin/Search/`.
 
 ## Patterns
 

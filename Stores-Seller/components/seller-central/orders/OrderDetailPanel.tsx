@@ -117,6 +117,15 @@ interface OrderDetailPanelProps {
     onClose: () => void
 }
 
+function Detail({ label, value }: { label: string; value: string }) {
+    return (
+        <div className="min-w-0">
+            <dt className="text-xs text-zinc-500 dark:text-zinc-500">{label}</dt>
+            <dd className="break-words text-zinc-900 dark:text-zinc-100">{value}</dd>
+        </div>
+    )
+}
+
 export function OrderDetailPanel({ orderId, onClose }: OrderDetailPanelProps) {
     const { mutate: globalMutate } = useSWRConfig()
     const { data: order, error, isLoading, isValidating, mutate } = useSWR<SellerOrderDetail, OrderApiError>(
@@ -187,16 +196,11 @@ export function OrderDetailPanel({ orderId, onClose }: OrderDetailPanelProps) {
         const result = await runAction(
             () => shipSellerOrder(orderId, values),
             (d) => {
+                // The tracking number is issued by the server, so it is not invented here: it arrives with the refetch.
                 const at = new Date().toISOString()
-                return {
-                    ...d,
-                    order_status: 'Shipped',
-                    shipped_at: at,
-                    shipments: [{ carrier: values.carrier.trim(), tracking_number: values.tracking_number.trim(), tracking_url: values.tracking_url?.trim() || null, shipped_at: at }],
-                    timeline: withTimeline(d, 'Shipped', at),
-                }
+                return { ...d, order_status: 'Shipped', shipped_at: at, timeline: withTimeline(d, 'Shipped', at) }
             },
-            'Order marked as shipped.'
+            'Order shipped. Its tracking number is shown under Shipment.'
         )
         if (!result) setShipOpen(false)
         return result
@@ -208,9 +212,9 @@ export function OrderDetailPanel({ orderId, onClose }: OrderDetailPanelProps) {
             () => cancelSellerOrder(orderId, reason),
             (d) => {
                 const at = new Date().toISOString()
-                return { ...d, order_status: 'Cancelled', cancelled_at: at, cancel_reason: 'seller', timeline: withTimeline(d, 'Cancelled', at) }
+                return { ...d, order_status: 'Cancelled', cancelled_at: at, cancel_reason: reason.trim(), timeline: withTimeline(d, 'Cancelled', at) }
             },
-            'Order cancelled.'
+            order?.payment_status === 'paid' ? 'Order cancelled. The buyer is being refunded in full.' : 'Order cancelled.'
         )
         if (!result) setCancelOpen(false)
         return result
@@ -352,9 +356,24 @@ export function OrderDetailPanel({ orderId, onClose }: OrderDetailPanelProps) {
                                     <ul className="space-y-2">
                                         {order.shipments.map((s, i) => (
                                             <li key={`${s.tracking_number}-${i}`} className="rounded-md border border-zinc-200 p-3 text-sm dark:border-zinc-700">
-                                                <p className="font-medium">{s.carrier}</p>
-                                                <p className="break-all text-zinc-500 dark:text-zinc-400">Tracking {s.tracking_number}</p>
-                                                {s.shipped_at ? <p className="text-zinc-500 dark:text-zinc-400">Shipped {formatDate(s.shipped_at)}</p> : null}
+                                                <p className="text-xs font-bold uppercase tracking-wide text-zinc-600 dark:text-zinc-400">Tracking number</p>
+                                                <p className="break-all font-mono text-base font-bold text-primary-700 dark:text-primary-400">{s.tracking_number}</p>
+                                                <p className="mt-1 font-medium">
+                                                    {s.carrier}
+                                                    {s.service_level ? <span className="font-normal text-zinc-600 dark:text-zinc-400"> · {s.service_level}</span> : null}
+                                                </p>
+                                                <dl className="mt-2 grid gap-x-4 gap-y-1 text-zinc-600 sm:grid-cols-2 dark:text-zinc-400">
+                                                    {s.courier_reference ? <Detail label="Courier reference" value={s.courier_reference} /> : null}
+                                                    {s.parcels ? <Detail label="Parcels" value={String(s.parcels)} /> : null}
+                                                    {s.weight_kg ? <Detail label="Weight" value={`${s.weight_kg} kg`} /> : null}
+                                                    {s.length_cm && s.width_cm && s.height_cm ? <Detail label="Size" value={`${s.length_cm} × ${s.width_cm} × ${s.height_cm} cm`} /> : null}
+                                                    {s.dispatch_date ? <Detail label="Dispatched" value={formatDate(s.dispatch_date, false)} /> : null}
+                                                    {s.estimated_delivery_date ? <Detail label="Expected" value={formatDate(s.estimated_delivery_date, false)} /> : null}
+                                                    {s.contact_name || s.contact_phone ? <Detail label="Rider" value={[s.contact_name, s.contact_phone].filter(Boolean).join(' · ')} /> : null}
+                                                </dl>
+                                                {s.buyer_note ? <p className="mt-2 text-zinc-700 dark:text-zinc-300">Buyer sees: “{s.buyer_note}”</p> : null}
+                                                {s.internal_note ? <p className="mt-1 text-zinc-600 dark:text-zinc-400">Private note: {s.internal_note}</p> : null}
+                                                {s.shipped_at ? <p className="mt-1 text-zinc-500 dark:text-zinc-400">Shipped {formatDate(s.shipped_at)}</p> : null}
                                                 {s.tracking_url ? (
                                                     <a
                                                         href={s.tracking_url}
@@ -426,7 +445,7 @@ export function OrderDetailPanel({ orderId, onClose }: OrderDetailPanelProps) {
 
             {order ? (
                 <>
-                    <ShipDialog open={shipOpen} onOpenChange={setShipOpen} orderLabel={label} onSubmit={ship} />
+                    <ShipDialog open={shipOpen} onOpenChange={setShipOpen} orderLabel={label} order={order} onSubmit={ship} />
                     <CancelDialog open={cancelOpen} onOpenChange={setCancelOpen} orderLabel={label} isPaid={order.payment_status === 'paid'} onSubmit={cancel} />
                     <ConfirmCodDialog open={codOpen} onOpenChange={setCodOpen} orderLabel={label} totalLabel={formatMoney(order.total_amount, order.currency)} onConfirm={confirmCod} />
                     <PackingSlip order={order} />

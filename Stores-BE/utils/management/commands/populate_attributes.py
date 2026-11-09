@@ -94,6 +94,16 @@ class Command(BaseCommand):
         data = {
             "Color": list(COLOR_HEX_CODES.keys()),
             "Size": [
+                # Short apparel ladder first: populate_products builds size x colour
+                # grids from exactly these, and the PDP ranks them XS < S < ... < 4XL.
+                "XS",
+                "S",
+                "M",
+                "L",
+                "XL",
+                "XXL",
+                "3XL",
+                "4XL",
                 "Small",
                 "Medium",
                 "Large",
@@ -346,7 +356,19 @@ class Command(BaseCommand):
         }
 
         for attribute_name, values in data.items():
-            attribute, created = Attribute.objects.get_or_create(name=attribute_name)
+            attribute, created = Attribute.objects.get_or_create(
+                name=attribute_name,
+                defaults={
+                    "display_type": "swatch" if attribute_name == "Color" else "dropdown"
+                },
+            )
+            if (
+                attribute_name == "Color"
+                and not created
+                and attribute.display_type == "dropdown"
+            ):
+                attribute.display_type = "swatch"
+                attribute.save(update_fields=["display_type"])
             if created:
                 self.stdout.write(
                     self.style.SUCCESS(f"Attribute '{attribute_name}' added.")

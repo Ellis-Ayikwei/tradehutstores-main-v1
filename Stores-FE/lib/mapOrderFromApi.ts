@@ -167,6 +167,24 @@ function formatDetailDate(iso: string | undefined): string {
     }
 }
 
+function mapShippingAddress(o: ApiOrder): OrderDetailUi['shippingAddress'] {
+    const a = o.shipping_address
+    const phone = a?.phone || (o.phone != null ? String(o.phone) : undefined)
+    if (!a) {
+        return { name: 'Delivery', line1: 'No delivery address on this order', city: '', state: '', zip: '', country: '', phone }
+    }
+    return {
+        name: a.full_name?.trim() || 'Delivery',
+        line1: a.address?.trim() || '',
+        line2: a.address_line2?.trim() || undefined,
+        city: a.city?.trim() || '',
+        state: a.state?.trim() || '',
+        zip: a.postal_code?.trim() || '',
+        country: a.country?.trim() || '',
+        phone,
+    }
+}
+
 export function mapApiOrderToDetail(o: ApiOrder, currency = 'GHS'): OrderDetailUi {
     const items = o.items || []
     const subtotal = items.reduce((acc, it) => acc + num(it.total_price), 0)
@@ -199,18 +217,7 @@ export function mapApiOrderToDetail(o: ApiOrder, currency = 'GHS'): OrderDetailU
         tax,
         total: total || subtotal,
         paymentMethod: o.pay_mode || '—',
-        shippingAddress: {
-            name: 'Delivery',
-            line1:
-                o.address_id != null
-                    ? `Saved address #${o.address_id}`
-                    : 'Address on file',
-            city: '—',
-            state: '—',
-            zip: '—',
-            country: '—',
-            phone: o.phone != null ? String(o.phone) : undefined,
-        },
+        shippingAddress: mapShippingAddress(o),
         trackingNumber: undefined,
         carrier: undefined,
         estimatedDelivery: o.estimated_delivery_date

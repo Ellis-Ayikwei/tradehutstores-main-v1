@@ -5,7 +5,7 @@ from decimal import Decimal
 
 from django.contrib.auth import get_user_model
 from django.db import connection
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.test.utils import CaptureQueriesContext
 from django.utils import timezone
 
@@ -27,6 +27,7 @@ URL = "/tradehut/api/v1/sellers/me/stats/"
 User = get_user_model()
 
 
+@override_settings(SEARCH_ENABLE_ES=False, SEARCH_ENABLE_EMBEDDINGS=False)
 class SellerStatsTests(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -51,10 +52,17 @@ class SellerStatsTests(TestCase):
         # Shared legacy order: only A's 2 x 50.00 counts for A, only B's 5 x 20.00 for B.
         make_order(cls.buyer, [(cls.p1v1, 2), (cls.bv, 5)], "Processing", now - timedelta(days=2))
 
-        make_auction(cls.a)  # live
+        make_auction(cls.a, variant=cls.p4v)  # live (reuse a variant so no extra products appear)
         ended = now - timedelta(hours=1)
-        make_auction(cls.a, status=Auction.STATUS_ENDED, ends_at=ended, original_ends_at=ended)
-        make_auction(cls.b)
+        make_auction(
+            cls.a,
+            variant=cls.p4v,
+            status=Auction.STATUS_ENDED,
+            starts_at=now - timedelta(hours=5),
+            ends_at=ended,
+            original_ends_at=ended,
+        )
+        make_auction(cls.b, variant=cls.bv)
 
     def get(self, user):
         return client_for(user).get(URL)

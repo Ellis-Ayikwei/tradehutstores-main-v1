@@ -114,15 +114,6 @@ const timezones = [
   { value: 'Australia/Sydney', label: 'Sydney (AEST/AEDT)' }
 ];
 
-// Available payment gateways
-const availablePaymentGateways = [
-  { id: 'stripe', name: 'Stripe' },
-  { id: 'paypal', name: 'PayPal' },
-  { id: 'square', name: 'Square' },
-  { id: 'razorpay', name: 'Razorpay' },
-  { id: 'authorize_net', name: 'Authorize.net' }
-];
-
 // Available email providers
 const emailProviders = [
   { value: 'smtp', label: 'SMTP Server' },
@@ -329,28 +320,7 @@ const AdminSettings: React.FC = () => {
     payment: {
       currencyCode: 'USD',
       currencySymbol: '$',
-      paymentGateways: [
-        {
-          id: 'stripe',
-          name: 'Stripe',
-          isActive: true,
-          credentials: {
-            apiKey: '',
-            secretKey: ''
-          },
-          testMode: true
-        },
-        {
-          id: 'paypal',
-          name: 'PayPal',
-          isActive: false,
-          credentials: {
-            apiKey: '',
-            secretKey: ''
-          },
-          testMode: true
-        }
-      ],
+      paymentGateways: [],
       serviceFeePercentage: 10,
       minimumWithdrawalAmount: 50,
       automaticPayouts: false,
@@ -382,81 +352,6 @@ const AdminSettings: React.FC = () => {
       [section]: {
         ...prev[section],
         [field]: value
-      }
-    }));
-    
-    setUnsavedChanges(true);
-  };
-
-  // Handle adding a new payment gateway
-  const addPaymentGateway = (gatewayId: string) => {
-    const gateway = availablePaymentGateways.find(g => g.id === gatewayId);
-    if (!gateway) return;
-    
-    if (systemSettings.payment.paymentGateways.some(g => g.id === gatewayId)) {
-      return; // Gateway already exists
-    }
-    
-    const newGateway = {
-      id: gateway.id,
-      name: gateway.name,
-      isActive: false,
-      credentials: {
-        apiKey: '',
-        secretKey: ''
-      },
-      testMode: true
-    };
-    
-    setSystemSettings(prev => ({
-      ...prev,
-      payment: {
-        ...prev.payment,
-        paymentGateways: [...prev.payment.paymentGateways, newGateway]
-      }
-    }));
-    
-    setUnsavedChanges(true);
-  };
-
-  // Handle removing a payment gateway
-  const removePaymentGateway = (gatewayId: string) => {
-    setSystemSettings(prev => ({
-      ...prev,
-      payment: {
-        ...prev.payment,
-        paymentGateways: prev.payment.paymentGateways.filter(g => g.id !== gatewayId)
-      }
-    }));
-    
-    setUnsavedChanges(true);
-  };
-
-  // Handle updating a payment gateway
-  const updatePaymentGateway = (gatewayId: string, field: string, value: any) => {
-    setSystemSettings(prev => ({
-      ...prev,
-      payment: {
-        ...prev.payment,
-        paymentGateways: prev.payment.paymentGateways.map(g => {
-          if (g.id === gatewayId) {
-            if (field.startsWith('credentials.')) {
-              const credentialKey = field.split('.')[1];
-              return {
-                ...g,
-                credentials: {
-                  ...g.credentials,
-                  [credentialKey]: value
-                }
-              };
-            }
-            return {
-              ...g,
-              [field]: value
-            };
-          }
-          return g;
-        })
       }
     }));
     
@@ -879,83 +774,6 @@ const AdminSettings: React.FC = () => {
                   </div>
                 </Card>
 
-                <Card>
-                  <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900">Payment Gateways</h3>
-                    <div className="flex items-center space-x-2">
-                      <select
-                        className="px-3 py-2 border border-gray-200 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                        onChange={(e) => {
-                          if (e.target.value) {
-                            addPaymentGateway(e.target.value);
-                            e.target.value = '';
-                          }
-                        }}
-                        defaultValue=""
-                      >
-                        <option value="" disabled>Add Gateway</option>
-                        {availablePaymentGateways
-                          .filter(g => !systemSettings.payment.paymentGateways.some(pg => pg.id === g.id))
-                          .map(gateway => (
-                            <option key={gateway.id} value={gateway.id}>{gateway.name}</option>
-                          ))
-                        }
-                      </select>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    {systemSettings.payment.paymentGateways.map((gateway) => (
-                      <div key={gateway.id} className="border border-gray-200 rounded-lg p-6 bg-gray-50">
-                        <div className="flex justify-between items-center mb-4">
-                          <h4 className="font-semibold text-gray-900">{gateway.name}</h4>
-                          <div className="flex items-center space-x-4">
-                            <ToggleSwitch
-                              label="Active"
-                              checked={gateway.isActive}
-                              onChange={(value) => updatePaymentGateway(gateway.id, 'isActive', value)}
-                              description=""
-                            />
-                            <button
-                              onClick={() => removePaymentGateway(gateway.id)}
-                              className="text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 transition-colors"
-                              title="Remove gateway"
-                            >
-                              <FontAwesomeIcon icon={faTrash} />
-                            </button>
-                          </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <TextInput
-                            label="API Key"
-                            type="password"
-                            value={gateway.credentials.apiKey || ''}
-                            onChange={(value) => updatePaymentGateway(gateway.id, 'credentials.apiKey', value)}
-                            placeholder="••••••••"
-                          />
-                          
-                          <TextInput
-                            label="Secret Key"
-                            type="password"
-                            value={gateway.credentials.secretKey || ''}
-                            onChange={(value) => updatePaymentGateway(gateway.id, 'credentials.secretKey', value)}
-                            placeholder="••••••••"
-                          />
-                        </div>
-                        
-                        <div className="mt-4">
-                          <ToggleSwitch
-                            label="Test Mode"
-                            checked={gateway.testMode}
-                            onChange={(value) => updatePaymentGateway(gateway.id, 'testMode', value)}
-                            description="Use test credentials instead of live credentials"
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </Card>
               </div>
             )}
 

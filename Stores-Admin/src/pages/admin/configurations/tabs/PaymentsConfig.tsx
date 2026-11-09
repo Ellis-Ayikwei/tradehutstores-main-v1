@@ -40,12 +40,9 @@ const project = (c: StoreConfig): State => ({
 });
 
 // Visual icon by gateway id (the BE blob doesn't carry presentation hints).
+// The store takes exactly two kinds of payment: card / mobile money (one gateway handles both) and cash on delivery.
 const GATEWAY_ICON: Record<string, string> = {
     paystack: 'credit_card',
-    momo: 'smartphone',
-    flutterwave: 'language',
-    stripe: 'payments',
-    paypal: 'account_balance_wallet',
     cod: 'local_shipping',
 };
 
@@ -76,8 +73,8 @@ const PaymentsConfig: React.FC = () => {
         <div className="space-y-6">
             <ConfigSection
                 icon="credit_card"
-                title="Payment gateways"
-                description="Toggle the rails accepted at checkout. Mobile-first markets use Paystack + Mobile Money by default."
+                title="Payment options"
+                description="Buyers can pay by card or mobile money (one payment gateway handles both) or with cash on delivery. Turn either off to hide it at checkout."
             >
                 <div className="space-y-2">
                     {state.payments_gateways.map((g) => (

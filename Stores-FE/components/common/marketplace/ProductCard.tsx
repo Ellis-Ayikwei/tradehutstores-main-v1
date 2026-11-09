@@ -79,7 +79,13 @@ export interface ProductCardProps {
     deal?: boolean
     /** @deprecated No longer used (cards have no reserved meta row). */
     reserveMeta?: boolean
-    /** @deprecated Grid cards never show Add to cart; list rows show it whenever `onAddToCart` is set. */
+    /**
+     * Show the "Add to cart" button. Off by default for grid cards and on for list rows, so each page decides.
+     * It needs `onAddToCart` (CommerceProductCard supplies it). A product with several variants shows
+     * "Select options" instead, so the buyer always picks the exact variant first.
+     */
+    showAddToCart?: boolean
+    /** @deprecated Use `showAddToCart`. */
     showCta?: boolean
     /** Override the image `sizes` attribute (defaults to the standard grid sizes). Pass the real column width. */
     sizes?: string
@@ -135,6 +141,8 @@ function ProductCard({
     compact = false,
     variant = 'grid',
     deal,
+    showAddToCart,
+    showCta,
     sizes,
     className,
 }: ProductCardProps) {
@@ -163,6 +171,7 @@ function ProductCard({
     } = product
 
     const isList = variant === 'list'
+    const addToCartOn = showAddToCart ?? showCta ?? isList
 
     // ── Variant swatches ──────────────────────────────────────────────────────
     const groups = useMemo(() => colourGroups(variants), [variants])
@@ -454,14 +463,18 @@ function ProductCard({
 
     const ctaCls =
         'relative z-10 inline-flex h-11 w-full max-w-xs items-center justify-center gap-1.5 rounded-full bg-primary-700 px-4 text-sm font-medium text-white hover:bg-primary-800 md:h-9 disabled:cursor-not-allowed disabled:bg-zinc-300 disabled:text-zinc-700 dark:disabled:bg-zinc-700 dark:disabled:text-zinc-200'
-    const ctaEl = !onAddToCart ? null : needsOptions ? (
+    // A grid card starts with no swatch chosen: with more than one variant the buyer must pick on the product page;
+    // with exactly one, that variant is the one to add.
+    const mustChoose = !selected && (variants?.length ?? 0) > 1
+    const soleVariant = !selected && variants?.length === 1 ? variants[0] : undefined
+    const ctaEl = !onAddToCart || !addToCartOn ? null : needsOptions || mustChoose ? (
         <Link href={href} className={cx(ctaCls, BUTTON_FOCUS)}>
             Select options
         </Link>
     ) : (
         <button
             type="button"
-            onClick={() => onAddToCart(product, selected ?? undefined)}
+            onClick={() => onAddToCart(product, selected ?? soleVariant)}
             disabled={addToCartLoading || outOfStock}
             aria-label={`Add ${title} to cart`}
             className={cx(ctaCls, BUTTON_FOCUS)}
@@ -517,6 +530,7 @@ function ProductCard({
                 {gridBits.map((node, i) => (
                     <div key={i}>{node}</div>
                 ))}
+                {ctaEl ? <div className="pt-1">{ctaEl}</div> : null}
             </div>
         </article>
     )

@@ -65,44 +65,20 @@ def _default_enabled_languages():
     return ["en", "fr", "tw"]
 
 
+# The store takes exactly two kinds of payment:
+#   * "paystack"  - card or mobile money. One gateway handles both, so buyers only ever see
+#                   "Card or mobile money" (the provider's name is never shown at checkout).
+#   * "cod"       - cash on delivery.
+# Any other gateway id is dropped on save (see StoreConfigSerializer.validate_payments_gateways).
+PAYMENT_GATEWAY_IDS = ("paystack", "cod")
+
+
 def _default_payment_gateways():
     return [
         {
             "id": "paystack",
-            "name": "Paystack",
+            "name": "Card or mobile money",
             "enabled": True,
-            "testMode": True,
-            "publicKey": "",
-            "secretKey": "",
-        },
-        {
-            "id": "momo",
-            "name": "Mobile Money (MTN / Vodafone / AirtelTigo)",
-            "enabled": True,
-            "testMode": False,
-            "publicKey": "",
-            "secretKey": "",
-        },
-        {
-            "id": "flutterwave",
-            "name": "Flutterwave",
-            "enabled": False,
-            "testMode": True,
-            "publicKey": "",
-            "secretKey": "",
-        },
-        {
-            "id": "stripe",
-            "name": "Stripe",
-            "enabled": False,
-            "testMode": True,
-            "publicKey": "",
-            "secretKey": "",
-        },
-        {
-            "id": "paypal",
-            "name": "PayPal",
-            "enabled": False,
             "testMode": True,
             "publicKey": "",
             "secretKey": "",

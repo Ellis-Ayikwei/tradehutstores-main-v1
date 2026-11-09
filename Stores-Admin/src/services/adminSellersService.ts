@@ -11,6 +11,7 @@
  */
 import axios from 'axios';
 import axiosInstance from './axiosInstance';
+import type { SellerOrderListRow } from './sellerOrdersService';
 
 export type VerificationStatus = 'pending' | 'verified' | 'rejected' | 'suspended';
 export type DocumentStatus = 'pending' | 'approved' | 'rejected';
@@ -177,6 +178,10 @@ export const adminSellersApi = {
     detail: (id: string | number) => `sellers/admin/${id}/`,
     documents: (id: string | number) => `sellers/admin/${id}/documents/`,
     document: (docId: string | number) => `sellers/admin/documents/${docId}/`,
+    summary: (id: string | number) => `sellers/admin/${id}/summary/`,
+    orders: (id: string | number) => `sellers/admin/${id}/orders/`,
+    sold: (id: string | number) => `sellers/admin/${id}/sold/`,
+    payouts: (id: string | number) => `sellers/admin/${id}/payouts/`,
 };
 
 export const fetchAdminSellers = ({ status = '', q = '', page = 1, pageSize = 25, isActive }: SellerListParams) =>
@@ -202,3 +207,73 @@ export const deactivateAdminSeller = (id: string | number) => request(() => axio
 export const fetchAdminSellerDocuments = (id: string | number) => request(() => axiosInstance.get<SellerDocument[] | Paginated<SellerDocument>>(adminSellersApi.documents(id)));
 
 export const reviewAdminSellerDocument = (docId: string | number, body: DocumentReview) => request(() => axiosInstance.patch<SellerDocument>(adminSellersApi.document(docId), body));
+
+// ----------------------------------------------------------------------------- money (staff only)
+// Computed on the server from the seller's own order lines; see apps/sellers/finance.py for the rules.
+
+export interface SellerFinanceSummary {
+    currency: string;
+    commission_rate: string;
+    /** Days after delivery before earnings become payable. */
+    hold_days: number;
+    products: { total: number; available: number };
+    orders: { total: number; by_status: Record<string, number> };
+    units_sold: number;
+    /** Goods value of every order that is not cancelled or refunded. */
+    sold_gross: string;
+    delivered_gross: string;
+    /** Platform commission on delivered goods. */
+    commission: string;
+    /** Delivered goods the seller collected in cash (COD). */
+    cod_gross: string;
+    pending_earnings: string;
+    available_earnings: string;
+    paid_out: string;
+    /** Available earnings less payouts. Negative means the seller owes the platform. */
+    balance: string;
+}
+
+export interface SoldItem {
+    product_id: string | null;
+    title: string;
+    units: number;
+    revenue: string;
+    orders: number;
+}
+
+export type PayoutMethod = 'bank_transfer' | 'mobile_money' | 'cash' | 'other';
+
+export interface SellerPayoutRow {
+    id: string;
+    amount: string;
+    currency: string;
+    method: PayoutMethod;
+    reference: string | null;
+    note: string | null;
+    paid_at: string;
+    recorded_by: string | null;
+}
+
+export interface RecordPayoutInput {
+    amount: string;
+    method: PayoutMethod;
+    reference?: string;
+    note?: string;
+}
+
+export const fetchSellerSummary = (id: string | number) => request(() => axiosInstance.get<SellerFinanceSummary>(adminSellersApi.summary(id)));
+
+export const fetchSellerSold = (id: string | number) => request(() => axiosInstance.get<SoldItem[]>(adminSellersApi.sold(id)));
+
+export const fetchSellerOrders = (id: string | number, { status = '', q = '', page = 1, pageSize = 20 }: { status?: string; q?: string; page?: number; pageSize?: number }) =>
+    request(() =>
+        axiosInstance.get<Paginated<SellerOrderListRow>>(adminSellersApi.orders(id), {
+            params: { status: status || undefined, q: q.trim() || undefined, page, page_size: pageSize },
+        })
+    );
+
+export const fetchSellerPayouts = (id: string | number) => request(() => axiosInstance.get<SellerPayoutRow[]>(adminSellersApi.payouts(id)));
+
+/** One key per submit attempt: a double click or a retry returns the first payout instead of paying twice. */
+export const recordSellerPayout = (id: string | number, body: RecordPayoutInput, idempotencyKey: string) =>
+    request(() => axiosInstance.post<SellerPayoutRow>(adminSellersApi.payouts(id), body, { headers: { 'Idempotency-Key': idempotencyKey } }));

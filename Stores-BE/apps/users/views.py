@@ -155,8 +155,12 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
             and user != request.user
         ):
             return Response({"detail": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
-        orders = Order.objects.filter(user=user).prefetch_related(
-            "orderitem_set", "orderitem_set__product"
+        # `Order.items` is the OrderItem related_name (it used to be the default `orderitem_set`).
+        orders = (
+            Order.objects.filter(user=user)
+            .select_related("address")
+            .prefetch_related("items", "items__product")
+            .order_by("-placed_at", "-id")
         )
         return Response(
             OrderSerializer(orders, many=True, context={"request": request}).data

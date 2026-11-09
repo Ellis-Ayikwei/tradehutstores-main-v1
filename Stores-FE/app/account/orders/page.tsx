@@ -4,9 +4,10 @@
  * My Orders — buyer order history
  * Route: /account/orders
  *
- * Ported from: stitch_full_website_redesign_expansion/tradehut_my_orders/code.html
- *
  * Layout: shared AccountShell via app/account/layout.tsx
+ *
+ * Theming: every surface/text/border carries a light class and a `dark:` pair (class-based dark mode).
+ * Do not use the fixed design tokens (surface-container-*, on-surface*, primary) here: they never flip.
  */
 
 import { useState, useEffect } from "react";
@@ -28,6 +29,17 @@ import {
   Headphones,
   Package,
 } from "lucide-react";
+
+// ---------------------------------------------------------------------------
+// Theme classes (light + dark pair, solid colours only)
+// ---------------------------------------------------------------------------
+const TEXT = "text-gray-900 dark:text-gray-100";
+const TEXT_MUTED = "text-gray-600 dark:text-gray-400";
+const TEXT_FAINT = "text-gray-400 dark:text-gray-500";
+const TEXT_BRAND = "text-orange-600 dark:text-orange-400";
+const CARD = "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800";
+const SUBTLE = "bg-gray-50 dark:bg-gray-800";
+const HOVER_SUBTLE = "hover:bg-gray-100 dark:hover:bg-gray-800";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -82,28 +94,28 @@ const STATUS_CONFIG: Record<
 > = {
   processing: {
     label: "Processing",
-    dot: "bg-tertiary",
+    dot: "bg-blue-600 dark:bg-blue-400",
     badge: "bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-100",
   },
   shipped: {
     label: "Shipped",
-    dot: "bg-secondary-green",
-    badge: "bg-secondary-container text-on-secondary-fixed-variant",
+    dot: "bg-green-600 dark:bg-green-400",
+    badge: "bg-green-100 text-green-900 dark:bg-green-900 dark:text-green-100",
   },
   delivered: {
     label: "Delivered",
-    dot: "bg-on-surface-variant",
-    badge: "bg-surface-container-highest text-on-surface-variant",
+    dot: "bg-gray-500 dark:bg-gray-400",
+    badge: "bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-100",
   },
   returned: {
     label: "Returned",
-    dot: "bg-bid-amber",
+    dot: "bg-amber-600 dark:bg-amber-400",
     badge: "bg-amber-100 text-amber-900 dark:bg-amber-900 dark:text-amber-100",
   },
   cancelled: {
     label: "Cancelled",
-    dot: "bg-error",
-    badge: "bg-error-container text-on-error-container",
+    dot: "bg-red-600 dark:bg-red-400",
+    badge: "bg-red-100 text-red-900 dark:bg-red-900 dark:text-red-100",
   },
 };
 
@@ -130,14 +142,14 @@ function OrderRow({ order }: { order: Order }) {
   return (
     <>
       {/* Desktop table row (md+) */}
-      <tr className="hidden md:table-row group hover:bg-surface-container-low dark:hover:bg-gray-800 transition-colors">
+      <tr className={`hidden md:table-row group ${HOVER_SUBTLE} transition-colors`}>
         <td className="px-6 py-6 lg:px-8">
-          <span className="font-mono text-sm font-bold text-primary dark:text-orange-400">
+          <span className={`font-mono text-sm font-bold ${TEXT_BRAND}`}>
             {order.reference}
           </span>
         </td>
         <td className="px-6 py-6 lg:px-8">
-          <span className="text-sm font-medium text-on-surface dark:text-gray-100">{order.date}</span>
+          <span className={`text-sm font-medium ${TEXT}`}>{order.date}</span>
         </td>
         <td className="px-6 py-6 lg:px-8">
           <StatusPill status={order.status} />
@@ -148,7 +160,7 @@ function OrderRow({ order }: { order: Order }) {
             {order.items.slice(0, 3).map((item) => (
               <div
                 key={item.id}
-                className="w-9 h-9 rounded-lg border-2 border-surface-container-lowest overflow-hidden bg-surface-container-low flex-shrink-0 relative"
+                className="w-9 h-9 rounded-lg border-2 border-white dark:border-gray-900 overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0 relative"
               >
                 {item.imageUrl ? (
                   <Image
@@ -159,43 +171,43 @@ function OrderRow({ order }: { order: Order }) {
                     className="object-cover"
                   />
                 ) : (
-                  <Package className="absolute inset-0 m-auto w-4 h-4 text-on-surface-variant" aria-label={item.imageAlt} />
+                  <Package className={`absolute inset-0 m-auto w-4 h-4 ${TEXT_MUTED}`} aria-label={item.imageAlt} />
                 )}
               </div>
             ))}
             {order.items.length > 3 && (
-              <div className="w-9 h-9 rounded-lg border-2 border-surface-container-lowest bg-surface-container flex items-center justify-center text-[10px] font-bold text-on-surface-variant flex-shrink-0">
+              <div className={`w-9 h-9 rounded-lg border-2 border-white dark:border-gray-900 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-[10px] font-bold ${TEXT_MUTED} flex-shrink-0`}>
                 +{order.items.length - 3}
               </div>
             )}
           </div>
         </td>
         <td className="px-6 py-6 lg:px-8 text-right">
-          <span className="font-mono text-base font-bold text-on-surface dark:text-gray-100">
+          <span className={`font-mono text-base font-bold ${TEXT}`}>
             {formatAmount(order.total)}
           </span>
         </td>
         <td className="px-6 py-6 lg:px-8 text-right">
           <Link
             href={`/account/orders/${order.id}`}
-            className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-surface-container-high transition-colors active:scale-95"
+            className={`inline-flex items-center justify-center p-2 rounded-lg ${HOVER_SUBTLE} transition-colors active:scale-95`}
             aria-label={`View details for order ${order.reference}`}
           >
-            <ChevronRight className="w-4 h-4 text-on-surface-variant" />
+            <ChevronRight className={`w-4 h-4 ${TEXT_MUTED}`} />
           </Link>
         </td>
       </tr>
 
       {/* Mobile card */}
       <tr className="md:hidden">
-        <td colSpan={6} className="px-0 py-0">
-          <div className="bg-surface-container-lowest dark:bg-gray-900 rounded-2xl shadow-card dark:border dark:border-gray-800 p-5 mb-3 flex items-center gap-4">
+        <td colSpan={6} className="px-3 py-1.5">
+          <div className={`${CARD} rounded-2xl p-5 flex items-center gap-4`}>
             {/* Thumbnail stack */}
             <div className="flex -space-x-2 flex-shrink-0">
               {order.items.slice(0, 2).map((item) => (
                 <div
                   key={item.id}
-                  className="w-12 h-12 rounded-xl border-2 border-surface-container-lowest overflow-hidden bg-surface-container-low relative"
+                  className="w-12 h-12 rounded-xl border-2 border-white dark:border-gray-900 overflow-hidden bg-gray-100 dark:bg-gray-800 relative"
                 >
                   {item.imageUrl ? (
                     <Image
@@ -206,7 +218,7 @@ function OrderRow({ order }: { order: Order }) {
                       className="object-cover"
                     />
                   ) : (
-                    <Package className="absolute inset-0 m-auto w-5 h-5 text-on-surface-variant" aria-label={item.imageAlt} />
+                    <Package className={`absolute inset-0 m-auto w-5 h-5 ${TEXT_MUTED}`} aria-label={item.imageAlt} />
                   )}
                 </div>
               ))}
@@ -214,23 +226,23 @@ function OrderRow({ order }: { order: Order }) {
             {/* Info */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <span className="font-mono text-xs font-bold text-primary dark:text-orange-400 truncate">
+                <span className={`font-mono text-xs font-bold ${TEXT_BRAND} truncate`}>
                   {order.reference}
                 </span>
                 <StatusPill status={order.status} />
               </div>
-              <p className="text-xs text-on-surface-variant">{order.date}</p>
-              <p className="font-mono text-sm font-bold mt-1">
+              <p className={`text-xs ${TEXT_MUTED}`}>{order.date}</p>
+              <p className={`font-mono text-sm font-bold mt-1 ${TEXT}`}>
                 {formatAmount(order.total)}
               </p>
             </div>
             {/* CTA */}
             <Link
               href={`/account/orders/${order.id}`}
-              className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-low hover:bg-surface-container active:scale-95 transition-all"
+              className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 active:scale-95 transition-all"
               aria-label={`View order ${order.reference}`}
             >
-              <ChevronRight className="w-4 h-4 text-on-surface-variant" />
+              <ChevronRight className={`w-4 h-4 ${TEXT_MUTED}`} />
             </Link>
           </div>
         </td>
@@ -248,11 +260,11 @@ function EmptyState({ status }: { status: OrderStatus }) {
     <tr>
       <td colSpan={6}>
         <div className="flex flex-col items-center justify-center py-24 text-center">
-          <ShoppingBag className="w-16 h-16 text-outline mb-6" strokeWidth={1} />
-          <h3 className="font-headline font-bold text-xl text-on-surface mb-2">
+          <ShoppingBag className={`w-16 h-16 ${TEXT_FAINT} mb-6`} strokeWidth={1} />
+          <h3 className={`font-headline font-bold text-xl ${TEXT} mb-2`}>
             No {label} found
           </h3>
-          <p className="text-sm text-on-surface-variant max-w-xs">
+          <p className={`text-sm ${TEXT_MUTED} max-w-xs`}>
             {status === "all"
               ? "Your order history will appear here once you make your first purchase."
               : `You have no ${status} orders right now.`}
@@ -319,169 +331,162 @@ export default function MyOrdersPage() {
       <AccountMobileHeader title="Order History" />
 
       {/* Page header */}
-              <header className="mb-6 md:mb-10">
-                <h1 className="font-syne text-3xl md:text-4xl font-bold tracking-tight text-on-surface mb-2">
-                  Order History
-                </h1>
-                <p className="text-on-surface-variant text-sm">
-                  Review and track your recent procurement activities.
-                </p>
-              </header>
+      <header className="mb-6 md:mb-10">
+        <h1 className={`font-syne text-3xl md:text-4xl font-bold tracking-tight ${TEXT} mb-2`}>
+          Order History
+        </h1>
+        <p className={`${TEXT_MUTED} text-sm`}>
+          Review and track your recent procurement activities.
+        </p>
+      </header>
 
-              {fetchError && (
-                <div
-                  className="mb-4 rounded-xl border border-red-300 bg-red-100 dark:border-red-800 dark:bg-red-900 px-4 py-3 text-sm text-red-900 dark:text-red-100"
-                  role="alert"
+      {fetchError && (
+        <div
+          className="mb-4 rounded-xl border border-red-300 bg-red-100 dark:border-red-800 dark:bg-red-900 px-4 py-3 text-sm text-red-900 dark:text-red-100"
+          role="alert"
+        >
+          {fetchError}
+        </div>
+      )}
+
+      {loading && (
+        <p className={`text-sm ${TEXT_MUTED} mb-4`}>
+          Loading orders…
+        </p>
+      )}
+
+      {/* Filters bar — sticky at lg+ below the site header (matches the sidebar offset) */}
+      <div className="z-10 bg-white dark:bg-gray-900 pt-2 pb-3 -mx-4 px-4 md:-mx-0 md:px-0 mb-4 lg:sticky lg:top-28">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          {/* Status tabs */}
+          <div className="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 p-1.5 rounded-xl overflow-x-auto no-scrollbar flex-shrink-0">
+            {STATUS_TABS.map((tab) => {
+              const isActive = activeTab === tab.value;
+              return (
+                <button
+                  key={tab.value}
+                  onClick={() => setActiveTab(tab.value)}
+                  className={`
+                    px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider
+                    whitespace-nowrap transition-all duration-200 active:scale-95
+                    ${
+                      isActive
+                        ? "bg-white dark:bg-gray-900 text-orange-700 dark:text-orange-300 border border-gray-200 dark:border-gray-700"
+                        : `${TEXT_MUTED} hover:bg-white dark:hover:bg-gray-900 border border-transparent`
+                    }
+                  `}
                 >
-                  {fetchError}
-                </div>
-              )}
+                  {tab.label}
+                  {tabCount(tab.value) > 0 && (
+                    <span
+                      className={`ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full text-[9px] font-black
+                        ${isActive ? "bg-orange-100 text-orange-900 dark:bg-orange-900 dark:text-orange-100" : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200"}`}
+                    >
+                      {tabCount(tab.value)}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
 
-              {loading && (
-                <p className="text-sm text-on-surface-variant dark:text-gray-400 mb-4">
-                  Loading orders…
-                </p>
-              )}
+          {/* Date-range picker (static, TODO: wire) */}
+          <div className={`${CARD} px-4 py-2.5 rounded-xl flex items-center gap-2 cursor-pointer ${HOVER_SUBTLE} transition-all active:scale-95 flex-shrink-0`}>
+            <Calendar className={`w-4 h-4 ${TEXT_MUTED}`} />
+            <span className={`text-xs font-bold uppercase tracking-wider ${TEXT}`}>
+              {dateRange}
+            </span>
+            <ChevronDown className={`w-4 h-4 ${TEXT_MUTED}`} />
+          </div>
+        </div>{/* end flex-wrap row */}
+      </div>{/* end sticky bar */}
 
-              {/* Filters bar — sticky at lg+ below the site header (matches the sidebar offset) */}
-              <div className="z-10 bg-white dark:bg-gray-900 pt-2 pb-3 -mx-4 px-4 md:-mx-0 md:px-0 mb-4 lg:sticky lg:top-28">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                {/* Status tabs */}
-                <div className="flex items-center gap-1 bg-surface-container-low p-1.5 rounded-xl overflow-x-auto no-scrollbar flex-shrink-0">
-                  {STATUS_TABS.map((tab) => {
-                    const isActive = activeTab === tab.value;
-                    return (
-                      <button
-                        key={tab.value}
-                        onClick={() => setActiveTab(tab.value)}
-                        className={`
-                          px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider
-                          whitespace-nowrap transition-all duration-200 active:scale-95
-                          ${
-                            isActive
-                              ? "bg-surface-container-lowest shadow-sm text-primary-700"
-                              : "text-on-surface-variant hover:bg-surface-container-lowest"
-                          }
-                        `}
-                      >
-                        {tab.label}
-                        {tabCount(tab.value) > 0 && (
-                          <span
-                            className={`ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full text-[9px] font-black
-                              ${isActive ? "bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-100" : "bg-surface-container text-on-surface-variant"}`}
-                          >
-                            {tabCount(tab.value)}
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
+      {/* Orders table */}
+      <div className={`${CARD} rounded-3xl overflow-hidden`}>
+        <table className="w-full text-left border-collapse">
+          <thead className="hidden md:table-header-group">
+            <tr className={SUBTLE}>
+              {["Order ID", "Date", "Status", "Items"].map((h) => (
+                <th key={h} className={`px-6 py-5 lg:px-8 text-[10px] uppercase tracking-[0.2em] font-black ${TEXT_MUTED}`}>
+                  {h}
+                </th>
+              ))}
+              <th className={`px-6 py-5 lg:px-8 text-[10px] uppercase tracking-[0.2em] font-black ${TEXT_MUTED} text-right`}>
+                Total
+              </th>
+              <th className="px-6 py-5 lg:px-8" />
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
+            {filteredOrders.length === 0 ? (
+              <EmptyState status={activeTab} />
+            ) : (
+              filteredOrders.map((order) => (
+                <OrderRow key={order.id} order={order} />
+              ))
+            )}
+          </tbody>
+        </table>
 
-                {/* Date-range picker (static, TODO: wire) */}
-                <div className="bg-surface-container-lowest shadow-card px-4 py-2.5 rounded-xl flex items-center gap-2 cursor-pointer hover:shadow-card-hover transition-all active:scale-95 flex-shrink-0">
-                  <Calendar className="w-4 h-4 text-on-surface-variant" />
-                  <span className="text-xs font-bold uppercase tracking-wider text-on-surface">
-                    {dateRange}
-                  </span>
-                  <ChevronDown className="w-4 h-4 text-on-surface-variant" />
-                </div>
-                </div>{/* end flex-wrap row */}
-              </div>{/* end sticky bar */}
+        {/* Pagination */}
+        {filteredOrders.length > 0 && (
+          <div className={`px-6 py-6 lg:px-8 ${SUBTLE} flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4`}>
+            <p className={`text-xs font-bold ${TEXT_MUTED} uppercase tracking-widest`}>
+              Showing {filteredOrders.length} of {filteredOrders.length} orders
+            </p>
+            <div className="flex items-center gap-2">
+              <button
+                className={`w-10 h-10 flex items-center justify-center rounded-xl bg-gray-200 dark:bg-gray-700 ${TEXT_FAINT} cursor-not-allowed`}
+                disabled
+                aria-label="Previous page"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-orange-500 text-white font-bold text-sm">
+                1
+              </button>
+              <button className={`w-10 h-10 flex items-center justify-center rounded-xl ${TEXT} hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors font-bold text-sm active:scale-95`}>
+                2
+              </button>
+              <button className={`w-10 h-10 flex items-center justify-center rounded-xl ${TEXT} hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors font-bold text-sm active:scale-95`}>
+                3
+              </button>
+              <span className={`px-2 ${TEXT_MUTED}`}>…</span>
+              <button className={`w-10 h-10 flex items-center justify-center rounded-xl ${TEXT} hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors font-bold text-sm active:scale-95`}>
+                12
+              </button>
+              <button
+                className={`w-10 h-10 flex items-center justify-center rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 ${TEXT} hover:bg-gray-100 dark:hover:bg-gray-800 transition-all active:scale-95`}
+                aria-label="Next page"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
-              {/* Orders table */}
-              <div className="bg-surface-container-lowest dark:bg-gray-900 dark:border dark:border-gray-800 rounded-3xl shadow-card overflow-hidden">
-                <table className="w-full text-left border-collapse">
-                  <thead className="hidden md:table-header-group">
-                    <tr className="bg-surface-container-low">
-                      <th className="px-6 py-5 lg:px-8 text-[10px] uppercase tracking-[0.2em] font-black text-on-surface-variant">
-                        Order ID
-                      </th>
-                      <th className="px-6 py-5 lg:px-8 text-[10px] uppercase tracking-[0.2em] font-black text-on-surface-variant">
-                        Date
-                      </th>
-                      <th className="px-6 py-5 lg:px-8 text-[10px] uppercase tracking-[0.2em] font-black text-on-surface-variant">
-                        Status
-                      </th>
-                      <th className="px-6 py-5 lg:px-8 text-[10px] uppercase tracking-[0.2em] font-black text-on-surface-variant">
-                        Items
-                      </th>
-                      <th className="px-6 py-5 lg:px-8 text-[10px] uppercase tracking-[0.2em] font-black text-on-surface-variant text-right">
-                        Total
-                      </th>
-                      <th className="px-6 py-5 lg:px-8" />
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-surface-container-low md:divide-y">
-                    {filteredOrders.length === 0 ? (
-                      <EmptyState status={activeTab} />
-                    ) : (
-                      filteredOrders.map((order) => (
-                        <OrderRow key={order.id} order={order} />
-                      ))
-                    )}
-                  </tbody>
-                </table>
-
-                {/* Pagination */}
-                {filteredOrders.length > 0 && (
-                  <div className="px-6 py-6 lg:px-8 bg-surface-container-low flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">
-                      Showing {filteredOrders.length} of {filteredOrders.length} orders
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <button
-                        className="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container text-outline shadow-sm cursor-not-allowed"
-                        disabled
-                        aria-label="Previous page"
-                      >
-                        <ChevronLeft className="w-5 h-5" />
-                      </button>
-                      <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-primary text-on-primary shadow-card font-bold text-sm">
-                        1
-                      </button>
-                      <button className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-surface-container-high transition-colors font-bold text-sm active:scale-95">
-                        2
-                      </button>
-                      <button className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-surface-container-high transition-colors font-bold text-sm active:scale-95">
-                        3
-                      </button>
-                      <span className="px-2 text-on-surface-variant">…</span>
-                      <button className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-surface-container-high transition-colors font-bold text-sm active:scale-95">
-                        12
-                      </button>
-                      <button
-                        className="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-lowest shadow-sm hover:bg-surface-container-high transition-all active:scale-95"
-                        aria-label="Next page"
-                      >
-                        <ChevronRight className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Contextual insight cards */}
-              <div className="mt-10 md:mt-12 grid grid-cols-1 gap-6">
-                {/* Support card */}
-                <div className="bg-surface-container-low p-8 rounded-3xl flex flex-col justify-between border border-primary-200">
-                  <div>
-                    <Headphones className="text-primary mb-4 w-6 h-6" />
-                    <h4 className="font-syne font-bold text-lg mb-2">Need Help?</h4>
-                    <p className="text-xs text-on-surface-variant leading-relaxed mb-6">
-                      Call or WhatsApp us on 024 813 8722 for help with order
-                      tracking or disputes.
-                    </p>
-                  </div>
-                  <a
-                    href="tel:+233248138722"
-                    className="min-h-[44px] text-primary font-bold text-[10px] uppercase tracking-[0.2em] flex items-center gap-2 group/btn hover:underline transition-colors active:scale-95"
-                  >
-                    Call 024 813 8722
-                    <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </a>
-                </div>
-              </div>
+      {/* Contextual insight cards */}
+      <div className="mt-10 md:mt-12 grid grid-cols-1 gap-6">
+        {/* Support card */}
+        <div className="bg-orange-50 dark:bg-gray-900 p-8 rounded-3xl flex flex-col justify-between border border-orange-200 dark:border-orange-900">
+          <div>
+            <Headphones className={`${TEXT_BRAND} mb-4 w-6 h-6`} />
+            <h4 className={`font-syne font-bold text-lg mb-2 ${TEXT}`}>Need Help?</h4>
+            <p className={`text-xs ${TEXT_MUTED} leading-relaxed mb-6`}>
+              Call or WhatsApp us on 024 813 8722 for help with order
+              tracking or disputes.
+            </p>
+          </div>
+          <a
+            href="tel:+233248138722"
+            className={`min-h-[44px] ${TEXT_BRAND} font-bold text-[10px] uppercase tracking-[0.2em] flex items-center gap-2 group/btn hover:underline transition-colors active:scale-95`}
+          >
+            Call 024 813 8722
+            <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+          </a>
+        </div>
+      </div>
     </>
   );
 }

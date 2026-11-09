@@ -12,13 +12,12 @@ import React, { useMemo } from "react";
 import Link from "next/link";
 import { AlertTriangle, RefreshCw, RotateCcw, ShieldCheck, Tag, Zap } from "lucide-react";
 import MainLayout from "@/components/Layouts/MainLayout";
-import { useCurrency } from "@/contexts/CurrencyContext";
 import {
   Countdown,
-  ProductCard,
   ProductCardSkeleton,
   ProductGrid,
 } from "@/components/common/marketplace";
+import { CommerceProductCard } from "@/components/Products/ProductCard";
 import type { MarketplaceProduct } from "@/components/common/marketplace";
 import { normalizeProducts, type HomeProduct } from "@/components/Home/homeProduct";
 import { useHomeSections } from "@/components/Home/useHomeSections";
@@ -47,7 +46,6 @@ const INFO_LINKS = [
 ];
 
 export default function DealsPage() {
-  const { formatDisplayPrice } = useCurrency();
   const { sections, loading, error, retry } = useHomeSections();
 
   const sales = useMemo(
@@ -84,7 +82,7 @@ export default function DealsPage() {
           {loading ? (
             <ProductGrid layout="dense">
               {Array.from({ length: 12 }).map((_, i) => (
-                <ProductCardSkeleton key={i} showCta={false} />
+                <ProductCardSkeleton key={i} showAddToCart />
               ))}
             </ProductGrid>
           ) : null}
@@ -134,7 +132,7 @@ export default function DealsPage() {
               </div>
               <ProductGrid layout="dense">
                 {sale.cards.map((card, i) => (
-                  <ProductCard key={card.id} product={card} formatPrice={formatDisplayPrice} priority={i < 4} />
+                  <CommerceProductCard key={card.id} product={card} priority={i < 4} showAddToCart />
                 ))}
               </ProductGrid>
             </section>

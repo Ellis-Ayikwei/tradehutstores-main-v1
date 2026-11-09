@@ -416,7 +416,7 @@ function TrustPanel() {
     {
       Icon: Wallet,
       title: "Secure payment",
-      body: "Payment is handled securely by Paystack at checkout. No cards are stored.",
+      body: "Card and mobile money payments are handled securely at checkout. No cards are stored.",
       href: "/account/payment-methods",
     },
     {

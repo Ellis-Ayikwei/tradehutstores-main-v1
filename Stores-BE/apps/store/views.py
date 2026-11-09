@@ -98,11 +98,17 @@ PUBLIC_FIELDS = (
 
 def _public_payment_gateways(gateways):
     """Strip secret keys; expose only what the checkout UI needs."""
+    from apps.payments import paystack
+
     out = []
     for g in gateways or []:
         if not isinstance(g, dict):
             continue
         if not g.get("enabled"):
+            continue
+        # "Card or mobile money" only exists when Paystack is actually set up (secret key in the env);
+        # otherwise buyers would be offered an option the checkout has to refuse.
+        if g.get("id") == "paystack" and not paystack.is_configured():
             continue
         out.append(
             {

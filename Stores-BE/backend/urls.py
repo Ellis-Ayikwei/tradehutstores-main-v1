@@ -66,6 +66,8 @@ urlpatterns = [
                 path("store/", include("apps.store.urls")),
                 # Orders endpoints (seller O6-O9 so far; seller/ routes stay first)
                 path("orders/", include("apps.orders.urls")),
+                # Buyer checkout (quote + place COD order). Online payment is not wired yet.
+                path("checkout/", include("apps.orders.checkout_urls")),
                 # Cart endpoints (when created)
                 # path("cart/", include("apps.cart.urls")),
                 # Reviews endpoints (when created)

@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import stats_views, views
+from . import finance_views, stats_views, views
 
 app_name = "sellers"
 
@@ -30,5 +30,9 @@ urlpatterns = [
         views.AdminSellerDocumentsView.as_view(),
         name="admin_documents",
     ),
+    path("admin/<uuid:pk>/summary/", finance_views.AdminSellerSummaryView.as_view(), name="admin_summary"),
+    path("admin/<uuid:pk>/orders/", finance_views.AdminSellerOrdersView.as_view(), name="admin_orders"),
+    path("admin/<uuid:pk>/sold/", finance_views.AdminSellerSoldView.as_view(), name="admin_sold"),
+    path("admin/<uuid:pk>/payouts/", finance_views.AdminSellerPayoutsView.as_view(), name="admin_payouts"),
     path("<str:slug_or_uuid>/", views.PublicSellerDetailView.as_view(), name="public_detail"),
 ]

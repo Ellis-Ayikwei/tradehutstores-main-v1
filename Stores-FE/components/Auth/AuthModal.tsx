@@ -39,6 +39,7 @@ import {
 } from 'lucide-react'
 import useSignIn from 'react-auth-kit/hooks/useSignIn'
 import { useDispatch } from 'react-redux'
+import { useSWRConfig } from 'swr'
 import type { AppDispatch } from '@/store'
 import { commitAuthKitSignIn } from '@/store/authSlice'
 import {
@@ -122,6 +123,7 @@ function tokensFromVerifyResponse(r: VerifyOTPSuccess): TokenPair | null {
 export default function AuthModal({ open, onClose, initialMode = 'auto' }: Props) {
     const signIn = useSignIn()
     const dispatch = useDispatch<AppDispatch>()
+    const { mutate: revalidateAll } = useSWRConfig()
 
     // ── Flow state ────────────────────────────────────────────────────────
     const [step, setStep] = useState<Step>('identifier')
@@ -176,8 +178,12 @@ export default function AuthModal({ open, onClose, initialMode = 'auto' }: Props
     const persistTokens = useCallback(
         async (pair: TokenPair) => {
             await dispatch(commitAuthKitSignIn({ pair, signIn })).unwrap()
+            // Pages that already fetched while signed out (or with an expired token) keep a cached
+            // 401 and would keep showing "Sign in" after the modal succeeds. Revalidate every SWR key
+            // (no data argument, so cached data is kept while it refetches).
+            void revalidateAll(() => true)
         },
-        [signIn, dispatch],
+        [signIn, dispatch, revalidateAll],
     )
 
     // ── Handlers ─────────────────────────────────────────────────────────

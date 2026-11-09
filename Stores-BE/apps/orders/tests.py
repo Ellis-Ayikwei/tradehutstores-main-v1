@@ -239,38 +239,82 @@ class SellerOrderReadTests(SellerOrderBase):
 
 class SellerShipTests(SellerOrderBase):
     def ship(self, order, **body):
-        payload = {"carrier": "DHL", "tracking_number": "TRK-1", **body}
+        payload = {"carrier": "DHL", **body}
         return self.a.post(f"{BASE}{order.id}/ship/", payload, format="json")
 
-    def test_ship_happy_path(self):
+    def test_ship_happy_path_generates_the_tracking_number(self):
         order = self.order((self.seller_a, "Phone", 1, "100.00"))
-        res = self.ship(order, tracking_url="https://track.example.com/TRK-1")
-        self.assertEqual(res.status_code, 200)
+        res = self.ship(
+            order,
+            service_level="Express",
+            courier_reference="WB-7731",
+            parcels=2,
+            weight_kg="3.50",
+            length_cm="40", width_cm="30", height_cm="20",
+            dispatch_date="2026-11-10",
+            estimated_delivery_date="2026-11-12",
+            contact_name="Kwame Rider",
+            contact_phone="0201112222",
+            buyer_note="Call on arrival",
+            internal_note="Fragile, top shelf",
+        )
+        self.assertEqual(res.status_code, 200, res.content)
         body = res.json()
         self.assertEqual(body["order_status"], "Shipped")
-        self.assertEqual(body["shipments"][0]["carrier"], "DHL")
-        self.assertEqual(body["shipments"][0]["tracking_number"], "TRK-1")
-        self.assertEqual(body["shipments"][0]["tracking_url"], "https://track.example.com/TRK-1")
+        shipment = body["shipments"][0]
+        # The platform issued the tracking number: TH + 10 unambiguous characters.
+        self.assertRegex(shipment["tracking_number"], r"^TH[A-HJKMNP-Z2-9]{10}$")
+        self.assertEqual(shipment["carrier"], "DHL")
+        self.assertEqual(shipment["courier_reference"], "WB-7731")
+        self.assertEqual((shipment["service_level"], shipment["parcels"], shipment["weight_kg"]), ("Express", 2, "3.50"))
+        self.assertEqual((shipment["length_cm"], shipment["width_cm"], shipment["height_cm"]), ("40.0", "30.0", "20.0"))
+        self.assertEqual((shipment["dispatch_date"], shipment["estimated_delivery_date"]), ("2026-11-10", "2026-11-12"))
+        self.assertEqual((shipment["contact_name"], shipment["contact_phone"]), ("Kwame Rider", "0201112222"))
+        self.assertEqual((shipment["buyer_note"], shipment["internal_note"]), ("Call on arrival", "Fragile, top shelf"))
         self.assertIsNotNone(body["shipped_at"])
         self.assertIn("Shipped", [t["status"] for t in body["timeline"]])
         order.refresh_from_db()
         self.assertEqual(order.order_status, "Shipped")
+        self.assertEqual(order.tracking_number, shipment["tracking_number"])  # mirrored for older screens
+        self.assertEqual(str(order.estimated_delivery_date), "2026-11-12")
 
-    def test_replay_same_tracking_is_200_and_keeps_shipped_at(self):
+    def test_the_seller_cannot_choose_the_tracking_number(self):
+        order = self.order((self.seller_a, "Phone", 1, "100.00"))
+        res = self.ship(order, tracking_number="MY-OWN-NUMBER")
+        self.assertEqual(res.status_code, 200)
+        shipment = res.json()["shipments"][0]
+        self.assertNotEqual(shipment["tracking_number"], "MY-OWN-NUMBER")
+        self.assertEqual(shipment["courier_reference"], "MY-OWN-NUMBER")  # an old client's value is kept as the waybill
+
+    def test_every_shipment_gets_its_own_number(self):
+        numbers = {
+            self.ship(self.order((self.seller_a, f"P{i}", 1, "10.00"))).json()["shipments"][0]["tracking_number"]
+            for i in range(5)
+        }
+        self.assertEqual(len(numbers), 5)
+
+    def test_minimal_form_works_and_defaults_are_filled(self):
+        order = self.order((self.seller_a, "Phone", 1, "100.00"))
+        body = self.ship(order).json()["shipments"][0]
+        self.assertEqual(body["parcels"], 1)
+        self.assertIsNotNone(body["dispatch_date"])  # today
+
+    def test_double_click_within_two_minutes_is_a_no_op_success(self):
         order = self.order((self.seller_a, "Phone", 1, "100.00"))
         first = self.ship(order).json()
         res = self.ship(order)
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.json()["shipped_at"], first["shipped_at"])
+        self.assertEqual(res.json()["shipments"][0]["tracking_number"], first["shipments"][0]["tracking_number"])
 
-    def test_different_tracking_after_shipped_is_409(self):
+    def test_a_different_carrier_after_shipped_is_409(self):
         order = self.order((self.seller_a, "Phone", 1, "100.00"))
-        self.ship(order)
-        res = self.ship(order, tracking_number="TRK-2")
+        first = self.ship(order).json()
+        res = self.ship(order, carrier="FedEx")
         self.assertEqual(res.status_code, 409)
         self.assertEqual(res.json()["code"], "not_shippable")
         order.refresh_from_db()
-        self.assertEqual(order.tracking_number, "TRK-1")
+        self.assertEqual(order.tracking_number, first["shipments"][0]["tracking_number"])
 
     def test_wrong_states_are_409_not_shippable(self):
         for status in ("Pending", "Delivered", "Cancelled", "Refunded"):
@@ -283,17 +327,24 @@ class SellerShipTests(SellerOrderBase):
 
     def test_validation_errors_are_400(self):
         order = self.order((self.seller_a, "Phone", 1, "100.00"))
-        self.assertEqual(self.a.post(f"{BASE}{order.id}/ship/", {"carrier": "DHL"}, format="json").status_code, 400)
+        self.assertEqual(self.a.post(f"{BASE}{order.id}/ship/", {}, format="json").status_code, 400)
         self.assertEqual(self.ship(order, tracking_url="not a url").status_code, 400)
         self.assertEqual(self.ship(order, carrier="").status_code, 400)
+        self.assertEqual(self.ship(order, parcels=0).status_code, 400)
+        self.assertEqual(self.ship(order, weight_kg="-1").status_code, 400)
+        partial = self.ship(order, length_cm="10")
+        self.assertEqual(partial.status_code, 400)  # length without width and height
+        backwards = self.ship(order, dispatch_date="2026-11-12", estimated_delivery_date="2026-11-10")
+        self.assertEqual(backwards.status_code, 400)
+        self.assertIn("estimated_delivery_date", backwards.json())
+        order.refresh_from_db()
+        self.assertEqual(order.order_status, "Processing")
 
     def test_suspended_seller_cannot_write(self):
         order = self.order((self.seller_a, "Phone", 1, "100.00"))
         SellerProfile.objects.filter(pk=self.seller_a.pk).update(verification_status="suspended")
         fresh = User.objects.get(pk=self.user_a.pk)  # avoid the cached seller_profile
-        res = client_for(fresh).post(
-            f"{BASE}{order.id}/ship/", {"carrier": "DHL", "tracking_number": "T1"}, format="json"
-        )
+        res = client_for(fresh).post(f"{BASE}{order.id}/ship/", {"carrier": "DHL"}, format="json")
         self.assertEqual(res.status_code, 403)
         self.assertEqual(res.json()["code"], "seller_suspended")
 
@@ -342,10 +393,47 @@ class SellerConfirmDeliveryTests(SellerOrderBase):
         self.assertEqual(self.confirm(order).status_code, 409)
 
 
-class SellerCancelNotBuiltTests(SellerOrderBase):
-    def test_cancel_route_is_not_exposed(self):
+class SellerCancelTests(SellerOrderBase):
+    """O8. Money cases (gateway refunds) are in test_refunds.py; these are the plain order rules."""
+
+    def cancel(self, order, reason="out of stock"):
+        return self.a.post(f"{BASE}{order.id}/cancel/", {"reason": reason}, format="json")
+
+    def test_processing_order_is_cancelled_with_reason_and_time(self):
         order = self.order((self.seller_a, "Phone", 1, "100.00"))
-        res = self.a.post(f"{BASE}{order.id}/cancel/", {"reason": "out of stock"}, format="json")
-        self.assertEqual(res.status_code, 404)
+        res = self.cancel(order)
+        self.assertEqual(res.status_code, 200, res.content)
+        body = res.json()
+        self.assertEqual(body["order_status"], "Cancelled")
+        self.assertEqual(body["cancel_reason"], "out of stock")
+        self.assertIsNotNone(body["cancelled_at"])
+        self.assertIn("Cancelled", [t["status"] for t in body["timeline"]])
         order.refresh_from_db()
-        self.assertEqual(order.order_status, "Processing")
+        self.assertEqual(order.order_status, "Cancelled")
+
+    def test_cancelling_twice_is_a_success(self):
+        order = self.order((self.seller_a, "Phone", 1, "100.00"))
+        self.cancel(order)
+        self.assertEqual(self.cancel(order).status_code, 200)
+
+    def test_shipped_and_delivered_orders_cannot_be_cancelled(self):
+        for status in ("Shipped", "Delivered", "Pending", "Refunded"):
+            order = self.order((self.seller_a, f"P-{status}", 1, "10.00"), status=status)
+            res = self.cancel(order)
+            self.assertEqual((res.status_code, res.json()["code"]), (409, "not_cancellable"), status)
+            order.refresh_from_db()
+            self.assertEqual(order.order_status, status)
+
+    def test_reason_is_required(self):
+        order = self.order((self.seller_a, "Phone", 1, "100.00"))
+        self.assertEqual(self.a.post(f"{BASE}{order.id}/cancel/", {}, format="json").status_code, 400)
+        self.assertEqual(self.cancel(order, reason="x").status_code, 400)
+
+    def test_another_sellers_order_is_a_404(self):
+        theirs = self.order((self.seller_b, "Other", 1, "50.00"))
+        self.assertEqual(self.cancel(theirs).status_code, 404)
+
+    def test_shared_orders_cannot_be_cancelled_by_one_seller(self):
+        shared = self.order((self.seller_a, "A", 1, "10.00"), (self.seller_b, "B", 1, "10.00"))
+        res = self.cancel(shared)
+        self.assertEqual((res.status_code, res.json()["code"]), (409, "shared_order"))

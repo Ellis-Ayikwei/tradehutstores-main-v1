@@ -210,3 +210,46 @@ class SellerDocument(BaseModel):
 
     def __str__(self):
         return f"{self.seller_id} {self.kind} ({self.status})"
+
+
+PAYOUT_METHODS = (
+    ("bank_transfer", "Bank transfer"),
+    ("mobile_money", "Mobile money"),
+    ("cash", "Cash"),
+    ("other", "Other"),
+)
+
+
+class SellerPayout(BaseModel):
+    """Money the platform has sent to a seller, recorded by staff (the ledger's "paid out" side).
+
+    Rows are append-only from the API: a mistake is fixed with a new, explained row, never an edit.
+    ``created_at`` on BaseModel is auto_now, so ``paid_at`` is the real transfer date.
+    """
+
+    seller = models.ForeignKey(SellerProfile, on_delete=models.CASCADE, related_name="payouts")
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    currency = models.CharField(max_length=3)
+    method = models.CharField(max_length=16, choices=PAYOUT_METHODS)
+    reference = models.CharField(max_length=100, blank=True, default="")
+    note = models.CharField(max_length=500, blank=True, default="")
+    paid_at = models.DateTimeField(default=timezone.now, db_index=True)
+    recorded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="recorded_seller_payouts"
+    )
+    idempotency_key = models.CharField(max_length=64, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = "seller_payouts"
+        ordering = ["-paid_at", "-id"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["recorded_by", "idempotency_key"],
+                condition=models.Q(idempotency_key__isnull=False),
+                name="uniq_seller_payout_per_key",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.seller_id} {self.amount} {self.currency}"

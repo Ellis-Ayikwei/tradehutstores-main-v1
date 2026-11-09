@@ -642,7 +642,7 @@ export default function ProductsPageClient() {
                                     <div role="status" aria-label="Loading products">
                                         <ProductGrid layout="listing">
                                             {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-                                                <ProductCardSkeleton key={i} />
+                                                <ProductCardSkeleton key={i} showAddToCart />
                                             ))}
                                         </ProductGrid>
                                     </div>
@@ -666,6 +666,7 @@ export default function ProductsPageClient() {
                                                     compact
                                                     priority={i < 4}
                                                     sizes={LISTING_SIZES}
+                                                    showAddToCart
                                                 />
                                             ))}
                                         </ProductGrid>

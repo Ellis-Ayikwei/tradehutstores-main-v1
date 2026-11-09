@@ -3,10 +3,10 @@
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AlertTriangle, PackageOpen, RefreshCw, Search, SearchX, X } from 'lucide-react'
-import { ProductCard, ProductGrid } from '@/components/common/marketplace'
+import { ProductGrid } from '@/components/common/marketplace'
 import type { MarketplaceProduct } from '@/components/common/marketplace'
+import { CommerceProductCard } from '@/components/Products/ProductCard'
 import { SellerPromosStrip } from '@/components/Promo'
-import { useCurrency } from '@/contexts/CurrencyContext'
 import type { StoreProduct } from './types'
 
 type SortKey = 'newest' | 'price-asc' | 'price-desc' | 'rating' | 'discount'
@@ -48,7 +48,6 @@ interface StoreProductsProps {
 
 export default function StoreProducts({ storeId, storeName, products, productsError }: StoreProductsProps) {
     const router = useRouter()
-    const { formatDisplayPrice } = useCurrency()
     const [query, setQuery] = useState('')
     const [sort, setSort] = useState<SortKey>('newest')
     const [category, setCategory] = useState<string | null>(null)
@@ -203,7 +202,7 @@ export default function StoreProducts({ storeId, storeName, products, productsEr
                                         variants: p.variants,
                                         defaultVariantId: p.defaultVariantId,
                                     }
-                                    return <ProductCard key={p.id} product={card} formatPrice={formatDisplayPrice} priority={i < 4} />
+                                    return <CommerceProductCard key={p.id} product={card} priority={i < 4} showAddToCart />
                                 })}
                             </ProductGrid>
 

@@ -332,7 +332,7 @@ export default function CheckoutClient() {
                     checkoutId: result.checkout_id,
                     message: isClientRejection(e)
                         ? describeCheckoutError(e).message
-                        : 'We could not open Paystack. Your order is saved and waiting for payment.',
+                        : 'We could not open the payment page. Your order is saved and waiting for payment.',
                 })
                 dispatch(setCheckoutStatus('error'))
                 unlock()
@@ -345,7 +345,7 @@ export default function CheckoutClient() {
         }
         setPendingPayment({
             checkoutId: result.checkout_id,
-            message: result.payment_error || 'We could not open Paystack. Your order is saved and waiting for payment.',
+            message: result.payment_error || 'We could not open the payment page. Your order is saved and waiting for payment.',
         })
         dispatch(setCheckoutStatus('error'))
         unlock()
@@ -368,7 +368,7 @@ export default function CheckoutClient() {
                     window.location.assign(url)
                     return
                 }
-                setPendingPayment({ checkoutId: retrying.checkoutId, message: 'We could not open Paystack. Please try again.' })
+                setPendingPayment({ checkoutId: retrying.checkoutId, message: 'We could not open the payment page. Please try again.' })
                 dispatch(setCheckoutStatus('error'))
                 unlock()
                 return

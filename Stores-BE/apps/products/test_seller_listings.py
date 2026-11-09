@@ -4,7 +4,7 @@ from datetime import timedelta
 
 from django.contrib.auth import get_user_model
 from django.db import connection
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.test.utils import CaptureQueriesContext
 from django.utils import timezone
 
@@ -27,6 +27,7 @@ def names(res):
     return [row["name"] for row in res.json()["results"]]
 
 
+@override_settings(SEARCH_ENABLE_ES=False, SEARCH_ENABLE_EMBEDDINGS=False)
 class SellerListingsTests(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -77,8 +78,9 @@ class SellerListingsTests(TestCase):
         self.assertFalse(row["free_shipping"])
         self.assertIsNone(row["main_product_image"])
         self.assertEqual([set(v) for v in row["variants"]], [{"id", "sku", "price", "quantity", "name"}] * 2)
-        # No default variant set: primary is the first created.
-        self.assertEqual(row["primary_variant_price"], "30.00")
+        # No default variant set: primary is the cheapest, and variants are listed cheapest first.
+        self.assertEqual(row["primary_variant_price"], "20.00")
+        self.assertEqual([v["price"] for v in row["variants"]], ["20.00", "30.00"])
         self.assertEqual(row["primary_sku"], row["variants"][0]["sku"])
 
     def test_primary_variant_is_the_default_variant(self):
@@ -119,7 +121,7 @@ class SellerListingsTests(TestCase):
         self.assertEqual(names(self.get(ordering="name")), sorted([
             self.apple.name, self.banana.name, self.cherry.name, self.date.name]))
         self.assertEqual(names(self.get(ordering="-name"))[0], self.date.name)
-        # price uses the primary variant: Cherry 5, Banana 10, Apple 30 (first variant), Date 100 (default)
+        # price uses the primary variant: Cherry 5, Banana 10, Apple 20 (cheapest), Date 100 (default)
         self.assertEqual(
             names(self.get(ordering="price")),
             [self.cherry.name, self.banana.name, self.apple.name, self.date.name],

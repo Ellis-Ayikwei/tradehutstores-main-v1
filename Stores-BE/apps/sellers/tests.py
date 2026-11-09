@@ -7,7 +7,7 @@ from django.contrib.auth.models import Group
 from django.core.files.storage import FileSystemStorage
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import connection
-from django.test import TestCase, override_settings
+from django.test import TestCase as DjangoTestCase, override_settings
 from django.test.utils import CaptureQueriesContext
 from rest_framework.test import APIClient
 
@@ -18,7 +18,21 @@ from .models import SellerDocument, SellerProfile
 
 User = get_user_model()
 
-PNG = b"\x89PNG\r\n\x1a\n" + b"0" * 64
+
+class TestCase(DjangoTestCase):
+    """The data migration seeds the `sellers` flag as `beta`, which still blocks ordinary sellers.
+    These tests exercise the endpoints, not the rollout, so they run with the flag released;
+    the flag-specific tests below set their own state."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        from apps.store.models import FeatureFlag
+
+        FeatureFlag.objects.filter(key="sellers").update(status="on")
+
+
+PNG =b"\x89PNG\r\n\x1a\n" + b"0" * 64
 PDF = b"%PDF-1.4\n" + b"0" * 64
 JPG = b"\xff\xd8\xff\xe0" + b"0" * 64
 

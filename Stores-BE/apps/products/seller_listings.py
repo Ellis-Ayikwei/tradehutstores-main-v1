@@ -28,10 +28,10 @@ ORDERINGS = {
 DEFAULT_ORDERING = "-updated_at"
 
 
-def _first_variant_price(product_ref):
+def _cheapest_variant_price(product_ref):
     return Subquery(
         ProductVariant.objects.filter(product=OuterRef(product_ref))
-        .order_by("created_at", "pk")
+        .order_by("price", "sku")
         .values("price")[:1]
     )
 
@@ -76,14 +76,14 @@ def seller_listings_queryset(seller, params):
             Subquery(
                 ProductVariant.objects.filter(pk=OuterRef("default_variant_id")).values("price")[:1]
             ),
-            _first_variant_price("pk"),
+            _cheapest_variant_price("pk"),
         )
     )
     return (
         qs.select_related("category")
         .prefetch_related(
             Prefetch(
-                "variants", queryset=ProductVariant.objects.order_by("created_at", "pk")
+                "variants", queryset=ProductVariant.objects.order_by("price", "sku")
             ),
             Prefetch(
                 "product_images",
@@ -98,6 +98,8 @@ def seller_listings_queryset(seller, params):
 
 def listing_row(product, request=None):
     variants = product_variant_rows(product)
+    # Primary variant: the product's default, else the cheapest (variants arrive price-sorted;
+    # BaseModel.created_at is auto_now so there is no reliable "first created").
     primary = next((v for v in variants if v.pk == product.default_variant_id), None) or (
         variants[0] if variants else None
     )

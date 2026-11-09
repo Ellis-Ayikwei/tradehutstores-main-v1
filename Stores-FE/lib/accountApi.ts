@@ -34,7 +34,18 @@ export type ApiOrder = {
     user: string | null
     total_amount: string | number
     order_status: string | null
-    address_id: number | null
+    address_id: number | string | null
+    /** The delivery address itself; null when the order has none (or it was deleted). */
+    shipping_address?: {
+        full_name?: string | null
+        phone?: string | null
+        address?: string | null
+        address_line2?: string | null
+        city?: string | null
+        state?: string | null
+        postal_code?: string | null
+        country?: string | null
+    } | null
     pay_mode: string
     phone: number | string | null
     estimated_delivery_date: string | null

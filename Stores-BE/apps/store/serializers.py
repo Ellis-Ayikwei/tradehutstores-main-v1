@@ -57,7 +57,11 @@ class StoreConfigSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     "Each gateway must be a dict with at least an 'id'."
                 )
-        return value
+        # Only card/mobile money ("paystack") and cash on delivery ("cod") exist. A stale admin tab that
+        # still holds the old list must not bring the removed gateways back, so unknown ids are dropped.
+        from .models import PAYMENT_GATEWAY_IDS
+
+        return [g for g in value if g.get("id") in PAYMENT_GATEWAY_IDS]
 
     def validate_shipping_zones(self, value):
         if not isinstance(value, list):

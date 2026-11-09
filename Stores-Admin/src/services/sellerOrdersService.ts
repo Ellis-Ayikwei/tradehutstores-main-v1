@@ -3,7 +3,7 @@
  * `.claude/plans/20-seller-and-checkout-gaps.md` (section 4):
  *   O6  GET  /orders/seller/            ?status= &q= &page= &page_size=  (IsSeller, newest first)
  *   O6  GET  /orders/seller/<id>/       order detail for fulfilment
- *   O7  POST /orders/seller/<id>/ship/               {carrier, tracking_number, tracking_url?}
+ *   O7  POST /orders/seller/<id>/ship/               {carrier, parcels, weight_kg, dates, contact, notes...} (tracking number is generated)
  *   O8  POST /orders/seller/<id>/cancel/             {reason}   (Processing only)
  *   O9  POST /orders/seller/<id>/confirm-delivery/   (COD only, cash collected)
  * None of the seller order writes require an Idempotency-Key in the contract (it is required on
@@ -23,6 +23,8 @@ export type { Paginated, SellerApiError, SellerOrderRow };
 /** O6 list row. `pay_mode` is assumed (see header). */
 export interface SellerOrderListRow extends SellerOrderRow {
     pay_mode?: string | null;
+    /** Buyer's name, sent by the list endpoint (shipping name, else the account name). */
+    buyer_name?: string | null;
 }
 
 export interface SellerOrderItem {
@@ -52,8 +54,25 @@ export interface OrderAddress {
 
 export interface OrderShipment {
     carrier: string;
+    /** Issued by the platform when the order is shipped (e.g. TH7K2M9XQ4PD); nobody types it. */
     tracking_number: string;
     tracking_url?: string | null;
+    /** The carrier's own waybill / reference, when there is one. */
+    courier_reference?: string | null;
+    service_level?: string | null;
+    parcels?: number | null;
+    weight_kg?: string | null;
+    length_cm?: string | null;
+    width_cm?: string | null;
+    height_cm?: string | null;
+    dispatch_date?: string | null;
+    estimated_delivery_date?: string | null;
+    contact_name?: string | null;
+    contact_phone?: string | null;
+    /** Shown to the buyer. */
+    buyer_note?: string | null;
+    /** Seller / staff only. */
+    internal_note?: string | null;
     shipped_at?: string | null;
     delivered_at?: string | null;
 }
@@ -87,10 +106,50 @@ export interface SellerOrderDetail extends SellerOrderListRow {
     cancel_reason?: string | null;
 }
 
+/** The ship form. There is no tracking number: the platform generates one when the order is shipped. */
 export interface ShipOrderInput {
     carrier: string;
-    tracking_number: string;
+    service_level?: string;
+    /** The carrier's own waybill / reference (optional). */
+    courier_reference?: string;
     tracking_url?: string;
+    parcels?: number;
+    weight_kg?: string;
+    length_cm?: string;
+    width_cm?: string;
+    height_cm?: string;
+    /** YYYY-MM-DD */
+    dispatch_date?: string;
+    estimated_delivery_date?: string;
+    contact_name?: string;
+    contact_phone?: string;
+    buyer_note?: string;
+    internal_note?: string;
+}
+
+/** The request body for a ship call: only the fields that have a value. */
+export function buildShipBody(input: ShipOrderInput): Record<string, unknown> {
+    const body: Record<string, unknown> = { carrier: input.carrier.trim() };
+    for (const key of [
+        'service_level',
+        'courier_reference',
+        'tracking_url',
+        'weight_kg',
+        'length_cm',
+        'width_cm',
+        'height_cm',
+        'dispatch_date',
+        'estimated_delivery_date',
+        'contact_name',
+        'contact_phone',
+        'buyer_note',
+        'internal_note',
+    ] as const) {
+        const value = input[key]?.trim();
+        if (value) body[key] = value;
+    }
+    if (input.parcels && input.parcels > 0) body.parcels = input.parcels;
+    return body;
 }
 
 export interface SellerOrderListParams {
@@ -204,12 +263,9 @@ async function post(url: string, body: Record<string, unknown>): Promise<void> {
     }
 }
 
-/** O7. Processing to Shipped. A replay with the same tracking number returns 200. */
+/** O7. Processing to Shipped. The server issues the tracking number. The same request again within 2 minutes returns 200. */
 export function shipSellerOrder(id: string, input: ShipOrderInput): Promise<void> {
-    const body: Record<string, unknown> = { carrier: input.carrier.trim(), tracking_number: input.tracking_number.trim() };
-    const url = input.tracking_url?.trim();
-    if (url) body.tracking_url = url;
-    return post(sellerOrdersApi.ship(id), body);
+    return post(sellerOrdersApi.ship(id), buildShipBody(input));
 }
 
 /** O8. Processing only. */

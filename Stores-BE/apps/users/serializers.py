@@ -331,7 +331,24 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    items = OrderItemSerializer(source="orderitem_set", many=True, read_only=True)
+    items = OrderItemSerializer(many=True, read_only=True)
+    shipping_address = serializers.SerializerMethodField()
+
+    def get_shipping_address(self, obj):
+        """The delivery address itself (not just its id), so order pages can show where it is going."""
+        a = obj.address
+        if a is None:
+            return None
+        return {
+            "full_name": a.full_name,
+            "phone": a.phone or (str(obj.phone) if obj.phone else None),
+            "address": a.address,
+            "address_line2": a.address_line2,
+            "city": a.city,
+            "state": a.state,
+            "postal_code": a.postal_code,
+            "country": a.country,
+        }
 
     class Meta:
         model = Order
@@ -341,6 +358,7 @@ class OrderSerializer(serializers.ModelSerializer):
             "total_amount",
             "order_status",
             "address_id",
+            "shipping_address",
             "pay_mode",
             "phone",
             "estimated_delivery_date",

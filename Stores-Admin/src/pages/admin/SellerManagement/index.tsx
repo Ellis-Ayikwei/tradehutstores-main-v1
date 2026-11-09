@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import useSWR from 'swr';
 import { ChevronRight, RefreshCw, Store } from 'lucide-react';
@@ -14,7 +14,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/shadcn/tabs';
 import { cn } from '@/lib/utils';
 import { fetchAdminSellers, type AdminSellerError, type Paginated, type SellerListRow } from '@/services/adminSellersService';
 import { setPageTitle } from '@/store/themeConfigSlice';
-import { ReviewSheet, SELLERS_KEY } from './ReviewSheet';
+import { SELLERS_KEY } from './sellerSections';
 import { CategoryChips, MissingChip, STATUS_TABS, StatusBadge, businessTypeLabel, categoryNames, ownerName, rowDate } from './sellerUi';
 
 const PAGE_SIZE = 25;
@@ -50,16 +50,16 @@ function OwnerCell({ row }: { row: SellerListRow }) {
 
 export default function SellerManagement() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
 
     useEffect(() => {
-        dispatch(setPageTitle('Seller applications'));
+        dispatch(setPageTitle('Sellers'));
     }, [dispatch]);
 
     const tab = STATUS_TABS.find((t) => t.value === searchParams.get('status')) ?? STATUS_TABS[0];
     const page = Math.max(1, Number(searchParams.get('page')) || 1);
     const q = searchParams.get('q') ?? '';
-    const sellerId = searchParams.get('id');
 
     const update = useCallback(
         (patch: Record<string, string | null>, replace = true) => {
@@ -88,8 +88,7 @@ export default function SellerManagement() {
     const { data: pendingData } = useSWR<Paginated<SellerListRow>, AdminSellerError>([SELLERS_KEY, 'count', 'pending'], () => fetchAdminSellers({ status: 'pending', pageSize: 1 }), SWR_OPTIONS);
     const pendingCount = pendingData?.count;
 
-    const openSeller = useCallback((id: string | number) => update({ id: String(id) }, false), [update]);
-    const closeSeller = useCallback(() => update({ id: null }), [update]);
+    const openSeller = useCallback((id: string | number) => navigate(`/admin/sellers/${id}`), [navigate]);
 
     const emptyState = useMemo(() => {
         if (q) return undefined;
@@ -127,13 +126,13 @@ export default function SellerManagement() {
                         type="button"
                         size="sm"
                         variant="outline"
-                        aria-label={`Review ${row.original.business_name}`}
+                        aria-label={`Open ${row.original.business_name}`}
                         onClick={(event) => {
                             event.stopPropagation();
                             openSeller(row.original.id);
                         }}
                     >
-                        Review
+                        Open
                     </Button>
                 ),
             },
@@ -178,8 +177,8 @@ export default function SellerManagement() {
     return (
         <div className="space-y-3">
             <PageHeader
-                title="Seller applications"
-                description="Review sellers who applied online. Their products stay hidden until you approve them."
+                title="Sellers"
+                description="Review applications and open a seller to see what they sold and what they have been paid. Products stay hidden until approved."
                 className="pb-0"
                 actions={
                     <Button type="button" variant="outline" size="sm" onClick={() => void mutate()} disabled={isValidating}>
@@ -189,7 +188,7 @@ export default function SellerManagement() {
                 }
             />
 
-            <Tabs value={tab.value} onValueChange={(value) => update({ status: value === 'pending' ? null : value, page: null, id: null })}>
+            <Tabs value={tab.value} onValueChange={(value) => update({ status: value === 'pending' ? null : value, page: null })}>
                 <div className="-mx-1 overflow-x-auto px-1 pb-1">
                     <TabsList className="w-max">
                         {STATUS_TABS.map((t) => (
@@ -226,7 +225,6 @@ export default function SellerManagement() {
                 enableColumnVisibility={false}
             />
 
-            <ReviewSheet sellerId={sellerId} onClose={closeSeller} />
         </div>
     );
 }
