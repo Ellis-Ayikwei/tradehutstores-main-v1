@@ -51,7 +51,7 @@
       "vercel": "$vercel",
       "esbuild": ">=0.25.0",
       "miniflare": "5.20261110.1-beta",
-      "cookie": ">=0.7.2"
+      "cookie": "^0.7.2"
     },
     "js-yaml": "^4.3.2",
     "zod": "^4.6.7",
