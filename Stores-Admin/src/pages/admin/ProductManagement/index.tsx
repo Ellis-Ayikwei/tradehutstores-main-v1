@@ -1,17 +1,18 @@
-import {
-    IconAlertTriangle,
-    IconEdit,
-    IconEye,
-    IconPackage,
-    IconPlus,
-    IconTag,
-    IconTrash,
-} from '@tabler/icons-react';
-import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import IconLoader from '../../../components/Icon/IconLoader';
-import DraggableDataTable, { ColumnDefinition } from '../../../components/ui/DraggableDataTable';
-import FilterSelect from '../../../components/ui/FilterSelect';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import type { ColumnDef } from '@tanstack/react-table';
+import { AlertTriangle, Eye, Package, Pencil, Plus, RefreshCw, Star, Tag, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { Badge } from '@/components/shadcn/badge';
+import { Button } from '@/components/shadcn/button';
+import { Card } from '@/components/shadcn/card';
+import { DataTable, type DataTableSort } from '@/components/shadcn/data-table';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/shadcn/dialog';
+import { EmptyState } from '@/components/shadcn/empty-state';
+import { PageHeader } from '@/components/shadcn/page-header';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
+import { StatCard } from '@/components/shadcn/stat-card';
+import { cn } from '@/lib/utils';
 import axiosInstance from '../../../services/axiosInstance';
 import { useCurrency } from '../../../contexts/CurrencyContext';
 
@@ -43,56 +44,113 @@ interface Product {
     updated_at?: string;
 }
 
+const PAGE_SIZE = 25;
+const ALL = 'all';
+const AVAILABLE_ONLY = '__available_only';
+const FEATURED_ONLY = '__featured_only';
+
+const variantPriceAmount = (p: Product): number => Number(p.primary_variant_price ?? p.price ?? 0) || 0;
+const finalPrice = (p: Product): number => {
+    const disc = Number(p.discount_percentage ?? 0) || 0;
+    const base = variantPriceAmount(p);
+    return disc > 0 ? base - (base * disc) / 100 : base;
+};
+const skuLine = (p: Product): string => String(p.primary_sku ?? p.sku ?? '').trim() || '-';
+const stockOf = (p: Product): number => {
+    const qty = p.variant_stock_total ?? p.stock ?? p.inventory_level ?? 0;
+    return typeof qty === 'number' ? qty : Number(qty) || 0;
+};
+
+function statusVariant(status?: string | null): 'success' | 'warning' | 'destructive' | 'secondary' {
+    const key = String(status ?? '').trim().toLowerCase();
+    if (['active', 'published'].includes(key)) return 'success';
+    if (['draft', 'pending'].includes(key)) return 'warning';
+    if (key === 'deleted') return 'destructive';
+    return 'secondary';
+}
+
+function StatusBadge({ status }: { status?: string | null }) {
+    const label = String(status ?? 'Unknown').trim() || 'Unknown';
+    return <Badge variant={statusVariant(status)}>{label}</Badge>;
+}
+
+function ProductThumb({ product, className }: { product: Product; className?: string }) {
+    return (
+        <div className={cn('flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted text-muted-foreground', className)}>
+            {product.main_product_image ? (
+                <img src={product.main_product_image} alt={product.name || 'Product'} className="h-full w-full object-cover" loading="lazy" />
+            ) : (
+                <Package className="h-5 w-5" aria-hidden="true" />
+            )}
+        </div>
+    );
+}
+
+function sortValue(p: Product, id: string): string | number {
+    switch (id) {
+        case 'name':
+            return (p.name || '').toLowerCase();
+        case 'category':
+            return String(p.category_name || p.category || '').toLowerCase();
+        case 'brand':
+            return String(p.brand_name || p.brand || '').toLowerCase();
+        case 'price':
+            return finalPrice(p);
+        case 'stock':
+            return stockOf(p);
+        case 'status':
+            return String(p.status ?? '').toLowerCase();
+        default:
+            return 0;
+    }
+}
+
 const ProductManagement: React.FC = () => {
+    const navigate = useNavigate();
+    const { formatDisplayPrice: formatCurrency } = useCurrency();
+
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [activeFilter, setActiveFilter] = useState('all');
-    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [activeFilter, setActiveFilter] = useState(ALL);
+    const [search, setSearch] = useState('');
+    const [sort, setSort] = useState<DataTableSort | null>(null);
+    const [page, setPage] = useState(1);
+    const [toDelete, setToDelete] = useState<Product | null>(null);
+    const [deleting, setDeleting] = useState(false);
 
-    // Fetch products from API
-    const fetchProducts = async () => {
+    const fetchProducts = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
             const response = await axiosInstance.get('/products/');
             // Handle both array response and paginated response with results
-            const productsData = Array.isArray(response.data) 
-                ? response.data 
-                : (response.data?.results || response.data?.data || []);
+            const productsData = Array.isArray(response.data) ? response.data : response.data?.results || response.data?.data || [];
             setProducts(productsData);
         } catch (err) {
             setError('Failed to fetch products. Please try again later.');
             console.error('Error fetching products:', err);
-            setProducts([]); // Ensure products is always an array
+            setProducts([]);
         } finally {
             setLoading(false);
         }
-    };
-
-    useEffect(() => {
-        fetchProducts();
     }, []);
 
-    const dashboardStats = useMemo(() => {
-        const rows = Array.isArray(products) ? products : [];
-        return {
-            total: rows.length,
-            available: rows.filter((p) => p.available !== false).length,
-            spotlight: rows.filter((p) => Boolean(p.is_product_of_the_month)).length,
-            discounted: rows.filter((p) => Number(p.discount_percentage ?? 0) > 0).length,
-        };
-    }, [products]);
+    useEffect(() => {
+        void fetchProducts();
+    }, [fetchProducts]);
+
+    const stats = useMemo(
+        () => ({
+            total: products.length,
+            available: products.filter((p) => p.available !== false).length,
+            spotlight: products.filter((p) => Boolean(p.is_product_of_the_month)).length,
+            discounted: products.filter((p) => Number(p.discount_percentage ?? 0) > 0).length,
+        }),
+        [products]
+    );
 
     const filterOptions = useMemo(() => {
-        if (!Array.isArray(products) || products.length === 0) {
-            return [
-                { value: 'all', label: 'All products (0)' },
-                { value: '__available_only', label: 'Available only (0)' },
-                { value: '__featured_only', label: 'Product of month (0)' },
-            ];
-        }
         const statusCounts = new Map<string, number>();
         products.forEach((p) => {
             const st = String(p.status ?? '').trim() || '(no status)';
@@ -100,344 +158,345 @@ const ProductManagement: React.FC = () => {
         });
         const sorted = [...statusCounts.entries()].sort((a, b) => a[0].localeCompare(b[0]));
         return [
-            { value: 'all', label: `All products (${products.length})` },
+            { value: ALL, label: `All products (${products.length})` },
             ...sorted.map(([st, count]) => ({ value: st, label: `${st} (${count})` })),
-            {
-                value: '__available_only',
-                label: `Available only (${products.filter((p) => p.available !== false).length})`,
-            },
-            {
-                value: '__featured_only',
-                label: `Product of month (${products.filter((p) => p.is_product_of_the_month).length})`,
-            },
+            { value: AVAILABLE_ONLY, label: `Available only (${stats.available})` },
+            { value: FEATURED_ONLY, label: `Product of month (${stats.spotlight})` },
         ];
-    }, [products]);
+    }, [products, stats.available, stats.spotlight]);
 
-    // Filter products based on active filter
-    const getFilteredProducts = () => {
-        // Ensure products is an array - defensive check with early return
-        if (!products || !Array.isArray(products)) {
-            return [];
+    const filtered = useMemo(() => {
+        const q = search.trim().toLowerCase();
+        let rows = products.filter((p) => {
+            if (activeFilter === AVAILABLE_ONLY) return p.available !== false;
+            if (activeFilter === FEATURED_ONLY) return Boolean(p.is_product_of_the_month);
+            if (activeFilter !== ALL) return (String(p.status ?? '').trim() || '(no status)') === activeFilter;
+            return true;
+        });
+        if (q) {
+            rows = rows.filter((p) =>
+                [p.name, p.primary_sku, p.sku, p.category_name, p.category, p.brand_name, p.brand].some((v) => String(v ?? '').toLowerCase().includes(q))
+            );
         }
-        const productsArray = products;
-        if (activeFilter === 'all') return productsArray;
-        if (activeFilter === '__available_only') return productsArray.filter((p) => p.available !== false);
-        if (activeFilter === '__featured_only') return productsArray.filter((p) => p.is_product_of_the_month);
-        return productsArray.filter((p) => String(p.status ?? '').trim() === activeFilter);
-    };
+        if (sort) {
+            const dir = sort.desc ? -1 : 1;
+            rows = [...rows].sort((a, b) => {
+                const av = sortValue(a, sort.id);
+                const bv = sortValue(b, sort.id);
+                if (av < bv) return -1 * dir;
+                if (av > bv) return 1 * dir;
+                return 0;
+            });
+        }
+        return rows;
+    }, [products, activeFilter, search, sort]);
 
-    const handleFilterChange = (filter: string | number) => {
-        setActiveFilter(String(filter));
-    };
+    const pageRows = useMemo(() => filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE), [filtered, page]);
 
-    // Handle product deletion
-    const handleDelete = (product: Product) => {
-        setSelectedProduct(product);
-        setShowDeleteModal(true);
-    };
-
-    const handleConfirmDelete = async () => {
-        if (selectedProduct) {
-            try {
-                await axiosInstance.delete(`/products/${selectedProduct.id}/`);
-                await fetchProducts();
-                setShowDeleteModal(false);
-                setSelectedProduct(null);
-            } catch (err) {
-                setError('Failed to delete product. Please try again.');
-                console.error('Error deleting product:', err);
-            }
+    const confirmDelete = async () => {
+        if (!toDelete) return;
+        setDeleting(true);
+        try {
+            await axiosInstance.delete(`/products/${toDelete.id}/`);
+            toast.success('Product deleted');
+            setToDelete(null);
+            await fetchProducts();
+        } catch (err) {
+            console.error('Error deleting product:', err);
+            toast.error('Failed to delete product. Please try again.');
+        } finally {
+            setDeleting(false);
         }
     };
 
-    const { formatDisplayPrice: formatCurrency } = useCurrency();
-
-    const getStatusBadge = (status?: string | null) => {
-        const label = String(status ?? 'Unknown').trim() || 'Unknown';
-        const key = label.toLowerCase();
-        const greens = ['active', 'published'];
-        const warm = ['draft', 'pending'];
-        let cls = 'bg-gray-100 text-gray-800';
-        if (greens.includes(key)) cls = 'bg-green-100 text-green-800';
-        else if (warm.includes(key)) cls = 'bg-amber-100 text-amber-900';
-        else if (['deleted'].includes(key)) cls = 'bg-red-100 text-red-900';
-        else if (['deactivated', 'suspended', 'archived'].includes(key)) cls = 'bg-slate-100 text-slate-800';
-        return <span className={`px-2 py-1 text-xs font-semibold rounded-full ${cls}`}>{label}</span>;
-    };
-
-    const variantPriceAmount = (p: Product): number =>
-        Number(p.primary_variant_price ?? p.price ?? 0) || 0;
-
-    const skuLine = (p: Product): string =>
-        String((p.primary_sku ?? p.sku) ?? '')
-            .trim() || '—';
-
-    const columns: ColumnDefinition[] = [
-        {
-            accessor: 'main_product_image',
-            title: 'Image',
-            render: (product: Product) => (
-                <div className="w-12 h-12 flex-shrink-0">
-                    {product.main_product_image ? (
-                        <img src={product.main_product_image} alt={product.name || 'Product'} className="w-full h-full object-cover rounded" />
-                    ) : (
-                        <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center">
-                            <IconPackage className="w-6 h-6 text-gray-400" />
-                        </div>
-                    )}
-                </div>
-            ),
-        },
-        {
-            accessor: 'name',
-            title: 'Product Name',
-            sortable: true,
-            render: (product: Product) => (
+    const priceCell = useCallback(
+        (product: Product) => {
+            const disc = Number(product.discount_percentage ?? 0) || 0;
+            const base = variantPriceAmount(product);
+            return (
                 <div>
-                    <div className="font-semibold text-gray-900">{product.name || 'N/A'}</div>
-                    <div className="text-sm text-gray-500">SKU: {skuLine(product)}</div>
+                    <div className="font-semibold tabular-nums text-foreground">{formatCurrency(finalPrice(product))}</div>
+                    {disc > 0 ? (
+                        <div className="text-xs text-muted-foreground">
+                            <span className="tabular-nums line-through">{formatCurrency(base)}</span> <span className="font-medium text-destructive">-{disc}%</span>
+                        </div>
+                    ) : null}
                 </div>
-            ),
+            );
         },
-        {
-            accessor: 'category',
-            title: 'Category',
-            sortable: true,
-            render: (product: Product) => (
-                <div className="text-gray-900">
-                    <div>{product.category_name || product.category || '—'}</div>
-                    {product.sub_category_name && (
-                        <div className="text-xs text-gray-500">{product.sub_category_name}</div>
-                    )}
-                </div>
-            ),
-        },
-        {
-            accessor: 'brand',
-            title: 'Brand',
-            sortable: true,
-            render: (product: Product) => (
-                <span className="text-gray-900">{product.brand_name || product.brand || '—'}</span>
-            ),
-        },
-        {
-            accessor: 'price',
-            title: 'Price',
-            sortable: true,
-            render: (product: Product) => {
-                const disc = Number(product.discount_percentage ?? 0) || 0;
-                const base = variantPriceAmount(product);
-                const finalAmt = disc > 0 ? base - (base * disc) / 100 : base;
-                return (
-                    <div>
-                        <div className="font-semibold">{formatCurrency(finalAmt)}</div>
-                        {disc > 0 && (
-                            <div className="text-xs text-gray-500">
-                                <span className="line-through text-gray-400">{formatCurrency(base)}</span>{' '}
-                                <span className="text-red-600">-{disc}%</span>
-                            </div>
-                        )}
-                    </div>
-                );
-            },
-        },
-        {
-            accessor: 'stock',
-            title: 'Stock',
-            sortable: true,
-            render: (product: Product) => {
-                const qty =
-                    product.variant_stock_total ??
-                    product.stock ??
-                    product.inventory_level ??
-                    0;
-                const qn = typeof qty === 'number' ? qty : Number(qty) || 0;
-                const low = qn <= 10;
-                return (
-                    <div className={`font-semibold ${low ? 'text-red-600' : 'text-gray-900'}`}>
-                        {qn}
-                        {low && <span className="text-xs ml-1">(Low)</span>}
-                    </div>
-                );
-            },
-        },
-        {
-            accessor: 'average_rating',
-            title: 'Rating',
-            render: (product: Product) => (
-                <div className="flex items-center gap-1">
-                    <span className="font-semibold">
-                        {(Number(product.average_rating ?? 0) || 0).toFixed(1)}
-                    </span>
-                    <span className="text-xs text-gray-500">({product.total_reviews || 0})</span>
-                </div>
-            ),
-        },
-        {
-            accessor: 'status',
-            title: 'Status',
-            sortable: true,
-            render: (product: Product) => getStatusBadge(product.status ?? undefined),
-        },
-        {
-            accessor: 'actions',
-            title: 'Actions',
-            render: (product: Product) => (
-                <div className="flex gap-2">
-                    <Link
-                        to={`/admin/products/${product.id}`}
-                        className="p-2 hover:bg-gray-100 rounded transition-colors"
-                        title="View Details"
-                    >
-                        <IconEye className="w-4 h-4 text-blue-600" />
-                    </Link>
-                    <Link
-                        to={`/admin/products/${product.id}/edit`}
-                        className="p-2 hover:bg-gray-100 rounded transition-colors"
-                        title="Edit Product"
-                    >
-                        <IconEdit className="w-4 h-4 text-green-600" />
-                    </Link>
-                    <button
-                        onClick={() => handleDelete(product)}
-                        className="p-2 hover:bg-gray-100 rounded transition-colors"
-                        title="Delete Product"
-                    >
-                        <IconTrash className="w-4 h-4 text-red-600" />
-                    </button>
-                </div>
-            ),
-        },
-    ];
+        [formatCurrency]
+    );
 
-    if (loading) {
+    const stockCell = (product: Product) => {
+        const qn = stockOf(product);
+        const low = qn <= 10;
         return (
-            <div className="flex items-center justify-center min-h-screen">
-                <IconLoader className="w-10 h-10 animate-spin" />
-            </div>
+            <span className={cn('font-semibold tabular-nums', low ? 'text-destructive' : 'text-foreground')}>
+                {qn}
+                {low ? <span className="ml-1 text-xs font-normal">(Low)</span> : null}
+            </span>
         );
-    }
+    };
+
+    const actionButtons = (product: Product) => (
+        <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
+            <Button asChild variant="ghost" size="icon-sm">
+                <Link to={`/admin/products/${product.id}`} aria-label={`View ${product.name}`} title="View details">
+                    <Eye />
+                </Link>
+            </Button>
+            <Button asChild variant="ghost" size="icon-sm">
+                <Link to={`/admin/products/${product.id}/edit`} aria-label={`Edit ${product.name}`} title="Edit product">
+                    <Pencil />
+                </Link>
+            </Button>
+            <Button type="button" variant="ghost" size="icon-sm" aria-label={`Delete ${product.name}`} title="Delete product" onClick={() => setToDelete(product)}>
+                <Trash2 className="text-destructive" />
+            </Button>
+        </div>
+    );
+
+    const columns = useMemo<ColumnDef<Product>[]>(
+        () => [
+            {
+                id: 'image',
+                header: () => <span className="sr-only">Image</span>,
+                enableSorting: false,
+                enableHiding: false,
+                meta: { className: 'w-16' },
+                cell: ({ row }) => <ProductThumb product={row.original} />,
+            },
+            {
+                id: 'name',
+                accessorFn: (p) => sortValue(p, 'name'),
+                header: 'Product',
+                meta: { label: 'Product', cardTitle: true },
+                cell: ({ row }) => (
+                    <div className="min-w-[10rem]">
+                        <Link to={`/admin/products/${row.original.id}`} className="font-semibold text-foreground hover:underline" onClick={(e) => e.stopPropagation()}>
+                            {row.original.name || 'Unnamed product'}
+                        </Link>
+                        <p className="text-xs text-muted-foreground">SKU: {skuLine(row.original)}</p>
+                    </div>
+                ),
+            },
+            {
+                id: 'category',
+                accessorFn: (p) => sortValue(p, 'category'),
+                header: 'Category',
+                meta: { label: 'Category' },
+                cell: ({ row }) => (
+                    <div>
+                        <p className="text-sm text-foreground">{row.original.category_name || row.original.category || '-'}</p>
+                        {row.original.sub_category_name ? <p className="text-xs text-muted-foreground">{row.original.sub_category_name}</p> : null}
+                    </div>
+                ),
+            },
+            {
+                id: 'brand',
+                accessorFn: (p) => sortValue(p, 'brand'),
+                header: 'Brand',
+                meta: { label: 'Brand' },
+                cell: ({ row }) => <span className="text-sm text-foreground">{row.original.brand_name || row.original.brand || '-'}</span>,
+            },
+            {
+                id: 'price',
+                accessorFn: (p) => sortValue(p, 'price'),
+                header: 'Price',
+                meta: { label: 'Price', className: 'text-right' },
+                cell: ({ row }) => priceCell(row.original),
+            },
+            {
+                id: 'stock',
+                accessorFn: (p) => sortValue(p, 'stock'),
+                header: 'Stock',
+                meta: { label: 'Stock', className: 'text-right' },
+                cell: ({ row }) => stockCell(row.original),
+            },
+            {
+                id: 'rating',
+                header: 'Rating',
+                enableSorting: false,
+                meta: { label: 'Rating' },
+                cell: ({ row }) => (
+                    <span className="inline-flex items-center gap-1 text-sm text-foreground">
+                        <Star className="h-3.5 w-3.5 text-warning-subtle-foreground" aria-hidden="true" />
+                        <span className="font-semibold tabular-nums">{(Number(row.original.average_rating ?? 0) || 0).toFixed(1)}</span>
+                        <span className="text-xs text-muted-foreground">({row.original.total_reviews || 0})</span>
+                    </span>
+                ),
+            },
+            {
+                id: 'status',
+                accessorFn: (p) => sortValue(p, 'status'),
+                header: 'Status',
+                meta: { label: 'Status' },
+                cell: ({ row }) => <StatusBadge status={row.original.status} />,
+            },
+            {
+                id: 'actions',
+                header: () => <span className="sr-only">Actions</span>,
+                enableSorting: false,
+                enableHiding: false,
+                meta: { className: 'w-36 text-right' },
+                cell: ({ row }) => actionButtons(row.original),
+            },
+        ],
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [priceCell]
+    );
+
+    const renderMobileCard = useCallback(
+        (product: Product) => (
+            <Card key={product.id} className="p-3">
+                <div className="flex items-start gap-3">
+                    <ProductThumb product={product} className="h-16 w-16" />
+                    <div className="min-w-0 flex-1 space-y-1">
+                        <Link to={`/admin/products/${product.id}`} className="block truncate text-sm font-semibold text-foreground hover:underline">
+                            {product.name || 'Unnamed product'}
+                        </Link>
+                        <p className="truncate text-xs text-muted-foreground">
+                            SKU: {skuLine(product)}
+                            {product.category_name || product.category ? ` · ${product.category_name || product.category}` : ''}
+                        </p>
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+                            {priceCell(product)}
+                            <span className="text-xs text-muted-foreground">Stock</span>
+                            {stockCell(product)}
+                        </div>
+                        <StatusBadge status={product.status} />
+                    </div>
+                </div>
+                <div className="mt-2 border-t pt-2">{actionButtons(product)}</div>
+            </Card>
+        ),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [priceCell]
+    );
+
+    const emptyState = useMemo(() => {
+        if (search.trim() || activeFilter !== ALL) return undefined;
+        return (
+            <EmptyState
+                icon={Package}
+                title="No products yet"
+                description="Products added to the catalog will appear here."
+                action={
+                    <Button asChild size="sm">
+                        <Link to="/admin/products/new">
+                            <Plus />
+                            Add product
+                        </Link>
+                    </Button>
+                }
+            />
+        );
+    }, [search, activeFilter]);
 
     return (
-        <div className="space-y-6">
-            {/* Header */}
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Product Management</h1>
-                    <p className="text-gray-600 mt-1">Manage your product catalog and inventory</p>
-                </div>
-                <Link
-                    to="/admin/products/new"
-                    className="flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
-                >
-                    <IconPlus className="w-5 h-5" />
-                    Add New Product
-                </Link>
+        <div className="space-y-3">
+            <PageHeader
+                title="Products"
+                description="Manage the product catalog and inventory"
+                className="pb-0"
+                actions={
+                    <>
+                        <Button type="button" variant="outline" size="sm" onClick={() => void fetchProducts()} disabled={loading}>
+                            <RefreshCw className={cn(loading && 'animate-spin')} aria-hidden="true" />
+                            Refresh
+                        </Button>
+                        <Button asChild size="sm">
+                            <Link to="/admin/products/new">
+                                <Plus />
+                                Add product
+                            </Link>
+                        </Button>
+                    </>
+                }
+            />
+
+            <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+                <StatCard label="Catalog size" value={stats.total} icon={Package} isLoading={loading} />
+                <StatCard label="Available" value={stats.available} icon={Package} isLoading={loading} />
+                <StatCard label="Product of the month" value={stats.spotlight} icon={Star} isLoading={loading} />
+                <StatCard label="With discount" value={stats.discounted} icon={Tag} isLoading={loading} />
             </div>
 
-            {/* Error Message */}
-            {error && (
-                <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-start gap-3">
-                    <IconAlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+            {error && !loading ? (
+                <div className="flex items-start gap-2 rounded-xl bg-destructive-subtle px-3 py-2 text-sm text-destructive-subtle-foreground" role="alert">
+                    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
                     <p>{error}</p>
                 </div>
-            )}
+            ) : null}
 
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">Catalog size</p>
-                            <p className="text-2xl font-bold text-gray-900 mt-1">{dashboardStats.total}</p>
-                        </div>
-                        <IconPackage className="w-10 h-10 text-blue-500" />
-                    </div>
-                </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">Available flag</p>
-                            <p className="text-2xl font-bold text-green-600 mt-1">{dashboardStats.available}</p>
-                        </div>
-                        <IconPackage className="w-10 h-10 text-green-500" />
-                    </div>
-                </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">Spotlight (POTM)</p>
-                            <p className="text-2xl font-bold text-amber-600 mt-1">{dashboardStats.spotlight}</p>
-                        </div>
-                        <IconTag className="w-10 h-10 text-amber-500" />
-                    </div>
-                </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">With discount%</p>
-                            <p className="text-2xl font-bold text-red-600 mt-1">{dashboardStats.discounted}</p>
-                        </div>
-                        <IconAlertTriangle className="w-10 h-10 text-red-500" />
-                    </div>
-                </div>
-            </div>
+            <DataTable
+                columns={columns}
+                data={pageRows}
+                total={filtered.length}
+                page={page}
+                pageSize={PAGE_SIZE}
+                onPageChange={setPage}
+                sort={sort}
+                onSortChange={(next) => {
+                    setSort(next);
+                    setPage(1);
+                }}
+                search={search}
+                onSearchChange={(value) => {
+                    setSearch(value);
+                    setPage(1);
+                }}
+                searchPlaceholder="Search by name, SKU, category or brand"
+                toolbar={
+                    <Select
+                        value={activeFilter}
+                        onValueChange={(value) => {
+                            setActiveFilter(value);
+                            setPage(1);
+                        }}
+                    >
+                        <SelectTrigger className="w-full sm:w-56" aria-label="Filter by status">
+                            <SelectValue placeholder="Filter by status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {filterOptions.map((o) => (
+                                <SelectItem key={o.value} value={o.value}>
+                                    {o.label}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                }
+                isLoading={loading}
+                error={error && products.length === 0 ? error : undefined}
+                onRetry={() => void fetchProducts()}
+                emptyState={emptyState}
+                getRowId={(row) => row.id}
+                onRowClick={(row) => navigate(`/admin/products/${row.id}`)}
+                renderMobileCard={renderMobileCard}
+            />
 
-            {/* Filters */}
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                <FilterSelect 
-                    options={filterOptions} 
-                    value={activeFilter} 
-                    onChange={handleFilterChange}
-                    placeholder="Filter by status"
-                />
-            </div>
-
-            {/* Products Table */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                <DraggableDataTable
-                    data={getFilteredProducts()}
-                    columns={columns}
-                    loading={loading}
-                    title="Products"
-                    quickCheckFields={['name', 'primary_sku', 'sku', 'category_name', 'category', 'brand_name', 'brand']}
-                />
-            </div>
-
-            {/* Delete Confirmation Modal */}
-            {showDeleteModal && selectedProduct && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 bg-red-100 rounded-full">
-                                <IconTrash className="w-6 h-6 text-red-600" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-gray-900">Delete Product</h3>
-                        </div>
-                        <p className="text-gray-600 mb-6">
-                            Are you sure you want to delete <strong>{selectedProduct.name}</strong>? This action cannot be undone.
-                        </p>
-                        <div className="flex justify-end gap-3">
-                            <button
-                                onClick={() => setShowDeleteModal(false)}
-                                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleConfirmDelete}
-                                className="px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
-                            >
-                                Delete Product
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <Dialog open={Boolean(toDelete)} onOpenChange={(open) => (!open && !deleting ? setToDelete(null) : undefined)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Delete product</DialogTitle>
+                        <DialogDescription>
+                            Delete <span className="font-semibold text-foreground">{toDelete?.name}</span>? This action cannot be undone.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button type="button" variant="outline" onClick={() => setToDelete(null)} disabled={deleting}>
+                            Cancel
+                        </Button>
+                        <Button type="button" variant="destructive" onClick={() => void confirmDelete()} disabled={deleting}>
+                            <Trash2 />
+                            {deleting ? 'Deleting...' : 'Delete product'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };
 
 export default ProductManagement;
-
-

@@ -1,20 +1,25 @@
-import {
-    IconAlertTriangle,
-    IconEdit,
-    IconPackage,
-    IconPlus,
-    IconMinus,
-    IconRefresh,
-    IconTrendingDown,
-    IconTrendingUp,
-} from '@tabler/icons-react';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import IconLoader from '../../../components/Icon/IconLoader';
-import DraggableDataTable, { ColumnDefinition } from '../../../components/ui/DraggableDataTable';
-import FilterSelect from '../../../components/ui/FilterSelect';
-import axiosInstance from '../../../services/axiosInstance';
+import type { ColumnDef } from '@tanstack/react-table';
+import { AlertTriangle, Boxes, Loader2, Minus, Package, Pencil, Plus, RefreshCw, TrendingUp } from 'lucide-react';
+import { toast } from 'sonner';
+import { Badge } from '@/components/shadcn/badge';
+import { Button } from '@/components/shadcn/button';
+import { Card, CardContent } from '@/components/shadcn/card';
+import { DataTable, type DataTableSort } from '@/components/shadcn/data-table';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/shadcn/dialog';
+import { EmptyState } from '@/components/shadcn/empty-state';
+import { Input } from '@/components/shadcn/input';
+import { Label } from '@/components/shadcn/label';
+import { PageHeader } from '@/components/shadcn/page-header';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
+import { StatCard } from '@/components/shadcn/stat-card';
+import { Textarea } from '@/components/shadcn/textarea';
+import { cn } from '@/lib/utils';
 import { useCurrency } from '../../../contexts/CurrencyContext';
+import axiosInstance from '../../../services/axiosInstance';
+
+type StockStatus = 'in_stock' | 'low_stock' | 'out_of_stock' | 'overstock';
 
 interface InventoryItem {
     id: string;
@@ -29,31 +34,83 @@ interface InventoryItem {
     last_restocked: string;
     unit_cost: number;
     total_value: number;
-    status: 'in_stock' | 'low_stock' | 'out_of_stock' | 'overstock';
+    status: StockStatus;
 }
 
+const STATUS_META: Record<StockStatus, { label: string; variant: 'success' | 'warning' | 'destructive' | 'info'; icon: typeof Package }> = {
+    in_stock: { label: 'In stock', variant: 'success', icon: Package },
+    low_stock: { label: 'Low stock', variant: 'warning', icon: AlertTriangle },
+    out_of_stock: { label: 'Out of stock', variant: 'destructive', icon: AlertTriangle },
+    overstock: { label: 'Overstock', variant: 'info', icon: TrendingUp },
+};
+
+const PAGE_SIZES = [10, 25, 50, 100];
+
+const formatDate = (dateString: string): string =>
+    new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(dateString));
+
+const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
+    const meta = STATUS_META[status as StockStatus] ?? STATUS_META.in_stock;
+    const Icon = meta.icon;
+    return (
+        <Badge variant={meta.variant}>
+            <Icon aria-hidden="true" />
+            {meta.label}
+        </Badge>
+    );
+};
+
+const StockBar: React.FC<{ item: InventoryItem }> = ({ item }) => {
+    const current = item.current_stock || 0;
+    const max = item.maximum_stock || 1;
+    const pct = (current / max) * 100;
+    const color = pct < 25 ? 'bg-destructive' : pct < 50 ? 'bg-warning' : 'bg-success';
+    return (
+        <div className="h-1.5 w-full min-w-[96px] overflow-hidden rounded-full bg-muted">
+            <div className={cn('h-full rounded-full transition-all', color)} style={{ width: `${Math.min(pct, 100)}%` }} />
+        </div>
+    );
+};
+
+const StockLevel: React.FC<{ item: InventoryItem }> = ({ item }) => {
+    const current = item.current_stock || 0;
+    const tone = current <= (item.reorder_point || 0) ? 'text-destructive' : current <= (item.minimum_stock || 0) ? 'text-warning-700' : 'text-foreground';
+    return (
+        <div className="space-y-1">
+            <div className="flex items-center gap-1.5">
+                <span className={cn('font-semibold', tone)}>{item.current_stock ?? 0}</span>
+                <span className="text-xs text-muted-foreground">/ {item.maximum_stock || 0}</span>
+            </div>
+            <StockBar item={item} />
+        </div>
+    );
+};
+
 const InventoryManagement: React.FC = () => {
+    const { formatDisplayPrice: formatCurrency } = useCurrency();
+
     const [inventory, setInventory] = useState<InventoryItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [activeFilter, setActiveFilter] = useState('all');
-    const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
-    const [showStockModal, setShowStockModal] = useState(false);
-    const [stockAdjustment, setStockAdjustment] = useState({ quantity: 0, reason: '', type: 'add' as 'add' | 'remove' });
 
-    // Fetch inventory from API
-    const fetchInventory = async () => {
+    const [statusFilter, setStatusFilter] = useState<string>('all');
+    const [search, setSearch] = useState('');
+    const [sort, setSort] = useState<DataTableSort | null>(null);
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+
+    const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
+    const [adjustment, setAdjustment] = useState({ quantity: 0, reason: '', type: 'add' as 'add' | 'remove' });
+    const [adjustError, setAdjustError] = useState<string | null>(null);
+    const [saving, setSaving] = useState(false);
+
+    const fetchInventory = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
             const response = await axiosInstance.get('/products/inventory/');
             const data = response.data;
-            const list = Array.isArray(data)
-                ? data
-                : Array.isArray(data?.results)
-                ? data.results
-                : [];
-            setInventory(list);
+            setInventory(Array.isArray(data) ? data : Array.isArray(data?.results) ? data.results : []);
         } catch (err) {
             setError('Failed to fetch inventory. Please try again later.');
             console.error('Error fetching inventory:', err);
@@ -61,414 +118,328 @@ const InventoryManagement: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchInventory();
-    }, []);
+    }, [fetchInventory]);
 
-    // Calculate inventory stats
-    const getInventoryStats = () => {
-        const stats = {
+    const stats = useMemo(
+        () => ({
             all: inventory.length,
-            in_stock: inventory.filter((item) => item.status === 'in_stock').length,
-            low_stock: inventory.filter((item) => item.status === 'low_stock').length,
-            out_of_stock: inventory.filter((item) => item.status === 'out_of_stock').length,
-            overstock: inventory.filter((item) => item.status === 'overstock').length,
-            total_value: inventory.reduce((sum, item) => sum + item.total_value, 0),
-        };
-        return stats;
-    };
+            in_stock: inventory.filter((i) => i.status === 'in_stock').length,
+            low_stock: inventory.filter((i) => i.status === 'low_stock').length,
+            out_of_stock: inventory.filter((i) => i.status === 'out_of_stock').length,
+            overstock: inventory.filter((i) => i.status === 'overstock').length,
+            total_value: inventory.reduce((sum, i) => sum + (i.total_value || 0), 0),
+        }),
+        [inventory]
+    );
 
-    const inventoryStats = getInventoryStats();
+    const visibleRows = useMemo(() => {
+        const q = search.trim().toLowerCase();
+        let rows = inventory.filter((i) => (statusFilter === 'all' ? true : i.status === statusFilter));
+        if (q) {
+            rows = rows.filter((i) => [i.product_name, i.sku, i.warehouse_location].some((v) => (v || '').toLowerCase().includes(q)));
+        }
+        if (sort) {
+            const key = sort.id as keyof InventoryItem;
+            rows = [...rows].sort((a, b) => {
+                const av = a[key] ?? '';
+                const bv = b[key] ?? '';
+                const cmp = typeof av === 'number' && typeof bv === 'number' ? av - bv : String(av).localeCompare(String(bv));
+                return sort.desc ? -cmp : cmp;
+            });
+        }
+        return rows;
+    }, [inventory, statusFilter, search, sort]);
 
-    // Filter inventory based on active filter
-    const getFilteredInventory = () => {
-        if (activeFilter === 'all') return inventory;
-        return inventory.filter((item) => item.status === activeFilter);
-    };
+    const pagedRows = useMemo(() => visibleRows.slice((page - 1) * pageSize, page * pageSize), [visibleRows, page, pageSize]);
 
-    const handleFilterChange = (filter: string | number) => {
-        setActiveFilter(String(filter));
-    };
-
-    // Handle stock adjustment
-    const handleStockAdjustment = (item: InventoryItem, type: 'add' | 'remove') => {
+    const openAdjust = (item: InventoryItem, type: 'add' | 'remove') => {
         setSelectedItem(item);
-        setStockAdjustment({ quantity: 0, reason: '', type });
-        setShowStockModal(true);
+        setAdjustment({ quantity: 0, reason: '', type });
+        setAdjustError(null);
     };
 
-    const handleConfirmStockAdjustment = async () => {
-        if (selectedItem && stockAdjustment.quantity > 0) {
-            try {
-                const newStock = stockAdjustment.type === 'add' 
-                    ? selectedItem.current_stock + stockAdjustment.quantity
-                    : selectedItem.current_stock - stockAdjustment.quantity;
+    const newStock = selectedItem
+        ? adjustment.type === 'add'
+            ? selectedItem.current_stock + adjustment.quantity
+            : selectedItem.current_stock - adjustment.quantity
+        : 0;
 
-                await axiosInstance.patch(`/products/inventory/${selectedItem.id}/`, {
-                    current_stock: newStock,
-                    adjustment_reason: stockAdjustment.reason,
-                });
-
-                await fetchInventory();
-                setShowStockModal(false);
-                setSelectedItem(null);
-                setStockAdjustment({ quantity: 0, reason: '', type: 'add' });
-            } catch (err) {
-                setError('Failed to update stock. Please try again.');
-                console.error('Error updating stock:', err);
-            }
+    const confirmAdjust = async () => {
+        if (!selectedItem || adjustment.quantity <= 0) return;
+        try {
+            setSaving(true);
+            setAdjustError(null);
+            await axiosInstance.patch(`/products/inventory/${selectedItem.id}/`, {
+                current_stock: newStock,
+                adjustment_reason: adjustment.reason,
+            });
+            setSelectedItem(null);
+            toast.success('Stock updated.');
+            await fetchInventory();
+        } catch (err) {
+            setAdjustError('Failed to update stock. Please try again.');
+            console.error('Error updating stock:', err);
+        } finally {
+            setSaving(false);
         }
     };
 
-    const { formatDisplayPrice: formatCurrency } = useCurrency();
+    const rowActions = (item: InventoryItem) => (
+        <div className="flex items-center gap-1">
+            <Button type="button" variant="ghost" size="icon-sm" onClick={() => openAdjust(item, 'add')} title="Add stock" aria-label={`Add stock to ${item.product_name}`}>
+                <Plus aria-hidden="true" />
+            </Button>
+            <Button type="button" variant="ghost" size="icon-sm" onClick={() => openAdjust(item, 'remove')} title="Remove stock" aria-label={`Remove stock from ${item.product_name}`}>
+                <Minus aria-hidden="true" />
+            </Button>
+            <Button asChild variant="ghost" size="icon-sm">
+                <Link to={`/admin/products/${item.product_id}/edit`} title="Edit product" aria-label={`Edit ${item.product_name}`}>
+                    <Pencil aria-hidden="true" />
+                </Link>
+            </Button>
+        </div>
+    );
 
-    const formatDate = (dateString: string): string => {
-        const date = new Date(dateString);
-        return new Intl.DateTimeFormat('en-GB', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric',
-        }).format(date);
-    };
-
-    const getStatusBadge = (status: string) => {
-        const statusConfig = {
-            in_stock: { bg: 'bg-green-100', text: 'text-green-800', icon: IconPackage },
-            low_stock: { bg: 'bg-yellow-100', text: 'text-yellow-800', icon: IconAlertTriangle },
-            out_of_stock: { bg: 'bg-red-100', text: 'text-red-800', icon: IconAlertTriangle },
-            overstock: { bg: 'bg-blue-100', text: 'text-blue-800', icon: IconTrendingUp },
-        };
-        const safeStatus = status || 'unknown';
-        const config = statusConfig[safeStatus as keyof typeof statusConfig] || statusConfig.in_stock;
-        const Icon = config.icon;
-        
-        return (
-            <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full ${config.bg} ${config.text}`}>
-                <Icon className="w-3 h-3" />
-                {safeStatus.replace('_', ' ').toUpperCase()}
-            </span>
-        );
-    };
-
-    const getStockIndicator = (item: InventoryItem) => {
-        const currentStock = item.current_stock || 0;
-        const maxStock = item.maximum_stock || 1;
-        const percentage = (currentStock / maxStock) * 100;
-        let color = 'bg-green-500';
-        if (percentage < 25) color = 'bg-red-500';
-        else if (percentage < 50) color = 'bg-yellow-500';
-        
-        return (
-            <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
-                    className={`${color} h-2 rounded-full transition-all`} 
-                    style={{ width: `${Math.min(percentage, 100)}%` }}
-                />
-            </div>
-        );
-    };
-
-    const columns: ColumnDefinition[] = [
-        {
-            accessor: 'product_name',
-            title: 'Product',
-            sortable: true,
-            render: (item: InventoryItem) => (
-                <div>
-                    <div className="font-semibold text-gray-900">{item.product_name || 'N/A'}</div>
-                    <div className="text-sm text-gray-500">SKU: {item.sku || 'N/A'}</div>
-                </div>
-            ),
-        },
-        {
-            accessor: 'current_stock',
-            title: 'Stock Level',
-            sortable: true,
-            render: (item: InventoryItem) => (
-                <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                        <span className={`font-semibold ${
-                            (item.current_stock || 0) <= (item.reorder_point || 0) ? 'text-red-600' :
-                            (item.current_stock || 0) <= (item.minimum_stock || 0) ? 'text-yellow-600' :
-                            'text-gray-900'
-                        }`}>
-                            {item.current_stock ?? 0}
-                        </span>
-                        <span className="text-xs text-gray-500">/ {item.maximum_stock || 0}</span>
+    const columns = useMemo<ColumnDef<InventoryItem>[]>(
+        () => [
+            {
+                id: 'product_name',
+                accessorKey: 'product_name',
+                header: 'Product',
+                meta: { label: 'Product', cardTitle: true },
+                cell: ({ row }) => (
+                    <div>
+                        <div className="font-semibold text-foreground">{row.original.product_name || 'N/A'}</div>
+                        <div className="text-xs text-muted-foreground">SKU: {row.original.sku || 'N/A'}</div>
                     </div>
-                    {getStockIndicator(item)}
-                </div>
-            ),
-        },
-        {
-            accessor: 'reorder_point',
-            title: 'Reorder Point',
-            sortable: true,
-            render: (item: InventoryItem) => (
-                <div className="text-center">
-                    <span className="text-gray-900">{item.reorder_point ?? 0}</span>
-                </div>
-            ),
-        },
-        {
-            accessor: 'unit_cost',
-            title: 'Unit Cost',
-            sortable: true,
-            render: (item: InventoryItem) => (
-                <div className="text-gray-600">{formatCurrency(item.unit_cost || 0)}</div>
-            ),
-        },
-        {
-            accessor: 'total_value',
-            title: 'Total Value',
-            sortable: true,
-            render: (item: InventoryItem) => (
-                <div className="font-semibold text-gray-900">{formatCurrency(item.total_value || 0)}</div>
-            ),
-        },
-        {
-            accessor: 'warehouse_location',
-            title: 'Location',
-            render: (item: InventoryItem) => (
-                <div className="text-sm text-gray-600">{item.warehouse_location || 'N/A'}</div>
-            ),
-        },
-        {
-            accessor: 'status',
-            title: 'Status',
-            sortable: true,
-            render: (item: InventoryItem) => getStatusBadge(item.status),
-        },
-        {
-            accessor: 'last_restocked',
-            title: 'Last Restocked',
-            sortable: true,
-            render: (item: InventoryItem) => (
-                <div className="text-sm text-gray-600">{item.last_restocked ? formatDate(item.last_restocked) : 'N/A'}</div>
-            ),
-        },
-        {
-            accessor: 'actions',
-            title: 'Actions',
-            render: (item: InventoryItem) => (
-                <div className="flex gap-2">
-                    <button
-                        onClick={() => handleStockAdjustment(item, 'add')}
-                        className="p-2 hover:bg-gray-100 rounded transition-colors"
-                        title="Add Stock"
-                    >
-                        <IconPlus className="w-4 h-4 text-green-600" />
-                    </button>
-                    <button
-                        onClick={() => handleStockAdjustment(item, 'remove')}
-                        className="p-2 hover:bg-gray-100 rounded transition-colors"
-                        title="Remove Stock"
-                    >
-                        <IconMinus className="w-4 h-4 text-red-600" />
-                    </button>
-                    <Link
-                        to={`/admin/products/${item.product_id}/edit`}
-                        className="p-2 hover:bg-gray-100 rounded transition-colors"
-                        title="Edit Product"
-                    >
-                        <IconEdit className="w-4 h-4 text-blue-600" />
-                    </Link>
-                </div>
-            ),
-        },
-    ];
-
-    const filterOptions = [
-        { value: 'all', label: `All Items (${inventoryStats.all})` },
-        { value: 'in_stock', label: `In Stock (${inventoryStats.in_stock})` },
-        { value: 'low_stock', label: `Low Stock (${inventoryStats.low_stock})` },
-        { value: 'out_of_stock', label: `Out of Stock (${inventoryStats.out_of_stock})` },
-        { value: 'overstock', label: `Overstock (${inventoryStats.overstock})` },
-    ];
-
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <IconLoader className="w-10 h-10 animate-spin" />
-            </div>
-        );
-    }
+                ),
+            },
+            {
+                id: 'current_stock',
+                accessorKey: 'current_stock',
+                header: 'Stock level',
+                meta: { label: 'Stock level' },
+                cell: ({ row }) => <StockLevel item={row.original} />,
+            },
+            {
+                id: 'reorder_point',
+                accessorKey: 'reorder_point',
+                header: 'Reorder point',
+                meta: { label: 'Reorder point' },
+                cell: ({ row }) => <span>{row.original.reorder_point ?? 0}</span>,
+            },
+            {
+                id: 'unit_cost',
+                accessorKey: 'unit_cost',
+                header: 'Unit cost',
+                meta: { label: 'Unit cost' },
+                cell: ({ row }) => <span className="text-muted-foreground">{formatCurrency(row.original.unit_cost || 0)}</span>,
+            },
+            {
+                id: 'total_value',
+                accessorKey: 'total_value',
+                header: 'Total value',
+                meta: { label: 'Total value' },
+                cell: ({ row }) => <span className="font-semibold">{formatCurrency(row.original.total_value || 0)}</span>,
+            },
+            {
+                id: 'warehouse_location',
+                accessorKey: 'warehouse_location',
+                header: 'Location',
+                enableSorting: false,
+                meta: { label: 'Location' },
+                cell: ({ row }) => <span className="text-sm text-muted-foreground">{row.original.warehouse_location || 'N/A'}</span>,
+            },
+            {
+                id: 'status',
+                accessorKey: 'status',
+                header: 'Status',
+                meta: { label: 'Status' },
+                cell: ({ row }) => <StatusBadge status={row.original.status} />,
+            },
+            {
+                id: 'last_restocked',
+                accessorKey: 'last_restocked',
+                header: 'Last restocked',
+                meta: { label: 'Last restocked' },
+                cell: ({ row }) => <span className="text-sm text-muted-foreground">{row.original.last_restocked ? formatDate(row.original.last_restocked) : 'N/A'}</span>,
+            },
+            {
+                id: 'actions',
+                header: () => <span className="sr-only">Actions</span>,
+                enableSorting: false,
+                enableHiding: false,
+                cell: ({ row }) => rowActions(row.original),
+            },
+        ],
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [formatCurrency]
+    );
 
     return (
-        <div className="space-y-6">
-            {/* Header */}
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Inventory Management</h1>
-                    <p className="text-gray-600 mt-1">Track and manage your product stock levels</p>
-                </div>
-                <button
-                    onClick={fetchInventory}
-                    className="flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
-                >
-                    <IconRefresh className="w-5 h-5" />
-                    Refresh
-                </button>
+        <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6">
+            <PageHeader
+                title="Inventory"
+                description="Track and manage product stock levels."
+                actions={
+                    <Button type="button" variant="outline" onClick={fetchInventory} disabled={loading}>
+                        <RefreshCw className={loading ? 'animate-spin' : ''} aria-hidden="true" /> Refresh
+                    </Button>
+                }
+            />
+
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
+                <StatCard label="Total items" value={stats.all} icon={Boxes} isLoading={loading} />
+                <StatCard label="In stock" value={stats.in_stock} icon={Package} isLoading={loading} />
+                <StatCard label="Low stock" value={stats.low_stock} icon={AlertTriangle} isLoading={loading} />
+                <StatCard label="Out of stock" value={stats.out_of_stock} icon={AlertTriangle} isLoading={loading} />
+                <StatCard label="Total value" value={formatCurrency(stats.total_value)} icon={TrendingUp} isLoading={loading} className="col-span-2 md:col-span-1" />
             </div>
 
-            {/* Error Message */}
-            {error && (
-                <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-start gap-3">
-                    <IconAlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                    <p>{error}</p>
-                </div>
-            )}
-
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">Total Items</p>
-                            <p className="text-2xl font-bold text-gray-900 mt-1">{inventoryStats.all}</p>
-                        </div>
-                        <IconPackage className="w-10 h-10 text-gray-500" />
-                    </div>
-                </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">In Stock</p>
-                            <p className="text-2xl font-bold text-green-600 mt-1">{inventoryStats.in_stock}</p>
-                        </div>
-                        <IconPackage className="w-10 h-10 text-green-500" />
-                    </div>
-                </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">Low Stock</p>
-                            <p className="text-2xl font-bold text-yellow-600 mt-1">{inventoryStats.low_stock}</p>
-                        </div>
-                        <IconAlertTriangle className="w-10 h-10 text-yellow-500" />
-                    </div>
-                </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">Out of Stock</p>
-                            <p className="text-2xl font-bold text-red-600 mt-1">{inventoryStats.out_of_stock}</p>
-                        </div>
-                        <IconAlertTriangle className="w-10 h-10 text-red-500" />
-                    </div>
-                </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">Total Value</p>
-                            <p className="text-2xl font-bold text-blue-600 mt-1">{formatCurrency(inventoryStats.total_value)}</p>
-                        </div>
-                        <IconTrendingUp className="w-10 h-10 text-blue-500" />
-                    </div>
-                </div>
-            </div>
-
-            {/* Filters */}
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                <FilterSelect 
-                    options={filterOptions} 
-                    value={activeFilter} 
-                    onChange={handleFilterChange}
-                    placeholder="Filter by status"
-                />
-            </div>
-
-            {/* Inventory Table */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                <DraggableDataTable
-                    data={getFilteredInventory()}
-                    columns={columns}
-                    loading={loading}
-                    title="Inventory"
-                    quickCheckFields={['product_name', 'sku', 'warehouse_location']}
-                />
-            </div>
-
-            {/* Stock Adjustment Modal */}
-            {showStockModal && selectedItem && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className={`p-2 rounded-full ${stockAdjustment.type === 'add' ? 'bg-green-100' : 'bg-red-100'}`}>
-                                {stockAdjustment.type === 'add' ? (
-                                    <IconPlus className="w-6 h-6 text-green-600" />
-                                ) : (
-                                    <IconMinus className="w-6 h-6 text-red-600" />
-                                )}
+            <DataTable<InventoryItem>
+                columns={columns}
+                data={pagedRows}
+                total={visibleRows.length}
+                page={page}
+                pageSize={pageSize}
+                pageSizeOptions={PAGE_SIZES}
+                onPageChange={setPage}
+                onPageSizeChange={(n) => {
+                    setPageSize(n);
+                    setPage(1);
+                }}
+                sort={sort}
+                onSortChange={(s) => {
+                    setSort(s);
+                    setPage(1);
+                }}
+                search={search}
+                onSearchChange={(v) => {
+                    setSearch(v);
+                    setPage(1);
+                }}
+                searchPlaceholder="Search product, SKU or location"
+                isLoading={loading}
+                error={error}
+                onRetry={fetchInventory}
+                getRowId={(row) => row.id}
+                toolbar={
+                    <Select
+                        value={statusFilter}
+                        onValueChange={(v) => {
+                            setStatusFilter(v);
+                            setPage(1);
+                        }}
+                    >
+                        <SelectTrigger className="w-[200px]" aria-label="Filter by status">
+                            <SelectValue placeholder="Filter by status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All items ({stats.all})</SelectItem>
+                            <SelectItem value="in_stock">In stock ({stats.in_stock})</SelectItem>
+                            <SelectItem value="low_stock">Low stock ({stats.low_stock})</SelectItem>
+                            <SelectItem value="out_of_stock">Out of stock ({stats.out_of_stock})</SelectItem>
+                            <SelectItem value="overstock">Overstock ({stats.overstock})</SelectItem>
+                        </SelectContent>
+                    </Select>
+                }
+                emptyState={
+                    <EmptyState
+                        icon={Boxes}
+                        title={inventory.length === 0 ? 'No inventory yet' : 'No items match'}
+                        description={inventory.length === 0 ? 'Stock records will appear here once products are tracked.' : 'Try a different search or status filter.'}
+                    />
+                }
+                renderMobileCard={(item) => (
+                    <Card key={item.id}>
+                        <CardContent className="space-y-3 p-4 pt-4">
+                            <div className="flex items-start justify-between gap-2">
+                                <div className="min-w-0">
+                                    <p className="truncate font-semibold text-foreground">{item.product_name || 'N/A'}</p>
+                                    <p className="text-xs text-muted-foreground">SKU: {item.sku || 'N/A'}</p>
+                                </div>
+                                <StatusBadge status={item.status} />
                             </div>
-                            <h3 className="text-lg font-semibold text-gray-900">
-                                {stockAdjustment.type === 'add' ? 'Add Stock' : 'Remove Stock'}
-                            </h3>
+                            <StockLevel item={item} />
+                            <dl className="grid grid-cols-2 gap-2 text-sm">
+                                <div>
+                                    <dt className="text-xs text-muted-foreground">Reorder point</dt>
+                                    <dd>{item.reorder_point ?? 0}</dd>
+                                </div>
+                                <div>
+                                    <dt className="text-xs text-muted-foreground">Total value</dt>
+                                    <dd className="font-semibold">{formatCurrency(item.total_value || 0)}</dd>
+                                </div>
+                                <div>
+                                    <dt className="text-xs text-muted-foreground">Location</dt>
+                                    <dd>{item.warehouse_location || 'N/A'}</dd>
+                                </div>
+                                <div>
+                                    <dt className="text-xs text-muted-foreground">Last restocked</dt>
+                                    <dd>{item.last_restocked ? formatDate(item.last_restocked) : 'N/A'}</dd>
+                                </div>
+                            </dl>
+                            <div className="flex justify-end border-t border-border pt-3">{rowActions(item)}</div>
+                        </CardContent>
+                    </Card>
+                )}
+            />
+
+            {/* Stock adjustment */}
+            <Dialog open={selectedItem !== null} onOpenChange={(o) => (!o && !saving ? setSelectedItem(null) : undefined)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>{adjustment.type === 'add' ? 'Add stock' : 'Remove stock'}</DialogTitle>
+                        <DialogDescription>
+                            {selectedItem ? `${selectedItem.product_name} · current stock ${selectedItem.current_stock}` : null}
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    {adjustError ? (
+                        <div role="alert" className="rounded-xl bg-destructive-subtle px-4 py-3 text-sm text-destructive-subtle-foreground">
+                            {adjustError}
                         </div>
-                        <div className="mb-4">
-                            <p className="text-sm text-gray-600"><strong>Product:</strong> {selectedItem.product_name}</p>
-                            <p className="text-sm text-gray-600"><strong>Current Stock:</strong> {selectedItem.current_stock}</p>
+                    ) : null}
+
+                    <div className="space-y-4">
+                        <div className="space-y-1.5">
+                            <Label htmlFor="adjust-qty">Quantity *</Label>
+                            <Input
+                                id="adjust-qty"
+                                type="number"
+                                min={1}
+                                value={adjustment.quantity || ''}
+                                onChange={(e) => setAdjustment((a) => ({ ...a, quantity: parseInt(e.target.value, 10) || 0 }))}
+                            />
                         </div>
-                        <div className="space-y-4 mb-6">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Quantity*</label>
-                                <input
-                                    type="number"
-                                    min="1"
-                                    value={stockAdjustment.quantity}
-                                    onChange={(e) => setStockAdjustment({ ...stockAdjustment, quantity: parseInt(e.target.value) || 0 })}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Reason*</label>
-                                <textarea
-                                    value={stockAdjustment.reason}
-                                    onChange={(e) => setStockAdjustment({ ...stockAdjustment, reason: e.target.value })}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                    rows={3}
-                                    placeholder="Enter reason for adjustment..."
-                                    required
-                                />
-                            </div>
-                            <div className="p-3 bg-gray-50 rounded-lg">
-                                <p className="text-sm text-gray-600">
-                                    <strong>New Stock:</strong>{' '}
-                                    {stockAdjustment.type === 'add'
-                                        ? selectedItem.current_stock + stockAdjustment.quantity
-                                        : selectedItem.current_stock - stockAdjustment.quantity}
-                                </p>
-                            </div>
+                        <div className="space-y-1.5">
+                            <Label htmlFor="adjust-reason">Reason *</Label>
+                            <Textarea id="adjust-reason" rows={3} value={adjustment.reason} onChange={(e) => setAdjustment((a) => ({ ...a, reason: e.target.value }))} placeholder="Enter reason for adjustment" />
                         </div>
-                        <div className="flex justify-end gap-3">
-                            <button
-                                onClick={() => setShowStockModal(false)}
-                                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleConfirmStockAdjustment}
-                                className={`px-4 py-2 text-white rounded-lg transition-colors ${
-                                    stockAdjustment.type === 'add'
-                                        ? 'bg-green-600 hover:bg-green-700'
-                                        : 'bg-red-600 hover:bg-red-700'
-                                }`}
-                                disabled={!stockAdjustment.quantity || !stockAdjustment.reason}
-                            >
-                                Confirm
-                            </button>
+                        <div className="rounded-xl bg-muted px-4 py-3 text-sm">
+                            <span className="text-muted-foreground">New stock: </span>
+                            <span className={cn('font-semibold', newStock < 0 && 'text-destructive')}>{newStock}</span>
+                            {newStock < 0 ? <p className="mt-1 text-xs text-destructive">Stock cannot go below zero.</p> : null}
                         </div>
                     </div>
-                </div>
-            )}
+
+                    <DialogFooter>
+                        <Button type="button" variant="outline" onClick={() => setSelectedItem(null)} disabled={saving}>
+                            Cancel
+                        </Button>
+                        <Button type="button" onClick={confirmAdjust} disabled={saving || !adjustment.quantity || !adjustment.reason.trim() || newStock < 0}>
+                            {saving ? <Loader2 className="animate-spin" aria-hidden="true" /> : null}
+                            Confirm
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };
 
 export default InventoryManagement;
-
-

@@ -4,10 +4,11 @@
 cleverness never. The target UX is **Amazon's trust and search/checkout efficiency
 merged with AliExpress's deal density and visual energy** — on a mobile-first base.
 
-> **Precedence:** this file supersedes `.claude/CLAUDE.md` wherever they conflict.
+> **Precedence:** this file wins on facts, scope, model routing, design and phases.
+> `.claude/CLAUDE.md` holds the working agreement and wins on safety: git, database
+> and migrations, money, secrets (its §4 to §7).
 > The "Kinetic" redesign is **cancelled**; its agents, skills and mockups were
 > deleted (see §11) and its code residue is removed in Phase 1.
-> `.claude/CLAUDE.md` has been reduced to a pointer to this file.
 
 ---
 
@@ -157,7 +158,7 @@ Order of value. Don't start a lower tier while a higher tier is broken.
 
 ## 7. Backend rules (Stores-BE)
 
-**DB safety (hard rule).** `Stores-BE/.env` has `DATABASE_URL` pointing at a **Railway-hosted Postgres** (treat as live). `manage.py` contains a guard (`_guard_remote_database`) that refuses write commands against a non-local host, but **the user has disabled the call** (commented out in `main()`), so nothing technical stops you — the rule is yours to keep: never run migrate, test, shell, runserver, loaddata, seed/populate commands or anything that writes against the Railway database; set `DATABASE_URL` to a local database in the same command, and only run a command against Railway when the user explicitly asks for that specific command. `makemigrations` (file generation) is fine. The venv is `Stores-BE/.venv` (Python 3.11, installed without torch/transformers). The old tracked `Stores-BE/venv` is dead.
+**DB safety (hard rule).** `Stores-BE/.env` has `DATABASE_URL` pointing at a **Railway-hosted Postgres** (treat as live). `manage.py` contains a guard (`_guard_remote_database`) that refuses write commands against a non-local host, but **the user has disabled the call** (commented out in `main()`), so nothing technical stops you — the rule is yours to keep: never run migrate, test, shell, runserver, loaddata, seed/populate commands or anything that writes against the Railway database; set `DATABASE_URL` to a local database in the same command, and only run a command against Railway when the user explicitly asks for that specific command. `makemigrations <app> --check --dry-run` (lists the expected operations, writes nothing) is fine; writing the migration file needs the user's go-ahead (CLAUDE.md §5). The venv is `Stores-BE/.venv` (Python 3.11, installed without torch/transformers). The old tracked `Stores-BE/venv` is dead.
 
 - Inherit `apps.core.models.BaseModel`. New domains get their own app: `apps/auctions/`, `apps/rfq/` (register in `INSTALLED_APPS`, `backend/urls.py`).
 - DRF: thin views, logic in `services.py`, serializers validate. Explicit permission classes on every viewset — **no default-open endpoints**. Sellers only see their own rows (queryset scoping, not just frontend hiding).
@@ -173,7 +174,7 @@ Order of value. Don't start a lower tier while a higher tier is broken.
 A slice is done only when **all** are true — report evidence, not assertions:
 
 - [ ] Matches the phase plan/contract; no unrequested features or abstractions.
-- [ ] BE: `python manage.py check` clean; migrations generated and applied locally; tests pass.
+- [ ] BE: `python manage.py check` clean; expected migration operations listed (file written and applied only when the user asks, CLAUDE.md §5); tests pass on a local throwaway DB.
 - [ ] FE: `npm run build` and `npm run lint` pass (Stores-FE). Admin: `npx tsc --noEmit` and `npm run build` pass.
 - [ ] Works at 375 / 768 / 1024 / 1440 with no horizontal scroll; keyboard reachable; images have alt; contrast OK.
 - [ ] Loading, empty, error states exist. Failed API calls show a message, not a blank screen.
@@ -219,13 +220,13 @@ Still present and **stale**: skills `add-bid-feature` / `add-rfq-feature` refere
 | Admin dev / build / typecheck | `cd Stores-Admin; npm run dev` · `npm run build` · `npx tsc --noEmit` |
 | BE run | `cd Stores-BE; .\.venv\Scripts\Activate.ps1; $env:DATABASE_URL='postgresql://USER:PASS@localhost:5432/tradehut_dev'; python manage.py runserver` |
 | BE check / test | `python manage.py check` · `$env:DATABASE_URL='<local url>'; python manage.py test <app>` |
-| BE migrate | `python manage.py makemigrations <app>; python manage.py migrate` (local DB only — see §7 DB safety) |
+| BE migrate | `python manage.py makemigrations <app>; python manage.py migrate` (only when the user asks; local DB only; see §7 and CLAUDE.md §5) |
 | Kinetic residue | `rg -il kinetic Stores-FE Stores-Admin/src --glob '!node_modules'` |
 
 ## 13. Global do / don't
 
 - **Do** make the smallest change that meets the plan. Reuse what exists. Fix root causes.
-- **Do** commit per slice with a clear message; never `push --force`, `reset --hard`, or `rm -rf` (denied in settings anyway).
+- **Do** propose one conventional commit message per slice; the user stages and commits (CLAUDE.md §4). Never `push --force`, `reset --hard`, or `rm -rf` (denied in settings anyway).
 - **Don't** add dependencies silently (flag them, one line each: name, why, size).
 - **Don't** add abstraction layers, feature flags, generic "frameworks", or config for hypothetical needs.
 - **Don't** change fonts, rewrite nav, or touch files outside your assigned ownership.

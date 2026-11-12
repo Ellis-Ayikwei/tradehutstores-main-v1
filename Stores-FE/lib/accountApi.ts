@@ -72,3 +72,59 @@ export async function getNotificationUnreadCount(): Promise<number> {
         return 0
     }
 }
+
+/** Notification JSON (contract 25-notifications). `link` is a storefront-relative path or "". */
+export type ApiNotification = {
+    id: string | number
+    kind: string
+    title: string
+    body: string
+    link: string
+    data: Record<string, unknown>
+    is_read: boolean
+    read_at: string | null
+    created_at: string
+}
+
+export type NotificationPage = {
+    count: number
+    next: string | null
+    previous: string | null
+    results: ApiNotification[]
+}
+
+export type ListNotificationsParams = {
+    page?: number
+    pageSize?: number
+    unread?: boolean
+    /** kind prefix, e.g. "auction" */
+    kind?: string
+}
+
+/** GET notifications/ */
+export async function listNotifications(params: ListNotificationsParams = {}): Promise<NotificationPage> {
+    const query: Record<string, string | number> = {}
+    if (params.page) query.page = params.page
+    if (params.pageSize) query.page_size = params.pageSize
+    if (params.unread) query.unread = 'true'
+    if (params.kind) query.kind = params.kind
+    const { data } = await axiosInstance.get<NotificationPage>(`notifications/`, { params: query })
+    return data
+}
+
+/** POST notifications/{id}/read/ (idempotent) */
+export async function markNotificationRead(id: string | number): Promise<ApiNotification> {
+    const { data } = await axiosInstance.post<ApiNotification>(`notifications/${id}/read/`)
+    return data
+}
+
+/** POST notifications/read-all/ */
+export async function markAllNotificationsRead(): Promise<number> {
+    const { data } = await axiosInstance.post<{ updated?: number }>(`notifications/read-all/`)
+    return typeof data?.updated === 'number' ? data.updated : 0
+}
+
+/** DELETE notifications/{id}/ */
+export async function deleteNotification(id: string | number): Promise<void> {
+    await axiosInstance.delete(`notifications/${id}/`)
+}

@@ -2,10 +2,10 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { X } from 'lucide-react'
+import { ChevronRight, X } from 'lucide-react'
 import { resolveMediaSrc } from '@/lib/mediaUrl'
 import { markDismissed, sendClick, type AdSlot } from '@/lib/ads'
-import { accentStyle, creativeColors, resolveAspect } from './adLayout'
+import { accentStyle, creativeSurface, resolveAspect } from './adLayout'
 
 interface AdBannerProps {
     slot: AdSlot
@@ -43,56 +43,45 @@ export default function AdBanner({
     const alt = c.alt_text || c.headline || 'Advertisement'
 
     const aspect = resolveAspect(aspectClass, ratio)
-    const colors = creativeColors(c)
+    const surface = creativeSurface(c)
     const accent = accentStyle(c)
 
     const onClick = () => {
         if (hasCta) sendClick(slot.id, c.cta_url)
     }
 
-    // Text-only ad: the whole box is the solid panel. Image ad: a compact solid panel on the photo.
     const textOnly = !hasImage
-    const boxStyle = textOnly && colors ? colors : undefined
-    const boxTone = textOnly && !colors ? 'bg-zinc-900 text-white' : 'bg-zinc-50'
-    const panelStyle = colors ?? undefined
-    const panelTone = colors ? '' : 'bg-white text-zinc-900'
+    const boxStyle = textOnly ? { background: surface.background } : undefined
+    const boxTone = textOnly && !surface.background ? 'bg-zinc-900' : 'bg-zinc-100'
 
+    // Caption sits directly on the photo (or on the solid/gradient surface), over a legibility scrim.
     const caption = hasCaption ? (
         <div
-            className={
-                textOnly
-                    ? 'absolute inset-0 flex max-w-2xl flex-col justify-center px-4 sm:px-8'
-                    : `absolute bottom-2 left-2 max-w-[78%] rounded-md p-2 shadow-sm sm:bottom-3 sm:left-3 sm:max-w-[55%] sm:p-3 lg:max-w-[45%] ${panelTone}`
-            }
-            style={textOnly ? undefined : panelStyle}
+            className="absolute inset-0 flex max-w-2xl flex-col justify-end gap-1 p-4 sm:justify-center sm:gap-2 sm:p-8 lg:p-12"
+            style={{ color: surface.color }}
         >
             {c.eyebrow ? (
-                <p
-                    className={`text-[11px] font-bold uppercase tracking-wide ${
-                        textOnly || colors ? '' : 'text-primary-700'
-                    }`}
-                >
+                <span className="w-fit rounded-full bg-white px-2.5 py-0.5 text-xs font-semibold text-zinc-900">
                     {c.eyebrow}
-                </p>
+                </span>
             ) : null}
             {c.headline ? (
-                <h3 className="line-clamp-2 font-syne text-sm font-bold leading-tight sm:text-lg md:text-xl">
+                <h3 className="line-clamp-2 font-syne text-xl font-extrabold leading-tight sm:text-3xl lg:text-4xl">
                     {c.headline}
                 </h3>
             ) : null}
             {c.subheadline ? (
-                <p className="mt-0.5 hidden line-clamp-2 text-sm leading-snug sm:block">
-                    {c.subheadline}
-                </p>
+                <p className="line-clamp-2 hidden max-w-md text-sm leading-snug sm:block sm:text-base">{c.subheadline}</p>
             ) : null}
             {c.cta_label ? (
                 <span
-                    className={`mt-1.5 inline-flex h-8 items-center rounded-full px-3 text-xs font-semibold sm:h-9 sm:px-4 sm:text-sm ${
-                        accent ? '' : 'bg-primary-700 text-white'
+                    className={`mt-1 inline-flex h-9 w-fit items-center gap-1 rounded-full px-4 text-sm font-bold sm:mt-2 sm:h-11 sm:px-6 ${
+                        accent ? '' : 'bg-white text-zinc-900'
                     }`}
                     style={accent}
                 >
                     {c.cta_label}
+                    <ChevronRight className="h-4 w-4" aria-hidden="true" />
                 </span>
             ) : null}
         </div>
@@ -125,6 +114,9 @@ export default function AdBanner({
                         <Image src={mobile} alt={alt} fill sizes="100vw" className="object-cover md:hidden" />
                     </>
                 )
+            ) : null}
+            {hasImage && hasCaption ? (
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent sm:bg-gradient-to-r sm:from-black/70 sm:via-black/30 sm:to-transparent" />
             ) : null}
             {caption}
         </div>

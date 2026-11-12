@@ -1,51 +1,122 @@
 /**
- * Shared building blocks for the Ads admin pages — color swatch picker,
- * format icons, status badges, live ad previews.
+ * Shared building blocks for the Ads admin pages: form field, colour swatch
+ * picker, format icons, status badges, live ad previews, edit sheet, confirm
+ * dialog, empty/error panels.
  */
 import {
-    IconBolt,
-    IconBuildingStore,
-    IconCheck,
-    IconColorSwatch,
-    IconDeviceDesktop,
-    IconDeviceMobile,
-    IconDeviceTablet,
-    IconLayoutBottombar,
-    IconLayoutNavbar,
-    IconLayoutSidebar,
-    IconNote,
-    IconPhotoVideo,
-    IconRectangle,
-    IconWindowMaximize,
-} from '@tabler/icons-react';
-import React from 'react';
-import type {
-    Creative,
-    PlacementFormat,
-    CampaignStatus,
-} from '../../../services/adsAdminService';
+    AppWindow,
+    Check,
+    Loader2,
+    Maximize,
+    Monitor,
+    PanelRight,
+    PanelTop,
+    Images,
+    RectangleHorizontal,
+    Smartphone,
+    StickyNote,
+    Tablet,
+    Zap,
+    type LucideIcon,
+} from 'lucide-react';
+import React, { useId } from 'react';
+import { Badge } from '@/components/shadcn/badge';
+import { Button } from '@/components/shadcn/button';
+import { Card } from '@/components/shadcn/card';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/shadcn/dialog';
+import { EmptyState as BaseEmptyState } from '@/components/shadcn/empty-state';
+import { Input } from '@/components/shadcn/input';
+import { Label } from '@/components/shadcn/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
+import { Skeleton } from '@/components/shadcn/skeleton';
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/shadcn/sheet';
+import { cn } from '@/lib/utils';
+import type { Creative, PlacementFormat, CampaignStatus } from '../../../services/adsAdminService';
 import { CAMPAIGN_STATUSES } from '../../../services/adsAdminService';
 
-// ── Inputs ──────────────────────────────────────────────────────────────────
+// ── Form field ──────────────────────────────────────────────────────────────
 
-export const inputCls =
-    'w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-on-surface dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition';
+/**
+ * Label + control + hint. When the child is a single element without an `id`
+ * one is generated so the label is programmatically associated.
+ */
+export const Field: React.FC<{
+    label: string;
+    hint?: string;
+    className?: string;
+    children: React.ReactNode;
+}> = ({ label, hint, className, children }) => {
+    const generated = useId();
+    let control = children;
+    let id: string | undefined;
+    if (React.isValidElement(children) && typeof children.type !== 'symbol') {
+        const existing = (children.props as { id?: string }).id;
+        id = existing ?? generated;
+        control = existing ? children : React.cloneElement(children as React.ReactElement<{ id?: string }>, { id });
+    }
+    return (
+        <div className={cn('space-y-1.5', className)}>
+            <Label htmlFor={id}>{label}</Label>
+            {control}
+            {hint ? <p className="text-xs text-muted-foreground">{hint}</p> : null}
+        </div>
+    );
+};
 
-export const Field: React.FC<{ label: string; hint?: string; children: React.ReactNode }> = ({
-    label,
-    hint,
+const EMPTY_VALUE = '__empty__';
+
+/**
+ * Thin wrapper over the shadcn Select. Radix items cannot have an empty-string value, so
+ * an option with value '' is mapped to a sentinel and mapped back in onChange.
+ */
+export const SimpleSelect: React.FC<{
+    id?: string;
+    value: string;
+    onChange: (value: string) => void;
+    options: { value: string; label: string }[];
+    placeholder?: string;
+    className?: string;
+}> = ({ id, value, onChange, options, placeholder, className }) => (
+    <Select value={value === '' && options.some((o) => o.value === '') ? EMPTY_VALUE : value} onValueChange={(v) => onChange(v === EMPTY_VALUE ? '' : v)}>
+        <SelectTrigger id={id} className={className}>
+            <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+            {options.map((o) => (
+                <SelectItem key={o.value || EMPTY_VALUE} value={o.value === '' ? EMPTY_VALUE : o.value}>
+                    {o.label}
+                </SelectItem>
+            ))}
+        </SelectContent>
+    </Select>
+);
+
+/** Bordered group of related fields inside a sheet. */
+export const FormSection: React.FC<{ title: string; icon?: LucideIcon; className?: string; children: React.ReactNode }> = ({
+    title,
+    icon: Icon,
+    className,
     children,
 }) => (
-    <div>
-        <label className="block text-[11px] font-bold uppercase tracking-wider text-on-surface-variant dark:text-gray-500 mb-1.5">
-            {label}
-        </label>
+    <section className={cn('space-y-4 rounded-2xl border border-border bg-card p-4', className)}>
+        <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+            {Icon ? <Icon className="h-4 w-4 text-muted-foreground" aria-hidden /> : null}
+            {title}
+        </h3>
         {children}
-        {hint && <p className="mt-1 text-[11px] text-on-surface-variant dark:text-gray-500">{hint}</p>}
+    </section>
+);
+
+/** Switch-style row used for boolean fields. */
+export const CheckRow: React.FC<{ id: string; label: string; children: React.ReactNode }> = ({ id, label, children }) => (
+    <div className="flex items-center justify-between gap-3 rounded-xl border border-border px-3 py-2">
+        <Label htmlFor={id}>{label}</Label>
+        {children}
     </div>
 );
 
-// ── Color swatch picker ─────────────────────────────────────────────────────
+// ── Colour swatch picker ────────────────────────────────────────────────────
+// Presets are creative (advertising) colour *data* stored on a creative, not UI theme colours.
 
 export type ColorPreset = { name: string; value: string };
 
@@ -92,6 +163,9 @@ export const TEXT_PRESETS: ColorPreset[] = [
     { name: 'Cream', value: '#fef3c7' },
 ];
 
+const swatchStyle = (value: string): React.CSSProperties =>
+    value.includes('gradient') ? { backgroundImage: value } : value ? { backgroundColor: value } : {};
+
 export const ColorSwatchPicker: React.FC<{
     value: string;
     presets: ColorPreset[];
@@ -102,140 +176,110 @@ export const ColorSwatchPicker: React.FC<{
 
     return (
         <div className="space-y-2">
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-2">
                 {presets.map((p) => {
-                    const selected = (p.value || '') === (matched?.value || (value ? '' : ''));
+                    const selected = matched ? matched.value === p.value : false;
                     const isNone = p.value === '';
-                    const swatchStyle: React.CSSProperties = {};
-                    if (!isNone) {
-                        if (p.value.includes('gradient')) swatchStyle.backgroundImage = p.value;
-                        else swatchStyle.backgroundColor = p.value;
-                    }
                     return (
                         <button
                             key={p.name + p.value}
                             type="button"
                             onClick={() => onChange(p.value)}
                             title={`${p.name}${p.value ? ` · ${p.value}` : ''}`}
-                            className={[
-                                'relative h-8 w-8 rounded-full border-2 transition shrink-0',
-                                selected
-                                    ? 'border-primary ring-2 ring-primary-200 scale-110'
-                                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-400 hover:scale-105',
-                                isNone ? 'bg-white dark:bg-gray-800' : '',
-                            ].join(' ')}
-                            style={swatchStyle}
+                            aria-label={p.name}
+                            aria-pressed={selected}
+                            className={cn(
+                                'relative h-8 w-8 shrink-0 rounded-full border-2 transition-colors focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-subtle',
+                                selected ? 'border-primary' : 'border-border hover:border-muted-foreground',
+                                isNone && 'bg-card'
+                            )}
+                            style={isNone ? undefined : swatchStyle(p.value)}
                         >
-                            {isNone && (
+                            {isNone ? (
                                 <span className="absolute inset-0 flex items-center justify-center">
-                                    <span className="block h-px w-5 rotate-45 bg-gray-400" />
+                                    <span className="block h-px w-5 rotate-45 bg-muted-foreground" />
                                 </span>
-                            )}
-                            {selected && !isNone && (
-                                <IconCheck size={14} className="absolute inset-0 m-auto text-white drop-shadow" />
-                            )}
+                            ) : null}
+                            {selected && !isNone ? <Check className="absolute inset-0 m-auto h-3.5 w-3.5 text-white" aria-hidden /> : null}
                         </button>
                     );
                 })}
             </div>
             <div className="flex items-center gap-2">
-                <span
-                    className="h-7 w-7 rounded-md border border-gray-300 dark:border-gray-700 shrink-0"
-                    style={
-                        value.includes('gradient')
-                            ? { backgroundImage: value }
-                            : { backgroundColor: value || 'transparent' }
-                    }
-                />
-                <input
-                    className={`${inputCls} font-mono text-xs flex-1`}
+                <span className="h-8 w-8 shrink-0 rounded-md border border-border bg-muted" style={swatchStyle(value)} aria-hidden />
+                <Input
+                    className="flex-1 font-mono text-xs"
                     value={value}
-                    placeholder="#a43d00 or linear-gradient(...)"
+                    placeholder="Hex colour or linear-gradient(...)"
                     onChange={(e) => onChange(e.target.value)}
+                    aria-label="Colour value"
                 />
-                {isCustom && (
-                    <button
-                        type="button"
-                        onClick={() => onChange('')}
-                        className="text-xs font-semibold text-on-surface-variant hover:text-error transition px-2 py-1"
-                    >
+                {isCustom ? (
+                    <Button type="button" variant="ghost" size="sm" onClick={() => onChange('')}>
                         Clear
-                    </button>
-                )}
+                    </Button>
+                ) : null}
             </div>
-            <p className="text-[11px] text-on-surface-variant dark:text-gray-500">
-                {matched ? matched.name : isCustom ? `Custom · ${value}` : 'No color (uses default surface)'}
-            </p>
+            <p className="text-xs text-muted-foreground">{matched ? matched.name : isCustom ? `Custom · ${value}` : 'No colour (uses default surface)'}</p>
         </div>
     );
 };
 
 // ── Format icons ────────────────────────────────────────────────────────────
 
-export const FORMAT_ICONS: Record<PlacementFormat, React.ComponentType<{ size?: number }>> = {
-    banner: IconRectangle,
-    carousel: IconPhotoVideo,
-    modal: IconWindowMaximize,
-    topbar: IconLayoutNavbar,
-    sidebar: IconLayoutSidebar,
-    inline_card: IconNote,
-    fullscreen: IconColorSwatch,
+export const FORMAT_ICONS: Record<PlacementFormat, LucideIcon> = {
+    banner: RectangleHorizontal,
+    carousel: Images,
+    modal: AppWindow,
+    topbar: PanelTop,
+    sidebar: PanelRight,
+    inline_card: StickyNote,
+    fullscreen: Maximize,
 };
 
 export const FORMAT_LOCATION_HINT: Record<PlacementFormat, string> = {
     banner: 'A horizontal image strip embedded in a page.',
-    carousel: 'Multiple banners that auto-rotate. Set rotation_seconds.',
+    carousel: 'Multiple banners that auto-rotate. Set rotation seconds.',
     modal: 'Centered popup over a dimmed backdrop. Best for sign-up offers.',
     topbar: 'Sticky thin strip above the navbar. Site-wide.',
-    sidebar: 'Vertical card in the left/right column of category & PDP pages.',
+    sidebar: 'Vertical card in the left/right column of category and product pages.',
     inline_card: 'Card embedded between content sections.',
-    fullscreen: 'Full-viewport overlay. Use sparingly — high friction.',
+    fullscreen: 'Full-viewport overlay. Use sparingly, high friction.',
 };
 
 // ── Status badges ───────────────────────────────────────────────────────────
 
+const STATUS_VARIANT: Record<CampaignStatus, 'secondary' | 'info' | 'success' | 'warning' | 'destructive' | 'outline'> = {
+    draft: 'secondary',
+    scheduled: 'info',
+    running: 'success',
+    paused: 'warning',
+    ended: 'destructive',
+    archived: 'outline',
+};
+
 export const StatusBadge: React.FC<{ status: CampaignStatus }> = ({ status }) => {
     const meta = CAMPAIGN_STATUSES.find((s) => s.value === status);
-    const isRunning = status === 'running';
     return (
-        <span
-            className={[
-                'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white shadow-sm',
-                isRunning ? 'animate-pulse-soft' : '',
-            ].join(' ')}
-            style={{ backgroundColor: meta?.color }}
-        >
-            {isRunning && <IconBolt size={10} />}
+        <Badge variant={STATUS_VARIANT[status] ?? 'secondary'}>
+            {status === 'running' ? <Zap aria-hidden /> : null}
             {meta?.label || status}
-        </span>
+        </Badge>
     );
 };
 
 export const LiveDot: React.FC<{ on?: boolean; label?: string }> = ({ on = true, label }) => (
-    <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold">
-        <span className="relative flex h-2 w-2">
-            {on && (
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300" />
-            )}
-            <span
-                className={`relative inline-flex rounded-full h-2 w-2 ${
-                    on ? 'bg-emerald-500' : 'bg-gray-400'
-                }`}
-            />
-        </span>
+    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+        <span className={cn('inline-flex h-2 w-2 rounded-full', on ? 'bg-success-600' : 'bg-muted-foreground')} aria-hidden />
         {label || (on ? 'Live' : 'Off')}
     </span>
 );
 
-// ── Device chip ─────────────────────────────────────────────────────────────
+// ── Device icon ─────────────────────────────────────────────────────────────
 
-export const DeviceIcon: React.FC<{ device: 'mobile' | 'tablet' | 'desktop'; size?: number }> = ({
-    device,
-    size = 14,
-}) => {
-    const Icon =
-        device === 'mobile' ? IconDeviceMobile : device === 'tablet' ? IconDeviceTablet : IconDeviceDesktop;
-    return <Icon size={size} />;
+export const DeviceIcon: React.FC<{ device: 'mobile' | 'tablet' | 'desktop'; className?: string }> = ({ device, className }) => {
+    const Icon = device === 'mobile' ? Smartphone : device === 'tablet' ? Tablet : Monitor;
+    return <Icon className={cn('h-3.5 w-3.5', className)} aria-hidden />;
 };
 
 // ── Live ad preview (renders the creative the way the storefront would) ─────
@@ -255,38 +299,40 @@ interface PreviewProps {
     variant?: PlacementFormat;
 }
 
+// Storefront render fallbacks when a creative leaves a colour blank. These mirror the
+// storefront ad component, so the preview matches what buyers see.
+const FALLBACK_BG = '#1f2937';
+const FALLBACK_FG = '#ffffff';
+const FALLBACK_ACCENT = '#fbbf24';
+const CTA_CHIP_BG = '#ffffff';
+const CTA_CHIP_FG = '#111827';
+
+const bgStyle = (bg: string, fg: string): React.CSSProperties => ({
+    background: bg.includes('gradient') ? bg : undefined,
+    backgroundColor: bg.includes('gradient') ? undefined : bg,
+    color: fg,
+});
+
 export const LivePreview: React.FC<PreviewProps> = ({ creative, variant = 'banner' }) => {
-    const bg = creative.background_color || '#1f2937';
-    const fg = creative.text_color || '#ffffff';
-    const accent = creative.accent_color || '#fbbf24';
+    const bg = creative.background_color || FALLBACK_BG;
+    const fg = creative.text_color || FALLBACK_FG;
+    const accent = creative.accent_color || FALLBACK_ACCENT;
     const image = creative.image_desktop_preview || creative.image_desktop_url || '';
-    const isGradient = bg.includes('gradient');
 
     if (variant === 'topbar') {
         return (
-            <div
-                className="rounded-lg overflow-hidden"
-                style={{
-                    background: isGradient ? bg : undefined,
-                    backgroundColor: isGradient ? undefined : bg,
-                    color: fg,
-                }}
-            >
+            <div className="overflow-hidden rounded-xl border border-border" style={bgStyle(bg, fg)}>
                 <div className="flex items-center justify-center gap-3 px-4 py-2 text-xs font-medium">
-                    {creative.eyebrow && (
-                        <span className="font-bold uppercase tracking-wider text-[10px] shrink-0">
-                            {creative.eyebrow}
-                        </span>
-                    )}
+                    {creative.eyebrow ? <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider">{creative.eyebrow}</span> : null}
                     <span className="truncate">{creative.headline || '(headline)'}</span>
-                    {creative.cta_label && (
+                    {creative.cta_label ? (
                         <span
-                            className="px-2.5 py-0.5 rounded-full text-[11px] font-bold border whitespace-nowrap"
-                            style={{ borderColor: accent, backgroundColor: '#ffffff', color: '#111827' }}
+                            className="whitespace-nowrap rounded-full border px-2.5 py-0.5 text-[11px] font-bold"
+                            style={{ borderColor: accent, backgroundColor: CTA_CHIP_BG, color: CTA_CHIP_FG }}
                         >
                             {creative.cta_label}
                         </span>
-                    )}
+                    ) : null}
                 </div>
             </div>
         );
@@ -294,42 +340,25 @@ export const LivePreview: React.FC<PreviewProps> = ({ creative, variant = 'banne
 
     if (variant === 'modal') {
         return (
-            <div className="rounded-2xl overflow-hidden shadow-xl border border-gray-200 dark:border-gray-800 max-w-md mx-auto">
-                {image && (
-                    <div className="aspect-[16/10] bg-gray-100 overflow-hidden">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={image} alt="" className="w-full h-full object-cover" />
+            <div className="mx-auto max-w-md overflow-hidden rounded-2xl border border-border">
+                {image ? (
+                    <div className="aspect-[16/10] overflow-hidden bg-muted">
+                        <img src={image} alt="" className="h-full w-full object-cover" />
                     </div>
-                )}
-                <div
-                    className="p-7 text-center"
-                    style={{
-                        background: isGradient ? bg : undefined,
-                        backgroundColor: isGradient ? undefined : bg,
-                        color: fg,
-                    }}
-                >
-                    {creative.eyebrow && (
-                        <span
-                            className="inline-block text-[10px] font-bold uppercase tracking-[0.2em] mb-3 px-3 py-1 rounded-full"
-                            style={{ backgroundColor: accent, color: '#fff' }}
-                        >
+                ) : null}
+                <div className="p-6 text-center" style={bgStyle(bg, fg)}>
+                    {creative.eyebrow ? (
+                        <span className="mb-3 inline-block rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em]" style={{ backgroundColor: accent, color: FALLBACK_FG }}>
                             {creative.eyebrow}
                         </span>
-                    )}
+                    ) : null}
                     <h2 className="text-2xl font-bold leading-tight">{creative.headline || '(headline)'}</h2>
-                    {creative.subheadline && (
-                        <p className="mt-2 text-sm">{creative.subheadline}</p>
-                    )}
-                    {creative.cta_label && (
-                        <button
-                            type="button"
-                            className="mt-5 inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold shadow-md"
-                            style={{ backgroundColor: accent, color: '#ffffff' }}
-                        >
+                    {creative.subheadline ? <p className="mt-2 text-sm">{creative.subheadline}</p> : null}
+                    {creative.cta_label ? (
+                        <span className="mt-5 inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold" style={{ backgroundColor: accent, color: FALLBACK_FG }}>
                             {creative.cta_label} →
-                        </button>
-                    )}
+                        </span>
+                    ) : null}
                 </div>
             </div>
         );
@@ -337,143 +366,139 @@ export const LivePreview: React.FC<PreviewProps> = ({ creative, variant = 'banne
 
     // Default: banner / carousel / inline_card / etc.
     return (
-        <div
-            className="relative rounded-2xl overflow-hidden shadow-md aspect-[21/5] w-full"
-            style={{
-                background: isGradient ? bg : undefined,
-                backgroundColor: isGradient ? undefined : bg,
-                color: fg,
-            }}
-        >
-            {image && (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img
-                    src={image}
-                    alt=""
-                    className="absolute inset-0 w-full h-full object-cover opacity-90"
-                />
-            )}
-            <div className="absolute inset-0 flex flex-col justify-center px-6 sm:px-10 bg-gradient-to-r from-black/55 via-black/25 to-transparent">
-                {creative.eyebrow && (
-                    <span
-                        className="inline-block w-fit text-[10px] font-bold uppercase tracking-[0.2em] mb-2 px-2 py-0.5 rounded-full"
-                        style={{ backgroundColor: accent, color: '#fff' }}
-                    >
+        <div className="relative aspect-[21/5] w-full overflow-hidden rounded-xl border border-border" style={bgStyle(bg, fg)}>
+            {image ? <img src={image} alt="" className="absolute inset-0 h-full w-full object-cover" /> : null}
+            <div className={cn('absolute inset-0 flex flex-col justify-center px-4 sm:px-8', image && 'bg-gradient-to-r from-black/60 via-black/25 to-transparent')}>
+                {creative.eyebrow ? (
+                    <span className="mb-2 inline-block w-fit rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.2em]" style={{ backgroundColor: accent, color: FALLBACK_FG }}>
                         {creative.eyebrow}
                     </span>
-                )}
-                <h3 className="text-lg sm:text-2xl font-bold leading-tight max-w-md drop-shadow-lg">
-                    {creative.headline || '(headline)'}
-                </h3>
-                {creative.subheadline && (
-                    <p className="mt-1 text-xs sm:text-sm max-w-md line-clamp-2">
-                        {creative.subheadline}
-                    </p>
-                )}
-                {creative.cta_label && (
-                    <span
-                        className="mt-3 inline-flex items-center gap-1.5 self-start px-4 py-1.5 rounded-full text-xs font-bold shadow"
-                        style={{ backgroundColor: accent, color: '#ffffff' }}
-                    >
+                ) : null}
+                <h3 className="max-w-md text-sm font-bold leading-tight sm:text-xl">{creative.headline || '(headline)'}</h3>
+                {creative.subheadline ? <p className="mt-1 line-clamp-2 max-w-md text-xs sm:text-sm">{creative.subheadline}</p> : null}
+                {creative.cta_label ? (
+                    <span className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold" style={{ backgroundColor: accent, color: FALLBACK_FG }}>
                         {creative.cta_label} →
                     </span>
-                )}
+                ) : null}
             </div>
         </div>
     );
 };
 
-// ── Modal shell ─────────────────────────────────────────────────────────────
+// ── Edit sheet ──────────────────────────────────────────────────────────────
 
-export const ModalShell: React.FC<{
+export const FormSheet: React.FC<{
+    open: boolean;
     title: string;
+    description?: string;
     onClose: () => void;
     onSave: () => void;
     saving: boolean;
     saveLabel?: string;
     width?: 'md' | 'lg' | 'xl';
     children: React.ReactNode;
-    icon?: React.ReactNode;
-}> = ({ title, onClose, onSave, saving, saveLabel = 'Save', width = 'lg', children, icon }) => {
-    const widthCls =
-        width === 'xl' ? 'max-w-5xl' : width === 'lg' ? 'max-w-3xl' : 'max-w-xl';
+}> = ({ open, title, description, onClose, onSave, saving, saveLabel = 'Save', width = 'lg', children }) => {
+    const widthCls = width === 'xl' ? 'sm:max-w-5xl' : width === 'lg' ? 'sm:max-w-2xl' : 'sm:max-w-xl';
     return (
-        <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 "
-            onClick={onClose}
-        >
-            <div
-                className={`bg-white dark:bg-gray-900 rounded-2xl shadow-2xl ${widthCls} w-full max-h-[92vh] flex flex-col`}
-                onClick={(e) => e.stopPropagation()}
-            >
-                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-800 shrink-0">
-                    <div className="flex items-center gap-3">
-                        {icon}
-                        <h2 className="text-lg font-bold text-on-surface dark:text-white">{title}</h2>
-                    </div>
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-on-surface-variant"
-                        aria-label="Close"
-                    >
-                        ✕
-                    </button>
-                </div>
+        <Sheet open={open} onOpenChange={(next) => (!next ? onClose() : undefined)}>
+            <SheetContent className={cn('flex w-full flex-col gap-0 overflow-hidden p-0 sm:p-0', widthCls)}>
+                <SheetHeader className="border-b border-border p-4 pr-14">
+                    <SheetTitle>{title}</SheetTitle>
+                    <SheetDescription className={description ? undefined : 'sr-only'}>{description ?? title}</SheetDescription>
+                </SheetHeader>
                 <div className="flex-1 overflow-y-auto">{children}</div>
-                <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-gray-200 dark:border-gray-800 shrink-0 bg-gray-50 dark:bg-gray-800">
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="px-4 py-2 rounded-lg text-sm font-semibold border border-gray-300 dark:border-gray-700 text-on-surface-variant hover:bg-gray-100 dark:hover:bg-gray-800 transition"
-                    >
+                <SheetFooter className="flex-row justify-end gap-2 border-t border-border bg-background p-4 sm:p-4">
+                    <Button type="button" variant="outline" onClick={onClose} disabled={saving}>
                         Cancel
-                    </button>
-                    <button
-                        type="button"
-                        onClick={onSave}
-                        disabled={saving}
-                        className="inline-flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary-hover disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed dark:disabled:bg-gray-700 dark:disabled:text-gray-500 shadow"
-                    >
+                    </Button>
+                    <Button type="button" onClick={onSave} disabled={saving}>
+                        {saving ? <Loader2 className="animate-spin" aria-hidden /> : null}
                         {saving ? 'Saving…' : saveLabel}
-                    </button>
-                </div>
-            </div>
-        </div>
+                    </Button>
+                </SheetFooter>
+            </SheetContent>
+        </Sheet>
     );
 };
 
-// ── Empty state ─────────────────────────────────────────────────────────────
+// ── Confirm dialog (destructive actions) ────────────────────────────────────
+
+export const ConfirmDialog: React.FC<{
+    open: boolean;
+    title: string;
+    description?: string;
+    confirmLabel?: string;
+    busy?: boolean;
+    onConfirm: () => void;
+    onCancel: () => void;
+}> = ({ open, title, description, confirmLabel = 'Delete', busy = false, onConfirm, onCancel }) => (
+    <Dialog open={open} onOpenChange={(next) => (!next && !busy ? onCancel() : undefined)}>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{title}</DialogTitle>
+                <DialogDescription>{description}</DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+                <Button type="button" variant="outline" onClick={onCancel} disabled={busy}>
+                    Cancel
+                </Button>
+                <Button type="button" variant="destructive" onClick={onConfirm} disabled={busy}>
+                    {busy ? <Loader2 className="animate-spin" aria-hidden /> : null}
+                    {confirmLabel}
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
+);
+
+// ── Empty / loading / error panels ──────────────────────────────────────────
 
 export const EmptyState: React.FC<{
-    icon: React.ReactNode;
+    icon: LucideIcon;
     title: string;
     body: string;
     action?: React.ReactNode;
 }> = ({ icon, title, body, action }) => (
-    <div className="text-center py-16 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-subtle text-primary mb-3">
-            {icon}
-        </div>
-        <h3 className="font-bold text-on-surface dark:text-white">{title}</h3>
-        <p className="mt-1 text-sm text-on-surface-variant dark:text-gray-500 max-w-sm mx-auto">{body}</p>
-        {action && <div className="mt-5">{action}</div>}
+    <Card>
+        <BaseEmptyState icon={icon} title={title} description={body} action={action} className="py-16" />
+    </Card>
+);
+
+export const CardGridSkeleton: React.FC<{ count?: number; className?: string }> = ({ count = 6, className }) => (
+    <div className={cn('grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3', className)} aria-busy="true" aria-label="Loading">
+        {Array.from({ length: count }).map((_, i) => (
+            <Skeleton key={i} className="h-48 w-full rounded-2xl" />
+        ))}
     </div>
 );
 
-// ── Inline alert ────────────────────────────────────────────────────────────
+/** Filter / action bar above each tab's list. Stacks on mobile. */
+export const Toolbar: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+    <Card className="flex flex-col gap-3 p-3 sm:flex-row sm:flex-wrap sm:items-center">{children}</Card>
+);
 
-export const Alert: React.FC<{ tone?: 'error' | 'info' | 'warn'; children: React.ReactNode }> = ({
+export const Alert: React.FC<{ tone?: 'error' | 'info' | 'warn'; children: React.ReactNode; onRetry?: () => void }> = ({
     tone = 'error',
     children,
+    onRetry,
 }) => {
     const cls =
         tone === 'error'
-            ? 'border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-200'
+            ? 'border-destructive bg-destructive-subtle text-destructive-subtle-foreground'
             : tone === 'warn'
-            ? 'border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950 text-amber-800 dark:text-amber-200'
-            : 'border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-200';
-    return <div className={`rounded-lg border px-4 py-3 text-sm ${cls}`}>{children}</div>;
+              ? 'border-warning-subtle-foreground bg-warning-subtle text-warning-subtle-foreground'
+              : 'border-info-subtle-foreground bg-info-subtle text-info-subtle-foreground';
+    return (
+        <div role={tone === 'error' ? 'alert' : 'status'} className={cn('flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-3 text-sm', cls)}>
+            <span className="min-w-0">{children}</span>
+            {onRetry ? (
+                <Button type="button" variant="outline" size="sm" onClick={onRetry}>
+                    Try again
+                </Button>
+            ) : null}
+        </div>
+    );
 };
 
 // Helper to summarise a creative for the preview
@@ -490,5 +515,17 @@ export function creativeAsPreview(c: Partial<Creative>) {
     };
 }
 
-// Re-export icons used elsewhere so tabs don't have to know which to import
-export { IconBuildingStore };
+/** Datetime helpers shared by the editors (ISO <-> value of <input type="datetime-local">). */
+export function toLocalInput(iso: string | null): string {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return '';
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+export function fromLocalInput(v: string): string | null {
+    if (!v) return null;
+    const d = new Date(v);
+    return Number.isNaN(d.getTime()) ? null : d.toISOString();
+}

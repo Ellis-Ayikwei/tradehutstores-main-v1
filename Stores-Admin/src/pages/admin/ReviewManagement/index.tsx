@@ -1,30 +1,22 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { 
-    IconSearch, 
-    IconFilter, 
-    IconFilterOff, 
-    IconPlus, 
-    IconEdit, 
-    IconTrash, 
-    IconEye,
-    IconStar,
-    IconStarFilled,
-    IconRefresh,
-    IconDownload,
-    IconCheck,
-    IconAlertCircle
-} from '@tabler/icons-react';
+import React, { useMemo, useState } from 'react';
 import useSWR, { mutate } from 'swr';
+import type { ColumnDef } from '@tanstack/react-table';
+import { Check, Download, Eye, FilterX, Loader2, MessageSquare, Pencil, Plus, RefreshCw, Star, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
+import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
+import { Badge } from '@/components/shadcn/badge';
+import { Button } from '@/components/shadcn/button';
+import { Card, CardContent } from '@/components/shadcn/card';
+import { DataTable, type DataTableSort } from '@/components/shadcn/data-table';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/shadcn/dialog';
+import { EmptyState } from '@/components/shadcn/empty-state';
+import { PageHeader } from '@/components/shadcn/page-header';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
+import { StatCard } from '@/components/shadcn/stat-card';
+import { cn } from '@/lib/utils';
 import axiosInstance from '../../../services/axiosInstance';
 import fetcher from '../../../services/fetcher';
-import showMessage from '../../../helper/showMessage';
-import showRequestError from '../../../helper/showRequestError';
-import DraggableDataTable from '../../../components/ui/DraggableDataTable';
-import FilterSelect from '../../../components/ui/FilterSelect';
-import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
-import { usePermissionService } from '../../../hooks/usePermissionService';
-import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
-import ReviewModal from './ReviewModal';
+import ReviewModal, { type ReviewForm } from './ReviewModal';
 
 interface Review {
     id: string;
@@ -62,17 +54,6 @@ interface Customer {
     user_email: string;
     user_first_name: string;
     user_last_name: string;
-    default_pickup_address: any;
-    default_delivery_address: any;
-    preferred_vehicle_types: any[];
-    fragile_items_handling: boolean;
-    insurance_preference: string;
-    loyalty_points: number;
-    referral_code: string;
-    communication_preferences: any;
-    marketing_opt_in: boolean;
-    created_at: string;
-    updated_at: string;
 }
 
 interface Job {
@@ -92,153 +73,151 @@ function unwrapList<T>(payload: unknown): T[] {
     return [];
 }
 
-const ReviewManagement: React.FC = () => {
-    const { hasPermission } = usePermissionService() as any;
-    
-    // State management
-    const [reviews, setReviews] = useState<Review[]>([]);
-    const [filteredReviews, setFilteredReviews] = useState<Review[]>([]);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [providerFilter, setProviderFilter] = useState('');
-    const [ratingFilter, setRatingFilter] = useState('');
-    const [statusFilter, setStatusFilter] = useState('all');
-    const [dateRangeFilter, setDateRangeFilter] = useState({
-        startDate: '',
-        endDate: '',
-    });
-    const [deletingReviewId, setDeletingReviewId] = useState<string | null>(null);
-    const [saving, setSaving] = useState(false);
+/** Pull a readable message out of an axios / DRF error. */
+function requestErrorMessage(error: any): string {
+    const data = error?.response?.data;
+    if (typeof data === 'string' && data.trim() && !data.trim().startsWith('<')) return data;
+    if (data && typeof data === 'object') {
+        if (typeof data.detail === 'string') return data.detail;
+        const parts: string[] = [];
+        for (const [key, value] of Object.entries(data)) {
+            if (Array.isArray(value)) parts.push(`${key}: ${value.join(', ')}`);
+            else if (typeof value === 'string') parts.push(`${key}: ${value}`);
+        }
+        if (parts.length > 0) return parts.join('\n');
+    }
+    return error?.message || 'An unexpected error occurred. Please try again.';
+}
 
-    // Modal states
+const toRating = (rating: number | string | null | undefined): number => {
+    const n = typeof rating === 'string' ? parseFloat(rating) : rating;
+    return n == null || Number.isNaN(n) ? 0 : n;
+};
+
+const formatDate = (dateString: string) =>
+    new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+const EMPTY_FORM: ReviewForm = {
+    provider: '',
+    customer: '',
+    overall_rating: '',
+    punctuality_rating: '',
+    service_quality_rating: '',
+    communication_rating: '',
+    professionalism_rating: '',
+    value_for_money_rating: '',
+    review_text: '',
+    is_verified: false,
+    is_public: true,
+    job: '',
+};
+
+const Stars: React.FC<{ rating: number | string | null | undefined }> = ({ rating }) => {
+    const safe = toRating(rating);
+    return (
+        <div className="flex items-center gap-0.5" aria-label={`${safe.toFixed(1)} out of 5`}>
+            {[1, 2, 3, 4, 5].map((s) => (
+                <Star key={s} className={cn('h-4 w-4', s <= safe ? 'fill-current text-warning-500' : 'text-muted-foreground')} aria-hidden="true" />
+            ))}
+            <span className="ml-1 text-sm font-medium">{safe.toFixed(1)}</span>
+        </div>
+    );
+};
+
+const StatusBadge: React.FC<{ review: Review }> = ({ review }) => {
+    if (review.is_verified && review.is_public) return <Badge variant="success">Verified & public</Badge>;
+    if (review.is_verified) return <Badge variant="info">Verified</Badge>;
+    if (review.is_public) return <Badge variant="warning">Public</Badge>;
+    return <Badge variant="outline">Private</Badge>;
+};
+
+const ALL = 'all';
+const PAGE_SIZES = [10, 25, 50, 100];
+
+const ReviewManagement: React.FC = () => {
+    const [search, setSearch] = useState('');
+    const [providerFilter, setProviderFilter] = useState(ALL);
+    const [ratingFilter, setRatingFilter] = useState(ALL);
+    const [statusFilter, setStatusFilter] = useState(ALL);
+    const [sort, setSort] = useState<DataTableSort | null>(null);
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+
     const [showModal, setShowModal] = useState(false);
     const [editingReview, setEditingReview] = useState<Review | null>(null);
-    const [form, setForm] = useState({
-        provider: '',
-        customer: '',
-        overall_rating: '',
-        punctuality_rating: '',
-        service_quality_rating: '',
-        communication_rating: '',
-        professionalism_rating: '',
-        value_for_money_rating: '',
-        review_text: '',
-        is_verified: false,
-        is_public: true,
-        job: '',
-    });
+    const [form, setForm] = useState<ReviewForm>(EMPTY_FORM);
+    const [saving, setSaving] = useState(false);
 
-    // SWR data fetching
+    const [toDelete, setToDelete] = useState<Review | null>(null);
+    const [deleting, setDeleting] = useState(false);
+
     const { data: reviewsData, isLoading: reviewsLoading, error: reviewsError } = useSWR('reviews/', fetcher);
     const { data: providersData } = useSWR('providers/', fetcher);
     const { data: customersData } = useSWR('customers/', fetcher);
     const { data: jobsData } = useSWR('jobs/', fetcher);
 
-    const providers: Provider[] = unwrapList<Provider>(providersData);
-    const customers: Customer[] = unwrapList<Customer>(customersData);
-    const jobs: Job[] = unwrapList<Job>(jobsData);
+    const reviews = useMemo(() => unwrapList<Review>(reviewsData), [reviewsData]);
+    const providers = useMemo(() => unwrapList<Provider>(providersData), [providersData]);
+    const customers = useMemo(() => unwrapList<Customer>(customersData), [customersData]);
+    const jobs = useMemo(() => unwrapList<Job>(jobsData), [jobsData]);
 
-    useEffect(() => {
-        if (reviewsData == null) return;
-        const list = unwrapList<Review>(reviewsData);
-        setReviews(list);
-        setFilteredReviews(list);
-    }, [reviewsData]);
-
-    // Filter reviews
-    useEffect(() => {
-        let filtered = reviews;
-
-        if (searchTerm) {
-            filtered = filtered.filter(review =>
-                review.provider_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                review.customer_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                review.customer_email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                (review.review_text && review.review_text.toLowerCase().includes(searchTerm.toLowerCase()))
-            );
-        }
-
-        if (providerFilter) {
-            filtered = filtered.filter(review => review.provider === providerFilter);
-        }
-
-        if (ratingFilter) {
-            const minRating = parseFloat(ratingFilter);
-            filtered = filtered.filter(review => {
-                const rating = typeof review.overall_rating === 'string' ? parseFloat(review.overall_rating) : review.overall_rating;
-                return !isNaN(rating) && rating >= minRating;
+    const filtered = useMemo(() => {
+        const q = search.trim().toLowerCase();
+        let list = reviews.filter((r) => {
+            if (q) {
+                const hit =
+                    (r.provider_name || '').toLowerCase().includes(q) ||
+                    (r.customer_name || '').toLowerCase().includes(q) ||
+                    (r.customer_email || '').toLowerCase().includes(q) ||
+                    (r.review_text || '').toLowerCase().includes(q);
+                if (!hit) return false;
+            }
+            if (providerFilter !== ALL && r.provider !== providerFilter) return false;
+            if (ratingFilter !== ALL && toRating(r.overall_rating) < parseFloat(ratingFilter)) return false;
+            if (statusFilter === 'verified' && !r.is_verified) return false;
+            if (statusFilter === 'unverified' && r.is_verified) return false;
+            if (statusFilter === 'public' && !r.is_public) return false;
+            if (statusFilter === 'private' && r.is_public) return false;
+            return true;
+        });
+        if (sort) {
+            const key = sort.id as keyof Review;
+            const numeric = key === 'overall_rating' || key === 'average_detailed_rating';
+            list = [...list].sort((a, b) => {
+                const cmp = numeric
+                    ? toRating(a[key] as number) - toRating(b[key] as number)
+                    : key === 'created_at'
+                      ? new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+                      : String(a[key] ?? '').localeCompare(String(b[key] ?? ''));
+                return sort.desc ? -cmp : cmp;
             });
         }
+        return list;
+    }, [reviews, search, providerFilter, ratingFilter, statusFilter, sort]);
 
-        if (statusFilter !== 'all') {
-            if (statusFilter === 'verified') {
-                filtered = filtered.filter(review => review.is_verified);
-            } else if (statusFilter === 'unverified') {
-                filtered = filtered.filter(review => !review.is_verified);
-            } else if (statusFilter === 'public') {
-                filtered = filtered.filter(review => review.is_public);
-            } else if (statusFilter === 'private') {
-                filtered = filtered.filter(review => !review.is_public);
-            }
-        }
+    const paged = useMemo(() => filtered.slice((page - 1) * pageSize, page * pageSize), [filtered, page, pageSize]);
 
-        if (dateRangeFilter.startDate) {
-            filtered = filtered.filter(review => 
-                new Date(review.created_at) >= new Date(dateRangeFilter.startDate)
-            );
-        }
+    const stats = useMemo(
+        () => ({
+            total: reviews.length,
+            verified: reviews.filter((r) => r.is_verified).length,
+            public: reviews.filter((r) => r.is_public).length,
+            avg: reviews.length > 0 ? reviews.reduce((sum, r) => sum + toRating(r.overall_rating), 0) / reviews.length : 0,
+        }),
+        [reviews]
+    );
 
-        if (dateRangeFilter.endDate) {
-            filtered = filtered.filter(review => 
-                new Date(review.created_at) <= new Date(dateRangeFilter.endDate)
-            );
-        }
+    const hasFilters = Boolean(search) || providerFilter !== ALL || ratingFilter !== ALL || statusFilter !== ALL;
 
-        setFilteredReviews(filtered);
-    }, [reviews, searchTerm, providerFilter, ratingFilter, statusFilter, dateRangeFilter]);
-
-
-    // Helper functions
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-        });
+    const clearFilters = () => {
+        setSearch('');
+        setProviderFilter(ALL);
+        setRatingFilter(ALL);
+        setStatusFilter(ALL);
+        setPage(1);
     };
 
-    const renderStars = (rating: number | string | null | undefined) => {
-        // Convert rating to number and handle edge cases
-        const numericRating = typeof rating === 'string' ? parseFloat(rating) : rating;
-        const safeRating = isNaN(numericRating) || numericRating === null || numericRating === undefined ? 0 : numericRating;
-        
-        return (
-            <div className="flex items-center space-x-1">
-                {[1, 2, 3, 4, 5].map((star) => (
-                    <IconStarFilled
-                        key={star}
-                        className={`w-4 h-4 ${
-                            star <= safeRating ? 'text-yellow-400' : 'text-gray-300'
-                        }`}
-                    />
-                ))}
-                <span className="ml-1 text-sm font-medium">{safeRating.toFixed(1)}</span>
-            </div>
-        );
-    };
-
-    const getStatusBadge = (review: Review) => {
-        if (review.is_verified && review.is_public) {
-            return <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">Verified & Public</span>;
-        } else if (review.is_verified) {
-            return <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">Verified</span>;
-        } else if (review.is_public) {
-            return <span className="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">Public</span>;
-        } else {
-            return <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">Private</span>;
-        }
-    };
+    const refresh = () => mutate('reviews/');
 
     const openForm = (review?: Review) => {
         if (review) {
@@ -246,12 +225,12 @@ const ReviewManagement: React.FC = () => {
             setForm({
                 provider: review.provider,
                 customer: review.customer,
-                overall_rating: review.overall_rating.toString(),
-                punctuality_rating: review.punctuality_rating.toString(),
-                service_quality_rating: review.service_quality_rating.toString(),
-                communication_rating: review.communication_rating.toString(),
-                professionalism_rating: review.professionalism_rating.toString(),
-                value_for_money_rating: review.value_for_money_rating.toString(),
+                overall_rating: String(review.overall_rating ?? ''),
+                punctuality_rating: String(review.punctuality_rating ?? ''),
+                service_quality_rating: String(review.service_quality_rating ?? ''),
+                communication_rating: String(review.communication_rating ?? ''),
+                professionalism_rating: String(review.professionalism_rating ?? ''),
+                value_for_money_rating: String(review.value_for_money_rating ?? ''),
                 review_text: review.review_text || '',
                 is_verified: review.is_verified,
                 is_public: review.is_public,
@@ -259,20 +238,7 @@ const ReviewManagement: React.FC = () => {
             });
         } else {
             setEditingReview(null);
-            setForm({
-                provider: '',
-                customer: '',
-                overall_rating: '',
-                punctuality_rating: '',
-                service_quality_rating: '',
-                communication_rating: '',
-                professionalism_rating: '',
-                value_for_money_rating: '',
-                review_text: '',
-                is_verified: false,
-                is_public: true,
-                job: '',
-            });
+            setForm(EMPTY_FORM);
         }
         setShowModal(true);
     };
@@ -280,40 +246,19 @@ const ReviewManagement: React.FC = () => {
     const closeForm = () => {
         setShowModal(false);
         setEditingReview(null);
-        setForm({
-            provider: '',
-            customer: '',
-            overall_rating: '',
-            punctuality_rating: '',
-            service_quality_rating: '',
-            communication_rating: '',
-            professionalism_rating: '',
-            value_for_money_rating: '',
-            review_text: '',
-            is_verified: false,
-            is_public: true,
-            job: '',
-        });
+        setForm(EMPTY_FORM);
     };
 
-    const handleFormChange = (field: string, value: any) => {
-        setForm(prev => ({
-            ...prev,
-            [field]: value
-        }));
-    };
+    const handleFormChange = (field: string, value: any) => setForm((prev) => ({ ...prev, [field]: value }));
 
     const handleSave = async () => {
         try {
             setSaving(true);
-
-            // Helper functions for null handling
-            const toNullIfEmpty = (value: string) => value.trim() === '' ? null : value;
+            const toNullIfEmpty = (value: string) => (value.trim() === '' ? null : value);
             const toNumberOrNull = (value: string) => {
                 const num = parseFloat(value);
-                return isNaN(num) ? null : num;
+                return Number.isNaN(num) ? null : num;
             };
-
             const payload = {
                 provider: toNullIfEmpty(form.provider),
                 customer: toNullIfEmpty(form.customer),
@@ -328,78 +273,69 @@ const ReviewManagement: React.FC = () => {
                 is_public: form.is_public,
                 job: toNullIfEmpty(form.job),
             };
-
             if (editingReview) {
                 await axiosInstance.put(`/reviews/${editingReview.id}/`, payload);
-                showMessage('Review updated successfully');
+                toast.success('Review updated successfully');
             } else {
                 await axiosInstance.post('/reviews/', payload);
-                showMessage('Review created successfully');
+                toast.success('Review created successfully');
             }
-
-            mutate('reviews/');
+            refresh();
             closeForm();
         } catch (error) {
-            showRequestError(error);
+            console.error('Review save failed:', error);
+            toast.error(requestErrorMessage(error));
         } finally {
             setSaving(false);
         }
     };
 
-    const handleDelete = async (reviewId: string) => {
+    const confirmDelete = async () => {
+        if (!toDelete) return;
         try {
-            const confirmed = window.confirm('Are you sure you want to delete this review?');
-            if (confirmed) {
-                setDeletingReviewId(reviewId);
-                await axiosInstance.delete(`/reviews/${reviewId}/`);
-                showMessage('Review deleted successfully');
-                mutate('reviews/');
-            }
+            setDeleting(true);
+            await axiosInstance.delete(`/reviews/${toDelete.id}/`);
+            toast.success('Review deleted successfully');
+            setToDelete(null);
+            refresh();
         } catch (error) {
-            showRequestError(error);
+            console.error('Review delete failed:', error);
+            toast.error(requestErrorMessage(error));
         } finally {
-            setDeletingReviewId(null);
+            setDeleting(false);
         }
     };
 
     const handleVerify = async (reviewId: string) => {
         try {
             await axiosInstance.post('/reviews/verify_review/', { review_id: reviewId });
-            showMessage('Review verified successfully');
-            mutate('reviews/');
+            toast.success('Review verified successfully');
+            refresh();
         } catch (error) {
-            showRequestError(error);
+            console.error('Review verify failed:', error);
+            toast.error(requestErrorMessage(error));
         }
     };
 
     const exportToCSV = () => {
-        const headers = [
-            'ID', 'Provider', 'Customer', 'Overall Rating', 'Punctuality', 'Service Quality',
-            'Communication', 'Professionalism', 'Value for Money', 'Review Text',
-            'Verified', 'Public', 'Created At'
-        ];
-
-        const csvData = filteredReviews.map(review => [
-            review.id,
-            review.provider_name,
-            review.customer_name,
-            review.overall_rating,
-            review.punctuality_rating,
-            review.service_quality_rating,
-            review.communication_rating,
-            review.professionalism_rating,
-            review.value_for_money_rating,
-            review.review_text || '',
-            review.is_verified ? 'Yes' : 'No',
-            review.is_public ? 'Yes' : 'No',
-            formatDate(review.created_at)
+        const headers = ['ID', 'Provider', 'Customer', 'Overall Rating', 'Punctuality', 'Service Quality', 'Communication', 'Professionalism', 'Value for Money', 'Review Text', 'Verified', 'Public', 'Created At'];
+        const rows = filtered.map((r) => [
+            r.id,
+            r.provider_name,
+            r.customer_name,
+            r.overall_rating,
+            r.punctuality_rating,
+            r.service_quality_rating,
+            r.communication_rating,
+            r.professionalism_rating,
+            r.value_for_money_rating,
+            r.review_text || '',
+            r.is_verified ? 'Yes' : 'No',
+            r.is_public ? 'Yes' : 'No',
+            formatDate(r.created_at),
         ]);
-
-        const csvContent = [headers, ...csvData]
-            .map(row => row.map(field => `"${field}"`).join(','))
-            .join('\n');
-
-        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const csv = [headers, ...rows].map((row) => row.map((field) => `"${field}"`).join(',')).join('\n');
+        const blob = new Blob([csv], { type: 'text/csv' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -408,337 +344,229 @@ const ReviewManagement: React.FC = () => {
         window.URL.revokeObjectURL(url);
     };
 
-    const clearFilters = () => {
-        setSearchTerm('');
-        setProviderFilter('');
-        setRatingFilter('');
-        setStatusFilter('all');
-        setDateRangeFilter({ startDate: '', endDate: '' });
-    };
+    const rowActions = (r: Review) => (
+        <div className="flex items-center gap-1">
+            <Button type="button" variant="ghost" size="icon-sm" onClick={() => openForm(r)} title="Edit review" aria-label="Edit review">
+                <Pencil aria-hidden="true" />
+            </Button>
+            {!r.is_verified && (
+                <Button type="button" variant="ghost" size="icon-sm" onClick={() => handleVerify(r.id)} title="Verify review" aria-label="Verify review">
+                    <Check aria-hidden="true" />
+                </Button>
+            )}
+            <Button type="button" variant="ghost" size="icon-sm" className="text-destructive" onClick={() => setToDelete(r)} title="Delete review" aria-label="Delete review">
+                <Trash2 aria-hidden="true" />
+            </Button>
+        </div>
+    );
 
-    // Table columns
-    const columns = [
-        {
-            accessor: 'provider_name',
-            title: 'Provider',
-            sortable: true,
-            render: (item: Review) => (
-                <div className="font-medium text-gray-900 dark:text-white">
-                    {item.provider_name}
-                </div>
-            ),
-        },
-        {
-            accessor: 'customer_name',
-            title: 'Customer',
-            sortable: true,
-            render: (item: Review) => (
-                <div>
-                    <div className="font-medium text-gray-900 dark:text-white">
-                        {item.customer_name}
+    const columns = useMemo<ColumnDef<Review>[]>(
+        () => [
+            {
+                id: 'provider_name',
+                accessorKey: 'provider_name',
+                header: 'Provider',
+                meta: { label: 'Provider', cardTitle: true },
+                cell: ({ row }) => <span className="font-medium">{row.original.provider_name}</span>,
+            },
+            {
+                id: 'customer_name',
+                accessorKey: 'customer_name',
+                header: 'Customer',
+                meta: { label: 'Customer' },
+                cell: ({ row }) => (
+                    <div>
+                        <div className="font-medium">{row.original.customer_name}</div>
+                        <div className="text-xs text-muted-foreground">{row.original.customer_email}</div>
                     </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {item.customer_email}
-                    </div>
-                </div>
-            ),
-        },
-        {
-            accessor: 'overall_rating',
-            title: 'Overall Rating',
-            sortable: true,
-            render: (item: Review) => renderStars(item.overall_rating),
-        },
-        {
-            accessor: 'average_detailed_rating',
-            title: 'Detailed Avg',
-            sortable: true,
-            render: (item: Review) => renderStars(item.average_detailed_rating),
-        },
-        {
-            accessor: 'review_text',
-            title: 'Review',
-            sortable: false,
-            render: (item: Review) => (
-                <div className="max-w-xs">
-                    {item.review_text ? (
-                        <p className="text-sm text-gray-600 dark:text-gray-300 truncate">
-                            {item.review_text}
-                        </p>
+                ),
+            },
+            {
+                id: 'overall_rating',
+                accessorKey: 'overall_rating',
+                header: 'Overall',
+                meta: { label: 'Overall' },
+                cell: ({ row }) => <Stars rating={row.original.overall_rating} />,
+            },
+            {
+                id: 'average_detailed_rating',
+                accessorKey: 'average_detailed_rating',
+                header: 'Detailed avg',
+                meta: { label: 'Detailed avg' },
+                cell: ({ row }) => <Stars rating={row.original.average_detailed_rating} />,
+            },
+            {
+                id: 'review_text',
+                accessorKey: 'review_text',
+                header: 'Review',
+                enableSorting: false,
+                meta: { label: 'Review', className: 'max-w-xs' },
+                cell: ({ row }) =>
+                    row.original.review_text ? (
+                        <p className="line-clamp-2 text-sm text-muted-foreground">{row.original.review_text}</p>
                     ) : (
-                        <span className="text-sm text-gray-400 italic">No text</span>
-                    )}
-                </div>
-            ),
-        },
-        {
-            accessor: 'status',
-            title: 'Status',
-            sortable: false,
-            render: (item: Review) => getStatusBadge(item),
-        },
-        {
-            accessor: 'created_at',
-            title: 'Created',
-            sortable: true,
-            render: (item: Review) => (
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                    {formatDate(item.created_at)}
-                </div>
-            ),
-        },
-        {
-            accessor: 'actions',
-            title: 'Actions',
-            sortable: false,
-            render: (item: Review) => (
-                <div className="flex items-center space-x-2">
-                    <button
-                        onClick={() => openForm(item)}
-                        className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors"
-                        title="Edit Review"
-                    >
-                        <IconEdit className="w-4 h-4" />
-                    </button>
-                    
-                    {!item.is_verified && (
-                        <button
-                            onClick={() => handleVerify(item.id)}
-                            className="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg transition-colors"
-                            title="Verify Review"
-                        >
-                            <IconCheck className="w-4 h-4" />
-                        </button>
-                    )}
+                        <span className="text-sm italic text-muted-foreground">No text</span>
+                    ),
+            },
+            {
+                id: 'status',
+                header: 'Status',
+                enableSorting: false,
+                meta: { label: 'Status' },
+                cell: ({ row }) => <StatusBadge review={row.original} />,
+            },
+            {
+                id: 'created_at',
+                accessorKey: 'created_at',
+                header: 'Created',
+                meta: { label: 'Created' },
+                cell: ({ row }) => <span className="text-sm text-muted-foreground">{formatDate(row.original.created_at)}</span>,
+            },
+            {
+                id: 'actions',
+                header: () => <span className="sr-only">Actions</span>,
+                enableSorting: false,
+                enableHiding: false,
+                cell: ({ row }) => rowActions(row.original),
+            },
+        ],
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        []
+    );
 
-                    <button
-                        onClick={() => handleDelete(item.id)}
-                        disabled={deletingReviewId === item.id}
-                        className={`p-2 rounded-lg transition-colors ${
-                            deletingReviewId === item.id
-                                ? 'text-red-400 cursor-not-allowed bg-red-50'
-                                : 'text-red-600 hover:text-red-800 hover:bg-red-50'
-                        }`}
-                        title={deletingReviewId === item.id ? "Deleting..." : "Delete Review"}
-                    >
-                        {deletingReviewId === item.id ? (
-                            <div className="w-4 h-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin"></div>
-                        ) : (
-                            <IconTrash className="w-4 h-4" />
-                        )}
-                    </button>
-                </div>
-            ),
-        },
-    ];
-
-    if (reviewsLoading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-            </div>
-        );
-    }
-
-    if (reviewsError) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="text-center">
-                    <IconAlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-                    <p className="text-red-600 dark:text-red-400">Failed to load reviews</p>
-                    <button onClick={() => mutate('reviews/')} className="btn btn-primary mt-4">
-                        Try Again
-                    </button>
-                </div>
-            </div>
-        );
-    }
+    const resetPage = <T,>(set: (v: T) => void) => (v: T) => {
+        set(v);
+        setPage(1);
+    };
 
     return (
         <ProtectedRoute allowedGroups={['Administrators']}>
-            <div className="p-6 space-y-6">
-                {/* Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                            Review Management
-                        </h1>
-                        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                            Manage customer reviews and ratings for providers
-                        </p>
-                    </div>
-                    <div className="mt-4 sm:mt-0 flex space-x-3">
-                        <button
-                            onClick={() => mutate('reviews/')}
-                            className="btn btn-secondary"
-                        >
-                            <IconRefresh className="w-4 h-4 mr-2" />
-                            Refresh
-                        </button>
-                        <button
-                            onClick={exportToCSV}
-                            className="btn btn-secondary"
-                        >
-                            <IconDownload className="w-4 h-4 mr-2" />
-                            Export CSV
-                        </button>
-                        <button
-                            onClick={() => openForm()}
-                            className="btn btn-primary"
-                        >
-                            <IconPlus className="w-4 h-4 mr-2" />
-                            Add Review
-                        </button>
-                    </div>
-                </div>
-
-                {/* Statistics Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                        <div className="flex items-center">
-                            <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-                                <IconStar className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                            </div>
-                            <div className="ml-4">
-                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Reviews</p>
-                                <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                                    {reviews.length.toLocaleString()}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                        <div className="flex items-center">
-                            <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
-                                <IconCheck className="w-6 h-6 text-green-600 dark:text-green-400" />
-                            </div>
-                            <div className="ml-4">
-                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Verified</p>
-                                <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                                    {reviews.filter(r => r.is_verified).length.toLocaleString()}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                        <div className="flex items-center">
-                            <div className="p-2 bg-yellow-100 dark:bg-yellow-900 rounded-lg">
-                                <IconStarFilled className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
-                            </div>
-                            <div className="ml-4">
-                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Avg Rating</p>
-                                <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                                    {reviews.length > 0 
-                                        ? (reviews.reduce((sum, r) => {
-                                            const rating = typeof r.overall_rating === 'string' ? parseFloat(r.overall_rating) : r.overall_rating;
-                                            return sum + (isNaN(rating) ? 0 : rating);
-                                        }, 0) / reviews.length).toFixed(1)
-                                        : '0.0'
-                                    }
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                        <div className="flex items-center">
-                            <div className="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
-                                <IconEye className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                            </div>
-                            <div className="ml-4">
-                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Public</p>
-                                <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                                    {reviews.filter(r => r.is_public).length.toLocaleString()}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Filters */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                        
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Provider
-                            </label>
-                            <FilterSelect
-                                value={providerFilter}
-                                onChange={(value) => setProviderFilter(value as string)}
-                                options={[
-                                    { value: '', label: 'All Providers' },
-                                    ...providers.map(provider => ({
-                                        value: provider.id,
-                                        label: provider.company_name || provider.name
-                                    }))
-                                ]}
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Min Rating
-                            </label>
-                            <FilterSelect
-                                value={ratingFilter}
-                                onChange={(value) => setRatingFilter(value as string)}
-                                options={[
-                                    { value: '', label: 'All Ratings' },
-                                    { value: '5', label: '5 Stars' },
-                                    { value: '4', label: '4+ Stars' },
-                                    { value: '3', label: '3+ Stars' },
-                                    { value: '2', label: '2+ Stars' },
-                                    { value: '1', label: '1+ Stars' },
-                                ]}
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Status
-                            </label>
-                            <FilterSelect
-                                value={statusFilter}
-                                onChange={(value) => setStatusFilter(value as string)}
-                                options={[
-                                    { value: 'all', label: 'All Status' },
-                                    { value: 'verified', label: 'Verified' },
-                                    { value: 'unverified', label: 'Unverified' },
-                                    { value: 'public', label: 'Public' },
-                                    { value: 'private', label: 'Private' },
-                                ]}
-                            />
-                        </div>
-
-                        <div className="flex items-end space-x-2">
-                            <button
-                                onClick={clearFilters}
-                                className="btn btn-secondary"
-                            >
-                                <IconFilterOff className="w-4 h-4 mr-2" />
-                                Clear
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Data Table */}
-                <DraggableDataTable
-                    data={filteredReviews}
-                    columns={columns}
-                    loading={reviewsLoading}
+            <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6">
+                <PageHeader
                     title="Reviews"
-                    exportFileName="reviews"
-                    storeKey="reviews-table"
-                    onRefreshData={() => mutate('reviews/')}
-                    quickCheckFields={['provider_name', 'customer_name', 'overall_rating', 'review_text']}
+                    description="Manage customer reviews and ratings."
+                    actions={
+                        <>
+                            <Button type="button" variant="outline" onClick={refresh} disabled={reviewsLoading}>
+                                <RefreshCw className={reviewsLoading ? 'animate-spin' : ''} aria-hidden="true" /> Refresh
+                            </Button>
+                            <Button type="button" variant="outline" onClick={exportToCSV} disabled={filtered.length === 0}>
+                                <Download aria-hidden="true" /> Export CSV
+                            </Button>
+                            <Button type="button" onClick={() => openForm()}>
+                                <Plus aria-hidden="true" /> Add review
+                            </Button>
+                        </>
+                    }
                 />
 
-                {/* Add/Edit Review Modal */}
+                <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                    <StatCard label="Total reviews" value={stats.total.toLocaleString()} icon={MessageSquare} isLoading={reviewsLoading} />
+                    <StatCard label="Verified" value={stats.verified.toLocaleString()} icon={Check} isLoading={reviewsLoading} />
+                    <StatCard label="Avg rating" value={stats.avg.toFixed(1)} icon={Star} isLoading={reviewsLoading} />
+                    <StatCard label="Public" value={stats.public.toLocaleString()} icon={Eye} isLoading={reviewsLoading} />
+                </div>
+
+                <DataTable<Review>
+                    columns={columns}
+                    data={paged}
+                    total={filtered.length}
+                    page={page}
+                    pageSize={pageSize}
+                    pageSizeOptions={PAGE_SIZES}
+                    onPageChange={setPage}
+                    onPageSizeChange={(n) => {
+                        setPageSize(n);
+                        setPage(1);
+                    }}
+                    sort={sort}
+                    onSortChange={(s) => {
+                        setSort(s);
+                        setPage(1);
+                    }}
+                    search={search}
+                    onSearchChange={resetPage(setSearch)}
+                    searchPlaceholder="Search provider, customer or text"
+                    isLoading={reviewsLoading}
+                    error={reviewsError ? new Error(requestErrorMessage(reviewsError) || 'Failed to load reviews') : undefined}
+                    onRetry={refresh}
+                    getRowId={(r) => r.id}
+                    toolbar={
+                        <>
+                            <Select value={providerFilter} onValueChange={resetPage(setProviderFilter)}>
+                                <SelectTrigger className="w-[170px]" aria-label="Filter by provider">
+                                    <SelectValue placeholder="Provider" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value={ALL}>All providers</SelectItem>
+                                    {providers.map((p) => (
+                                        <SelectItem key={p.id} value={p.id}>
+                                            {p.company_name || p.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <Select value={ratingFilter} onValueChange={resetPage(setRatingFilter)}>
+                                <SelectTrigger className="w-[140px]" aria-label="Filter by minimum rating">
+                                    <SelectValue placeholder="Rating" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value={ALL}>All ratings</SelectItem>
+                                    <SelectItem value="5">5 stars</SelectItem>
+                                    <SelectItem value="4">4+ stars</SelectItem>
+                                    <SelectItem value="3">3+ stars</SelectItem>
+                                    <SelectItem value="2">2+ stars</SelectItem>
+                                    <SelectItem value="1">1+ stars</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <Select value={statusFilter} onValueChange={resetPage(setStatusFilter)}>
+                                <SelectTrigger className="w-[140px]" aria-label="Filter by status">
+                                    <SelectValue placeholder="Status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value={ALL}>All status</SelectItem>
+                                    <SelectItem value="verified">Verified</SelectItem>
+                                    <SelectItem value="unverified">Unverified</SelectItem>
+                                    <SelectItem value="public">Public</SelectItem>
+                                    <SelectItem value="private">Private</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            {hasFilters ? (
+                                <Button type="button" variant="ghost" size="sm" onClick={clearFilters}>
+                                    <FilterX aria-hidden="true" /> Clear
+                                </Button>
+                            ) : null}
+                        </>
+                    }
+                    emptyState={
+                        <EmptyState
+                            icon={MessageSquare}
+                            title={reviews.length === 0 ? 'No reviews yet' : 'No reviews match'}
+                            description={reviews.length === 0 ? 'Reviews will appear here once customers submit them.' : 'Try a different search or clear your filters.'}
+                        />
+                    }
+                    renderMobileCard={(r) => (
+                        <Card key={r.id}>
+                            <CardContent className="space-y-3 p-4 pt-4">
+                                <div className="flex items-start justify-between gap-2">
+                                    <div className="min-w-0">
+                                        <p className="truncate font-semibold">{r.provider_name}</p>
+                                        <p className="truncate text-sm">{r.customer_name}</p>
+                                        <p className="truncate text-xs text-muted-foreground">{r.customer_email}</p>
+                                    </div>
+                                    <StatusBadge review={r} />
+                                </div>
+                                <Stars rating={r.overall_rating} />
+                                {r.review_text ? <p className="line-clamp-3 text-sm text-muted-foreground">{r.review_text}</p> : <p className="text-sm italic text-muted-foreground">No text</p>}
+                                <div className="flex items-center justify-between border-t border-border pt-3">
+                                    <span className="text-xs text-muted-foreground">{formatDate(r.created_at)}</span>
+                                    {rowActions(r)}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
+                />
+
                 <ReviewModal
                     isOpen={showModal}
                     editingReview={editingReview}
@@ -751,6 +579,24 @@ const ReviewManagement: React.FC = () => {
                     onFormChange={handleFormChange}
                     onSave={handleSave}
                 />
+
+                <Dialog open={toDelete !== null} onOpenChange={(o) => (!o && !deleting ? setToDelete(null) : undefined)}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Delete this review?</DialogTitle>
+                            <DialogDescription>This permanently removes the review. This cannot be undone.</DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                            <Button type="button" variant="outline" onClick={() => setToDelete(null)} disabled={deleting}>
+                                Cancel
+                            </Button>
+                            <Button type="button" variant="destructive" onClick={confirmDelete} disabled={deleting}>
+                                {deleting ? <Loader2 className="animate-spin" aria-hidden="true" /> : <Trash2 aria-hidden="true" />}
+                                Delete
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
         </ProtectedRoute>
     );

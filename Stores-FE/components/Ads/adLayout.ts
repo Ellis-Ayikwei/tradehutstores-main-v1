@@ -49,6 +49,21 @@ export function creativeColors(c: AdCreative): { backgroundColor: string; color:
     return { backgroundColor: bg, color: fg }
 }
 
+const SAFE_GRADIENT = /^(linear|radial)-gradient\([#a-z0-9%.,()\s-]+\)$/i
+
+/**
+ * Banner surface: a solid colour or a CSS gradient set by the admin. Anything that is not a plain colour
+ * or a simple linear/radial gradient (urls, semicolons, expressions) is rejected. Text defaults to white.
+ */
+export function creativeSurface(c: AdCreative): { background?: string; color: string } {
+    const bg = c.background_color?.trim()
+    const color = c.text_color?.trim() || '#ffffff'
+    if (!bg) return { color }
+    const plain = /^#[0-9a-f]{3,8}$/i.test(bg) || /^[a-z]+$/i.test(bg) || /^(rgb|hsl)a?\([\d\s.,%/]+\)$/i.test(bg)
+    if (plain || SAFE_GRADIENT.test(bg)) return { background: bg, color }
+    return { color }
+}
+
 /** Solid accent colour for a CTA pill, when the admin set one. */
 export function accentStyle(c: AdCreative): CSSProperties | undefined {
     const a = c.accent_color?.trim()

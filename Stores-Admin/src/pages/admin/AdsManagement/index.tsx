@@ -1,52 +1,42 @@
-import {
-    IconBolt,
-    IconChartBar,
-    IconClick,
-    IconEye,
-    IconLayoutGrid,
-    IconPhoto,
-    IconRocket,
-    IconSpeakerphone,
-    IconTarget,
-} from '@tabler/icons-react';
+import { BarChart3, Eye, LayoutGrid, Image as ImageIcon, Megaphone, MousePointerClick, Target, Zap, type LucideIcon } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-    Campaign,
-    adsAdminErrorMessage,
-    fetchCampaigns,
-    fetchPlacements,
-    fetchSlots,
-} from '../../../services/adsAdminService';
+import { Badge } from '@/components/shadcn/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
+import { PageHeader } from '@/components/shadcn/page-header';
+import { StatCard } from '@/components/shadcn/stat-card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/tabs';
+import { Campaign, adsAdminErrorMessage, fetchCampaigns, fetchPlacements, fetchSlots } from '../../../services/adsAdminService';
 import CampaignsTab from './CampaignsTab';
 import CreativesTab from './CreativesTab';
 import PlacementsTab from './PlacementsTab';
 import SlotsTab from './SlotsTab';
+import { Alert } from './_shared';
 
 type Tab = 'campaigns' | 'creatives' | 'placements' | 'slots';
 
-const TABS: { id: Tab; label: string; icon: React.ComponentType<{ size?: number }>; description: string }[] = [
+const TABS: { id: Tab; label: string; icon: LucideIcon; description: string }[] = [
     {
         id: 'campaigns',
         label: 'Campaigns',
-        icon: IconSpeakerphone,
+        icon: Megaphone,
         description: 'Umbrella for an advertiser push (status, schedule, budget caps).',
     },
     {
         id: 'creatives',
         label: 'Creatives',
-        icon: IconPhoto,
-        description: 'The visual + copy + CTA. Reusable across placements.',
+        icon: ImageIcon,
+        description: 'The visual, copy and CTA. Reusable across placements.',
     },
     {
         id: 'placements',
         label: 'Placements',
-        icon: IconLayoutGrid,
+        icon: LayoutGrid,
         description: 'Slots on the storefront (homepage top bar, modal, footer, etc).',
     },
     {
         id: 'slots',
         label: 'Slots & Targeting',
-        icon: IconTarget,
+        icon: Target,
         description: 'Bind a creative into a placement with weight, schedule, frequency caps, targeting.',
     },
 ];
@@ -64,6 +54,12 @@ interface DashboardStats {
     topCampaigns: Campaign[];
 }
 
+function formatCompact(n: number): string {
+    if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+    if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+    return String(n);
+}
+
 const AdsManagement: React.FC = () => {
     const [tab, setTab] = useState<Tab>('campaigns');
     const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -74,11 +70,7 @@ const AdsManagement: React.FC = () => {
         try {
             setLoadingStats(true);
             setStatsError(null);
-            const [camps, placements, slots] = await Promise.all([
-                fetchCampaigns(),
-                fetchPlacements(),
-                fetchSlots(),
-            ]);
+            const [camps, placements, slots] = await Promise.all([fetchCampaigns(), fetchPlacements(), fetchSlots()]);
             const running = camps.filter((c) => c.status === 'running');
             const totalImpr = camps.reduce((s, c) => s + (c.stats?.impressions ?? 0), 0);
             const totalClicks = camps.reduce((s, c) => s + (c.stats?.clicks ?? 0), 0);
@@ -110,232 +102,112 @@ const AdsManagement: React.FC = () => {
         loadStats();
     }, [loadStats]);
 
-    const headlineNumber = useMemo(() => {
-        if (!stats) return '—';
-        if (stats.liveSlots === 0) return 'No live ads';
-        return `${stats.liveSlots} live ad${stats.liveSlots === 1 ? '' : 's'}`;
+    const headline = useMemo(() => {
+        if (!stats) return 'Run sponsored campaigns across every placement on the storefront.';
+        const live = stats.liveSlots === 0 ? 'No live ads' : `${stats.liveSlots} live ad${stats.liveSlots === 1 ? '' : 's'}`;
+        return `${live} across the storefront. Weighted slots, targeting, frequency caps and impression / click tracking.`;
     }, [stats]);
 
+    const activeTab = TABS.find((t) => t.id === tab) ?? TABS[0];
+
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900">
-            <div className="max-w-7xl mx-auto p-6 space-y-6">
-                {/* ── Hero ──────────────────────────────────────────────── */}
-                <div className="rounded-3xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
-                    <div className="relative px-6 md:px-8 py-6 md:py-8 bg-gradient-to-br from-primary-subtle via-transparent to-primary-subtle">
-                        <div className="flex items-start justify-between gap-6 flex-wrap">
-                            <div className="flex items-start gap-4 min-w-0">
-                                <div className="p-3 rounded-2xl bg-primary text-white shadow-lg shadow-primary/20">
-                                    <IconRocket size={28} />
-                                </div>
-                                <div className="min-w-0">
-                                    <p className="text-xs font-bold uppercase tracking-wider text-primary mb-1">
-                                        Ads & Promotions
-                                    </p>
-                                    <h1 className="text-2xl md:text-3xl font-bold text-on-surface dark:text-white">
-                                        {headlineNumber}{' '}
-                                        <span className="text-on-surface-variant font-normal text-xl md:text-2xl">
-                                            across the storefront
-                                        </span>
-                                    </h1>
-                                    <p className="mt-2 text-sm text-on-surface-variant dark:text-gray-400 max-w-2xl">
-                                        Run sponsored campaigns across every placement — banners, carousels, top
-                                        bars, modals, footers — with weighted slots, geo + device + user targeting,
-                                        frequency caps, and live impression / click tracking.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+        <div className="mx-auto w-full max-w-7xl space-y-4">
+            <PageHeader title="Ads & Promotions" description={headline} />
 
-                        {/* ── Dashboard cards ───────────────────────────── */}
-                        <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
-                            <StatCard
-                                icon={<IconBolt size={18} />}
-                                label="Live ads"
-                                value={loadingStats ? '…' : stats?.liveSlots ?? 0}
-                                hint={
-                                    stats
-                                        ? `${stats.pausedSlots} paused`
-                                        : ''
-                                }
-                                tone="emerald"
-                            />
-                            <StatCard
-                                icon={<IconSpeakerphone size={18} />}
-                                label="Running campaigns"
-                                value={loadingStats ? '…' : stats?.runningCampaigns ?? 0}
-                                hint={
-                                    stats
-                                        ? `${stats.activeCampaigns} active total`
-                                        : ''
-                                }
-                                tone="blue"
-                            />
-                            <StatCard
-                                icon={<IconEye size={18} />}
-                                label="Impressions · 30d"
-                                value={loadingStats ? '…' : formatCompact(stats?.impressions30d ?? 0)}
-                                hint={`${formatCompact(stats?.clicks30d ?? 0)} clicks`}
-                                tone="violet"
-                            />
-                            <StatCard
-                                icon={<IconClick size={18} />}
-                                label="Click-through · 30d"
-                                value={loadingStats ? '…' : `${stats?.ctr30d ?? 0}%`}
-                                hint={
-                                    stats?.ctr30d && stats.ctr30d > 1.5
-                                        ? '↑ healthy range'
-                                        : stats?.ctr30d
-                                        ? '↓ tune copy / targeting'
-                                        : 'No data yet'
-                                }
-                                tone="amber"
-                            />
-                        </div>
+            {statsError ? (
+                <Alert onRetry={loadStats}>Couldn't load stats: {statsError}</Alert>
+            ) : null}
 
-                        {/* ── Top campaigns row ─────────────────────────── */}
-                        {stats && stats.topCampaigns.length > 0 && (
-                            <div className="mt-6 pt-5 border-t border-gray-200 dark:border-gray-800">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <IconChartBar size={14} className="text-on-surface-variant" />
-                                    <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">
-                                        Top performers · 30d
-                                    </p>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                                    {stats.topCampaigns.map((c, i) => (
-                                        <div
-                                            key={c.id}
-                                            className="flex items-center gap-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-2.5"
-                                        >
-                                            <span
-                                                className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
-                                                    i === 0
-                                                        ? 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300'
-                                                        : i === 1
-                                                        ? 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
-                                                        : 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300'
-                                                }`}
-                                            >
-                                                #{i + 1}
-                                            </span>
-                                            <div className="min-w-0 flex-1">
-                                                <p className="text-sm font-semibold text-on-surface dark:text-white truncate">
-                                                    {c.name}
-                                                </p>
-                                                <p className="text-[11px] text-on-surface-variant truncate">
-                                                    {formatCompact(c.stats?.impressions ?? 0)} impressions ·{' '}
-                                                    {c.stats?.ctr ?? 0}% CTR
-                                                </p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <StatCard
+                    icon={Zap}
+                    label="Live ads"
+                    value={stats?.liveSlots ?? 0}
+                    hint={stats ? `${stats.pausedSlots} paused` : undefined}
+                    isLoading={loadingStats}
+                />
+                <StatCard
+                    icon={Megaphone}
+                    label="Running campaigns"
+                    value={stats?.runningCampaigns ?? 0}
+                    hint={stats ? `${stats.activeCampaigns} active total` : undefined}
+                    isLoading={loadingStats}
+                />
+                <StatCard
+                    icon={Eye}
+                    label="Impressions · 30d"
+                    value={formatCompact(stats?.impressions30d ?? 0)}
+                    hint={`${formatCompact(stats?.clicks30d ?? 0)} clicks`}
+                    isLoading={loadingStats}
+                />
+                <StatCard
+                    icon={MousePointerClick}
+                    label="Click-through · 30d"
+                    value={`${stats?.ctr30d ?? 0}%`}
+                    hint={stats?.ctr30d && stats.ctr30d > 1.5 ? 'Healthy range' : stats?.ctr30d ? 'Tune copy or targeting' : 'No data yet'}
+                    isLoading={loadingStats}
+                />
+            </div>
 
-                        {statsError && (
-                            <div className="mt-4 rounded-lg border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950 px-4 py-3 text-sm text-red-700 dark:text-red-200">
-                                Couldn't load stats: {statsError}
-                            </div>
-                        )}
-                    </div>
-                </div>
+            {stats && stats.topCampaigns.length > 0 ? (
+                <Card>
+                    <CardHeader className="pb-3 sm:pb-3">
+                        <CardTitle className="flex items-center gap-2 text-sm">
+                            <BarChart3 className="h-4 w-4 text-muted-foreground" aria-hidden />
+                            Top performers · 30d
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <ul className="grid grid-cols-1 gap-2 md:grid-cols-3">
+                            {stats.topCampaigns.map((c, i) => (
+                                <li key={c.id} className="flex items-center gap-3 rounded-xl border border-border bg-muted px-3 py-2.5">
+                                    <Badge variant={i === 0 ? 'warning' : 'secondary'} className="shrink-0">
+                                        #{i + 1}
+                                    </Badge>
+                                    <div className="min-w-0 flex-1">
+                                        <p className="truncate text-sm font-semibold text-foreground">{c.name}</p>
+                                        <p className="truncate text-xs text-muted-foreground">
+                                            {formatCompact(c.stats?.impressions ?? 0)} impressions · {c.stats?.ctr ?? 0}% CTR
+                                        </p>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </CardContent>
+                </Card>
+            ) : null}
 
-                {/* ── Tab strip ────────────────────────────────────────── */}
-                <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden">
-                    <div className="flex items-stretch overflow-x-auto">
+            <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)}>
+                <div className="overflow-x-auto pb-1">
+                    <TabsList className="h-auto w-max min-w-full justify-start sm:min-w-0">
                         {TABS.map((t) => {
                             const Icon = t.icon;
-                            const active = tab === t.id;
                             return (
-                                <button
-                                    key={t.id}
-                                    type="button"
-                                    onClick={() => setTab(t.id)}
-                                    className={[
-                                        'group relative flex-1 min-w-[170px] flex items-start gap-3 px-4 py-3 text-left transition-colors',
-                                        active
-                                            ? 'bg-primary-subtle dark:bg-primary-subtle'
-                                            : 'hover:bg-gray-50 dark:hover:bg-gray-800',
-                                    ].join(' ')}
-                                >
-                                    <div
-                                        className={[
-                                            'shrink-0 p-2 rounded-lg transition-colors',
-                                            active
-                                                ? 'bg-primary text-white'
-                                                : 'bg-gray-100 dark:bg-gray-800 text-on-surface-variant group-hover:bg-primary-subtle group-hover:text-primary',
-                                        ].join(' ')}
-                                    >
-                                        <Icon size={16} />
-                                    </div>
-                                    <div className="min-w-0">
-                                        <p
-                                            className={[
-                                                'text-sm font-bold whitespace-nowrap',
-                                                active ? 'text-primary' : 'text-on-surface dark:text-white',
-                                            ].join(' ')}
-                                        >
-                                            {t.label}
-                                        </p>
-                                        <p className="text-[11px] text-on-surface-variant line-clamp-2 mt-0.5">
-                                            {t.description}
-                                        </p>
-                                    </div>
-                                    {active && (
-                                        <span className="absolute left-0 top-0 h-full w-0.5 bg-primary" />
-                                    )}
-                                </button>
+                                <TabsTrigger key={t.id} value={t.id} className="h-8 flex-none px-4">
+                                    <Icon aria-hidden />
+                                    {t.label}
+                                </TabsTrigger>
                             );
                         })}
-                    </div>
+                    </TabsList>
                 </div>
+                <p className="mt-2 text-sm text-muted-foreground">{activeTab.description}</p>
 
-                {/* ── Tab body ─────────────────────────────────────────── */}
-                <div>
-                    {tab === 'campaigns' && <CampaignsTab onChange={loadStats} />}
-                    {tab === 'creatives' && <CreativesTab onChange={loadStats} />}
-                    {tab === 'placements' && <PlacementsTab onChange={loadStats} />}
-                    {tab === 'slots' && <SlotsTab onChange={loadStats} />}
-                </div>
-            </div>
+                <TabsContent value="campaigns" className="mt-4">
+                    <CampaignsTab onChange={loadStats} />
+                </TabsContent>
+                <TabsContent value="creatives" className="mt-4">
+                    <CreativesTab onChange={loadStats} />
+                </TabsContent>
+                <TabsContent value="placements" className="mt-4">
+                    <PlacementsTab onChange={loadStats} />
+                </TabsContent>
+                <TabsContent value="slots" className="mt-4">
+                    <SlotsTab onChange={loadStats} />
+                </TabsContent>
+            </Tabs>
         </div>
     );
 };
-
-// ── Helpers ─────────────────────────────────────────────────────────────────
-
-const StatCard: React.FC<{
-    icon: React.ReactNode;
-    label: string;
-    value: number | string;
-    hint?: string;
-    tone?: 'emerald' | 'blue' | 'violet' | 'amber';
-}> = ({ icon, label, value, hint, tone = 'emerald' }) => {
-    const toneCls = {
-        emerald: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400',
-        blue: 'text-blue-600 bg-blue-50 dark:bg-blue-950 dark:text-blue-400',
-        violet: 'text-violet-600 bg-violet-50 dark:bg-violet-950 dark:text-violet-400',
-        amber: 'text-amber-600 bg-amber-50 dark:bg-amber-950 dark:text-amber-400',
-    }[tone];
-    return (
-        <div className="rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
-            <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant dark:text-gray-500">
-                    {label}
-                </span>
-                <span className={`p-1.5 rounded-lg ${toneCls}`}>{icon}</span>
-            </div>
-            <p className="text-2xl font-bold text-on-surface dark:text-white leading-tight">{value}</p>
-            {hint && <p className="text-[11px] text-on-surface-variant dark:text-gray-500 mt-1">{hint}</p>}
-        </div>
-    );
-};
-
-function formatCompact(n: number): string {
-    if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-    if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
-    return String(n);
-}
 
 export default AdsManagement;

@@ -1,19 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-    IconArrowLeft,
-    IconCheck,
-    IconPlus,
-    IconTrash,
-    IconUpload,
-    IconAlertCircle,
-    IconPackage,
-    IconTag,
-} from '@tabler/icons-react';
-// Mantine components removed - using Tailwind-based components instead
-import { notifications } from '@mantine/notifications';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm, type Control } from 'react-hook-form';
+import { z } from 'zod';
+import { AlertCircle, ArrowLeft, Check, Image as ImageIcon, Loader2, Package, Plus, Tag, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { Button } from '@/components/shadcn/button';
+import { Card, CardContent } from '@/components/shadcn/card';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/shadcn/dialog';
+import { EmptyState } from '@/components/shadcn/empty-state';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, useFormField } from '@/components/shadcn/form';
+import { Input } from '@/components/shadcn/input';
+import { Label } from '@/components/shadcn/label';
+import { PageHeader } from '@/components/shadcn/page-header';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
+import { Skeleton } from '@/components/shadcn/skeleton';
+import { Switch } from '@/components/shadcn/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/tabs';
+import { Textarea } from '@/components/shadcn/textarea';
+import { cn } from '@/lib/utils';
 import axiosInstance from '../../../services/axiosInstance';
-import IconLoader from '../../../components/Icon/IconLoader';
+
 
 // Product Status Options
 const PRODUCT_STATUS = [
@@ -233,12 +240,213 @@ interface Tag {
     name: string;
 }
 
+const productSchema = z.object({
+    status: z.string(),
+    name: z.string().trim().min(1, 'Product name is required'),
+    slug: z.string(),
+    keywords: z.string(),
+    description: z.string(),
+    category: z.string().min(1, 'Category is required'),
+    sub_category: z.string().min(1, 'Sub category is required'),
+    brand: z.string().min(1, 'Brand is required'),
+    store: z.string(),
+    condition: z.string(),
+    variation_theme: z.string().min(1, 'Variation theme is required'),
+    main_product_image: z.custom<File | null>(() => true),
+    min_amount: z.number(),
+    inventory_level: z.number(),
+    available: z.boolean(),
+    seller_profile: z.string(),
+    meta_title: z.string(),
+    meta_description: z.string(),
+    discount_percentage: z.number(),
+    is_spare_part: z.boolean(),
+    requires_installation: z.boolean(),
+    is_product_of_the_month: z.boolean(),
+});
+
+type ProductFormValues = z.infer<typeof productSchema>;
+type ProductControl = Control<ProductFormValues>;
+
+const EMPTY_FORM: ProductFormValues = {
+    status: 'Draft',
+    name: '',
+    slug: '',
+    keywords: '',
+    description: '',
+    category: '',
+    sub_category: '',
+    brand: '',
+    store: '',
+    condition: '',
+    variation_theme: 'single',
+    main_product_image: null,
+    min_amount: 1,
+    inventory_level: 0,
+    available: true,
+    seller_profile: '',
+    meta_title: '',
+    meta_description: '',
+    discount_percentage: 0,
+    is_spare_part: false,
+    requires_installation: false,
+    is_product_of_the_month: false,
+};
+
+interface SelectOption {
+    value: string;
+    label: string;
+}
+
+const NONE_VALUE = '__none';
+
+/** Radix Select cannot use '' as an item value, so an optional "none" row maps to a sentinel. */
+function OptionSelect({
+    value,
+    onChange,
+    options,
+    placeholder,
+    noneLabel,
+    disabled,
+    id,
+    invalid,
+    describedBy,
+    ariaLabel,
+}: {
+    value: string;
+    onChange: (value: string) => void;
+    options: SelectOption[];
+    placeholder: string;
+    noneLabel?: string;
+    disabled?: boolean;
+    id?: string;
+    invalid?: boolean;
+    describedBy?: string;
+    ariaLabel?: string;
+}) {
+    return (
+        <Select value={value || (noneLabel ? NONE_VALUE : '')} onValueChange={(v) => onChange(v === NONE_VALUE ? '' : v)} disabled={disabled}>
+            <SelectTrigger id={id} aria-invalid={invalid} aria-describedby={describedBy} aria-label={ariaLabel}>
+                <SelectValue placeholder={placeholder} />
+            </SelectTrigger>
+            <SelectContent>
+                {noneLabel ? <SelectItem value={NONE_VALUE}>{noneLabel}</SelectItem> : null}
+                {options.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>
+                        {o.label}
+                    </SelectItem>
+                ))}
+            </SelectContent>
+        </Select>
+    );
+}
+
+/** OptionSelect wired to the surrounding <FormField>/<FormItem> (id, aria and error state). */
+function FieldSelect(props: Omit<React.ComponentProps<typeof OptionSelect>, 'id' | 'invalid' | 'describedBy'>) {
+    const { formItemId, formDescriptionId, formMessageId, error } = useFormField();
+    return <OptionSelect {...props} id={formItemId} invalid={!!error} describedBy={error ? `${formDescriptionId} ${formMessageId}` : formDescriptionId} />;
+}
+
+type ProductFieldName = keyof ProductFormValues;
+
+function TextField({
+    control,
+    name,
+    label,
+    required,
+    placeholder,
+    description,
+    className,
+    mono,
+    multiline,
+    rows,
+    numeric,
+    min,
+    max,
+}: {
+    control: ProductControl;
+    name: ProductFieldName;
+    label: string;
+    required?: boolean;
+    placeholder?: string;
+    description?: string;
+    className?: string;
+    mono?: boolean;
+    multiline?: boolean;
+    rows?: number;
+    numeric?: boolean;
+    min?: number;
+    max?: number;
+}) {
+    return (
+        <FormField
+            control={control}
+            name={name}
+            render={({ field }) => (
+                <FormItem className={cn('space-y-1.5', className)}>
+                    <FormLabel>
+                        {label}
+                        {required ? <span className="text-destructive"> *</span> : null}
+                    </FormLabel>
+                    <FormControl>
+                        {multiline ? (
+                            <Textarea ref={field.ref} name={field.name} onBlur={field.onBlur} value={String(field.value ?? '')} onChange={field.onChange} rows={rows} placeholder={placeholder} />
+                        ) : numeric ? (
+                            <Input
+                                ref={field.ref}
+                                name={field.name}
+                                onBlur={field.onBlur}
+                                type="number"
+                                min={min}
+                                max={max}
+                                value={Number(field.value ?? 0)}
+                                onChange={(e) => field.onChange(parseInt(e.target.value) || (min ?? 0))}
+                            />
+                        ) : (
+                            <Input
+                                ref={field.ref}
+                                name={field.name}
+                                onBlur={field.onBlur}
+                                value={String(field.value ?? '')}
+                                onChange={field.onChange}
+                                placeholder={placeholder}
+                                autoComplete="off"
+                                className={cn(mono && 'font-mono text-sm')}
+                            />
+                        )}
+                    </FormControl>
+                    {description ? <FormDescription className="text-xs">{description}</FormDescription> : null}
+                    <FormMessage />
+                </FormItem>
+            )}
+        />
+    );
+}
+
+function SwitchField({ control, name, label }: { control: ProductControl; name: ProductFieldName; label: string }) {
+    return (
+        <FormField
+            control={control}
+            name={name}
+            render={({ field }) => (
+                <FormItem className="flex items-center justify-between gap-3 space-y-0 rounded-xl border p-3">
+                    <FormLabel className="cursor-pointer">{label}</FormLabel>
+                    <FormControl>
+                        <Switch checked={Boolean(field.value)} onCheckedChange={field.onChange} />
+                    </FormControl>
+                </FormItem>
+            )}
+        />
+    );
+}
+
 const AddProduct: React.FC = () => {
     const navigate = useNavigate();
     const { id: editProductId } = useParams<{ id?: string }>();
     const [loading, setLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [activeTab, setActiveTab] = useState<string>('basic');
+    const [variantToRemove, setVariantToRemove] = useState<number | null>(null);
 
     // Dropdown data
     const [categories, setCategories] = useState<Category[]>([]);
@@ -260,33 +468,8 @@ const AddProduct: React.FC = () => {
     const [heroBlobUrl, setHeroBlobUrl] = useState<string | null>(null);
     const [serverHeroUrl, setServerHeroUrl] = useState<string | null>(null);
 
-    const [formData, setFormData] = useState({
-        // Basic Info
-        status: 'Draft',
-        name: '',
-        slug: '',
-        keywords: '',
-        description: '',
-        category: '',
-        sub_category: '',
-        brand: '',
-        store: '',
-        condition: '',
-        variation_theme: 'single',
-        main_product_image: null as File | null,
-        min_amount: 1,
-        inventory_level: 0,
-        available: true,
-        seller_profile: '',
-        meta_title: '',
-        meta_description: '',
-        discount_percentage: 0,
-        is_spare_part: false,
-        requires_installation: false,
-        is_product_of_the_month: false,
-    });
-
-    const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+    const form = useForm<ProductFormValues>({ resolver: zodResolver(productSchema), defaultValues: EMPTY_FORM, mode: 'onTouched' });
+    const formData = form.watch();
 
     const [variants, setVariants] = useState<ProductVariant[]>([
         {
@@ -329,11 +512,7 @@ const AddProduct: React.FC = () => {
             await fetchCatalogSelections();
         } catch (error) {
             console.error('Error fetching dropdown data:', error);
-            notifications.show({
-                title: 'Error',
-                message: 'Failed to load dropdown data',
-                color: 'red',
-            });
+            toast.error('Failed to load dropdown data');
         } finally {
             setLoadingData(false);
         }
@@ -352,11 +531,7 @@ const AddProduct: React.FC = () => {
         } catch (error) {
             console.error('Error fetching subcategories:', error);
             setSubCategories([]);
-            notifications.show({
-                title: 'Warning',
-                message: 'Could not load subcategories. Please try again.',
-                color: 'yellow',
-            });
+            toast.warning('Could not load subcategories. Please try again.');
         } finally {
             if (!silent) setLoading(false);
         }
@@ -375,11 +550,7 @@ const AddProduct: React.FC = () => {
         } catch (error) {
             console.error('Error fetching brands:', error);
             setBrands([]);
-            notifications.show({
-                title: 'Warning',
-                message: 'Could not load brands. Please try again.',
-                color: 'yellow',
-            });
+            toast.warning('Could not load brands. Please try again.');
         } finally {
             if (!silent) setLoading(false);
         }
@@ -522,7 +693,7 @@ const AddProduct: React.FC = () => {
                 return null;
             });
 
-            setFormData({
+            form.reset({
                 status: raw.status != null ? String(raw.status) : 'Draft',
                 name: String(raw.name ?? ''),
                 slug: raw.slug != null ? String(raw.slug) : '',
@@ -570,11 +741,7 @@ const AddProduct: React.FC = () => {
             setTags([]);
         } catch (error) {
             console.error('Edit load failed', error);
-            notifications.show({
-                title: 'Error',
-                message: 'Could not load product for editing',
-                color: 'red',
-            });
+            toast.error('Could not load product for editing');
             navigate('/admin/products/list');
         } finally {
             suppressCategoryCascadeRef.current = false;
@@ -604,7 +771,7 @@ const AddProduct: React.FC = () => {
             fetchSubCategories(formData.category);
         } else {
             setSubCategories([]);
-            setFormData((prev) => ({ ...prev, sub_category: '' }));
+            form.setValue('sub_category', '');
         }
     }, [formData.category]);
 
@@ -616,7 +783,7 @@ const AddProduct: React.FC = () => {
             fetchBrands(formData.category);
         } else {
             setBrands([]);
-            setFormData((prev) => ({ ...prev, brand: '' }));
+            form.setValue('brand', '');
         }
     }, [formData.category]);
 
@@ -790,47 +957,10 @@ const AddProduct: React.FC = () => {
         setTags(updated);
     };
 
-    // Validation
-    const validateForm = (): boolean => {
-        const errors: Record<string, string> = {};
-
-        if (!formData.name.trim()) {
-            errors.name = 'Product name is required';
-        }
-        if (!formData.category) {
-            errors.category = 'Category is required';
-        }
-        if (!formData.sub_category) {
-            errors.sub_category = 'Sub category is required';
-        }
-        if (!formData.brand) {
-            errors.brand = 'Brand is required';
-        }
-        if (!formData.variation_theme) {
-            errors.variation_theme = 'Variation theme is required';
-        }
-
-        setFormErrors(errors);
-        return Object.keys(errors).length === 0;
-    };
-
     // Form submission
     const handleSubmit = async () => {
-        if (!validateForm()) {
-            notifications.show({
-                title: 'Validation Error',
-                message: 'Please fill in all required fields',
-                color: 'red',
-            });
-            return;
-        }
-
         if (variants.length === 0) {
-            notifications.show({
-                title: 'Validation Error',
-                message: 'At least one product variant is required',
-                color: 'red',
-            });
+            toast.error('At least one product variant is required');
             setActiveTab('variants');
             return;
         }
@@ -923,11 +1053,7 @@ const AddProduct: React.FC = () => {
                         variantIdMap[anchor] ||
                         Object.values(variantIdMap)[0];
                     if (!variantPk) {
-                        notifications.show({
-                            title: 'Image error',
-                            message: 'Link gallery uploads to a variant SKU or add variants first.',
-                            color: 'red',
-                        });
+                        toast.error('Link gallery uploads to a variant SKU or add variants first.');
                         throw new Error('missing-variant');
                     }
                     await postImageBlob(variantPk, img, img.image);
@@ -956,12 +1082,7 @@ const AddProduct: React.FC = () => {
                     }
                 }
 
-                notifications.show({
-                    title: 'Success',
-                    message: 'Product created successfully',
-                    color: 'green',
-                    icon: <IconCheck />,
-                });
+                toast.success('Product created successfully');
 
                 navigate('/admin/products/list');
                 return;
@@ -1092,11 +1213,7 @@ const AddProduct: React.FC = () => {
                 if (!(im.image instanceof File)) continue;
                 const vk = resolveGalleryVariantPk(im.product_variant);
                 if (!vk) {
-                    notifications.show({
-                        title: 'Image error',
-                        message: 'Select a variant SKU for each new gallery upload.',
-                        color: 'red',
-                    });
+                    toast.error('Select a variant SKU for each new gallery upload.');
                     throw new Error('missing-variant-gall');
                 }
                 await postImageBlobPid(vk, im, im.image);
@@ -1143,926 +1260,617 @@ const AddProduct: React.FC = () => {
                 default_variant: defaultVariantPk,
             });
 
-            notifications.show({
-                title: 'Success',
-                message: 'Product updated',
-                color: 'green',
-                icon: <IconCheck />,
-            });
+            toast.success('Product updated');
             navigate(`/admin/products/${pid}`);
         } catch (error: unknown) {
             console.error('Save product failed', error);
-            notifications.show({
-                title: 'Error',
-                message: apiErrorDetail(error),
-                color: 'red',
-            });
+            toast.error(apiErrorDetail(error));
         } finally {
             setSubmitting(false);
         }
     };
 
     if (loadingData) {
-        return <IconLoader />;
+        return (
+            <div className="space-y-4" aria-busy="true">
+                <Skeleton className="h-8 w-64" />
+                <Skeleton className="h-10 w-full max-w-xl" />
+                <Skeleton className="h-96 w-full" />
+            </div>
+        );
     }
 
-    return (
-        <div className="p-6 bg-gray-50 min-h-screen">
-            {/* Header */}
-            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div className="flex items-center gap-4">
-                    <button
-                        onClick={() => navigate('/admin/products/list')}
-                        className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
-                        title="Back to Products"
-                    >
-                        <IconArrowLeft className="w-5 h-5 text-gray-700" />
-                    </button>
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900">
-                            {editProductId ? 'Edit Product' : 'Add New Product'}
-                        </h1>
-                        <p className="text-gray-600 mt-1">
-                            {editProductId
-                                ? 'Update catalog fields, variants, gallery images, and key features'
-                                : 'Create a new product in your catalog'}
-                        </p>
-                    </div>
-                </div>
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                    {editProductId && (
-                        <button
-                            type="button"
-                            onClick={() => navigate(`/admin/products/${editProductId}`)}
-                            className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                        >
-                            View detail
-                        </button>
-                    )}
-                </div>
+    const subDisabled = !formData.category || loading;
+    const attributeNames = formData.variation_theme && formData.variation_theme !== 'single' ? formData.variation_theme.split('-') : [];
+    const showAttributeSelects = attributeNames.length > 0 && Object.keys(attributeGroups).length > 0;
+
+    const getAttributeSlotValue = (variant: ProductVariant, slot: number): string => {
+        if (slot === 0) return Array.isArray(variant.attribute_values) && variant.attribute_values.length > 0 ? variant.attribute_values[0] : '';
+        return (slot === 1 ? variant.attribute_values1 : variant.attribute_values2) || '';
+    };
+
+    const setAttributeSlotValue = (index: number, slot: number, value: string) => {
+        if (slot === 0) updateVariant(index, 'attribute_values', value ? [value] : []);
+        else updateVariant(index, slot === 1 ? 'attribute_values1' : 'attribute_values2', value);
+    };
+
+    const updateVariantImageType = (variantIndex: number, imageIndex: number, imageType: string) => {
+        setVariants((prev) =>
+            prev.map((v, vi) =>
+                vi !== variantIndex ? v : { ...v, images: (v.images ?? []).map((im, ii) => (ii === imageIndex ? { ...im, image_type: imageType } : im)) }
+            )
+        );
+    };
+
+    const updateGalleryImage = (index: number, patch: Partial<ProductImage>) => {
+        setImages((prev) => prev.map((im, i) => (i === index ? { ...im, ...patch } : im)));
+    };
+
+    const onValid = () => {
+        void handleSubmit();
+    };
+    const onInvalid = () => {
+        toast.error('Please fill in all required fields');
+        setActiveTab('basic');
+    };
+
+    const TAB_DEFS = [
+        { id: 'basic', label: 'Basic information', icon: Package },
+        { id: 'variants', label: 'Variants', icon: Tag },
+        { id: 'images', label: 'Images', icon: ImageIcon },
+        { id: 'features', label: 'Key features', icon: Check },
+        { id: 'tags', label: 'Tags', icon: Tag },
+    ];
+
+    const sectionHeader = (title: string, description: string, action?: React.ReactNode) => (
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="space-y-1">
+                <h2 className="text-base font-semibold text-foreground">{title}</h2>
+                <p className="text-sm text-muted-foreground">{description}</p>
             </div>
-
-            {/* Tabs Navigation */}
-            <div className="bg-white rounded-lg shadow-sm mb-6 border border-gray-200">
-                <div className="flex border-b border-gray-200">
-                    {[
-                        { id: 'basic', label: 'Basic Information', icon: IconPackage },
-                        { id: 'variants', label: 'Variants', icon: IconTag },
-                        { id: 'images', label: 'Images', icon: IconUpload },
-                        { id: 'features', label: 'Key Features', icon: IconCheck },
-                        { id: 'tags', label: 'Tags', icon: IconTag },
-                    ].map((tab) => {
-                        const Icon = tab.icon;
-                        return (
-                            <button
-                                key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                                className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors border-b-2 ${
-                                    activeTab === tab.id
-                                        ? 'border-primary-500 text-primary-600 bg-primary-50'
-                                        : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                                }`}
-                            >
-                                <Icon className="w-5 h-5" />
-                                {tab.label}
-                            </button>
-                        );
-                    })}
-                </div>
-            </div>
-
-            {/* Tab Content */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                {/* Basic Information Tab */}
-                {activeTab === 'basic' && (
-                    <div className="p-6">
-                        <div className="mb-6">
-                            <h2 className="text-xl font-semibold text-gray-900 mb-2">Product Details</h2>
-                            <p className="text-sm text-gray-600">Fill in the basic information about your product</p>
-                        </div>
-                        <div className="border-t border-gray-200 pt-6">
-                            <div className="grid grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Product Name <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="Enter product name"
-                                        required
-                                        value={formData.name}
-                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
-                                            formErrors.name ? 'border-red-500' : 'border-gray-300'
-                                        }`}
-                                    />
-                                    {formErrors.name && (
-                                        <p className="mt-1 text-sm text-red-600">{formErrors.name}</p>
-                                    )}
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                                    <select
-                                        value={formData.status}
-                                        onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                    >
-                                        {PRODUCT_STATUS.map((status) => (
-                                            <option key={status.value} value={status.value}>
-                                                {status.label}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Keywords</label>
-                                    <input
-                                        type="text"
-                                        placeholder="Enter keywords (comma-separated)"
-                                        value={formData.keywords}
-                                        onChange={(e) => setFormData({ ...formData, keywords: e.target.value })}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Slug</label>
-                                    <input
-                                        type="text"
-                                        placeholder="seo-friendly-slug"
-                                        value={formData.slug}
-                                        onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                    />
-                                    <p className="mt-1 text-xs text-gray-500">Leave blank on create to auto-generate from brand + title on the backend.</p>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Category <span className="text-red-500">*</span>
-                                    </label>
-                                    <select
-                                        required
-                                        value={formData.category}
-                                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
-                                            formErrors.category ? 'border-red-500' : 'border-gray-300'
-                                        }`}
-                                    >
-                                        <option value="">Select a category</option>
-                                        {categories.map((c) => (
-                                            <option key={c.id} value={c.id}>
-                                                {c.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    {formErrors.category && (
-                                        <p className="mt-1 text-sm text-red-600">{formErrors.category}</p>
-                                    )}
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Sub Category <span className="text-red-500">*</span>
-                                    </label>
-                                    <select
-                                        required
-                                        disabled={!formData.category || loading}
-                                        value={formData.sub_category}
-                                        onChange={(e) => setFormData({ ...formData, sub_category: e.target.value })}
-                                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
-                                            formErrors.sub_category ? 'border-red-500' : 'border-gray-300'
-                                        } ${!formData.category || loading ? 'bg-gray-100 cursor-not-allowed' : ''}`}
-                                    >
-                                        <option value="">
-                                            {!formData.category ? 'Select a category first' : loading ? 'Loading...' : 'Select a sub category'}
-                                        </option>
-                                        {subCategories.map((sc) => (
-                                            <option key={sc.id} value={sc.id}>
-                                                {sc.sub_category_name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    {formErrors.sub_category && (
-                                        <p className="mt-1 text-sm text-red-600">{formErrors.sub_category}</p>
-                                    )}
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Brand <span className="text-red-500">*</span>
-                                    </label>
-                                    <select
-                                        required
-                                        disabled={!formData.category || loading}
-                                        value={formData.brand}
-                                        onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
-                                            formErrors.brand ? 'border-red-500' : 'border-gray-300'
-                                        } ${!formData.category || loading ? 'bg-gray-100 cursor-not-allowed' : ''}`}
-                                    >
-                                        <option value="">
-                                            {!formData.category ? 'Select a category first' : loading ? 'Loading...' : 'Select a brand'}
-                                        </option>
-                                        {brands.map((b) => (
-                                            <option key={b.id} value={b.id}>
-                                                {b.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    {formErrors.brand && (
-                                        <p className="mt-1 text-sm text-red-600">{formErrors.brand}</p>
-                                    )}
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Condition</label>
-                                    <select
-                                        value={formData.condition}
-                                        onChange={(e) => setFormData({ ...formData, condition: e.target.value })}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                    >
-                                        <option value="">Select condition</option>
-                                        {CONDITION_OPTIONS.map((cond) => (
-                                            <option key={cond.value} value={cond.value}>
-                                                {cond.label}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Variation Theme <span className="text-red-500">*</span>
-                                    </label>
-                                    <select
-                                        required
-                                        value={formData.variation_theme}
-                                        onChange={(e) => setFormData({ ...formData, variation_theme: e.target.value })}
-                                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
-                                            formErrors.variation_theme ? 'border-red-500' : 'border-gray-300'
-                                        }`}
-                                    >
-                                        {VARIATION_THEMES.map((theme) => (
-                                            <option key={theme.value} value={theme.value}>
-                                                {theme.label}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    {formErrors.variation_theme && (
-                                        <p className="mt-1 text-sm text-red-600">{formErrors.variation_theme}</p>
-                                    )}
-                                </div>
-                                <div className="col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                                    <textarea
-                                        placeholder="Enter product description"
-                                        rows={4}
-                                        value={formData.description}
-                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Minimum Amount</label>
-                                    <input
-                                        type="number"
-                                        min={1}
-                                        value={formData.min_amount}
-                                        onChange={(e) => setFormData({ ...formData, min_amount: parseInt(e.target.value) || 1 })}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Inventory Level</label>
-                                    <input
-                                        type="number"
-                                        min={0}
-                                        value={formData.inventory_level}
-                                        onChange={(e) => setFormData({ ...formData, inventory_level: parseInt(e.target.value) || 0 })}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Discount Percentage</label>
-                                    <input
-                                        type="number"
-                                        min={0}
-                                        max={100}
-                                        value={formData.discount_percentage}
-                                        onChange={(e) => setFormData({ ...formData, discount_percentage: parseInt(e.target.value) || 0 })}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Seller</label>
-                                    <select
-                                        value={formData.seller_profile}
-                                        onChange={(e) => setFormData({ ...formData, seller_profile: e.target.value })}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                    >
-                                        <option value="">Select a seller (optional)</option>
-                                        {sellers.map((s) => (
-                                            <option key={s.id} value={s.id}>
-                                                {s.business_name || s.user?.email || s.id}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Store (FK UUID)</label>
-                                    <input
-                                        type="text"
-                                        placeholder="Optional store id"
-                                        value={formData.store}
-                                        onChange={(e) => setFormData({ ...formData, store: e.target.value })}
-                                        className="font-mono w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                                    />
-                                </div>
-                                <div className="col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Main Product Image</label>
-                                    {(heroBlobUrl || serverHeroUrl) && (
-                                        <div className="mb-3 overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
-                                            <img
-                                                src={(heroBlobUrl || serverHeroUrl) as string}
-                                                alt="Hero preview"
-                                                className="mx-auto max-h-48 w-auto object-contain"
-                                            />
-                                        </div>
-                                    )}
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={(e) => {
-                                            const file = e.target.files?.[0] || null;
-                                            setHeroBlobUrl(file ? URL.createObjectURL(file) : null);
-                                            setServerHeroUrl(null);
-                                            setFormData({ ...formData, main_product_image: file });
-                                        }}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                    />
-                                </div>
-                                <div className="col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Meta Title</label>
-                                    <input
-                                        type="text"
-                                        placeholder="SEO meta title"
-                                        value={formData.meta_title}
-                                        onChange={(e) => setFormData({ ...formData, meta_title: e.target.value })}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                    />
-                                </div>
-                                <div className="col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Meta Description</label>
-                                    <textarea
-                                        placeholder="SEO meta description"
-                                        rows={2}
-                                        value={formData.meta_description}
-                                        onChange={(e) => setFormData({ ...formData, meta_description: e.target.value })}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="flex items-center gap-2 cursor-pointer">
-                                        <input
-                                            type="checkbox"
-                                            checked={formData.available}
-                                            onChange={(e) => setFormData({ ...formData, available: e.target.checked })}
-                                            className="w-4 h-4 text-primary-500 border-gray-300 rounded focus:ring-primary-500"
-                                        />
-                                        <span className="text-sm font-medium text-gray-700">Available</span>
-                                    </label>
-                                </div>
-                                <div>
-                                    <label className="flex items-center gap-2 cursor-pointer">
-                                        <input
-                                            type="checkbox"
-                                            checked={formData.is_spare_part}
-                                            onChange={(e) => setFormData({ ...formData, is_spare_part: e.target.checked })}
-                                            className="w-4 h-4 text-primary-500 border-gray-300 rounded focus:ring-primary-500"
-                                        />
-                                        <span className="text-sm font-medium text-gray-700">Is Spare Part</span>
-                                    </label>
-                                </div>
-                                <div>
-                                    <label className="flex items-center gap-2 cursor-pointer">
-                                        <input
-                                            type="checkbox"
-                                            checked={formData.requires_installation}
-                                            onChange={(e) => setFormData({ ...formData, requires_installation: e.target.checked })}
-                                            className="w-4 h-4 text-primary-500 border-gray-300 rounded focus:ring-primary-500"
-                                        />
-                                        <span className="text-sm font-medium text-gray-700">Requires Installation</span>
-                                    </label>
-                                </div>
-                                <div>
-                                    <label className="flex items-center gap-2 cursor-pointer">
-                                        <input
-                                            type="checkbox"
-                                            checked={formData.is_product_of_the_month}
-                                            onChange={(e) => setFormData({ ...formData, is_product_of_the_month: e.target.checked })}
-                                            className="w-4 h-4 text-primary-500 border-gray-300 rounded focus:ring-primary-500"
-                                        />
-                                        <span className="text-sm font-medium text-gray-700">Product of the Month</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {/* Variants Tab */}
-                {activeTab === 'variants' && (
-                    <div className="p-6">
-                        <div className="mb-6 flex items-center justify-between">
-                            <div>
-                                <h2 className="text-xl font-semibold text-gray-900 mb-2">Product Variants</h2>
-                                <p className="text-sm text-gray-600">Add product variants with different attributes</p>
-                            </div>
-                            <button
-                                onClick={addVariant}
-                                className="flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
-                            >
-                                <IconPlus className="w-4 h-4" />
-                                Add Variant
-                            </button>
-                        </div>
-                        <div className="border-t border-gray-200 pt-6">
-                            {variants.length === 0 && (
-                                <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg flex items-start gap-3">
-                                    <IconAlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                                    <p>At least one variant is required. Please add a variant.</p>
-                                </div>
-                            )}
-
-                            <div className="space-y-4">
-                                {variants.map((variant, index) => (
-                                    <div
-                                        key={variant.id ?? variant.clientRowKey ?? `variant-${index}`}
-                                        className="border border-gray-200 rounded-lg p-4"
-                                    >
-                                        <div className="flex items-center justify-between mb-4">
-                                            <h3 className="font-semibold text-gray-900">Variant {index + 1}</h3>
-                                            {variants.length > 1 && (
-                                                <button
-                                                    onClick={() => removeVariant(index)}
-                                                    className="p-2 hover:bg-red-50 rounded-lg transition-colors"
-                                                >
-                                                    <IconTrash className="w-4 h-4 text-red-600" />
-                                                </button>
-                                            )}
-                                        </div>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                    SKU <span className="text-red-500">*</span>
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    placeholder="Enter SKU"
-                                                    required
-                                                    value={variant.sku}
-                                                    onChange={(e) => updateVariant(index, 'sku', e.target.value)}
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                    Price <span className="text-red-500">*</span>
-                                                </label>
-                                                <input
-                                                    type="number"
-                                                    step="0.01"
-                                                    placeholder="0.00"
-                                                    required
-                                                    value={variant.price}
-                                                    onChange={(e) => updateVariant(index, 'price', e.target.value)}
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
-                                                <input
-                                                    type="number"
-                                                    min={0}
-                                                    value={variant.quantity}
-                                                    onChange={(e) => updateVariant(index, 'quantity', parseInt(e.target.value) || 0)}
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-1">Min Buy Amount</label>
-                                                <input
-                                                    type="number"
-                                                    min={1}
-                                                    value={variant.min_buy_amount}
-                                                    onChange={(e) => updateVariant(index, 'min_buy_amount', parseInt(e.target.value) || 1)}
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                                />
-                                            </div>
-                                            {formData.variation_theme !== 'single' && 
-                                             Object.keys(attributeGroups).length > 0 && (() => {
-                                                const attributeNames = formData.variation_theme.split('-');
-                                                return (
-                                                    <>
-                                                        {/* First Attribute Group */}
-                                                        {attributeNames.length > 0 && attributeGroups[attributeNames[0]] && (
-                                                            <div className="col-span-2">
-                                                                <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
-                                                                    {attributeNames[0]} <span className="text-red-500">*</span>
-                                                                </label>
-                                                                <select
-                                                                    value={Array.isArray(variant.attribute_values) && variant.attribute_values.length > 0 
-                                                                        ? variant.attribute_values[0] 
-                                                                        : ''}
-                                                                    onChange={(e) => {
-                                                                        const selected = e.target.value ? [e.target.value] : [];
-                                                                        updateVariant(index, 'attribute_values', selected);
-                                                                    }}
-                                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                                                    required
-                                                                >
-                                                                    <option value="">Select {attributeNames[0]}</option>
-                                                                    {attributeGroups[attributeNames[0]].map((av) => (
-                                                                        <option key={av.id} value={av.id}>
-                                                                            {av.value_name}
-                                                                        </option>
-                                                                    ))}
-                                                                </select>
-                                                            </div>
-                                                        )}
-                                                        
-                                                        {/* Second Attribute Group */}
-                                                        {attributeNames.length > 1 && attributeGroups[attributeNames[1]] && (
-                                                            <div className="col-span-2">
-                                                                <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
-                                                                    {attributeNames[1]} <span className="text-red-500">*</span>
-                                                                </label>
-                                                                <select
-                                                                    value={variant.attribute_values1 || ''}
-                                                                    onChange={(e) => {
-                                                                        updateVariant(index, 'attribute_values1', e.target.value);
-                                                                    }}
-                                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                                                    required
-                                                                >
-                                                                    <option value="">Select {attributeNames[1]}</option>
-                                                                    {attributeGroups[attributeNames[1]].map((av) => (
-                                                                        <option key={av.id} value={av.id}>
-                                                                            {av.value_name}
-                                                                        </option>
-                                                                    ))}
-                                                                </select>
-                                                            </div>
-                                                        )}
-                                                        
-                                                        {/* Third Attribute Group */}
-                                                        {attributeNames.length > 2 && attributeGroups[attributeNames[2]] && (
-                                                            <div className="col-span-2">
-                                                                <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
-                                                                    {attributeNames[2]} <span className="text-red-500">*</span>
-                                                                </label>
-                                                                <select
-                                                                    value={variant.attribute_values2 || ''}
-                                                                    onChange={(e) => {
-                                                                        updateVariant(index, 'attribute_values2', e.target.value);
-                                                                    }}
-                                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                                                    required
-                                                                >
-                                                                    <option value="">Select {attributeNames[2]}</option>
-                                                                    {attributeGroups[attributeNames[2]].map((av) => (
-                                                                        <option key={av.id} value={av.id}>
-                                                                            {av.value_name}
-                                                                        </option>
-                                                                    ))}
-                                                                </select>
-                                                            </div>
-                                                        )}
-                                                    </>
-                                                );
-                                            })()}
-                                        </div>
-                                        
-                                        {/* Variant-Specific Images */}
-                                        <div className="mt-6 pt-6 border-t border-gray-200">
-                                            <div className="flex items-center justify-between mb-4">
-                                                <h4 className="text-sm font-semibold text-gray-700">Variant Images</h4>
-                                                <input
-                                                    type="file"
-                                                    accept="image/*"
-                                                    multiple
-                                                    onChange={(e) => handleVariantImageUpload(index, e.target.files)}
-                                                    className="text-sm px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                                />
-                                            </div>
-                                            {variant.images && variant.images.length > 0 ? (
-                                                <div className="grid grid-cols-4 gap-3">
-                                                    {variant.images.map((img, imgIndex) => {
-                                                        const thumb =
-                                                            img.preview ||
-                                                            (typeof img.image === 'string' ? img.image : '');
-                                                        return (
-                                                        <div
-                                                            key={img.id ?? `${imgIndex}-${thumb.slice(0, 12)}`}
-                                                            className="border border-gray-200 rounded-lg p-2"
-                                                        >
-                                                            {thumb ? (
-                                                                <img
-                                                                    src={thumb}
-                                                                    alt=""
-                                                                    className="w-full h-24 object-cover rounded mb-2"
-                                                                />
-                                                            ) : null}
-                                                            <div className="flex items-center justify-between mb-2">
-                                                                <button
-                                                                    onClick={() => setVariantMainImage(index, imgIndex)}
-                                                                    className={`text-xs px-2 py-1 rounded ${
-                                                                        img.is_main
-                                                                            ? 'bg-green-100 text-green-800'
-                                                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                                                    }`}
-                                                                >
-                                                                    {img.is_main ? 'Main' : 'Set Main'}
-                                                                </button>
-                                                                <button
-                                                                    onClick={() => removeVariantImage(index, imgIndex)}
-                                                                    className="p-1 hover:bg-red-50 rounded"
-                                                                >
-                                                                    <IconTrash className="w-3 h-3 text-red-600" />
-                                                                </button>
-                                                            </div>
-                                                            <select
-                                                                value={img.image_type}
-                                                                onChange={(e) => {
-                                                                    const updated = [...variants];
-                                                                    if (updated[index].images) {
-                                                                        updated[index].images![imgIndex].image_type = e.target.value;
-                                                                        setVariants(updated);
-                                                                    }
-                                                                }}
-                                                                className="w-full text-xs px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-primary-500"
-                                                            >
-                                                                {IMAGE_TYPES.map((type) => (
-                                                                    <option key={type.value} value={type.value}>
-                                                                        {type.label}
-                                                                    </option>
-                                                                ))}
-                                                            </select>
-                                                        </div>
-                                                        );
-                                                    })}
-                                                </div>
-                                            ) : (
-                                                <p className="text-sm text-gray-500 italic">No images for this variant yet</p>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {/* Images Tab */}
-                {activeTab === 'images' && (
-                    <div className="p-6">
-                        <div className="mb-6 flex items-center justify-between">
-                            <div>
-                                <h2 className="text-xl font-semibold text-gray-900 mb-2">Product Images</h2>
-                                <p className="text-sm text-gray-600">Upload and manage product-level images (can optionally link to variants)</p>
-                            </div>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                multiple
-                                onChange={(e) => handleImageUpload(e.target.files)}
-                                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                            />
-                        </div>
-                        <div className="border-t border-gray-200 pt-6">
-                            {images.length === 0 && variantGalleryRows.length === 0 && (
-                                <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg flex items-start gap-3">
-                                    <IconAlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                                    <p>No images uploaded yet. Upload images to display them here. Note: Variant-specific images can be added in the Variants tab.</p>
-                                </div>
-                            )}
-
-                            {variantGalleryRows.length > 0 && (
-                                <div className="mb-6">
-                                    <div className="mb-3 flex items-center justify-between">
-                                        <h3 className="text-sm font-semibold text-gray-700">
-                                            Saved images ({variantGalleryRows.length})
-                                        </h3>
-                                        <button
-                                            type="button"
-                                            onClick={() => setActiveTab('variants')}
-                                            className="text-sm font-medium text-primary-600 hover:underline"
-                                        >
-                                            Edit in Variants tab
-                                        </button>
-                                    </div>
-                                    <p className="mb-3 text-xs text-gray-500">
-                                        Every image belongs to a variant, so existing images are managed in the Variants tab.
-                                    </p>
-                                    <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 lg:grid-cols-6">
-                                        {variantGalleryRows.map(({ src, key, label, isMain, imageType }) => (
-                                            <div key={key} className="border border-gray-200 rounded-lg p-2">
-                                                <img src={src} alt="" className="w-full h-24 object-cover rounded mb-2" />
-                                                <p className="truncate text-xs text-gray-700" title={label}>{label}</p>
-                                                <p className="text-xs text-gray-500">
-                                                    {isMain ? 'Main' : imageType}
-                                                </p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            <div className="grid grid-cols-3 gap-4">
-                                {images.map((image, index) => {
-                                    const src =
-                                        image.preview ||
-                                        (typeof image.image === 'string' ? image.image : '');
-                                    return (
-                                    <div key={image.id ?? `img-${index}`} className="border border-gray-200 rounded-lg p-4">
-                                        {src ? (
-                                            <img
-                                                src={src}
-                                                alt=""
-                                                className="w-full h-40 object-cover rounded-lg mb-4"
-                                            />
-                                        ) : null}
-                                        <div className="flex items-center justify-between mb-4">
-                                            <button
-                                                onClick={() => setMainImage(index)}
-                                                className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
-                                                    image.is_main
-                                                        ? 'bg-green-100 text-green-800'
-                                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                                }`}
-                                            >
-                                                {image.is_main ? 'Main' : 'Set as Main'}
-                                            </button>
-                                            <button
-                                                onClick={() => removeImage(index)}
-                                                className="p-2 hover:bg-red-50 rounded-lg transition-colors"
-                                            >
-                                                <IconTrash className="w-4 h-4 text-red-600" />
-                                            </button>
-                                        </div>
-                                        <div className="space-y-3">
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-1">Product Variant (Optional)</label>
-                                                <select
-                                                    value={image.product_variant || ''}
-                                                    onChange={(e) => {
-                                                        const updated = [...images];
-                                                        updated[index].product_variant = e.target.value || undefined;
-                                                        setImages(updated);
-                                                    }}
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                                >
-                                                    <option value="">None (requires variant SKU for upload)</option>
-                                                    {variants.map((v, vIndex) => (
-                                                        <option key={v.id || vIndex} value={v.sku}>
-                                                            {v.sku}{' '}
-                                                            {v.attribute_values && v.attribute_values.length > 0
-                                                                ? `- Variant ${vIndex + 1}`
-                                                                : ''}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-1">Image Type</label>
-                                                <select
-                                                    value={image.image_type}
-                                                    onChange={(e) => {
-                                                        const updated = [...images];
-                                                        updated[index].image_type = e.target.value;
-                                                        setImages(updated);
-                                                    }}
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                                >
-                                                    {IMAGE_TYPES.map((type) => (
-                                                        <option key={type.value} value={type.value}>
-                                                            {type.label}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {/* Key Features Tab */}
-                {activeTab === 'features' && (
-                    <div className="p-6">
-                        <div className="mb-6 flex items-center justify-between">
-                            <div>
-                                <h2 className="text-xl font-semibold text-gray-900 mb-2">Key Features</h2>
-                                <p className="text-sm text-gray-600">Add key features that highlight your product</p>
-                            </div>
-                            <button
-                                onClick={addKeyFeature}
-                                className="flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
-                            >
-                                <IconPlus className="w-4 h-4" />
-                                Add Feature
-                            </button>
-                        </div>
-                        <div className="border-t border-gray-200 pt-6">
-                            <div className="space-y-3">
-                                {keyFeatures.map((feature, index) => (
-                                    <div key={index} className="flex items-center gap-3">
-                                        <input
-                                            type="text"
-                                            placeholder="Enter feature name"
-                                            value={feature.name}
-                                            onChange={(e) => updateKeyFeature(index, e.target.value)}
-                                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                        />
-                                        <button
-                                            onClick={() => removeKeyFeature(index)}
-                                            className="p-2 hover:bg-red-50 rounded-lg transition-colors"
-                                        >
-                                            <IconTrash className="w-4 h-4 text-red-600" />
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {/* Tags Tab */}
-                {activeTab === 'tags' && (
-                    <div className="p-6">
-                        <div className="mb-6 flex items-center justify-between">
-                            <div>
-                                <h2 className="text-xl font-semibold text-gray-900 mb-2">Tags</h2>
-                                <p className="text-sm text-gray-600">Add tags to help customers find your product</p>
-                            </div>
-                            <button
-                                onClick={addTag}
-                                className="flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
-                            >
-                                <IconPlus className="w-4 h-4" />
-                                Add Tag
-                            </button>
-                        </div>
-                        <div className="border-t border-gray-200 pt-6">
-                            <div className="space-y-3">
-                                {tags.map((tag, index) => (
-                                    <div key={index} className="flex items-center gap-3">
-                                        <input
-                                            type="text"
-                                            placeholder="Enter tag name"
-                                            value={tag.name}
-                                            onChange={(e) => updateTag(index, e.target.value)}
-                                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                        />
-                                        <button
-                                            onClick={() => removeTag(index)}
-                                            className="p-2 hover:bg-red-50 rounded-lg transition-colors"
-                                        >
-                                            <IconTrash className="w-4 h-4 text-red-600" />
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </div>
-
-            {/* Action Buttons */}
-            <div className="mt-6 flex justify-end gap-4">
-                <button
-                    onClick={() => navigate('/admin/products/list')}
-                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-                >
-                    Cancel
-                </button>
-                <button
-                    onClick={handleSubmit}
-                    disabled={submitting}
-                    className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 disabled:cursor-not-allowed flex items-center gap-2"
-                >
-                    {submitting ? (
-                        <>
-                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                            {editProductId ? 'Saving...' : 'Creating...'}
-                        </>
-                    ) : (
-                        <>
-                            <IconCheck className="w-4 h-4" />
-                            {editProductId ? 'Save changes' : 'Create product'}
-                        </>
-                    )}
-                </button>
-            </div>
+            {action}
         </div>
+    );
+
+    return (
+        <Form {...form}>
+            <form
+                onSubmit={form.handleSubmit(onValid, onInvalid)}
+                onKeyDown={(e) => {
+                    // Enter inside a text input must not submit the whole product.
+                    if (e.key === 'Enter' && (e.target as HTMLElement).tagName === 'INPUT') e.preventDefault();
+                }}
+                noValidate
+                className="space-y-3"
+            >
+                <div className="flex items-start gap-2">
+                    <Button type="button" variant="ghost" size="icon" onClick={() => navigate('/admin/products/list')} aria-label="Back to products" className="mt-0.5 shrink-0">
+                        <ArrowLeft />
+                    </Button>
+                    <PageHeader
+                        className="min-w-0 flex-1 pb-0"
+                        title={editProductId ? 'Edit product' : 'Add new product'}
+                        description={editProductId ? 'Update catalog fields, variants, gallery images and key features' : 'Create a new product in the catalog'}
+                        actions={
+                            editProductId ? (
+                                <Button type="button" variant="outline" size="sm" onClick={() => navigate(`/admin/products/${editProductId}`)}>
+                                    View detail
+                                </Button>
+                            ) : undefined
+                        }
+                    />
+                </div>
+
+                <Tabs value={activeTab} onValueChange={setActiveTab}>
+                    <div className="-mx-1 overflow-x-auto px-1 pb-1">
+                        <TabsList className="w-max">
+                            {TAB_DEFS.map((t) => {
+                                const Icon = t.icon;
+                                return (
+                                    <TabsTrigger key={t.id} value={t.id}>
+                                        <Icon aria-hidden="true" />
+                                        {t.label}
+                                    </TabsTrigger>
+                                );
+                            })}
+                        </TabsList>
+                    </div>
+
+                    {/* Basic information */}
+                    <TabsContent value="basic">
+                        <Card>
+                            <CardContent className="p-4 pt-4 sm:p-5 sm:pt-5">
+                                {sectionHeader('Product details', 'Fill in the basic information about the product')}
+                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                    <TextField control={form.control} name="name" label="Product name" required placeholder="Enter product name" />
+                                    <FormField
+                                        control={form.control}
+                                        name="status"
+                                        render={({ field }) => (
+                                            <FormItem className="space-y-1.5">
+                                                <FormLabel>Status</FormLabel>
+                                                <FieldSelect value={field.value} onChange={field.onChange} options={PRODUCT_STATUS} placeholder="Select status" />
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <TextField control={form.control} name="keywords" label="Keywords" placeholder="Enter keywords (comma-separated)" />
+                                    <TextField
+                                        control={form.control}
+                                        name="slug"
+                                        label="Slug"
+                                        placeholder="seo-friendly-slug"
+                                        description="Leave blank on create to auto-generate from brand + title on the backend."
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="category"
+                                        render={({ field }) => (
+                                            <FormItem className="space-y-1.5">
+                                                <FormLabel>
+                                                    Category <span className="text-destructive">*</span>
+                                                </FormLabel>
+                                                <FieldSelect
+                                                    value={field.value}
+                                                    onChange={field.onChange}
+                                                    options={categories.map((c) => ({ value: c.id, label: c.name }))}
+                                                    placeholder="Select a category"
+                                                />
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="sub_category"
+                                        render={({ field }) => (
+                                            <FormItem className="space-y-1.5">
+                                                <FormLabel>
+                                                    Sub category <span className="text-destructive">*</span>
+                                                </FormLabel>
+                                                <FieldSelect
+                                                    value={field.value}
+                                                    onChange={field.onChange}
+                                                    disabled={subDisabled}
+                                                    options={subCategories.map((sc) => ({ value: sc.id, label: sc.sub_category_name }))}
+                                                    placeholder={!formData.category ? 'Select a category first' : loading ? 'Loading...' : 'Select a sub category'}
+                                                />
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="brand"
+                                        render={({ field }) => (
+                                            <FormItem className="space-y-1.5">
+                                                <FormLabel>
+                                                    Brand <span className="text-destructive">*</span>
+                                                </FormLabel>
+                                                <FieldSelect
+                                                    value={field.value}
+                                                    onChange={field.onChange}
+                                                    disabled={subDisabled}
+                                                    options={brands.map((b) => ({ value: b.id, label: b.name }))}
+                                                    placeholder={!formData.category ? 'Select a category first' : loading ? 'Loading...' : 'Select a brand'}
+                                                />
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="condition"
+                                        render={({ field }) => (
+                                            <FormItem className="space-y-1.5">
+                                                <FormLabel>Condition</FormLabel>
+                                                <FieldSelect value={field.value} onChange={field.onChange} options={CONDITION_OPTIONS} placeholder="Select condition" noneLabel="No condition" />
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="variation_theme"
+                                        render={({ field }) => (
+                                            <FormItem className="space-y-1.5">
+                                                <FormLabel>
+                                                    Variation theme <span className="text-destructive">*</span>
+                                                </FormLabel>
+                                                <FieldSelect value={field.value} onChange={field.onChange} options={VARIATION_THEMES} placeholder="Select a theme" />
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <TextField control={form.control} name="description" label="Description" multiline rows={4} placeholder="Enter product description" className="sm:col-span-2" />
+                                    <TextField control={form.control} name="min_amount" label="Minimum amount" numeric min={1} />
+                                    <TextField control={form.control} name="inventory_level" label="Inventory level" numeric min={0} />
+                                    <TextField control={form.control} name="discount_percentage" label="Discount percentage" numeric min={0} max={100} />
+                                    <FormField
+                                        control={form.control}
+                                        name="seller_profile"
+                                        render={({ field }) => (
+                                            <FormItem className="space-y-1.5">
+                                                <FormLabel>Seller</FormLabel>
+                                                <FieldSelect
+                                                    value={field.value}
+                                                    onChange={field.onChange}
+                                                    options={sellers.map((s) => ({ value: s.id, label: s.business_name || s.user?.email || s.id }))}
+                                                    placeholder="Select a seller (optional)"
+                                                    noneLabel="No seller"
+                                                />
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <TextField control={form.control} name="store" label="Store (FK UUID)" placeholder="Optional store id" mono />
+
+                                    <div className="space-y-1.5 sm:col-span-2">
+                                        <Label htmlFor="main-product-image">Main product image</Label>
+                                        {heroBlobUrl || serverHeroUrl ? (
+                                            <div className="overflow-hidden rounded-xl border bg-muted">
+                                                <img src={(heroBlobUrl || serverHeroUrl) as string} alt="Hero preview" className="mx-auto max-h-48 w-auto object-contain" />
+                                            </div>
+                                        ) : null}
+                                        <Input
+                                            id="main-product-image"
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={(e) => {
+                                                const file = e.target.files?.[0] || null;
+                                                setHeroBlobUrl(file ? URL.createObjectURL(file) : null);
+                                                setServerHeroUrl(null);
+                                                form.setValue('main_product_image', file, { shouldDirty: true });
+                                            }}
+                                        />
+                                    </div>
+
+                                    <TextField control={form.control} name="meta_title" label="Meta title" placeholder="SEO meta title" className="sm:col-span-2" />
+                                    <TextField control={form.control} name="meta_description" label="Meta description" multiline rows={2} placeholder="SEO meta description" className="sm:col-span-2" />
+
+                                    <div className="grid grid-cols-1 gap-3 sm:col-span-2 sm:grid-cols-2">
+                                        <SwitchField control={form.control} name="available" label="Available" />
+                                        <SwitchField control={form.control} name="is_spare_part" label="Is spare part" />
+                                        <SwitchField control={form.control} name="requires_installation" label="Requires installation" />
+                                        <SwitchField control={form.control} name="is_product_of_the_month" label="Product of the month" />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
+                    {/* Variants */}
+                    <TabsContent value="variants">
+                        <Card>
+                            <CardContent className="p-4 pt-4 sm:p-5 sm:pt-5">
+                                {sectionHeader(
+                                    'Product variants',
+                                    'Add product variants with different attributes',
+                                    <Button type="button" size="sm" onClick={addVariant}>
+                                        <Plus />
+                                        Add variant
+                                    </Button>
+                                )}
+
+                                {variants.length === 0 ? (
+                                    <div className="flex items-start gap-2 rounded-xl bg-warning-subtle px-3 py-2 text-sm text-warning-subtle-foreground" role="alert">
+                                        <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                                        <p>At least one variant is required. Please add a variant.</p>
+                                    </div>
+                                ) : null}
+
+                                <div className="space-y-4">
+                                    {variants.map((variant, index) => (
+                                        <div key={variant.id ?? variant.clientRowKey ?? `variant-${index}`} className="rounded-2xl border p-4">
+                                            <div className="mb-3 flex items-center justify-between">
+                                                <h3 className="text-sm font-semibold text-foreground">Variant {index + 1}</h3>
+                                                {variants.length > 1 ? (
+                                                    <Button type="button" variant="ghost" size="icon-sm" aria-label={`Remove variant ${index + 1}`} onClick={() => setVariantToRemove(index)}>
+                                                        <Trash2 className="text-destructive" />
+                                                    </Button>
+                                                ) : null}
+                                            </div>
+                                            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                                <div className="space-y-1.5">
+                                                    <Label htmlFor={`v-${index}-sku`}>
+                                                        SKU <span className="text-destructive">*</span>
+                                                    </Label>
+                                                    <Input id={`v-${index}-sku`} placeholder="Enter SKU" value={variant.sku} onChange={(e) => updateVariant(index, 'sku', e.target.value)} />
+                                                </div>
+                                                <div className="space-y-1.5">
+                                                    <Label htmlFor={`v-${index}-price`}>
+                                                        Price <span className="text-destructive">*</span>
+                                                    </Label>
+                                                    <Input
+                                                        id={`v-${index}-price`}
+                                                        type="number"
+                                                        step="0.01"
+                                                        placeholder="0.00"
+                                                        value={variant.price}
+                                                        onChange={(e) => updateVariant(index, 'price', e.target.value)}
+                                                    />
+                                                </div>
+                                                <div className="space-y-1.5">
+                                                    <Label htmlFor={`v-${index}-qty`}>Quantity</Label>
+                                                    <Input
+                                                        id={`v-${index}-qty`}
+                                                        type="number"
+                                                        min={0}
+                                                        value={variant.quantity}
+                                                        onChange={(e) => updateVariant(index, 'quantity', parseInt(e.target.value) || 0)}
+                                                    />
+                                                </div>
+                                                <div className="space-y-1.5">
+                                                    <Label htmlFor={`v-${index}-min`}>Min buy amount</Label>
+                                                    <Input
+                                                        id={`v-${index}-min`}
+                                                        type="number"
+                                                        min={1}
+                                                        value={variant.min_buy_amount}
+                                                        onChange={(e) => updateVariant(index, 'min_buy_amount', parseInt(e.target.value) || 1)}
+                                                    />
+                                                </div>
+                                                {showAttributeSelects
+                                                    ? attributeNames.slice(0, 3).map((attrName, slot) =>
+                                                          attributeGroups[attrName] ? (
+                                                              <div key={`${attrName}-${slot}`} className="space-y-1.5 sm:col-span-2">
+                                                                  <Label htmlFor={`v-${index}-attr-${slot}`} className="capitalize">
+                                                                      {attrName} <span className="text-destructive">*</span>
+                                                                  </Label>
+                                                                  <OptionSelect
+                                                                      id={`v-${index}-attr-${slot}`}
+                                                                      value={getAttributeSlotValue(variant, slot)}
+                                                                      onChange={(v) => setAttributeSlotValue(index, slot, v)}
+                                                                      options={attributeGroups[attrName].map((av) => ({ value: av.id, label: av.value_name }))}
+                                                                      placeholder={`Select ${attrName}`}
+                                                                  />
+                                                              </div>
+                                                          ) : null
+                                                      )
+                                                    : null}
+                                            </div>
+
+                                            <div className="mt-4 space-y-3 border-t pt-4">
+                                                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                                                    <h4 className="text-sm font-semibold text-foreground">Variant images</h4>
+                                                    <Input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        multiple
+                                                        aria-label={`Upload images for variant ${index + 1}`}
+                                                        onChange={(e) => handleVariantImageUpload(index, e.target.files)}
+                                                        className="sm:max-w-xs"
+                                                    />
+                                                </div>
+                                                {variant.images && variant.images.length > 0 ? (
+                                                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                                                        {variant.images.map((img, imgIndex) => {
+                                                            const thumb = img.preview || (typeof img.image === 'string' ? img.image : '');
+                                                            return (
+                                                                <div key={img.id ?? `${imgIndex}-${thumb.slice(0, 12)}`} className="space-y-2 rounded-xl border p-2">
+                                                                    {thumb ? <img src={thumb} alt="" className="h-24 w-full rounded-lg object-cover" loading="lazy" /> : null}
+                                                                    <div className="flex items-center justify-between gap-1">
+                                                                        <Button
+                                                                            type="button"
+                                                                            size="xs"
+                                                                            variant={img.is_main ? 'default' : 'outline'}
+                                                                            onClick={() => setVariantMainImage(index, imgIndex)}
+                                                                        >
+                                                                            {img.is_main ? 'Main' : 'Set main'}
+                                                                        </Button>
+                                                                        <Button type="button" variant="ghost" size="icon-xs" aria-label="Remove image" onClick={() => removeVariantImage(index, imgIndex)}>
+                                                                            <Trash2 className="text-destructive" />
+                                                                        </Button>
+                                                                    </div>
+                                                                    <OptionSelect
+                                                                        value={img.image_type}
+                                                                        onChange={(v) => updateVariantImageType(index, imgIndex, v)}
+                                                                        options={IMAGE_TYPES}
+                                                                        placeholder="Image type"
+                                                                        ariaLabel="Image type"
+                                                                    />
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                ) : (
+                                                    <p className="text-sm text-muted-foreground">No images for this variant yet.</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
+                    {/* Images */}
+                    <TabsContent value="images">
+                        <Card>
+                            <CardContent className="p-4 pt-4 sm:p-5 sm:pt-5">
+                                {sectionHeader(
+                                    'Product images',
+                                    'Upload and manage product-level images (can optionally link to variants)',
+                                    <Input type="file" accept="image/*" multiple aria-label="Upload product images" onChange={(e) => handleImageUpload(e.target.files)} className="sm:max-w-xs" />
+                                )}
+
+                                {images.length === 0 && variantGalleryRows.length === 0 ? (
+                                    <EmptyState icon={ImageIcon} title="No images uploaded yet" description="Upload images to display them here. Variant-specific images can be added in the Variants tab." />
+                                ) : null}
+
+                                {variantGalleryRows.length > 0 ? (
+                                    <div className="mb-6 space-y-3">
+                                        <div className="flex items-center justify-between gap-2">
+                                            <h3 className="text-sm font-semibold text-foreground">Saved images ({variantGalleryRows.length})</h3>
+                                            <Button type="button" variant="link" size="sm" onClick={() => setActiveTab('variants')}>
+                                                Edit in Variants tab
+                                            </Button>
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">Every image belongs to a variant, so existing images are managed in the Variants tab.</p>
+                                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+                                            {variantGalleryRows.map(({ src, key, label, isMain, imageType }) => (
+                                                <div key={key} className="rounded-xl border p-2">
+                                                    <img src={src} alt="" className="mb-2 h-24 w-full rounded-lg object-cover" loading="lazy" />
+                                                    <p className="truncate text-xs text-foreground" title={label}>
+                                                        {label}
+                                                    </p>
+                                                    <p className="text-xs text-muted-foreground">{isMain ? 'Main' : imageType}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ) : null}
+
+                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                    {images.map((image, index) => {
+                                        const src = image.preview || (typeof image.image === 'string' ? image.image : '');
+                                        return (
+                                            <div key={image.id ?? `img-${index}`} className="space-y-3 rounded-2xl border p-3">
+                                                {src ? <img src={src} alt="" className="h-40 w-full rounded-xl object-cover" loading="lazy" /> : null}
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <Button type="button" size="sm" variant={image.is_main ? 'default' : 'outline'} onClick={() => setMainImage(index)}>
+                                                        {image.is_main ? 'Main' : 'Set as main'}
+                                                    </Button>
+                                                    <Button type="button" variant="ghost" size="icon-sm" aria-label="Remove image" onClick={() => removeImage(index)}>
+                                                        <Trash2 className="text-destructive" />
+                                                    </Button>
+                                                </div>
+                                                <div className="space-y-1.5">
+                                                    <Label htmlFor={`img-${index}-variant`}>Product variant (optional)</Label>
+                                                    <OptionSelect
+                                                        id={`img-${index}-variant`}
+                                                        value={image.product_variant || ''}
+                                                        onChange={(v) => updateGalleryImage(index, { product_variant: v || undefined })}
+                                                        options={variants.map((v, vIndex) => ({
+                                                            value: v.sku,
+                                                            label: `${v.sku}${v.attribute_values && v.attribute_values.length > 0 ? ` - Variant ${vIndex + 1}` : ''}`,
+                                                        }))}
+                                                        placeholder="None (requires variant SKU for upload)"
+                                                        noneLabel="None (uses first variant SKU)"
+                                                    />
+                                                </div>
+                                                <div className="space-y-1.5">
+                                                    <Label htmlFor={`img-${index}-type`}>Image type</Label>
+                                                    <OptionSelect id={`img-${index}-type`} value={image.image_type} onChange={(v) => updateGalleryImage(index, { image_type: v })} options={IMAGE_TYPES} placeholder="Image type" />
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
+                    {/* Key features */}
+                    <TabsContent value="features">
+                        <Card>
+                            <CardContent className="p-4 pt-4 sm:p-5 sm:pt-5">
+                                {sectionHeader(
+                                    'Key features',
+                                    'Add key features that highlight the product',
+                                    <Button type="button" size="sm" onClick={addKeyFeature}>
+                                        <Plus />
+                                        Add feature
+                                    </Button>
+                                )}
+                                {keyFeatures.length === 0 ? (
+                                    <EmptyState icon={Check} title="No key features yet" description="Add short highlights buyers should know about." />
+                                ) : (
+                                    <div className="space-y-3">
+                                        {keyFeatures.map((feature, index) => (
+                                            <div key={feature.id ?? index} className="flex items-center gap-2">
+                                                <Input placeholder="Enter feature name" aria-label={`Feature ${index + 1}`} value={feature.name} onChange={(e) => updateKeyFeature(index, e.target.value)} />
+                                                <Button type="button" variant="ghost" size="icon" aria-label={`Remove feature ${index + 1}`} onClick={() => removeKeyFeature(index)}>
+                                                    <Trash2 className="text-destructive" />
+                                                </Button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
+                    {/* Tags */}
+                    <TabsContent value="tags">
+                        <Card>
+                            <CardContent className="p-4 pt-4 sm:p-5 sm:pt-5">
+                                {sectionHeader(
+                                    'Tags',
+                                    'Add tags to help customers find the product',
+                                    <Button type="button" size="sm" onClick={addTag}>
+                                        <Plus />
+                                        Add tag
+                                    </Button>
+                                )}
+                                {tags.length === 0 ? (
+                                    <EmptyState icon={Tag} title="No tags yet" description="Tags are saved when the product is created." />
+                                ) : (
+                                    <div className="space-y-3">
+                                        {tags.map((tag, index) => (
+                                            <div key={index} className="flex items-center gap-2">
+                                                <Input placeholder="Enter tag name" aria-label={`Tag ${index + 1}`} value={tag.name} onChange={(e) => updateTag(index, e.target.value)} />
+                                                <Button type="button" variant="ghost" size="icon" aria-label={`Remove tag ${index + 1}`} onClick={() => removeTag(index)}>
+                                                    <Trash2 className="text-destructive" />
+                                                </Button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                </Tabs>
+
+                {/* Sticky action bar */}
+                <div className="sticky bottom-[4.25rem] z-40 flex items-center justify-end gap-2 border-t bg-background py-2.5 md:bottom-0">
+                    <Button type="button" variant="outline" onClick={() => navigate('/admin/products/list')} disabled={submitting}>
+                        Cancel
+                    </Button>
+                    <Button type="submit" disabled={submitting}>
+                        {submitting ? (
+                            <>
+                                <Loader2 className="animate-spin" />
+                                {editProductId ? 'Saving...' : 'Creating...'}
+                            </>
+                        ) : (
+                            <>
+                                <Check />
+                                {editProductId ? 'Save changes' : 'Create product'}
+                            </>
+                        )}
+                    </Button>
+                </div>
+            </form>
+
+            <Dialog open={variantToRemove !== null} onOpenChange={(open) => (!open ? setVariantToRemove(null) : undefined)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Remove variant</DialogTitle>
+                        <DialogDescription>
+                            {variantToRemove !== null ? `Remove variant ${variantToRemove + 1}${variants[variantToRemove]?.sku ? ` (${variants[variantToRemove].sku})` : ''}? ` : ''}
+                            {editProductId ? 'Saved variants are deleted from the product when you save changes.' : 'It will not be created with the product.'}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button type="button" variant="outline" onClick={() => setVariantToRemove(null)}>
+                            Cancel
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="destructive"
+                            onClick={() => {
+                                if (variantToRemove !== null) removeVariant(variantToRemove);
+                                setVariantToRemove(null);
+                            }}
+                        >
+                            <Trash2 />
+                            Remove variant
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </Form>
     );
 };
 

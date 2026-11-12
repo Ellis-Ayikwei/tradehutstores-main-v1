@@ -78,6 +78,7 @@ const ADMIN_MENU: MenuItem[] = [
             { path: '/admin/catalog', icon: ClipboardList, label: 'Catalog', allowedGroups: ['Administrators', 'Inventory Managers'] },
             { path: '/admin/search', icon: Search, label: 'Search Ops', allowedGroups: ['Administrators', 'Inventory Managers'] },
             { path: '/admin/merchandising/homepage', icon: LayoutGrid, label: 'Homepage Merchandising', allowedGroups: ['Administrators', 'Inventory Managers'] },
+            { path: '/admin/merchandising/hero', icon: LayoutGrid, label: 'Homepage Hero', allowedGroups: ['Administrators', 'Inventory Managers'] },
             { path: '/admin/ads', icon: Megaphone, label: 'Ads & Promotions', allowedGroups: ['Administrators', 'Inventory Managers'] },
             { path: '/admin/promos', icon: BadgePercent, label: 'Promo Codes', allowedGroups: ['Administrators', 'Inventory Managers'] },
         ],

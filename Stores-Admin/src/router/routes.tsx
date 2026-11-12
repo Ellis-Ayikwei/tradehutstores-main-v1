@@ -103,6 +103,7 @@ import SellerDetail from '../pages/admin/SellerManagement/SellerDetail';
 import InventoryManagement from '../pages/admin/InventoryManagement';
 import EcommerceDashboard from '../pages/admin/EcommerceDashboard';
 import MerchandisingHomepage from '../pages/admin/MerchandisingHomepage';
+import HeroManagement from '../pages/admin/HeroManagement';
 import AdsManagement from '../pages/admin/AdsManagement';
 import PromosManagement from '../pages/admin/PromosManagement';
 
@@ -570,6 +571,15 @@ const routes = [
         element: (
             <ProtectedRoute allowedGroups={['Administrators', 'Inventory Managers']}>
                 <MerchandisingHomepage />
+            </ProtectedRoute>
+        ),
+        layout: 'admin',
+    },
+    {
+        path: '/admin/merchandising/hero',
+        element: (
+            <ProtectedRoute allowedGroups={['Administrators', 'Inventory Managers']}>
+                <HeroManagement />
             </ProtectedRoute>
         ),
         layout: 'admin',

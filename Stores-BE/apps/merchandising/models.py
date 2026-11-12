@@ -5,6 +5,7 @@ Homepage merchandising — admin-curated sections with manual, rule-based, or mi
 from django.db import models
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
 
 
 class TimeStampedModel(models.Model):
@@ -179,3 +180,174 @@ class SectionClickEvent(models.Model):
         indexes = [
             models.Index(fields=["section", "clicked_at"]),
         ]
+
+
+# ── Home hero ────────────────────────────────────────────────────────────────
+
+_HEX_COLOR = RegexValidator(
+    regex=r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+    message="Use a hex colour such as #18181b.",
+)
+
+
+def validate_link(value: str) -> None:
+    """Storefront-relative path ("/deals") or absolute http(s) URL."""
+    if not value:
+        return
+    if value.startswith("/") and not value.startswith("//"):
+        return
+    if value.startswith(("http://", "https://")):
+        return
+    raise ValidationError("Use a path starting with / or a full http(s) URL.")
+
+
+class HeroConfig(TimeStampedModel):
+    """Singleton: how the storefront home hero is arranged and styled."""
+
+    class Layout(models.TextChoices):
+        CAROUSEL = "carousel", "Carousel (full width)"
+        CAROUSEL_SIDE = "carousel_side", "Carousel + side tiles"
+        BENTO = "bento", "Bento grid (large + tiles, static)"
+
+    class Transition(models.TextChoices):
+        SLIDE = "slide", "Slide"
+        FADE = "fade", "Fade"
+
+    class BackgroundStyle(models.TextChoices):
+        NONE = "none", "None (page background)"
+        SOLID = "solid", "Solid colour"
+        GRADIENT = "gradient", "Gradient"
+
+    layout = models.CharField(max_length=20, choices=Layout.choices, default=Layout.CAROUSEL_SIDE)
+    autoplay = models.BooleanField(default=True)
+    interval_seconds = models.PositiveSmallIntegerField(default=6)
+    transition = models.CharField(max_length=10, choices=Transition.choices, default=Transition.SLIDE)
+    show_arrows = models.BooleanField(default=True)
+    show_dots = models.BooleanField(default=True)
+    height_desktop = models.PositiveSmallIntegerField(default=360, help_text="Pixels, >= lg screens.")
+    rounded = models.BooleanField(default=True)
+
+    # Band behind the hero (page-width strip).
+    background_style = models.CharField(
+        max_length=10, choices=BackgroundStyle.choices, default=BackgroundStyle.NONE
+    )
+    background_color = models.CharField(max_length=7, blank=True, validators=[_HEX_COLOR])
+    gradient_from = models.CharField(max_length=7, blank=True, validators=[_HEX_COLOR])
+    gradient_to = models.CharField(max_length=7, blank=True, validators=[_HEX_COLOR])
+    gradient_angle = models.PositiveSmallIntegerField(default=135)
+
+    class Meta:
+        verbose_name = "Hero configuration"
+        verbose_name_plural = "Hero configuration"
+
+    def __str__(self):
+        return "Home hero configuration"
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def load(cls) -> "HeroConfig":
+        obj, _ = cls.objects.get_or_create(pk=1)
+        return obj
+
+    def clean(self):
+        errors = {}
+        if not 2 <= self.interval_seconds <= 30:
+            errors["interval_seconds"] = "Choose between 2 and 30 seconds."
+        if not 200 <= self.height_desktop <= 640:
+            errors["height_desktop"] = "Choose between 200 and 640 px."
+        if self.gradient_angle > 360:
+            errors["gradient_angle"] = "Angle must be 0-360."
+        if self.background_style == self.BackgroundStyle.SOLID and not self.background_color:
+            errors["background_color"] = "Pick a colour."
+        if self.background_style == self.BackgroundStyle.GRADIENT and not (
+            self.gradient_from and self.gradient_to
+        ):
+            errors["gradient_from"] = "Pick both gradient colours."
+        if errors:
+            raise ValidationError(errors)
+
+
+class HeroSlide(TimeStampedModel):
+    class Placement(models.TextChoices):
+        MAIN = "main", "Main (carousel / large)"
+        TILE = "tile", "Tile (side / small)"
+
+    class BackgroundStyle(models.TextChoices):
+        SOLID = "solid", "Solid colour"
+        GRADIENT = "gradient", "Gradient"
+
+    class TextAlign(models.TextChoices):
+        LEFT = "left", "Left"
+        CENTER = "center", "Centre"
+        RIGHT = "right", "Right"
+
+    name = models.CharField(max_length=120, help_text="Internal label, not shown to buyers.")
+    placement = models.CharField(max_length=10, choices=Placement.choices, default=Placement.MAIN)
+    position = models.PositiveSmallIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+    starts_at = models.DateTimeField(null=True, blank=True)
+    ends_at = models.DateTimeField(null=True, blank=True)
+
+    image_desktop = models.ImageField(upload_to="hero/desktop/", blank=True, null=True)
+    image_mobile = models.ImageField(
+        upload_to="hero/mobile/", blank=True, null=True, help_text="Optional. Falls back to desktop."
+    )
+    alt_text = models.CharField(max_length=240, blank=True)
+
+    eyebrow = models.CharField(max_length=60, blank=True)
+    title = models.CharField(max_length=120, blank=True)
+    subtitle = models.CharField(max_length=240, blank=True)
+    cta_label = models.CharField(max_length=40, blank=True)
+    link_url = models.CharField(max_length=500, blank=True, validators=[validate_link])
+    open_in_new_tab = models.BooleanField(default=False)
+
+    text_color = models.CharField(max_length=7, default="#ffffff", validators=[_HEX_COLOR])
+    text_align = models.CharField(max_length=10, choices=TextAlign.choices, default=TextAlign.LEFT)
+    overlay_strength = models.PositiveSmallIntegerField(
+        default=50, help_text="0-80. Dark scrim on top of the photo for text legibility."
+    )
+
+    background_style = models.CharField(
+        max_length=10, choices=BackgroundStyle.choices, default=BackgroundStyle.SOLID
+    )
+    background_color = models.CharField(max_length=7, default="#18181b", validators=[_HEX_COLOR])
+    gradient_from = models.CharField(max_length=7, blank=True, validators=[_HEX_COLOR])
+    gradient_to = models.CharField(max_length=7, blank=True, validators=[_HEX_COLOR])
+    gradient_angle = models.PositiveSmallIntegerField(default=135)
+
+    class Meta:
+        ordering = ["placement", "position", "id"]
+        verbose_name = "Hero slide"
+        verbose_name_plural = "Hero slides"
+
+    def __str__(self):
+        return f"{self.name} ({self.placement}, pos {self.position})"
+
+    @property
+    def is_live(self) -> bool:
+        if not self.is_active:
+            return False
+        now = timezone.now()
+        if self.starts_at and now < self.starts_at:
+            return False
+        if self.ends_at and now > self.ends_at:
+            return False
+        return True
+
+    def clean(self):
+        errors = {}
+        if self.overlay_strength > 80:
+            errors["overlay_strength"] = "Maximum is 80."
+        if self.gradient_angle > 360:
+            errors["gradient_angle"] = "Angle must be 0-360."
+        if self.background_style == self.BackgroundStyle.GRADIENT and not (
+            self.gradient_from and self.gradient_to
+        ):
+            errors["gradient_from"] = "Pick both gradient colours."
+        if self.starts_at and self.ends_at and self.ends_at <= self.starts_at:
+            errors["ends_at"] = "End must be after start."
+        if errors:
+            raise ValidationError(errors)

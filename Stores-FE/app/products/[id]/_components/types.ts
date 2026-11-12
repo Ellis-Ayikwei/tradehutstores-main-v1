@@ -43,6 +43,8 @@ export interface PdpProduct {
   pricing_currency: string
   main_product_image: string
   images: string[]
+  /** Large infographic / brand-story pictures shown full width under the product details. */
+  wall_images: string[]
   /** Product-level pictures not tied to any variant (shared shots); shown for every variant. */
   shared_images: string[]
   variants: PdpVariant[]

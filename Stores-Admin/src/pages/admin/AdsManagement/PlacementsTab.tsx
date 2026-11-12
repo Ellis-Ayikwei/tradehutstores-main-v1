@@ -1,15 +1,13 @@
-import {
-    IconCheck,
-    IconCopy,
-    IconEdit,
-    IconLayoutGrid,
-    IconPlus,
-    IconRefresh,
-    IconRepeat,
-    IconRotate,
-    IconTrash,
-} from '@tabler/icons-react';
+import { Check, Copy, LayoutGrid, Pencil, Plus, Power, RefreshCw, Repeat, RotateCw, Trash2 } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
+import { Badge } from '@/components/shadcn/badge';
+import { Button } from '@/components/shadcn/button';
+import { Card } from '@/components/shadcn/card';
+import { Input } from '@/components/shadcn/input';
+import { Switch } from '@/components/shadcn/switch';
+import { Textarea } from '@/components/shadcn/textarea';
+import { cn } from '@/lib/utils';
 import {
     AdPlacement,
     PLACEMENT_FORMATS,
@@ -21,16 +19,7 @@ import {
     fetchPlacements,
     patchPlacement,
 } from '../../../services/adsAdminService';
-import {
-    Alert,
-    EmptyState,
-    FORMAT_ICONS,
-    FORMAT_LOCATION_HINT,
-    Field,
-    LiveDot,
-    ModalShell,
-    inputCls,
-} from './_shared';
+import { Alert, CardGridSkeleton, CheckRow, ConfirmDialog, EmptyState, FORMAT_ICONS, FORMAT_LOCATION_HINT, Field, FormSheet, LiveDot, SimpleSelect, Toolbar } from './_shared';
 
 function slugify(s: string): string {
     return s
@@ -62,12 +51,16 @@ const PlacementsTab: React.FC<Props> = ({ onChange }) => {
     const [rows, setRows] = useState<AdPlacement[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [formError, setFormError] = useState<string | null>(null);
     const [search, setSearch] = useState('');
 
     const [editingId, setEditingId] = useState<number | null>(null);
     const [draft, setDraft] = useState<PlacementWritePayload>(emptyDraft);
     const [open, setOpen] = useState(false);
     const [saving, setSaving] = useState(false);
+
+    const [toDelete, setToDelete] = useState<AdPlacement | null>(null);
+    const [deleting, setDeleting] = useState(false);
 
     const load = useCallback(async () => {
         try {
@@ -94,6 +87,7 @@ const PlacementsTab: React.FC<Props> = ({ onChange }) => {
     const openCreate = () => {
         setEditingId(null);
         setDraft(emptyDraft());
+        setFormError(null);
         setOpen(true);
     };
 
@@ -109,362 +103,261 @@ const PlacementsTab: React.FC<Props> = ({ onChange }) => {
             rotation_seconds: row.rotation_seconds,
             is_active: row.is_active,
         });
+        setFormError(null);
         setOpen(true);
     };
 
     const save = async () => {
         if (!draft.name.trim() || !draft.slug.trim()) {
-            setError('Name and slug are required.');
+            setFormError('Name and slug are required.');
             return;
         }
         try {
             setSaving(true);
-            setError(null);
+            setFormError(null);
             if (editingId) {
                 await patchPlacement(editingId, draft);
             } else {
                 await createPlacement(draft);
             }
+            toast.success(editingId ? 'Placement saved' : 'Placement created');
             setOpen(false);
             await load();
             onChange?.();
         } catch (e) {
-            setError(adsAdminErrorMessage(e));
+            setFormError(adsAdminErrorMessage(e));
         } finally {
             setSaving(false);
         }
     };
 
-    const remove = async (row: AdPlacement) => {
-        if (!confirm(`Delete placement "${row.name}"? All slots in it will be deleted too.`)) return;
+    const confirmRemove = async () => {
+        if (!toDelete) return;
         try {
-            await deletePlacement(row.id);
+            setDeleting(true);
+            await deletePlacement(toDelete.id);
+            toast.success('Placement deleted');
+            setToDelete(null);
             await load();
             onChange?.();
         } catch (e) {
-            setError(adsAdminErrorMessage(e));
+            toast.error(adsAdminErrorMessage(e));
+        } finally {
+            setDeleting(false);
         }
     };
 
     const toggle = async (row: AdPlacement) => {
         try {
             await patchPlacement(row.id, { is_active: !row.is_active });
+            toast.success(row.is_active ? 'Placement paused' : 'Placement activated');
             await load();
             onChange?.();
         } catch (e) {
-            setError(adsAdminErrorMessage(e));
+            toast.error(adsAdminErrorMessage(e));
         }
     };
 
     const copySlug = async (slug: string) => {
         try {
             await navigator.clipboard.writeText(`<AdSlot slug="${slug}" />`);
+            toast.success('Snippet copied');
         } catch {
-            /* ignore */
+            toast.error('Could not copy to the clipboard.');
         }
     };
 
     return (
         <div className="space-y-4">
-            <div className="flex items-center gap-3 flex-wrap rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-3">
-                <input
-                    placeholder="Search by slug or name…"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className={`${inputCls} max-w-sm`}
-                />
-                <button
-                    type="button"
-                    onClick={load}
-                    className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold border border-gray-300 dark:border-gray-700 text-on-surface-variant hover:bg-gray-100 dark:hover:bg-gray-800"
-                >
-                    <IconRefresh size={16} /> Refresh
-                </button>
-                <button
-                    type="button"
-                    onClick={openCreate}
-                    className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary-hover shadow"
-                >
-                    <IconPlus size={16} /> New placement
-                </button>
-            </div>
+            <Toolbar>
+                <Input placeholder="Search by slug or name…" value={search} onChange={(e) => setSearch(e.target.value)} className="sm:max-w-sm" aria-label="Search placements" />
+                <div className="flex gap-2 sm:ml-auto">
+                    <Button type="button" variant="outline" onClick={load} className="flex-1 sm:flex-none">
+                        <RefreshCw /> Refresh
+                    </Button>
+                    <Button type="button" onClick={openCreate} className="flex-1 sm:flex-none">
+                        <Plus /> New placement
+                    </Button>
+                </div>
+            </Toolbar>
 
-            {error && <Alert>{error}</Alert>}
+            {error ? <Alert onRetry={load}>{error}</Alert> : null}
 
             {loading ? (
-                <div className="text-center py-12 text-sm text-on-surface-variant">Loading placements…</div>
+                <CardGridSkeleton />
             ) : filtered.length === 0 ? (
                 <EmptyState
-                    icon={<IconLayoutGrid size={26} />}
-                    title="No placements yet"
-                    body="A placement is a named slot on the storefront (e.g. 'homepage-top-bar'). The FE renders ads via <AdSlot slug='your-slug' />. You usually create these once and rarely touch them after."
+                    icon={LayoutGrid}
+                    title={rows.length === 0 ? 'No placements yet' : 'No placements match'}
+                    body={
+                        rows.length === 0
+                            ? "A placement is a named slot on the storefront (e.g. 'homepage-top-bar'). The storefront renders ads via <AdSlot slug='your-slug' />. You usually create these once and rarely touch them after."
+                            : 'Try a different search.'
+                    }
                     action={
-                        <button
-                            type="button"
-                            onClick={openCreate}
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary-hover"
-                        >
-                            <IconPlus size={16} /> Create your first placement
-                        </button>
+                        rows.length === 0 ? (
+                            <Button type="button" onClick={openCreate}>
+                                <Plus /> Create your first placement
+                            </Button>
+                        ) : undefined
                     }
                 />
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {filtered.map((row) => {
-                        const Icon = FORMAT_ICONS[row.format as PlacementFormat] || IconLayoutGrid;
+                        const Icon = FORMAT_ICONS[row.format as PlacementFormat] || LayoutGrid;
                         return (
-                            <div
-                                key={row.id}
-                                className="group rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
-                            >
+                            <Card key={row.id} className="p-4 sm:p-5">
                                 <div className="flex items-start justify-between gap-3">
-                                    <div className="flex items-start gap-3 min-w-0 flex-1">
+                                    <div className="flex min-w-0 flex-1 items-start gap-3">
                                         <div
-                                            className={[
-                                                'shrink-0 p-2.5 rounded-xl transition-colors',
-                                                row.is_active
-                                                    ? 'bg-primary-subtle text-primary'
-                                                    : 'bg-gray-100 dark:bg-gray-800 text-on-surface-variant',
-                                            ].join(' ')}
+                                            className={cn(
+                                                'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl',
+                                                row.is_active ? 'bg-primary-subtle text-primary-subtle-foreground' : 'bg-muted text-muted-foreground'
+                                            )}
                                         >
-                                            <Icon size={20} />
+                                            <Icon className="h-5 w-5" aria-hidden />
                                         </div>
                                         <div className="min-w-0 flex-1">
-                                            <div className="flex items-center gap-2">
-                                                <h3 className="font-bold text-on-surface dark:text-white truncate">
-                                                    {row.name}
-                                                </h3>
+                                            <div className="flex flex-wrap items-center gap-x-2">
+                                                <h3 className="truncate font-semibold text-foreground">{row.name}</h3>
                                                 <LiveDot on={row.is_active} />
                                             </div>
                                             <button
                                                 type="button"
                                                 onClick={() => copySlug(row.slug)}
                                                 title="Copy <AdSlot> snippet"
-                                                className="mt-0.5 group/slug inline-flex items-center gap-1 text-[11px] font-mono text-on-surface-variant hover:text-primary transition"
+                                                className="mt-0.5 inline-flex max-w-full items-center gap-1 rounded text-xs text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-subtle"
                                             >
-                                                <code>{row.slug}</code>
-                                                <IconCopy size={10} className="opacity-0 group-hover/slug:opacity-100 transition" />
+                                                <code className="truncate font-mono">{row.slug}</code>
+                                                <Copy className="h-3 w-3 shrink-0" aria-hidden />
+                                                <span className="sr-only">Copy AdSlot snippet</span>
                                             </button>
                                         </div>
                                     </div>
-                                    <div className="flex gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button
-                                            onClick={() => toggle(row)}
-                                            title={row.is_active ? 'Pause placement' : 'Activate'}
-                                            className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 text-on-surface-variant"
-                                        >
-                                            <IconCheck size={15} />
-                                        </button>
-                                        <button
-                                            onClick={() => openEdit(row)}
-                                            title="Edit"
-                                            className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 text-on-surface-variant"
-                                        >
-                                            <IconEdit size={15} />
-                                        </button>
-                                        <button
-                                            onClick={() => remove(row)}
-                                            title="Delete"
-                                            className="p-1.5 rounded-md hover:bg-red-100 dark:hover:bg-red-950 text-red-600"
-                                        >
-                                            <IconTrash size={15} />
-                                        </button>
+                                    <div className="flex shrink-0 gap-1">
+                                        <Button type="button" variant="ghost" size="icon-sm" onClick={() => toggle(row)} aria-label={row.is_active ? `Pause ${row.name}` : `Activate ${row.name}`} title={row.is_active ? 'Pause placement' : 'Activate'}>
+                                            {row.is_active ? <Power /> : <Check />}
+                                        </Button>
+                                        <Button type="button" variant="ghost" size="icon-sm" onClick={() => openEdit(row)} aria-label={`Edit ${row.name}`}>
+                                            <Pencil />
+                                        </Button>
+                                        <Button type="button" variant="destructive" size="icon-sm" onClick={() => setToDelete(row)} aria-label={`Delete ${row.name}`}>
+                                            <Trash2 />
+                                        </Button>
                                     </div>
                                 </div>
 
-                                <p className="mt-3 text-xs text-on-surface-variant line-clamp-2">
-                                    {row.description ||
-                                        FORMAT_LOCATION_HINT[row.format as PlacementFormat] ||
-                                        '—'}
-                                </p>
+                                <p className="mt-3 line-clamp-2 text-xs text-muted-foreground">{row.description || FORMAT_LOCATION_HINT[row.format as PlacementFormat] || '-'}</p>
 
                                 <div className="mt-4 grid grid-cols-3 gap-2 text-xs">
-                                    <Stat label="Format" value={row.format} />
-                                    <Stat
-                                        label="Active slots"
-                                        value={row.active_slot_count}
-                                        accent={row.active_slot_count > 0 ? 'emerald' : 'gray'}
-                                    />
+                                    <Stat label="Format" value={row.format} capitalize />
+                                    <Stat label="Active slots" value={row.active_slot_count} good={row.active_slot_count > 0} />
                                     <Stat label="Max" value={row.max_active_slots} />
                                 </div>
 
-                                <div className="mt-3 flex items-center gap-2 flex-wrap text-[10px] text-on-surface-variant">
-                                    {row.aspect_ratio && (
-                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800">
-                                            <span className="font-mono">{row.aspect_ratio}</span>
-                                        </span>
-                                    )}
-                                    {row.rotation_seconds > 0 && (
-                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800">
-                                            <IconRepeat size={10} /> rotates {row.rotation_seconds}s
-                                        </span>
-                                    )}
-                                    {row.max_active_slots > 1 && (
-                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800">
-                                            <IconRotate size={10} /> carousel up to {row.max_active_slots}
-                                        </span>
-                                    )}
+                                <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                                    {row.aspect_ratio ? (
+                                        <Badge variant="secondary" className="font-mono">
+                                            {row.aspect_ratio}
+                                        </Badge>
+                                    ) : null}
+                                    {row.rotation_seconds > 0 ? (
+                                        <Badge variant="secondary">
+                                            <Repeat aria-hidden /> rotates {row.rotation_seconds}s
+                                        </Badge>
+                                    ) : null}
+                                    {row.max_active_slots > 1 ? (
+                                        <Badge variant="secondary">
+                                            <RotateCw aria-hidden /> carousel up to {row.max_active_slots}
+                                        </Badge>
+                                    ) : null}
                                 </div>
-                            </div>
+                            </Card>
                         );
                     })}
                 </div>
             )}
 
-            {/* Modal */}
-            {open && (
-                <ModalShell
-                    title={editingId ? 'Edit placement' : 'New placement'}
-                    icon={
-                        <span className="p-2 rounded-lg bg-primary-subtle text-primary">
-                            <IconLayoutGrid size={18} />
-                        </span>
-                    }
-                    onClose={() => setOpen(false)}
-                    onSave={save}
-                    saving={saving}
-                    saveLabel={editingId ? 'Save changes' : 'Create placement'}
-                    width="md"
-                >
-                    <div className="p-6 space-y-4">
-                        {error && <Alert>{error}</Alert>}
+            <FormSheet
+                open={open}
+                title={editingId ? 'Edit placement' : 'New placement'}
+                description="A named place on the storefront where ads can appear."
+                onClose={() => setOpen(false)}
+                onSave={save}
+                saving={saving}
+                saveLabel={editingId ? 'Save changes' : 'Create placement'}
+                width="md"
+            >
+                <div className="space-y-4 p-4">
+                    {formError ? <Alert>{formError}</Alert> : null}
 
-                        <Field label="Name *">
-                            <input
-                                className={inputCls}
-                                value={draft.name}
-                                onChange={(e) => {
-                                    const name = e.target.value;
-                                    setDraft((d) => ({
-                                        ...d,
-                                        name,
-                                        slug: editingId ? d.slug : slugify(name),
-                                    }));
-                                }}
-                                placeholder="Homepage Top Bar"
-                            />
-                        </Field>
-                        <Field
-                            label="Slug *"
-                            hint={`Used by the FE: <AdSlot slug="${draft.slug || 'your-slug'}" />`}
-                        >
-                            <input
-                                className={`${inputCls} font-mono text-xs`}
-                                value={draft.slug}
-                                onChange={(e) =>
-                                    setDraft((d) => ({ ...d, slug: slugify(e.target.value) }))
-                                }
-                                placeholder="homepage-top-bar"
-                            />
-                        </Field>
-                        <Field label="Description">
-                            <textarea
-                                className={inputCls}
-                                rows={2}
-                                value={draft.description}
-                                onChange={(e) =>
-                                    setDraft((d) => ({ ...d, description: e.target.value }))
-                                }
-                                placeholder="Where this slot appears, expected creative size, ownership…"
-                            />
-                        </Field>
+                    <Field label="Name *">
+                        <Input
+                            value={draft.name}
+                            onChange={(e) => {
+                                const name = e.target.value;
+                                setDraft((d) => ({ ...d, name, slug: editingId ? d.slug : slugify(name) }));
+                            }}
+                            placeholder="Homepage Top Bar"
+                        />
+                    </Field>
+                    <Field label="Slug *" hint={`Used by the storefront: <AdSlot slug="${draft.slug || 'your-slug'}" />`}>
+                        <Input className="font-mono text-xs" value={draft.slug} onChange={(e) => setDraft((d) => ({ ...d, slug: slugify(e.target.value) }))} placeholder="homepage-top-bar" />
+                    </Field>
+                    <Field label="Description">
+                        <Textarea rows={2} value={draft.description} onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))} placeholder="Where this slot appears, expected creative size, ownership…" />
+                    </Field>
 
-                        <div className="grid grid-cols-2 gap-3">
-                            <Field label="Format">
-                                <select
-                                    className={inputCls}
-                                    value={draft.format}
-                                    onChange={(e) =>
-                                        setDraft((d) => ({
-                                            ...d,
-                                            format: e.target.value as typeof d.format,
-                                        }))
-                                    }
-                                >
-                                    {PLACEMENT_FORMATS.map((f) => (
-                                        <option key={f.value} value={f.value}>
-                                            {f.label}
-                                        </option>
-                                    ))}
-                                </select>
-                                <p className="mt-1 text-[11px] text-on-surface-variant">
-                                    {FORMAT_LOCATION_HINT[draft.format as PlacementFormat]}
-                                </p>
-                            </Field>
-                            <Field label="Aspect ratio" hint="Hint to creative producers (21/4, 16/9, 1/1)">
-                                <input
-                                    className={`${inputCls} font-mono text-xs`}
-                                    value={draft.aspect_ratio}
-                                    onChange={(e) =>
-                                        setDraft((d) => ({ ...d, aspect_ratio: e.target.value }))
-                                    }
-                                    placeholder="21/4"
-                                />
-                            </Field>
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                            <Field label="Max active slots" hint="≥ 2 enables carousel mode">
-                                <input
-                                    type="number"
-                                    min={1}
-                                    max={20}
-                                    className={inputCls}
-                                    value={draft.max_active_slots}
-                                    onChange={(e) =>
-                                        setDraft((d) => ({
-                                            ...d,
-                                            max_active_slots: Math.max(1, Number(e.target.value) || 1),
-                                        }))
-                                    }
-                                />
-                            </Field>
-                            <Field label="Rotation seconds" hint="0 = no rotate (only with max ≥ 2)">
-                                <input
-                                    type="number"
-                                    min={0}
-                                    className={inputCls}
-                                    value={draft.rotation_seconds}
-                                    onChange={(e) =>
-                                        setDraft((d) => ({
-                                            ...d,
-                                            rotation_seconds: Math.max(0, Number(e.target.value) || 0),
-                                        }))
-                                    }
-                                />
-                            </Field>
-                        </div>
-                        <label className="flex items-center gap-2 text-sm text-on-surface dark:text-gray-200">
-                            <input
-                                type="checkbox"
-                                checked={draft.is_active}
-                                onChange={(e) =>
-                                    setDraft((d) => ({ ...d, is_active: e.target.checked }))
-                                }
-                            />
-                            Placement is active (ads will serve)
-                        </label>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                        <Field label="Format" hint={FORMAT_LOCATION_HINT[draft.format as PlacementFormat]}>
+                            <SimpleSelect value={draft.format} onChange={(v) => setDraft((d) => ({ ...d, format: v as typeof d.format }))} options={PLACEMENT_FORMATS} />
+                        </Field>
+                        <Field label="Aspect ratio" hint="Hint to creative producers (21/4, 16/9, 1/1)">
+                            <Input className="font-mono text-xs" value={draft.aspect_ratio} onChange={(e) => setDraft((d) => ({ ...d, aspect_ratio: e.target.value }))} placeholder="21/4" />
+                        </Field>
                     </div>
-                </ModalShell>
-            )}
+                    <div className="grid gap-4 sm:grid-cols-2">
+                        <Field label="Max active slots" hint="2 or more enables carousel mode">
+                            <Input
+                                type="number"
+                                min={1}
+                                max={20}
+                                value={draft.max_active_slots}
+                                onChange={(e) => setDraft((d) => ({ ...d, max_active_slots: Math.max(1, Number(e.target.value) || 1) }))}
+                            />
+                        </Field>
+                        <Field label="Rotation seconds" hint="0 = no rotate (only with max 2 or more)">
+                            <Input
+                                type="number"
+                                min={0}
+                                value={draft.rotation_seconds}
+                                onChange={(e) => setDraft((d) => ({ ...d, rotation_seconds: Math.max(0, Number(e.target.value) || 0) }))}
+                            />
+                        </Field>
+                    </div>
+                    <CheckRow id="placement-active" label="Placement is active (ads will serve)">
+                        <Switch id="placement-active" checked={draft.is_active} onCheckedChange={(v) => setDraft((d) => ({ ...d, is_active: v }))} />
+                    </CheckRow>
+                </div>
+            </FormSheet>
+
+            <ConfirmDialog
+                open={toDelete !== null}
+                title="Delete this placement?"
+                description={toDelete ? `"${toDelete.name}" and all slots in it will be deleted. This cannot be undone.` : undefined}
+                busy={deleting}
+                onConfirm={confirmRemove}
+                onCancel={() => setToDelete(null)}
+            />
         </div>
     );
 };
 
-const Stat: React.FC<{ label: string; value: React.ReactNode; accent?: 'emerald' | 'gray' }> = ({
-    label,
-    value,
-    accent = 'gray',
-}) => (
-    <div className="rounded-lg bg-gray-50 dark:bg-gray-800 px-2.5 py-2">
-        <p className="text-[10px] uppercase tracking-wide text-on-surface-variant">{label}</p>
-        <p
-            className={[
-                'font-bold text-sm truncate capitalize',
-                accent === 'emerald' ? 'text-emerald-600' : 'text-on-surface dark:text-white',
-            ].join(' ')}
-        >
-            {value}
-        </p>
+const Stat: React.FC<{ label: string; value: React.ReactNode; good?: boolean; capitalize?: boolean }> = ({ label, value, good, capitalize }) => (
+    <div className="rounded-lg bg-muted px-2.5 py-2">
+        <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
+        <p className={cn('truncate text-sm font-bold', capitalize && 'capitalize', good ? 'text-success-600' : 'text-foreground')}>{value}</p>
     </div>
 );
 

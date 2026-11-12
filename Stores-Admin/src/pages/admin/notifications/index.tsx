@@ -1,7 +1,5 @@
-import NotificationManagement from './NotificationManagement';
+import NotificationInbox from '../../Notifications/NotificationInbox';
 
-const NotificationsPage = () => {
-  return <NotificationManagement />;
-};
+const AdminNotificationsPage = () => <NotificationInbox />;
 
-export default NotificationsPage;
+export default AdminNotificationsPage;

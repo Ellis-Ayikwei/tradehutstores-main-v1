@@ -16,6 +16,7 @@ import MobileActionBar from './MobileActionBar'
 import PriceBlock from './PriceBlock'
 import { AboutList, DescriptionBody, DetailsList, DetailsTable, SellerPolicies, detailListRows, highlightRows } from './ProductInfo'
 import ProductJsonLd from './ProductJsonLd'
+import ProductWall from './ProductWall'
 import { BrandSellerRails, DealsRail, RelatedRail } from './PdpRails'
 import Reviews from './Reviews'
 import { toImageList } from './pdpUtils'
@@ -275,6 +276,7 @@ export default function ProductDetail({ product, related, seller, onReviewAdded 
             <DescriptionBody text={product.description} />
           </CollapsibleSection>
         ) : null}
+        <ProductWall images={product.wall_images} name={product.name} />
         {listRows.length > 0 ? (
           <CollapsibleSection id="details" title="Product details">
             <DetailsList rows={listRows} />

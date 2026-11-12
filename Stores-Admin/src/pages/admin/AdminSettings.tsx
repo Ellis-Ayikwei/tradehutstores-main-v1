@@ -1,788 +1,399 @@
-import React, { useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCog,
-  faBell,
-  faCreditCard,
-  faPaintBrush,
-  faGlobe,
-  faCheckCircle,
-  faExclamationTriangle,
-  faInfoCircle,
-  faSave,
-  faUndoAlt,
-  faMoneyBillWave,
-  faEnvelope,
-  faMobileAlt,
-  faServer,
-  faCloudUploadAlt,
-  faPalette,
-  faImage,
-  faCode,
-  faTrash
-} from '@fortawesome/free-solid-svg-icons';
+import { useEffect, type ReactNode } from 'react';
+import { useForm, type Control } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Bell, CreditCard, Globe, Loader2, Save, Undo2 } from 'lucide-react';
 
-// Define system settings types
-interface GeneralSettings {
-  siteName: string;
-  siteDescription: string;
-  supportEmail: string;
-  contact_phone: string;
-  defaultLanguage: string;
-  timezone: string;
-  maintenanceMode: boolean;
-  maintenanceMessage: string;
-}
+import { Button } from '@/components/shadcn/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/shadcn/card';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/shadcn/form';
+import { Input } from '@/components/shadcn/input';
+import { PageHeader } from '@/components/shadcn/page-header';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
+import { Switch } from '@/components/shadcn/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/tabs';
+import { Textarea } from '@/components/shadcn/textarea';
+import { toast } from '@/components/shadcn/sonner';
 
-interface NotificationSettings {
-  adminEmailNotifications: boolean;
-  providerEmailNotifications: boolean;
-  userEmailNotifications: boolean;
-  smsNotifications: boolean;
-  pushNotifications: boolean;
-  emailServiceProvider: string;
-  smtpServer: string;
-  smtpPort: string;
-  smtpUsername: string;
-  smtpPassword: string;
-  smsApiKey: string;
-  smsFrom: string;
-}
+const optionalNumber = (label: string, max?: number) =>
+    z
+        .string()
+        .trim()
+        .refine((value) => value === '' || (!Number.isNaN(Number(value)) && Number(value) >= 0 && (max === undefined || Number(value) <= max)), {
+            message: max === undefined ? `${label} must be a number, 0 or more` : `${label} must be a number between 0 and ${max}`,
+        });
 
-interface PaymentSettings {
-  currencyCode: string;
-  currencySymbol: string;
-  paymentGateways: {
-    id: string;
-    name: string;
-    isActive: boolean;
-    credentials: {
-      apiKey?: string;
-      secretKey?: string;
-      merchantId?: string;
-    };
-    testMode: boolean;
-  }[];
-  serviceFeePercentage: number;
-  minimumWithdrawalAmount: number;
-  automaticPayouts: boolean;
-  payoutSchedule: string;
-}
+const settingsSchema = z.object({
+    siteName: z.string().trim().min(1, 'Site name is required'),
+    siteDescription: z.string().trim(),
+    supportEmail: z.string().trim().refine((value) => value === '' || z.string().email().safeParse(value).success, { message: 'Enter a valid email address' }),
+    contactPhone: z.string().trim(),
+    defaultLanguage: z.string(),
+    timezone: z.string(),
+    maintenanceMode: z.boolean(),
+    maintenanceMessage: z.string().trim(),
 
-interface AppearanceSettings {
-  primaryColor: string;
-  secondaryColor: string;
-  logoUrl: string;
-  faviconUrl: string;
-  footerText: string;
-  customCss: string;
-  customJs: string;
-  homePageLayout: string;
-}
+    adminEmailNotifications: z.boolean(),
+    sellerEmailNotifications: z.boolean(),
+    userEmailNotifications: z.boolean(),
+    smsNotifications: z.boolean(),
+    pushNotifications: z.boolean(),
+    emailServiceProvider: z.string(),
+    smtpServer: z.string().trim(),
+    smtpPort: z.string().trim(),
+    smtpUsername: z.string().trim(),
+    smtpPassword: z.string(),
+    smsApiKey: z.string(),
+    smsFrom: z.string().trim(),
 
-interface SystemSettings {
-  general: GeneralSettings;
-  notifications: NotificationSettings;
-  payment: PaymentSettings;
-  appearance: AppearanceSettings;
-}
+    currencyCode: z.string().trim(),
+    currencySymbol: z.string().trim(),
+    serviceFeePercentage: optionalNumber('Service fee', 100),
+    minimumWithdrawalAmount: optionalNumber('Minimum withdrawal'),
+    automaticPayouts: z.boolean(),
+    payoutSchedule: z.string(),
+});
 
-// Available languages
-const languages = [
-  { code: 'en', name: 'English' },
-  { code: 'es', name: 'Spanish' },
-  { code: 'fr', name: 'French' },
-  { code: 'de', name: 'German' },
-  { code: 'it', name: 'Italian' },
-  { code: 'pt', name: 'Portuguese' },
-  { code: 'ru', name: 'Russian' },
-  { code: 'zh', name: 'Chinese' },
-  { code: 'ja', name: 'Japanese' },
-  { code: 'ar', name: 'Arabic' }
-];
+type SettingsValues = z.infer<typeof settingsSchema>;
+type StringKeys = { [K in keyof SettingsValues]: SettingsValues[K] extends string ? K : never }[keyof SettingsValues];
+type BooleanKeys = { [K in keyof SettingsValues]: SettingsValues[K] extends boolean ? K : never }[keyof SettingsValues];
 
-// Available timezones
-const timezones = [
-  { value: 'UTC', label: 'UTC (Coordinated Universal Time)' },
-  { value: 'America/New_York', label: 'Eastern Time (EST/EDT)' },
-  { value: 'America/Chicago', label: 'Central Time (CST/CDT)' },
-  { value: 'America/Denver', label: 'Mountain Time (MST/MDT)' },
-  { value: 'America/Los_Angeles', label: 'Pacific Time (PST/PDT)' },
-  { value: 'Europe/London', label: 'London (GMT/BST)' },
-  { value: 'Europe/Paris', label: 'Paris (CET/CEST)' },
-  { value: 'Asia/Tokyo', label: 'Tokyo (JST)' },
-  { value: 'Australia/Sydney', label: 'Sydney (AEST/AEDT)' }
-];
+const DEFAULT_VALUES: SettingsValues = {
+    siteName: 'TradeHut',
+    siteDescription: '',
+    supportEmail: '',
+    contactPhone: '024 813 8722',
+    defaultLanguage: 'en',
+    timezone: 'UTC',
+    maintenanceMode: false,
+    maintenanceMessage: 'We are currently performing maintenance. Please check back later.',
 
-// Available email providers
-const emailProviders = [
-  { value: 'smtp', label: 'SMTP Server' },
-  { value: 'sendgrid', label: 'SendGrid' },
-  { value: 'mailchimp', label: 'Mailchimp' },
-  { value: 'aws_ses', label: 'AWS SES' }
-];
+    adminEmailNotifications: true,
+    sellerEmailNotifications: true,
+    userEmailNotifications: true,
+    smsNotifications: false,
+    pushNotifications: false,
+    emailServiceProvider: 'smtp',
+    smtpServer: '',
+    smtpPort: '587',
+    smtpUsername: '',
+    smtpPassword: '',
+    smsApiKey: '',
+    smsFrom: '',
 
-// Create Reusable Components
-const SectionHeader = ({ icon, title, description }: { icon: any, title: string, description: string }) => (
-  <div className="mb-8">
-    <h2 className="text-xl font-semibold flex items-center text-gray-900 mb-2">
-      <FontAwesomeIcon icon={icon} className="mr-3 text-blue-600" />
-      {title}
-    </h2>
-    <p className="text-gray-600">{description}</p>
-  </div>
-);
-
-const Card = ({ children, className = '' }: { children: React.ReactNode, className?: string }) => (
-  <div className={`bg-white rounded-xl shadow-sm border border-gray-100 p-6 ${className}`}>
-    {children}
-  </div>
-);
-
-const ToggleSwitch = ({ 
-  label, 
-  checked, 
-  onChange,
-  description = ''
-}: { 
-  label: string, 
-  checked: boolean, 
-  onChange: (checked: boolean) => void,
-  description?: string
-}) => (
-  <div className="flex items-center justify-between py-4 border-b border-gray-50 last:border-b-0">
-    <div className="flex-1">
-      <label className="font-medium text-gray-900">{label}</label>
-      {description && <p className="text-sm text-gray-500 mt-1">{description}</p>}
-    </div>
-    <label className="relative inline-flex items-center cursor-pointer">
-      <input 
-        type="checkbox" 
-        checked={checked} 
-        onChange={(e) => onChange(e.target.checked)} 
-        className="sr-only peer" 
-      />
-      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-    </label>
-  </div>
-);
-
-const TextInput = ({ 
-  label, 
-  value, 
-  onChange,
-  name = '',
-  placeholder = '',
-  type = 'text',
-  required = false,
-  description = ''
-}: { 
-  label: string, 
-  value: string, 
-  onChange: (value: string) => void,
-  name?: string,
-  placeholder?: string,
-  type?: string,
-  required?: boolean,
-  description?: string
-}) => (
-  <div className="mb-6">
-    <label className="block text-sm font-medium text-gray-700 mb-2">
-      {label}{required && <span className="text-red-500 ml-1">*</span>}
-    </label>
-    {description && <p className="text-xs text-gray-500 mb-2">{description}</p>}
-    <input
-      type={type}
-      name={name}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      className="w-full px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-    />
-  </div>
-);
-
-const TextArea = ({ 
-  label, 
-  value, 
-  onChange, 
-  rows = 3,
-  placeholder = '',
-  description = ''
-}: { 
-  label: string, 
-  value: string, 
-  onChange: (value: string) => void,
-  rows?: number,
-  placeholder?: string,
-  description?: string
-}) => (
-  <div className="mb-6">
-    <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
-    {description && <p className="text-xs text-gray-500 mb-2">{description}</p>}
-    <textarea
-      rows={rows}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      className="w-full px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
-    />
-  </div>
-);
-
-const SelectField = ({ 
-  label, 
-  value, 
-  onChange, 
-  options,
-  description = ''
-}: { 
-  label: string, 
-  value: string, 
-  onChange: (value: string) => void,
-  options: { value: string, label: string }[],
-  description?: string
-}) => (
-  <div className="mb-6">
-    <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
-    {description && <p className="text-xs text-gray-500 mb-2">{description}</p>}
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className="w-full px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-    >
-      {options.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
-        </option>
-      ))}
-    </select>
-  </div>
-);
-
-const Alert = ({ 
-  type, 
-  message 
-}: { 
-  type: 'success' | 'error' | 'warning' | 'info', 
-  message: string 
-}) => {
-  const icons = {
-    success: faCheckCircle,
-    error: faExclamationTriangle,
-    warning: faExclamationTriangle,
-    info: faInfoCircle
-  };
-  
-  const colors = {
-    success: 'bg-green-50 text-green-800 border-green-200',
-    error: 'bg-red-50 text-red-800 border-red-200',
-    warning: 'bg-yellow-50 text-yellow-800 border-yellow-200',
-    info: 'bg-blue-50 text-blue-800 border-blue-200'
-  };
-  
-  return (
-    <div className={`p-4 rounded-lg border ${colors[type]} mb-6 flex items-start`}>
-      <FontAwesomeIcon icon={icons[type]} className="mr-3 mt-0.5 flex-shrink-0" />
-      <div className="text-sm">{message}</div>
-    </div>
-  );
+    currencyCode: '',
+    currencySymbol: '',
+    serviceFeePercentage: '',
+    minimumWithdrawalAmount: '',
+    automaticPayouts: false,
+    payoutSchedule: 'weekly',
 };
 
-// Main component
-const AdminSettings: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('general');
-  const [systemSettings, setSystemSettings] = useState<SystemSettings>({
-    general: {
-      siteName: 'TradeHut',
-      siteDescription: '',
-      supportEmail: 'support@tradehut.com',
-      contact_phone: '024 813 8722',
-      defaultLanguage: 'en',
-      timezone: 'UTC',
-      maintenanceMode: false,
-      maintenanceMessage: 'We are currently performing maintenance. Please check back later.'
-    },
-    notifications: {
-      adminEmailNotifications: true,
-      providerEmailNotifications: true,
-      userEmailNotifications: true,
-      smsNotifications: false,
-      pushNotifications: false,
-      emailServiceProvider: 'smtp',
-      smtpServer: '',
-      smtpPort: '587',
-      smtpUsername: 'notifications@tradehut.com',
-      smtpPassword: '',
-      smsApiKey: '',
-      smsFrom: 'TradeHut'
-    },
-    payment: {
-      currencyCode: 'USD',
-      currencySymbol: '$',
-      paymentGateways: [],
-      serviceFeePercentage: 10,
-      minimumWithdrawalAmount: 50,
-      automaticPayouts: false,
-      payoutSchedule: 'weekly'
-    },
-    appearance: {
-      primaryColor: '#dc711a',
-      secondaryColor: '#1a56db',
-      logoUrl: '/logo192.png',
-      faviconUrl: '/favicon.png',
-      footerText: '© 2025 TradeHut. All rights reserved.',
-      customCss: '',
-      customJs: '',
-      homePageLayout: 'default'
-    }
-  });
-  const [unsavedChanges, setUnsavedChanges] = useState(false);
-  const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error', message: string } | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const LANGUAGES = [
+    { value: 'en', label: 'English' },
+    { value: 'es', label: 'Spanish' },
+    { value: 'fr', label: 'French' },
+    { value: 'de', label: 'German' },
+    { value: 'it', label: 'Italian' },
+    { value: 'pt', label: 'Portuguese' },
+    { value: 'ru', label: 'Russian' },
+    { value: 'zh', label: 'Chinese' },
+    { value: 'ja', label: 'Japanese' },
+    { value: 'ar', label: 'Arabic' },
+];
 
-  // Update settings handler
-  const updateSettings = <T extends keyof SystemSettings>(
-    section: T,
-    field: keyof SystemSettings[T],
-    value: any
-  ) => {
-    setSystemSettings(prev => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
-        [field]: value
-      }
-    }));
-    
-    setUnsavedChanges(true);
-  };
+const TIMEZONES = [
+    { value: 'UTC', label: 'UTC (Coordinated Universal Time)' },
+    { value: 'America/New_York', label: 'Eastern Time (EST/EDT)' },
+    { value: 'America/Chicago', label: 'Central Time (CST/CDT)' },
+    { value: 'America/Denver', label: 'Mountain Time (MST/MDT)' },
+    { value: 'America/Los_Angeles', label: 'Pacific Time (PST/PDT)' },
+    { value: 'Europe/London', label: 'London (GMT/BST)' },
+    { value: 'Europe/Paris', label: 'Paris (CET/CEST)' },
+    { value: 'Asia/Tokyo', label: 'Tokyo (JST)' },
+    { value: 'Australia/Sydney', label: 'Sydney (AEST/AEDT)' },
+];
 
-  // Handle saving the settings
-  const saveSettings = async () => {
-    setIsSubmitting(true);
-    // Simulate API call
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
-      
-      setSaveMessage({
-        type: 'success',
-        message: 'Settings saved successfully'
-      });
-      
-      setUnsavedChanges(false);
-      
-      // Hide the success message after a few seconds
-      setTimeout(() => {
-        setSaveMessage(null);
-      }, 5000);
-    } catch (error) {
-      setSaveMessage({
-        type: 'error',
-        message: 'Failed to save settings. Please try again.'
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+const EMAIL_PROVIDERS = [
+    { value: 'smtp', label: 'SMTP Server' },
+    { value: 'sendgrid', label: 'SendGrid' },
+    { value: 'mailchimp', label: 'Mailchimp' },
+    { value: 'aws_ses', label: 'AWS SES' },
+];
 
-  // Confirmation before leaving with unsaved changes
-  useEffect(() => {
-    if (!unsavedChanges) return;
-    
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      e.preventDefault();
-      const message = "You have unsaved changes. Are you sure you want to leave?";
-      e.returnValue = message;
-      return message;
-    };
-    
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [unsavedChanges]);
+const PAYOUT_SCHEDULES = [
+    { value: 'daily', label: 'Daily' },
+    { value: 'weekly', label: 'Weekly' },
+    { value: 'biweekly', label: 'Bi-weekly' },
+    { value: 'monthly', label: 'Monthly' },
+];
 
-  const tabs = [
-    { id: 'general', label: 'General', icon: faGlobe },
-    { id: 'notifications', label: 'Notifications', icon: faBell },
-    { id: 'payment', label: 'Payment', icon: faCreditCard },
-  ];
+interface FieldProps<K> {
+    control: Control<SettingsValues>;
+    name: K;
+    label: string;
+    description?: string;
+}
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">System Settings</h1>
-              <p className="mt-2 text-gray-600">Manage your application configuration and preferences</p>
-            </div>
-            <div className="flex space-x-3">
-              <button
-                onClick={() => window.location.reload()}
-                disabled={!unsavedChanges || isSubmitting}
-                className={`px-4 py-2 rounded-lg flex items-center text-sm font-medium transition-colors ${
-                  !unsavedChanges || isSubmitting
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
-                }`}
-              >
-                <FontAwesomeIcon icon={faUndoAlt} className="mr-2" />
-                Discard
-              </button>
-              <button
-                onClick={saveSettings}
-                disabled={!unsavedChanges || isSubmitting}
-                className={`px-6 py-2 rounded-lg flex items-center text-sm font-medium transition-colors ${
-                  !unsavedChanges || isSubmitting
-                    ? 'bg-blue-300 text-white cursor-not-allowed'
-                    : 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm'
-                }`}
-              >
-                <FontAwesomeIcon icon={faSave} className="mr-2" />
-                {isSubmitting ? 'Saving...' : 'Save Changes'}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {saveMessage && (
-          <Alert
-            type={saveMessage.type}
-            message={saveMessage.message}
-          />
-        )}
-
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          {/* Navigation Tabs */}
-          <div className="border-b border-gray-100">
-            <nav className="flex space-x-8 px-6">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                    activeTab === tab.id
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }`}
-                >
-                  <FontAwesomeIcon icon={tab.icon} className="mr-2" />
-                  {tab.label}
-                </button>
-              ))}
-            </nav>
-          </div>
-
-          {/* Content Area */}
-          <div className="p-8">
-            {/* General Settings */}
-            {activeTab === 'general' && (
-              <div className="space-y-8">
-                <SectionHeader
-                  icon={faGlobe}
-                  title="General Settings"
-                  description="Configure basic information about your application"
-                />
-
-                <Card>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-6">Site Information</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <TextInput
-                      label="Site Name"
-                      value={systemSettings.general.siteName}
-                      onChange={(value) => updateSettings('general', 'siteName', value)}
-                      placeholder="Your site name"
-                      required
-                    />
-                    
-                    <TextInput
-                      label="Site Description"
-                      value={systemSettings.general.siteDescription}
-                      onChange={(value) => updateSettings('general', 'siteDescription', value)}
-                      placeholder="Brief description of your site"
-                    />
-                    
-                    <TextInput
-                      label="Support Email"
-                      type="email"
-                      value={systemSettings.general.supportEmail}
-                      onChange={(value) => updateSettings('general', 'supportEmail', value)}
-                      placeholder="Support email address"
-                      required
-                    />
-                    
-                    <TextInput
-                      label="Contact Phone"
-                      value={systemSettings.general.contact_phone}
-                      onChange={(value) => updateSettings('general', 'contact_phone', value)}
-                      placeholder="Support phone number"
-                    />
-                  </div>
-                </Card>
-
-                <Card>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-6">Localization</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <SelectField
-                      label="Default Language"
-                      value={systemSettings.general.defaultLanguage}
-                      onChange={(value) => updateSettings('general', 'defaultLanguage', value)}
-                      options={languages.map(lang => ({ value: lang.code, label: lang.name }))}
-                    />
-                    
-                    <SelectField
-                      label="Default Timezone"
-                      value={systemSettings.general.timezone}
-                      onChange={(value) => updateSettings('general', 'timezone', value)}
-                      options={timezones}
-                    />
-                  </div>
-                </Card>
-
-                <Card>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-6">Maintenance</h3>
-                  <ToggleSwitch
-                    label="Maintenance Mode"
-                    checked={systemSettings.general.maintenanceMode}
-                    onChange={(value) => updateSettings('general', 'maintenanceMode', value)}
-                    description="Enable to temporarily disable public access to the site"
-                  />
-                  
-                  {systemSettings.general.maintenanceMode && (
-                    <div className="mt-6">
-                      <TextArea
-                        label="Maintenance Message"
-                        value={systemSettings.general.maintenanceMessage}
-                        onChange={(value) => updateSettings('general', 'maintenanceMessage', value)}
-                        placeholder="Message to display during maintenance"
-                        rows={3}
-                      />
-                    </div>
-                  )}
-                </Card>
-              </div>
+function TextField({ control, name, label, description, type = 'text', placeholder, inputMode, autoComplete }: FieldProps<StringKeys> & { type?: string; placeholder?: string; inputMode?: 'text' | 'decimal' | 'numeric' | 'email'; autoComplete?: string }) {
+    return (
+        <FormField
+            control={control}
+            name={name}
+            render={({ field }) => (
+                <FormItem>
+                    <FormLabel>{label}</FormLabel>
+                    <FormControl>
+                        <Input {...field} type={type} placeholder={placeholder} inputMode={inputMode} autoComplete={autoComplete} />
+                    </FormControl>
+                    {description ? <FormDescription>{description}</FormDescription> : null}
+                    <FormMessage />
+                </FormItem>
             )}
+        />
+    );
+}
 
-            {/* Notification Settings */}
-            {activeTab === 'notifications' && (
-              <div className="space-y-8">
-                <SectionHeader
-                  icon={faBell}
-                  title="Notification Settings"
-                  description="Configure email and SMS notification preferences"
-                />
-
-                <Card>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-6">Email Notifications</h3>
-                  <div className="space-y-4">
-                    <ToggleSwitch
-                      label="Admin Notifications"
-                      checked={systemSettings.notifications.adminEmailNotifications}
-                      onChange={(value) => updateSettings('notifications', 'adminEmailNotifications', value)}
-                      description="Send email notifications to administrators"
-                    />
-                    
-                    <ToggleSwitch
-                      label="Provider Notifications"
-                      checked={systemSettings.notifications.providerEmailNotifications}
-                      onChange={(value) => updateSettings('notifications', 'providerEmailNotifications', value)}
-                      description="Send email notifications to service providers"
-                    />
-                    
-                    <ToggleSwitch
-                      label="User Notifications"
-                      checked={systemSettings.notifications.userEmailNotifications}
-                      onChange={(value) => updateSettings('notifications', 'userEmailNotifications', value)}
-                      description="Send email notifications to regular users"
-                    />
-                  </div>
-                </Card>
-
-                <Card>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-6">SMS & Push Notifications</h3>
-                  <div className="space-y-4">
-                    <ToggleSwitch
-                      label="SMS Notifications"
-                      checked={systemSettings.notifications.smsNotifications}
-                      onChange={(value) => updateSettings('notifications', 'smsNotifications', value)}
-                      description="Send SMS notifications for important updates"
-                    />
-                    
-                    <ToggleSwitch
-                      label="Push Notifications"
-                      checked={systemSettings.notifications.pushNotifications}
-                      onChange={(value) => updateSettings('notifications', 'pushNotifications', value)}
-                      description="Send mobile app push notifications"
-                    />
-                  </div>
-                </Card>
-
-                <Card>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-6">Email Configuration</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <SelectField
-                      label="Email Service Provider"
-                      value={systemSettings.notifications.emailServiceProvider}
-                      onChange={(value) => updateSettings('notifications', 'emailServiceProvider', value)}
-                      options={emailProviders}
-                    />
-                  </div>
-                  
-                  {systemSettings.notifications.emailServiceProvider === 'smtp' && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <TextInput
-                        label="SMTP Server"
-                        value={systemSettings.notifications.smtpServer}
-                        onChange={(value) => updateSettings('notifications', 'smtpServer', value)}
-                        placeholder="SMTP server host"
-                      />
-                      
-                      <TextInput
-                        label="SMTP Port"
-                        value={systemSettings.notifications.smtpPort}
-                        onChange={(value) => updateSettings('notifications', 'smtpPort', value)}
-                        placeholder="587"
-                      />
-                      
-                      <TextInput
-                        label="SMTP Username"
-                        value={systemSettings.notifications.smtpUsername}
-                        onChange={(value) => updateSettings('notifications', 'smtpUsername', value)}
-                        placeholder="SMTP username"
-                      />
-                      
-                      <TextInput
-                        label="SMTP Password"
-                        type="password"
-                        value={systemSettings.notifications.smtpPassword}
-                        onChange={(value) => updateSettings('notifications', 'smtpPassword', value)}
-                        placeholder="••••••••"
-                      />
-                    </div>
-                  )}
-                  
-                  {(systemSettings.notifications.emailServiceProvider === 'sendgrid' || 
-                    systemSettings.notifications.emailServiceProvider === 'mailchimp' || 
-                    systemSettings.notifications.emailServiceProvider === 'aws_ses') && (
-                    <div className="grid grid-cols-1 gap-6">
-                      <TextInput
-                        label="API Key"
-                        type="password"
-                        value={systemSettings.notifications.smtpPassword}
-                        onChange={(value) => updateSettings('notifications', 'smtpPassword', value)}
-                        placeholder="••••••••"
-                      />
-                    </div>
-                  )}
-                </Card>
-
-                {systemSettings.notifications.smsNotifications && (
-                  <Card>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-6">SMS Configuration</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <TextInput
-                        label="SMS API Key"
-                        type="password"
-                        value={systemSettings.notifications.smsApiKey}
-                        onChange={(value) => updateSettings('notifications', 'smsApiKey', value)}
-                        placeholder="••••••••"
-                      />
-                      
-                      <TextInput
-                        label="SMS From Name/Number"
-                        value={systemSettings.notifications.smsFrom}
-                        onChange={(value) => updateSettings('notifications', 'smsFrom', value)}
-                        placeholder="TradeHut"
-                      />
-                    </div>
-                  </Card>
-                )}
-              </div>
+function TextAreaField({ control, name, label, description, placeholder }: FieldProps<StringKeys> & { placeholder?: string }) {
+    return (
+        <FormField
+            control={control}
+            name={name}
+            render={({ field }) => (
+                <FormItem>
+                    <FormLabel>{label}</FormLabel>
+                    <FormControl>
+                        <Textarea {...field} rows={3} placeholder={placeholder} />
+                    </FormControl>
+                    {description ? <FormDescription>{description}</FormDescription> : null}
+                    <FormMessage />
+                </FormItem>
             )}
+        />
+    );
+}
 
-            {/* Payment Settings */}
-            {activeTab === 'payment' && (
-              <div className="space-y-8">
-                <SectionHeader
-                  icon={faMoneyBillWave}
-                  title="Payment Settings"
-                  description="Configure payment gateways and financial settings"
-                />
-
-                <Card>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-6">Currency Settings</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <TextInput
-                      label="Currency Code"
-                      value={systemSettings.payment.currencyCode}
-                      onChange={(value) => updateSettings('payment', 'currencyCode', value)}
-                      placeholder="USD"
-                    />
-                    
-                    <TextInput
-                      label="Currency Symbol"
-                      value={systemSettings.payment.currencySymbol}
-                      onChange={(value) => updateSettings('payment', 'currencySymbol', value)}
-                      placeholder="$"
-                    />
-                    
-                    <TextInput
-                      label="Service Fee Percentage"
-                      type="number"
-                      value={systemSettings.payment.serviceFeePercentage.toString()}
-                      onChange={(value) => updateSettings('payment', 'serviceFeePercentage', parseFloat(value) || 0)}
-                      placeholder="10"
-                    />
-                    
-                    <TextInput
-                      label="Minimum Withdrawal Amount"
-                      type="number"
-                      value={systemSettings.payment.minimumWithdrawalAmount.toString()}
-                      onChange={(value) => updateSettings('payment', 'minimumWithdrawalAmount', parseFloat(value) || 0)}
-                      placeholder="50"
-                    />
-                  </div>
-                </Card>
-
-                <Card>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-6">Payout Settings</h3>
-                  <div className="space-y-4">
-                    <ToggleSwitch
-                      label="Automatic Payouts"
-                      checked={systemSettings.payment.automaticPayouts}
-                      onChange={(value) => updateSettings('payment', 'automaticPayouts', value)}
-                      description="Automatically process payouts to providers"
-                    />
-                    
-                    <div className="pt-2">
-                      <SelectField
-                        label="Payout Schedule"
-                        value={systemSettings.payment.payoutSchedule}
-                        onChange={(value) => updateSettings('payment', 'payoutSchedule', value)}
-                        options={[
-                          { value: 'daily', label: 'Daily' },
-                          { value: 'weekly', label: 'Weekly' },
-                          { value: 'biweekly', label: 'Bi-weekly' },
-                          { value: 'monthly', label: 'Monthly' }
-                        ]}
-                      />
-                    </div>
-                  </div>
-                </Card>
-
-              </div>
+function SelectField({ control, name, label, description, options }: FieldProps<StringKeys> & { options: { value: string; label: string }[] }) {
+    return (
+        <FormField
+            control={control}
+            name={name}
+            render={({ field }) => (
+                <FormItem>
+                    <FormLabel>{label}</FormLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                        <FormControl>
+                            <SelectTrigger>
+                                <SelectValue />
+                            </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                            {options.map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                    {option.label}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    {description ? <FormDescription>{description}</FormDescription> : null}
+                    <FormMessage />
+                </FormItem>
             )}
+        />
+    );
+}
 
-            
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+function SwitchField({ control, name, label, description }: FieldProps<BooleanKeys>) {
+    return (
+        <FormField
+            control={control}
+            name={name}
+            render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between gap-4 space-y-0 border-b py-3 last:border-b-0">
+                    <div className="min-w-0 space-y-0.5">
+                        <FormLabel>{label}</FormLabel>
+                        {description ? <FormDescription>{description}</FormDescription> : null}
+                    </div>
+                    <FormControl>
+                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                    </FormControl>
+                </FormItem>
+            )}
+        />
+    );
+}
 
-export default AdminSettings;
+function Section({ title, description, children }: { title: string; description?: string; children: ReactNode }) {
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>{title}</CardTitle>
+                {description ? <CardDescription>{description}</CardDescription> : null}
+            </CardHeader>
+            <CardContent>{children}</CardContent>
+        </Card>
+    );
+}
+
+const FIELD_GRID = 'grid grid-cols-1 gap-4 md:grid-cols-2';
+
+export default function AdminSettings() {
+    const form = useForm<SettingsValues>({ resolver: zodResolver(settingsSchema), defaultValues: DEFAULT_VALUES, mode: 'onTouched' });
+    const { control, formState, watch } = form;
+    const { isDirty, isSubmitting } = formState;
+
+    const maintenanceMode = watch('maintenanceMode');
+    const emailProvider = watch('emailServiceProvider');
+    const smsEnabled = watch('smsNotifications');
+
+    useEffect(() => {
+        if (!isDirty) return;
+        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+            event.preventDefault();
+            event.returnValue = '';
+        };
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [isDirty]);
+
+    const onSubmit = form.handleSubmit(async (values) => {
+        try {
+            // No settings API exists yet; this mirrors the previous behaviour of simulating the request.
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            form.reset(values);
+            toast.success('Settings saved for this session. A settings API is not connected yet, so they are not persisted.');
+        } catch {
+            toast.error('Failed to save settings. Please try again.');
+        }
+    });
+
+    return (
+        <Form {...form}>
+            <form onSubmit={onSubmit} noValidate className="space-y-4 pb-20">
+                <PageHeader title="System Settings" description="Manage your application configuration and preferences" className="pb-0" />
+
+                <Tabs defaultValue="general">
+                    <div className="-mx-1 overflow-x-auto px-1 pb-1">
+                        <TabsList className="w-max">
+                            <TabsTrigger value="general">
+                                <Globe aria-hidden="true" />
+                                General
+                            </TabsTrigger>
+                            <TabsTrigger value="notifications">
+                                <Bell aria-hidden="true" />
+                                Notifications
+                            </TabsTrigger>
+                            <TabsTrigger value="payment">
+                                <CreditCard aria-hidden="true" />
+                                Payment
+                            </TabsTrigger>
+                        </TabsList>
+                    </div>
+
+                    <TabsContent value="general" className="mt-4 space-y-4">
+                        <Section title="Site information" description="Basic information about your application">
+                            <div className={FIELD_GRID}>
+                                <TextField control={control} name="siteName" label="Site name" placeholder="Your site name" />
+                                <TextField control={control} name="siteDescription" label="Site description" placeholder="Brief description of your site" />
+                                <TextField control={control} name="supportEmail" label="Support email" type="email" inputMode="email" autoComplete="email" placeholder="Support email address" />
+                                <TextField control={control} name="contactPhone" label="Contact phone" type="tel" inputMode="text" autoComplete="tel" placeholder="Support phone number" />
+                            </div>
+                        </Section>
+
+                        <Section title="Localization">
+                            <div className={FIELD_GRID}>
+                                <SelectField control={control} name="defaultLanguage" label="Default language" options={LANGUAGES} />
+                                <SelectField control={control} name="timezone" label="Default timezone" options={TIMEZONES} />
+                            </div>
+                        </Section>
+
+                        <Section title="Maintenance">
+                            <SwitchField control={control} name="maintenanceMode" label="Maintenance mode" description="Enable to temporarily disable public access to the site" />
+                            {maintenanceMode ? (
+                                <div className="pt-4">
+                                    <TextAreaField control={control} name="maintenanceMessage" label="Maintenance message" placeholder="Message to display during maintenance" />
+                                </div>
+                            ) : null}
+                        </Section>
+                    </TabsContent>
+
+                    <TabsContent value="notifications" className="mt-4 space-y-4">
+                        <Section title="Email notifications">
+                            <SwitchField control={control} name="adminEmailNotifications" label="Admin notifications" description="Send email notifications to administrators" />
+                            <SwitchField control={control} name="sellerEmailNotifications" label="Seller notifications" description="Send email notifications to sellers" />
+                            <SwitchField control={control} name="userEmailNotifications" label="Customer notifications" description="Send email notifications to customers" />
+                        </Section>
+
+                        <Section title="SMS and push notifications">
+                            <SwitchField control={control} name="smsNotifications" label="SMS notifications" description="Send SMS notifications for important updates" />
+                            <SwitchField control={control} name="pushNotifications" label="Push notifications" description="Send mobile app push notifications" />
+                        </Section>
+
+                        <Section title="Email configuration">
+                            <div className="space-y-4">
+                                <div className={FIELD_GRID}>
+                                    <SelectField control={control} name="emailServiceProvider" label="Email service provider" options={EMAIL_PROVIDERS} />
+                                </div>
+                                {emailProvider === 'smtp' ? (
+                                    <div className={FIELD_GRID}>
+                                        <TextField control={control} name="smtpServer" label="SMTP server" placeholder="SMTP server host" />
+                                        <TextField control={control} name="smtpPort" label="SMTP port" inputMode="numeric" placeholder="587" />
+                                        <TextField control={control} name="smtpUsername" label="SMTP username" autoComplete="off" placeholder="SMTP username" />
+                                        <TextField control={control} name="smtpPassword" label="SMTP password" type="password" autoComplete="new-password" />
+                                    </div>
+                                ) : (
+                                    <div className={FIELD_GRID}>
+                                        <TextField control={control} name="smtpPassword" label="API key" type="password" autoComplete="new-password" />
+                                    </div>
+                                )}
+                            </div>
+                        </Section>
+
+                        {smsEnabled ? (
+                            <Section title="SMS configuration">
+                                <div className={FIELD_GRID}>
+                                    <TextField control={control} name="smsApiKey" label="SMS API key" type="password" autoComplete="new-password" />
+                                    <TextField control={control} name="smsFrom" label="SMS sender name or number" />
+                                </div>
+                            </Section>
+                        ) : null}
+                    </TabsContent>
+
+                    <TabsContent value="payment" className="mt-4 space-y-4">
+                        <Section title="Currency and fees">
+                            <div className={FIELD_GRID}>
+                                <TextField control={control} name="currencyCode" label="Currency code" />
+                                <TextField control={control} name="currencySymbol" label="Currency symbol" />
+                                <TextField control={control} name="serviceFeePercentage" label="Service fee (%)" type="number" inputMode="decimal" />
+                                <TextField control={control} name="minimumWithdrawalAmount" label="Minimum withdrawal amount" type="number" inputMode="decimal" />
+                            </div>
+                        </Section>
+
+                        <Section title="Payouts">
+                            <SwitchField control={control} name="automaticPayouts" label="Automatic payouts" description="Automatically process payouts to sellers" />
+                            <div className="pt-4">
+                                <div className={FIELD_GRID}>
+                                    <SelectField control={control} name="payoutSchedule" label="Payout schedule" options={PAYOUT_SCHEDULES} />
+                                </div>
+                            </div>
+                        </Section>
+                    </TabsContent>
+                </Tabs>
+
+                <div className="sticky bottom-0 z-10 -mx-1 flex items-center justify-between gap-3 border-t bg-background px-1 py-3">
+                    <p className="text-sm text-muted-foreground">{isDirty ? 'You have unsaved changes.' : 'All changes saved.'}</p>
+                    <div className="flex items-center gap-2">
+                        <Button type="button" variant="outline" disabled={!isDirty || isSubmitting} onClick={() => form.reset()}>
+                            <Undo2 aria-hidden="true" />
+                            Discard
+                        </Button>
+                        <Button type="submit" disabled={!isDirty || isSubmitting}>
+                            {isSubmitting ? <Loader2 className="animate-spin" aria-hidden="true" /> : <Save aria-hidden="true" />}
+                            {isSubmitting ? 'Saving...' : 'Save changes'}
+                        </Button>
+                    </div>
+                </div>
+            </form>
+        </Form>
+    );
+}

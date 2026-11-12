@@ -1,23 +1,22 @@
-import React, { useState, useMemo } from 'react';
-import {
-    IconHistory,
-    IconSearch,
-    IconFilter,
-    IconDownload,
-    IconRefresh,
-    IconEye,
-    IconCalendar,
-    IconUser,
-    IconActivity,
-    IconClock,
-    IconChevronDown,
-    IconChevronUp,
-} from '@tabler/icons-react';
-import { Dialog, Transition } from '@headlessui/react';
-import DraggableDataTable, { ColumnDefinition } from '../../../components/ui/DraggableDataTable';
-import FilterSelect from '../../../components/ui/FilterSelect';
+import { useEffect, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import useSWR from 'swr';
-import fetcher from '../../../services/fetcher';
+import type { ColumnDef } from '@tanstack/react-table';
+import { Download, Eye, History, RefreshCw } from 'lucide-react';
+
+import { Badge, type BadgeProps } from '@/components/shadcn/badge';
+import { Button } from '@/components/shadcn/button';
+import { DataTable, type DataTableSort } from '@/components/shadcn/data-table';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/shadcn/dialog';
+import { EmptyState } from '@/components/shadcn/empty-state';
+import { Input } from '@/components/shadcn/input';
+import { Label } from '@/components/shadcn/label';
+import { PageHeader } from '@/components/shadcn/page-header';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
+import { StatCard } from '@/components/shadcn/stat-card';
+import { cn } from '@/lib/utils';
+import axiosInstance from '@/services/axiosInstance';
+import { setPageTitle } from '@/store/themeConfigSlice';
 
 interface UserActivity {
     id: string;
@@ -34,598 +33,398 @@ interface UserActivity {
         title: string;
     };
     created_at: string;
-    details?: any;
+    details?: unknown;
 }
 
 interface ActivityStats {
-    users?: {
-        total?: number;
-        by_type?: {
-            customers?: number;
-            providers?: number;
-            admins?: number;
-        };
-        by_status?: {
-            active?: number;
-            inactive?: number;
-            pending?: number;
-        };
-        new_users?: {
-            last_1_day?: number;
-            last_7_days?: number;
-            last_30_days?: number;
-        };
-    };
-    requests?: {
-        total?: number;
-        by_status?: {
-            pending?: number;
-            completed?: number;
-            cancelled?: number;
-        };
-        by_period?: {
-            last_1_day?: number;
-            last_7_days?: number;
-            last_30_days?: number;
-        };
-    };
-    bidding?: {
-        total_bids?: number;
-        by_status?: {
-            pending?: number;
-            accepted?: number;
-            rejected?: number;
-        };
-    };
-    payments?: {
-        total?: number;
-        by_status?: {
-            completed?: number;
-            pending?: number;
-            failed?: number;
-        };
-        total_revenue?: number;
-    };
-    jobs?: {
-        total?: number;
-        completed?: number;
-        in_progress?: number;
-    };
+    users?: { total?: number };
     activities?: {
         total?: number;
-        by_period?: {
-            last_1_day?: number;
-            last_7_days?: number;
-            last_30_days?: number;
-        };
-        most_active_users?: Array<{
-            user__email?: string;
-            activity_count?: number;
-        }>;
-        common_activities?: Array<{
-            activity_type?: string;
-            count?: number;
-        }>;
+        by_period?: { last_1_day?: number };
+        most_active_users?: Array<{ user__email?: string; activity_count?: number }>;
     };
-    generated_at?: string;
 }
 
-const AuditTrail: React.FC = () => {
-    // Filters
-    const [searchTerm, setSearchTerm] = useState('');
-    const [activityTypeFilter, setActivityTypeFilter] = useState<string>('');
-    const [userFilter, setUserFilter] = useState<string>('');
-    const [dateRange, setDateRange] = useState<{ start: string; end: string }>({ start: '', end: '' });
-    
-    // Modal state
-    const [selectedActivity, setSelectedActivity] = useState<UserActivity | null>(null);
-    const [showDetailsModal, setShowDetailsModal] = useState(false);
-    
-    // Activity types for filter
-    const activityTypes = [
-        { value: 'login', label: 'Login' },
-        { value: 'logout', label: 'Logout' },
-        { value: 'register', label: 'Registration' },
-        { value: 'create_request', label: 'Create Request' },
-        { value: 'update_request', label: 'Update Request' },
-        { value: 'cancel_request', label: 'Cancel Request' },
-        { value: 'place_bid', label: 'Place Bid' },
-        { value: 'update_bid', label: 'Update Bid' },
-        { value: 'create_user', label: 'Create User' },
-        { value: 'update_user', label: 'Update User' },
-        { value: 'delete_user', label: 'Delete User' },
-        { value: 'suspend_user', label: 'Suspend User' },
-        { value: 'activate_user', label: 'Activate User' },
-        { value: 'upload_file', label: 'Upload File' },
-        { value: 'download_file', label: 'Download File' },
-        { value: 'api_call', label: 'API Call' },
-    ];
+interface ActivityPage {
+    rows: UserActivity[];
+    count: number;
+}
 
-    // Build query parameters for activities
-    const activitiesParams = useMemo(() => {
-        const params = new URLSearchParams();
-        if (searchTerm) params.append('search', searchTerm);
-        if (activityTypeFilter) params.append('activity_type', activityTypeFilter);
-        if (userFilter) params.append('user', userFilter);
-        if (dateRange.start) params.append('start_date', dateRange.start);
-        if (dateRange.end) params.append('end_date', dateRange.end);
-        return params.toString();
-    }, [searchTerm, activityTypeFilter, userFilter, dateRange]);
+interface ActivityQuery {
+    page: number;
+    pageSize: number;
+    search: string;
+    activityType: string;
+    startDate: string;
+    endDate: string;
+    sort: DataTableSort | null;
+}
 
-    // SWR hooks for data fetching
-    const { 
-        data: activitiesData, 
-        error: activitiesError, 
-        isLoading: activitiesLoading,
-        mutate: mutateActivities 
-    } = useSWR(
-        `/activities/?${activitiesParams}`,
-        fetcher,
-        {
-            revalidateOnFocus: false,
-            revalidateOnReconnect: true,
-            refreshInterval: 30000, // Refresh every 30 seconds
-        }
-    );
+const PAGE_SIZE_DEFAULT = 25;
+const SWR_OPTIONS = { shouldRetryOnError: false, revalidateOnFocus: false, keepPreviousData: true } as const;
 
-    console.log("the activities data is", activitiesData);
+const ACTIVITY_LABELS: Record<string, string> = {
+    login: 'Logged in',
+    logout: 'Logged out',
+    register: 'Registered',
+    create_request: 'Created request',
+    update_request: 'Updated request',
+    cancel_request: 'Cancelled request',
+    place_bid: 'Placed bid',
+    update_bid: 'Updated bid',
+    create_user: 'Created user',
+    update_user: 'Updated user',
+    delete_user: 'Deleted user',
+    suspend_user: 'Suspended user',
+    activate_user: 'Activated user',
+    upload_file: 'Uploaded file',
+    download_file: 'Downloaded file',
+    api_call: 'API call',
+};
 
-    const { 
-        data: statsData, 
-        error: statsError, 
-        isLoading: statsLoading 
-    } = useSWR(
-        '/activities/stats/',
-        fetcher,
-        {
-            revalidateOnFocus: false,
-            revalidateOnReconnect: true,
-            refreshInterval: 60000, // Refresh every minute
-        }
-    );
+const ACTIVITY_FILTER_OPTIONS = [
+    { value: 'login', label: 'Login' },
+    { value: 'logout', label: 'Logout' },
+    { value: 'register', label: 'Registration' },
+    { value: 'create_request', label: 'Create request' },
+    { value: 'update_request', label: 'Update request' },
+    { value: 'cancel_request', label: 'Cancel request' },
+    { value: 'place_bid', label: 'Place bid' },
+    { value: 'update_bid', label: 'Update bid' },
+    { value: 'create_user', label: 'Create user' },
+    { value: 'update_user', label: 'Update user' },
+    { value: 'delete_user', label: 'Delete user' },
+    { value: 'suspend_user', label: 'Suspend user' },
+    { value: 'activate_user', label: 'Activate user' },
+    { value: 'upload_file', label: 'Upload file' },
+    { value: 'download_file', label: 'Download file' },
+    { value: 'api_call', label: 'API call' },
+];
 
-    // Extract data from SWR responses
-    const activities = activitiesData?.results || activitiesData || [];
-    const stats = statsData;
-    const loading = activitiesLoading || statsLoading;
-    const error = activitiesError || statsError;
+function activityLabel(type: string): string {
+    if (ACTIVITY_LABELS[type]) return ACTIVITY_LABELS[type];
+    const text = type.replace(/_/g, ' ').trim();
+    return text ? text.charAt(0).toUpperCase() + text.slice(1) : '';
+}
 
-    // Format activity type for display
-    const formatActivityType = (type: string) => {
-        const typeMap: { [key: string]: string } = {
-            login: 'Logged In',
-            logout: 'Logged Out',
-            register: 'Registered',
-            create_request: 'Created Request',
-            update_request: 'Updated Request',
-            cancel_request: 'Cancelled Request',
-            place_bid: 'Placed Bid',
-            update_bid: 'Updated Bid',
-            create_user: 'Created User',
-            update_user: 'Updated User',
-            delete_user: 'Deleted User',
-            suspend_user: 'Suspended User',
-            activate_user: 'Activated User',
-            upload_file: 'Uploaded File',
-            download_file: 'Downloaded File',
-            api_call: 'API Call',
-        };
-        return typeMap[type] || type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-    };
+function activityBadge(type: string): BadgeProps['variant'] {
+    if (type.includes('login') || type.includes('activate')) return 'success';
+    if (type.includes('logout') || type.includes('delete') || type.includes('cancel') || type.includes('suspend')) return 'destructive';
+    if (type.includes('update') || type.includes('modify')) return 'info';
+    if (type.includes('create') || type.includes('register')) return 'secondary';
+    return 'outline';
+}
 
-    // Get activity icon based on type
-    const getActivityIcon = (type: string) => {
-        if (type.includes('login')) return '🔐';
-        if (type.includes('logout')) return '🚪';
-        if (type.includes('create')) return '➕';
-        if (type.includes('update')) return '✏️';
-        if (type.includes('delete')) return '🗑️';
-        if (type.includes('upload')) return '📤';
-        if (type.includes('download')) return '📥';
-        if (type.includes('bid')) return '💰';
-        if (type.includes('request')) return '📋';
-        return '📝';
-    };
+function formatDate(value: string): string {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '';
+    return new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(date);
+}
 
-    // Format date
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return new Intl.DateTimeFormat('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-        }).format(date);
-    };
+function userName(user: UserActivity['user_details'] | undefined): string {
+    if (!user) return '';
+    return `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim();
+}
 
-    // Get activity badge color
-    const getActivityBadgeColor = (type: string) => {
-        if (type.includes('login') || type.includes('activate')) return 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-400';
-        if (type.includes('logout') || type.includes('delete') || type.includes('cancel')) return 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400';
-        if (type.includes('update') || type.includes('modify')) return 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-400';
-        if (type.includes('create') || type.includes('register')) return 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-400';
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-400';
-    };
+/** Sends paging and filters to the API; a bare-array answer (no server paging) is filtered and paged locally. */
+async function fetchActivities(query: ActivityQuery): Promise<ActivityPage> {
+    const params: Record<string, string | number> = { page: query.page, page_size: query.pageSize };
+    if (query.search) params.search = query.search;
+    if (query.activityType) params.activity_type = query.activityType;
+    if (query.startDate) params.start_date = query.startDate;
+    if (query.endDate) params.end_date = query.endDate;
+    if (query.sort) params.ordering = `${query.sort.desc ? '-' : ''}${query.sort.id}`;
 
-    const columns: ColumnDefinition[] = [
-        {
-            accessor: 'activity_info',
-            title: 'Activity',
-            width: '30%',
-            render: (item: UserActivity) => (
-                <div className="flex items-center gap-3">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                        <span className="text-lg">{getActivityIcon(item.activity_type)}</span>
-                    </div>
-                    <div>
-                        <div className="text-sm font-semibold text-gray-900 dark:text-white">
-                            {formatActivityType(item.activity_type)}
-                        </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
-                            {item.request ? `Request: ${item.request.title}` : 'System Activity'}
-                        </div>
-                    </div>
-                </div>
-            ),
-        },
-        {
-            accessor: 'user_details',
-            title: 'User',
-            width: '20%',
-            render: (item: UserActivity) => (
-                <div>
-                    <div className="text-sm font-semibold text-gray-900 dark:text-white">
-                        {item.user_details.first_name} {item.user_details.last_name}
-                    </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
-                        {item.user_details.email}
-                    </div>
-                    <div className="text-xs text-gray-400 dark:text-gray-500">
-                        {item.user_details.user_type}
-                    </div>
-                </div>
-            ),
-        },
-        {
-            accessor: 'activity_type',
-            title: 'Type',
-            width: '15%',
-            render: (item: UserActivity) => (
-                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getActivityBadgeColor(item.activity_type)}`}>
-                    {formatActivityType(item.activity_type)}
-                </span>
-            ),
-        },
-        {
-            accessor: 'created_at',
-            title: 'Timestamp',
-            width: '15%',
-            sortable: true,
-            render: (item: UserActivity) => (
-                <div>
-                    <div className="text-sm text-gray-900 dark:text-white">
-                        {formatDate(item.created_at)}
-                    </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
-                        {new Date(item.created_at).toLocaleDateString()}
-                    </div>
-                </div>
-            ),
-        },
-        {
-            accessor: 'details',
-            title: 'Details',
-            width: '10%',
-            textAlign: 'center',
-            render: (item: UserActivity) => (
-                <button
-                    onClick={() => {
-                        setSelectedActivity(item);
-                        setShowDetailsModal(true);
-                    }}
-                    className="p-2 text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 dark:hover:bg-indigo-950 rounded-lg transition-colors"
-                    title="View Details"
-                >
-                    <IconEye className="w-4 h-4" />
-                </button>
-            ),
-        },
-    ];
-
-    if (error) {
-        return (
-            <div className="min-h-[400px] flex items-center justify-center">
-                <div className="flex flex-col items-center gap-4">
-                    <IconHistory className="w-12 h-12 text-red-500" />
-                    <p className="text-red-600 dark:text-red-400">
-                        {error?.message || 'Failed to fetch audit trail data'}
-                    </p>
-                    <button 
-                        onClick={() => mutateActivities()} 
-                        className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
-                    >
-                        Try Again
-                    </button>
-                </div>
-            </div>
-        );
+    const data = (await axiosInstance.get('/activities/', { params })).data;
+    if (!Array.isArray(data)) {
+        const rows: UserActivity[] = data?.results ?? [];
+        return { rows, count: typeof data?.count === 'number' ? data.count : rows.length };
     }
 
-    if (loading && !activities.length) {
-        return (
-            <div className="min-h-[400px] flex items-center justify-center">
-                <div className="flex flex-col items-center gap-4">
-                    <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-                    <p className="text-gray-600 dark:text-gray-400">Loading audit trail data...</p>
-                </div>
-            </div>
-        );
+    let rows = data as UserActivity[];
+    const term = query.search.toLowerCase();
+    if (term) rows = rows.filter((a) => [a.user_details?.email, a.activity_type, a.request?.title].some((value) => (value ?? '').toLowerCase().includes(term)));
+    if (query.activityType) rows = rows.filter((a) => a.activity_type === query.activityType);
+    if (query.startDate) rows = rows.filter((a) => a.created_at.slice(0, 10) >= query.startDate);
+    if (query.endDate) rows = rows.filter((a) => a.created_at.slice(0, 10) <= query.endDate);
+    if (query.sort) {
+        const direction = query.sort.desc ? -1 : 1;
+        rows = [...rows].sort((a, b) => (a.created_at < b.created_at ? -1 : a.created_at > b.created_at ? 1 : 0) * direction);
     }
+    const start = (query.page - 1) * query.pageSize;
+    return { rows: rows.slice(start, start + query.pageSize), count: rows.length };
+}
+
+const csvCell = (value: string) => `"${value.replace(/"/g, '""')}"`;
+
+function exportCsv(rows: UserActivity[]) {
+    const lines = rows.map((activity) => [activity.user_details?.email ?? '', activityLabel(activity.activity_type), formatDate(activity.created_at), activity.request?.title ?? ''].map(csvCell).join(','));
+    const blob = new Blob([['User,Activity,Timestamp,Request', ...lines].join('\n')], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `audit-trail-${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+}
+
+function DetailRow({ label, children }: { label: string; children: React.ReactNode }) {
+    return (
+        <div className="space-y-0.5">
+            <dt className="text-xs font-medium text-muted-foreground">{label}</dt>
+            <dd className="text-sm text-foreground">{children}</dd>
+        </div>
+    );
+}
+
+export default function AuditTrail() {
+    const dispatch = useDispatch();
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(PAGE_SIZE_DEFAULT);
+    const [search, setSearch] = useState('');
+    const [activityType, setActivityType] = useState('');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [sort, setSort] = useState<DataTableSort | null>(null);
+    const [selected, setSelected] = useState<UserActivity | null>(null);
+
+    useEffect(() => {
+        dispatch(setPageTitle('Audit trail'));
+    }, [dispatch]);
+
+    const query: ActivityQuery = { page, pageSize, search, activityType, startDate, endDate, sort };
+    const { data, error, isLoading, isValidating, mutate } = useSWR<ActivityPage>(
+        ['audit-trail', page, pageSize, search, activityType, startDate, endDate, sort?.id ?? '', sort?.desc ?? false],
+        () => fetchActivities(query),
+        { ...SWR_OPTIONS, refreshInterval: 30000 }
+    );
+
+    const { data: stats, isLoading: statsLoading } = useSWR<ActivityStats>('audit-trail-stats', async () => (await axiosInstance.get('/activities/stats/')).data, {
+        shouldRetryOnError: false,
+        revalidateOnFocus: false,
+        refreshInterval: 60000,
+    });
+
+    const columns = useMemo<ColumnDef<UserActivity>[]>(
+        () => [
+            {
+                id: 'activity',
+                header: 'Activity',
+                enableSorting: false,
+                enableHiding: false,
+                meta: { label: 'Activity', cardTitle: true, className: 'max-w-[18rem]' },
+                cell: ({ row }) => (
+                    <div className="min-w-0">
+                        <p className="truncate font-semibold text-foreground">{activityLabel(row.original.activity_type)}</p>
+                        <p className="truncate text-xs text-muted-foreground">{row.original.request ? `Request: ${row.original.request.title}` : 'System activity'}</p>
+                    </div>
+                ),
+            },
+            {
+                id: 'user',
+                header: 'User',
+                enableSorting: false,
+                meta: { label: 'User', className: 'max-w-[16rem]' },
+                cell: ({ row }) => {
+                    const user = row.original.user_details;
+                    return (
+                        <div className="min-w-0">
+                            <p className="truncate text-sm font-medium text-foreground">{userName(user) || '-'}</p>
+                            <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
+                            {user?.user_type ? <p className="text-xs text-muted-foreground">{user.user_type}</p> : null}
+                        </div>
+                    );
+                },
+            },
+            {
+                id: 'type',
+                header: 'Type',
+                enableSorting: false,
+                meta: { label: 'Type' },
+                cell: ({ row }) => <Badge variant={activityBadge(row.original.activity_type)}>{activityLabel(row.original.activity_type)}</Badge>,
+            },
+            {
+                accessorKey: 'created_at',
+                header: 'Timestamp',
+                meta: { label: 'Timestamp' },
+                cell: ({ row }) => <span className="whitespace-nowrap text-sm text-foreground">{formatDate(row.original.created_at)}</span>,
+            },
+            {
+                id: 'details',
+                header: () => <span className="sr-only">Details</span>,
+                enableSorting: false,
+                enableHiding: false,
+                meta: { className: 'w-16 text-right' },
+                cell: ({ row }) => (
+                    <Button type="button" variant="outline" size="icon-sm" aria-label="View activity details" title="View details" onClick={() => setSelected(row.original)}>
+                        <Eye aria-hidden="true" />
+                    </Button>
+                ),
+            },
+        ],
+        []
+    );
+
+    const resetPage = () => setPage(1);
+    const hasFilters = Boolean(search || activityType || startDate || endDate);
+    const mostActive = stats?.activities?.most_active_users?.[0];
 
     return (
-        <div className="space-y-6">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Audit Trail</h1>
-                    <p className="text-gray-600 dark:text-gray-400 mt-1">Track all user activities and system events</p>
-                </div>
-                <div className="flex gap-3">
-                    <button
-                        onClick={() => {
-                            mutateActivities();
-                        }}
-                        disabled={activitiesLoading}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-colors ${
-                            activitiesLoading 
-                                ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed' 
-                                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                        }`}
-                    >
-                        <IconRefresh className={`w-4 h-4 ${activitiesLoading ? 'animate-spin' : ''}`} />
-                        {activitiesLoading ? 'Refreshing...' : 'Refresh'}
-                    </button>
-                    <button
-                        onClick={() => {
-                            // Export functionality
-                            const csvContent = activities.map((activity: UserActivity) => 
-                                `${activity.user.email},${formatActivityType(activity.activity_type)},${formatDate(activity.created_at)},${activity.request?.title || 'N/A'}`
-                            ).join('\n');
-                            const blob = new Blob([`User,Activity,Timestamp,Request\n${csvContent}`], { type: 'text/csv' });
-                            const url = window.URL.createObjectURL(blob);
-                            const a = document.createElement('a');
-                            a.href = url;
-                            a.download = `audit-trail-${new Date().toISOString().split('T')[0]}.csv`;
-                            a.click();
-                        }}
-                        className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition-colors"
-                    >
-                        <IconDownload className="w-4 h-4" />
-                        Export CSV
-                    </button>
-                </div>
-            </div>
+        <div className="space-y-4">
+            <PageHeader
+                title="Audit trail"
+                description="Track user activities and system events."
+                className="pb-0"
+                actions={
+                    <>
+                        <Button type="button" variant="outline" onClick={() => void mutate()} disabled={isValidating}>
+                            <RefreshCw className={cn(isValidating && 'animate-spin')} aria-hidden="true" />
+                            {isValidating ? 'Refreshing...' : 'Refresh'}
+                        </Button>
+                        <Button type="button" onClick={() => exportCsv(data?.rows ?? [])} disabled={!data || data.rows.length === 0}>
+                            <Download aria-hidden="true" />
+                            Export CSV
+                        </Button>
+                    </>
+                }
+            />
 
-            {/* Statistics Cards */}
-            {statsLoading ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {[1, 2, 3, 4].map((i) => (
-                        <div key={i} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
-                            <div className="flex items-center gap-4">
-                                <div className="p-3 bg-gray-100 dark:bg-gray-700 rounded-xl">
-                                    <div className="w-6 h-6 bg-gray-200 dark:bg-gray-600 rounded animate-pulse"></div>
-                                </div>
-                                <div className="flex-1">
-                                    <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mb-2"></div>
-                                    <div className="h-6 bg-gray-200 dark:bg-gray-600 rounded animate-pulse w-16"></div>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            ) : stats ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
-                        <div className="flex items-center gap-4">
-                            <div className="p-3 bg-blue-100 dark:bg-blue-950 rounded-xl">
-                                <IconActivity className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                            </div>
-                            <div>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">Total Activities</p>
-                                <p className="text-2xl font-bold text-gray-900 dark:text-white">{(stats.activities?.total || 0).toLocaleString()}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
-                        <div className="flex items-center gap-4">
-                            <div className="p-3 bg-green-100 dark:bg-green-950 rounded-xl">
-                                <IconClock className="w-6 h-6 text-green-600 dark:text-green-400" />
-                            </div>
-                            <div>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">Today's Activities</p>
-                                <p className="text-2xl font-bold text-gray-900 dark:text-white">{(stats.activities?.by_period?.last_1_day || 0).toLocaleString()}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
-                        <div className="flex items-center gap-4">
-                            <div className="p-3 bg-purple-100 dark:bg-purple-950 rounded-xl">
-                                <IconUser className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                            </div>
-                            <div>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">Total Users</p>
-                                <p className="text-2xl font-bold text-gray-900 dark:text-white">{(stats.users?.total || 0).toLocaleString()}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
-                        <div className="flex items-center gap-4">
-                            <div className="p-3 bg-orange-100 dark:bg-orange-950 rounded-xl">
-                                <IconActivity className="w-6 h-6 text-orange-600 dark:text-orange-400" />
-                            </div>
-                            <div>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">Most Active</p>
-                                <p className="text-lg font-bold text-gray-900 dark:text-white">
-                                    {stats.activities?.most_active_users?.[0]?.user__email?.split('@')[0] || 'N/A'}
-                                </p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">
-                                    {stats.activities?.most_active_users?.[0]?.activity_count || 0} activities
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+            {statsLoading || stats ? (
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    <StatCard label="Total activities" value={(stats?.activities?.total ?? 0).toLocaleString()} isLoading={statsLoading} />
+                    <StatCard label="Today's activities" value={(stats?.activities?.by_period?.last_1_day ?? 0).toLocaleString()} isLoading={statsLoading} />
+                    <StatCard label="Total users" value={(stats?.users?.total ?? 0).toLocaleString()} isLoading={statsLoading} />
+                    <StatCard
+                        label="Most active user"
+                        value={mostActive?.user__email?.split('@')[0] ?? '-'}
+                        hint={mostActive ? `${mostActive.activity_count ?? 0} activities` : undefined}
+                        isLoading={statsLoading}
+                    />
                 </div>
             ) : null}
 
-            {/* Filters */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Search</label>
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <IconSearch className="text-gray-400 w-4 h-4" />
-                            </div>
-                            <input
-                                type="text"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                placeholder="Search activities..."
-                                className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg leading-5 bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:text-white"
+            <DataTable
+                columns={columns}
+                data={data?.rows ?? []}
+                total={data?.count ?? 0}
+                page={page}
+                pageSize={pageSize}
+                onPageChange={setPage}
+                onPageSizeChange={(next) => {
+                    setPageSize(next);
+                    resetPage();
+                }}
+                sort={sort}
+                onSortChange={(next) => {
+                    setSort(next);
+                    resetPage();
+                }}
+                search={search}
+                onSearchChange={(value) => {
+                    setSearch(value);
+                    resetPage();
+                }}
+                searchPlaceholder="Search activities"
+                isLoading={isLoading}
+                error={error}
+                onRetry={() => void mutate()}
+                getRowId={(row) => String(row.id)}
+                enableColumnVisibility={false}
+                toolbar={
+                    <>
+                        <Select
+                            value={activityType || 'all'}
+                            onValueChange={(value) => {
+                                setActivityType(value === 'all' ? '' : value);
+                                resetPage();
+                            }}
+                        >
+                            <SelectTrigger aria-label="Filter by activity type" className="w-full sm:w-48">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All types</SelectItem>
+                                {ACTIVITY_FILTER_OPTIONS.map((option) => (
+                                    <SelectItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        <div className="flex items-center gap-2">
+                            <Label htmlFor="audit-start" className="sr-only">
+                                Start date
+                            </Label>
+                            <Input
+                                id="audit-start"
+                                type="date"
+                                value={startDate}
+                                max={endDate || undefined}
+                                onChange={(event) => {
+                                    setStartDate(event.target.value);
+                                    resetPage();
+                                }}
+                                className="w-full sm:w-40"
+                            />
+                            <span className="text-sm text-muted-foreground">to</span>
+                            <Label htmlFor="audit-end" className="sr-only">
+                                End date
+                            </Label>
+                            <Input
+                                id="audit-end"
+                                type="date"
+                                value={endDate}
+                                min={startDate || undefined}
+                                onChange={(event) => {
+                                    setEndDate(event.target.value);
+                                    resetPage();
+                                }}
+                                className="w-full sm:w-40"
                             />
                         </div>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Activity Type</label>
-                        <FilterSelect
-                            options={activityTypes}
-                            value={activityTypeFilter}
-                            placeholder="All Types"
-                            onChange={(val) => setActivityTypeFilter(val ? String(val) : '')}
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Start Date</label>
-                        <input
-                            type="date"
-                            value={dateRange.start}
-                            onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
-                            className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">End Date</label>
-                        <input
-                            type="date"
-                            value={dateRange.end}
-                            onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
-                            className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        />
-                    </div>
-                </div>
-            </div>
-
-            {/* Data Table */}
-            <DraggableDataTable
-                data={activities}
-                columns={columns}
-                loading={loading}
-                title="Activity Log"
-                exportFileName="audit-trail"
-                storeKey="audit-trail-table"
-                onRefreshData={() => mutateActivities()}
-                quickCheckFields={['user_details.email', 'activity_type', 'request.title']}
+                    </>
+                }
+                emptyState={
+                    hasFilters ? (
+                        <EmptyState icon={History} title="No activity matches your filters" description="Try a different search, type or date range." />
+                    ) : (
+                        <EmptyState icon={History} title="No activity recorded yet" description="User activity and system events will be listed here." />
+                    )
+                }
             />
 
-            {/* Activity Details Modal */}
-            <Transition appear show={showDetailsModal} as={React.Fragment}>
-                <Dialog as="div" className="relative z-50" onClose={() => setShowDetailsModal(false)}>
-                    <Transition.Child
-                        as={React.Fragment}
-                        enter="ease-out duration-300"
-                        enterFrom="opacity-0"
-                        enterTo="opacity-100"
-                        leave="ease-in duration-200"
-                        leaveFrom="opacity-100"
-                        leaveTo="opacity-0"
-                    >
-                        <div className="fixed inset-0 bg-black/50 " />
-                    </Transition.Child>
-
-                    <div className="fixed inset-0 overflow-y-auto">
-                        <div className="flex min-h-full items-center justify-center p-4 text-center">
-                            <Transition.Child
-                                as={React.Fragment}
-                                enter="ease-out duration-300"
-                                enterFrom="opacity-0 scale-95"
-                                enterTo="opacity-100 scale-100"
-                                leave="ease-in duration-200"
-                                leaveFrom="opacity-100 scale-100"
-                                leaveTo="opacity-0 scale-95"
-                            >
-                                <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-6 text-left align-middle shadow-xl transition-all border border-gray-200 dark:border-gray-700">
-                                    <Dialog.Title as="h3" className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                                        Activity Details
-                                    </Dialog.Title>
-
-                                    {selectedActivity && (
-                                        <div className="space-y-4">
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div>
-                                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">User</label>
-                                                    <p className="text-sm text-gray-900 dark:text-white">
-                                                        {selectedActivity.user.first_name} {selectedActivity.user.last_name}
-                                                    </p>
-                                                    <p className="text-xs text-gray-500 dark:text-gray-400">{selectedActivity.user.email}</p>
-                                                </div>
-                                                <div>
-                                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Activity Type</label>
-                                                    <p className="text-sm text-gray-900 dark:text-white">
-                                                        {formatActivityType(selectedActivity.activity_type)}
-                                                    </p>
-                                                </div>
-                                                <div>
-                                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Timestamp</label>
-                                                    <p className="text-sm text-gray-900 dark:text-white">
-                                                        {formatDate(selectedActivity.created_at)}
-                                                    </p>
-                                                </div>
-                                                <div>
-                                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Request</label>
-                                                    <p className="text-sm text-gray-900 dark:text-white">
-                                                        {selectedActivity.request?.title || 'N/A'}
-                                                    </p>
-                                                </div>
-                                            </div>
-
-                                            {selectedActivity.details && (
-                                                <div>
-                                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Additional Details</label>
-                                                    <pre className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-sm text-gray-900 dark:text-white overflow-auto max-h-64">
-                                                        {JSON.stringify(selectedActivity.details, null, 2)}
-                                                    </pre>
-                                                </div>
-                                            )}
-                                        </div>
-                                    )}
-
-                                    <div className="flex justify-end mt-6">
-                                        <button
-                                            onClick={() => setShowDetailsModal(false)}
-                                            className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                                        >
-                                            Close
-                                        </button>
-                                    </div>
-                                </Dialog.Panel>
-                            </Transition.Child>
+            <Dialog open={Boolean(selected)} onOpenChange={(open) => (open ? undefined : setSelected(null))}>
+                <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+                    <DialogHeader>
+                        <DialogTitle>Activity details</DialogTitle>
+                        <DialogDescription>{selected ? activityLabel(selected.activity_type) : ''}</DialogDescription>
+                    </DialogHeader>
+                    {selected ? (
+                        <div className="space-y-4">
+                            <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                <DetailRow label="User">
+                                    <p>{userName(selected.user_details) || '-'}</p>
+                                    <p className="break-all text-xs text-muted-foreground">{selected.user_details?.email}</p>
+                                </DetailRow>
+                                <DetailRow label="Activity type">{activityLabel(selected.activity_type)}</DetailRow>
+                                <DetailRow label="Timestamp">{formatDate(selected.created_at)}</DetailRow>
+                                <DetailRow label="Request">{selected.request?.title || '-'}</DetailRow>
+                            </dl>
+                            {selected.details ? (
+                                <div className="space-y-1">
+                                    <p className="text-xs font-medium text-muted-foreground">Additional details</p>
+                                    <pre className="max-h-64 overflow-auto rounded-lg border bg-muted p-3 text-xs text-foreground">{JSON.stringify(selected.details, null, 2)}</pre>
+                                </div>
+                            ) : null}
                         </div>
-                    </div>
-                </Dialog>
-            </Transition>
+                    ) : null}
+                    <DialogFooter>
+                        <Button type="button" variant="outline" onClick={() => setSelected(null)}>
+                            Close
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
-};
-
-export default AuditTrail;
+}

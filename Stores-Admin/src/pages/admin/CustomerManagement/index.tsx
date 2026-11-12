@@ -1,25 +1,31 @@
-import {
-    IconAlertTriangle,
-    IconBan,
-    IconCheck,
-    IconEdit,
-    IconEye,
-    IconMail,
-    IconPlus,
-    IconSearch,
-    IconShoppingBag,
-    IconStar,
-    IconTrash,
-    IconUser,
-    IconUsers,
-} from '@tabler/icons-react';
-import React, { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import IconLoader from '../../../components/Icon/IconLoader';
-import DraggableDataTable, { ColumnDefinition } from '../../../components/ui/DraggableDataTable';
-import FilterSelect from '../../../components/ui/FilterSelect';
-import axiosInstance from '../../../services/axiosInstance';
-import { useCurrency } from '../../../contexts/CurrencyContext';
+import { useDispatch } from 'react-redux';
+import useSWR, { useSWRConfig } from 'swr';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import type { ColumnDef } from '@tanstack/react-table';
+import { Ban, CheckCircle2, Eye, Loader2, Plus, RefreshCw, Trash2, UserRound, Users } from 'lucide-react';
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
+import { Badge, type BadgeProps } from '@/components/shadcn/badge';
+import { Button } from '@/components/shadcn/button';
+import { DataTable, type DataTableSort } from '@/components/shadcn/data-table';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/shadcn/dialog';
+import { EmptyState } from '@/components/shadcn/empty-state';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/shadcn/form';
+import { PageHeader } from '@/components/shadcn/page-header';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
+import { StatCard } from '@/components/shadcn/stat-card';
+import { Textarea } from '@/components/shadcn/textarea';
+import { toast } from '@/components/shadcn/sonner';
+import { cn } from '@/lib/utils';
+import { useCurrency } from '@/contexts/CurrencyContext';
+import axiosInstance from '@/services/axiosInstance';
+import { setPageTitle } from '@/store/themeConfigSlice';
+
+type AccountStatus = 'active' | 'pending' | 'suspended' | 'inactive';
 
 interface Customer {
     id: string;
@@ -27,466 +33,387 @@ interface Customer {
     last_name: string;
     email: string;
     phone_number: string;
-    account_status: 'active' | 'pending' | 'suspended' | 'inactive';
+    account_status: AccountStatus;
     profile_picture?: string;
     date_joined: string;
     last_active: string;
     total_orders: number;
     total_spent: number;
     average_order_value: number;
-    address?: {
-        address_line1: string;
-        city: string;
-        state?: string;
-        postal_code: string;
-        country: string;
-    };
 }
 
-const CustomerManagement: React.FC = () => {
-    const [customers, setCustomers] = useState<Customer[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [activeFilter, setActiveFilter] = useState('all');
-    const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
-    const [showSuspendModal, setShowSuspendModal] = useState(false);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [suspensionReason, setSuspensionReason] = useState('');
+interface CustomerQuery {
+    page: number;
+    pageSize: number;
+    search: string;
+    status: AccountStatus | 'all';
+    sort: DataTableSort | null;
+}
 
-    // Fetch customers from API
-    const fetchCustomers = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-            const response = await axiosInstance.get('/customers/');
-            // Handle both array response and paginated response with results
-            const customersData = Array.isArray(response.data) 
-                ? response.data 
-                : (response.data?.results || response.data?.data || []);
-            setCustomers(customersData);
-        } catch (err) {
-            setError('Failed to fetch customers. Please try again later.');
-            console.error('Error fetching customers:', err);
-            setCustomers([]); // Ensure customers is always an array
-        } finally {
-            setLoading(false);
-        }
-    };
+interface CustomerPage {
+    rows: Customer[];
+    count: number;
+}
 
-    useEffect(() => {
-        fetchCustomers();
-    }, []);
+const CUSTOMERS_KEY = 'customers';
+const PAGE_SIZE_DEFAULT = 25;
+const SWR_OPTIONS = { shouldRetryOnError: false, revalidateOnFocus: false, keepPreviousData: true } as const;
 
-    // Calculate customer counts
-    const getCustomerCounts = () => {
-        // Ensure customers is an array
-        const customersArray = Array.isArray(customers) ? customers : [];
-        const counts = {
-            all: customersArray.length,
-            active: customersArray.filter((c) => c.account_status === 'active').length,
-            suspended: customersArray.filter((c) => c.account_status === 'suspended').length,
-            pending: customersArray.filter((c) => c.account_status === 'pending').length,
-            inactive: customersArray.filter((c) => c.account_status === 'inactive').length,
-        };
-        return counts;
-    };
+const STATUS_OPTIONS: { value: AccountStatus | 'all'; label: string }[] = [
+    { value: 'all', label: 'All customers' },
+    { value: 'active', label: 'Active' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'suspended', label: 'Suspended' },
+    { value: 'inactive', label: 'Inactive' },
+];
 
-    const customerCounts = getCustomerCounts();
-
-    // Filter customers based on active filter
-    const getFilteredCustomers = () => {
-        // Ensure customers is an array
-        const customersArray = Array.isArray(customers) ? customers : [];
-        if (activeFilter === 'all') return customersArray;
-        return customersArray.filter((customer) => customer.account_status === activeFilter);
-    };
-
-    const handleFilterChange = (filter: string | number) => {
-        setActiveFilter(String(filter));
-    };
-
-    // Handle customer suspension
-    const handleSuspend = async (customer: Customer) => {
-        setSelectedCustomer(customer);
-        setShowSuspendModal(true);
-        setSuspensionReason('');
-    };
-
-    const handleConfirmSuspend = async () => {
-        if (selectedCustomer) {
-            try {
-                const newStatus = selectedCustomer.account_status === 'suspended' ? 'active' : 'suspended';
-                await axiosInstance.patch(`/customers/${selectedCustomer.id}/`, {
-                    account_status: newStatus,
-                    suspension_reason: suspensionReason,
-                });
-                await fetchCustomers();
-                setShowSuspendModal(false);
-                setSuspensionReason('');
-                setSelectedCustomer(null);
-            } catch (err) {
-                setError('Failed to update customer status. Please try again.');
-                console.error('Error updating customer status:', err);
-            }
-        }
-    };
-
-    // Handle customer deletion
-    const handleDelete = (customer: Customer) => {
-        setSelectedCustomer(customer);
-        setShowDeleteModal(true);
-    };
-
-    const handleConfirmDelete = async () => {
-        if (selectedCustomer) {
-            try {
-                await axiosInstance.delete(`/customers/${selectedCustomer.id}/`);
-                await fetchCustomers();
-                setShowDeleteModal(false);
-                setSelectedCustomer(null);
-            } catch (err) {
-                setError('Failed to delete customer. Please try again.');
-                console.error('Error deleting customer:', err);
-            }
-        }
-    };
-
-    const { formatDisplayPrice: formatCurrency } = useCurrency();
-
-    const formatDate = (dateString: string): string => {
-        const date = new Date(dateString);
-        return new Intl.DateTimeFormat('en-GB', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric',
-        }).format(date);
-    };
-
-    const getStatusBadge = (status: string) => {
-        const statusConfig = {
-            active: 'bg-green-100 text-green-800',
-            pending: 'bg-yellow-100 text-yellow-800',
-            suspended: 'bg-red-100 text-red-800',
-            inactive: 'bg-gray-100 text-gray-800',
-        };
-        const safeStatus = status || 'inactive';
-        return (
-            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${statusConfig[safeStatus as keyof typeof statusConfig] || statusConfig.inactive}`}>
-                {safeStatus.toUpperCase()}
-            </span>
-        );
-    };
-
-    const columns: ColumnDefinition[] = [
-        {
-            accessor: 'profile_picture',
-            title: 'Avatar',
-            render: (customer: Customer) => (
-                <div className="w-10 h-10 flex-shrink-0">
-                    {customer.profile_picture ? (
-                        <img src={customer.profile_picture} alt={`${customer.first_name || ''} ${customer.last_name || ''}`} className="w-full h-full object-cover rounded-full" />
-                    ) : (
-                        <div className="w-full h-full bg-gray-200 rounded-full flex items-center justify-center">
-                            <IconUser className="w-5 h-5 text-gray-400" />
-                        </div>
-                    )}
-                </div>
-            ),
-        },
-        {
-            accessor: 'first_name',
-            title: 'Customer Name',
-            sortable: true,
-            render: (customer: Customer) => (
-                <div>
-                    <div className="font-semibold text-gray-900">
-                        {customer.first_name || ''} {customer.last_name || ''}
-                    </div>
-                    <div className="text-sm text-gray-500">{customer.email || 'N/A'}</div>
-                </div>
-            ),
-        },
-        {
-            accessor: 'phone_number',
-            title: 'Phone',
-            sortable: true,
-            render: (customer: Customer) => (
-                <div className="text-sm text-gray-600">{customer.phone_number || 'N/A'}</div>
-            ),
-        },
-        {
-            accessor: 'total_orders',
-            title: 'Orders',
-            sortable: true,
-            render: (customer: Customer) => (
-                <div className="text-center">
-                    <span className="font-semibold text-gray-900">{customer.total_orders ?? 0}</span>
-                </div>
-            ),
-        },
-        {
-            accessor: 'total_spent',
-            title: 'Total Spent',
-            sortable: true,
-            render: (customer: Customer) => (
-                <div className="font-semibold text-gray-900">{formatCurrency(customer.total_spent || 0)}</div>
-            ),
-        },
-        {
-            accessor: 'average_order_value',
-            title: 'Avg. Order',
-            sortable: true,
-            render: (customer: Customer) => (
-                <div className="text-gray-600">{formatCurrency(customer.average_order_value || 0)}</div>
-            ),
-        },
-        {
-            accessor: 'account_status',
-            title: 'Status',
-            sortable: true,
-            render: (customer: Customer) => getStatusBadge(customer.account_status),
-        },
-        {
-            accessor: 'date_joined',
-            title: 'Joined',
-            sortable: true,
-            render: (customer: Customer) => (
-                <div className="text-sm text-gray-600">{customer.date_joined ? formatDate(customer.date_joined) : 'N/A'}</div>
-            ),
-        },
-        {
-            accessor: 'actions',
-            title: 'Actions',
-            render: (customer: Customer) => (
-                <div className="flex gap-2">
-                    <Link
-                        to={`/admin/customers/${customer.id}`}
-                        className="p-2 hover:bg-gray-100 rounded transition-colors"
-                        title="View Details"
-                    >
-                        <IconEye className="w-4 h-4 text-blue-600" />
-                    </Link>
-                    <button
-                        onClick={() => handleSuspend(customer)}
-                        className="p-2 hover:bg-gray-100 rounded transition-colors"
-                        title={customer.account_status === 'suspended' ? 'Activate' : 'Suspend'}
-                    >
-                        {customer.account_status === 'suspended' ? (
-                            <IconCheck className="w-4 h-4 text-green-600" />
-                        ) : (
-                            <IconBan className="w-4 h-4 text-orange-600" />
-                        )}
-                    </button>
-                    <button
-                        onClick={() => handleDelete(customer)}
-                        className="p-2 hover:bg-gray-100 rounded transition-colors"
-                        title="Delete Customer"
-                    >
-                        <IconTrash className="w-4 h-4 text-red-600" />
-                    </button>
-                </div>
-            ),
-        },
-    ];
-
-    const filterOptions = [
-        { value: 'all', label: `All Customers (${customerCounts.all})` },
-        { value: 'active', label: `Active (${customerCounts.active})` },
-        { value: 'pending', label: `Pending (${customerCounts.pending})` },
-        { value: 'suspended', label: `Suspended (${customerCounts.suspended})` },
-        { value: 'inactive', label: `Inactive (${customerCounts.inactive})` },
-    ];
-
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <IconLoader className="w-10 h-10 animate-spin" />
-            </div>
-        );
-    }
-
-    // Calculate total revenue
-    const customersArray = Array.isArray(customers) ? customers : [];
-    const totalRevenue = customersArray.reduce((sum, customer) => sum + (customer.total_spent || 0), 0);
-    const averageOrderValue = customersArray.length > 0 
-        ? customersArray.reduce((sum, customer) => sum + (customer.average_order_value || 0), 0) / customersArray.length 
-        : 0;
-
-    return (
-        <div className="space-y-6">
-            {/* Header */}
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Customer Management</h1>
-                    <p className="text-gray-600 mt-1">Manage customer accounts and relationships</p>
-                </div>
-                <Link
-                    to="/admin/customers/new"
-                    className="flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
-                >
-                    <IconPlus className="w-5 h-5" />
-                    Add New Customer
-                </Link>
-            </div>
-
-            {/* Error Message */}
-            {error && (
-                <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-start gap-3">
-                    <IconAlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                    <p>{error}</p>
-                </div>
-            )}
-
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">Total Customers</p>
-                            <p className="text-2xl font-bold text-gray-900 mt-1">{customerCounts.all}</p>
-                        </div>
-                        <IconUsers className="w-10 h-10 text-blue-500" />
-                    </div>
-                </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">Active</p>
-                            <p className="text-2xl font-bold text-green-600 mt-1">{customerCounts.active}</p>
-                        </div>
-                        <IconCheck className="w-10 h-10 text-green-500" />
-                    </div>
-                </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">Total Revenue</p>
-                            <p className="text-2xl font-bold text-blue-600 mt-1">{formatCurrency(totalRevenue)}</p>
-                        </div>
-                        <IconShoppingBag className="w-10 h-10 text-blue-500" />
-                    </div>
-                </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">Avg. Order Value</p>
-                            <p className="text-2xl font-bold text-purple-600 mt-1">{formatCurrency(averageOrderValue)}</p>
-                        </div>
-                        <IconStar className="w-10 h-10 text-purple-500" />
-                    </div>
-                </div>
-            </div>
-
-            {/* Filters */}
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                <FilterSelect 
-                    options={filterOptions} 
-                    value={activeFilter} 
-                    onChange={handleFilterChange}
-                    placeholder="Filter by status"
-                />
-            </div>
-
-            {/* Customers Table */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                <DraggableDataTable
-                    data={getFilteredCustomers()}
-                    columns={columns}
-                    loading={loading}
-                    title="Customers"
-                    quickCheckFields={['first_name', 'last_name', 'email', 'phone_number']}
-                />
-            </div>
-
-            {/* Suspend/Activate Modal */}
-            {showSuspendModal && selectedCustomer && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className={`p-2 rounded-full ${selectedCustomer.account_status === 'suspended' ? 'bg-green-100' : 'bg-orange-100'}`}>
-                                {selectedCustomer.account_status === 'suspended' ? (
-                                    <IconCheck className="w-6 h-6 text-green-600" />
-                                ) : (
-                                    <IconBan className="w-6 h-6 text-orange-600" />
-                                )}
-                            </div>
-                            <h3 className="text-lg font-semibold text-gray-900">
-                                {selectedCustomer.account_status === 'suspended' ? 'Activate Customer' : 'Suspend Customer'}
-                            </h3>
-                        </div>
-                        <p className="text-gray-600 mb-4">
-                            {selectedCustomer.account_status === 'suspended'
-                                ? `Are you sure you want to activate ${selectedCustomer.first_name} ${selectedCustomer.last_name}?`
-                                : `Are you sure you want to suspend ${selectedCustomer.first_name} ${selectedCustomer.last_name}?`}
-                        </p>
-                        {selectedCustomer.account_status !== 'suspended' && (
-                            <div className="mb-6">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Suspension Reason</label>
-                                <textarea
-                                    value={suspensionReason}
-                                    onChange={(e) => setSuspensionReason(e.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                    rows={3}
-                                    placeholder="Enter reason for suspension..."
-                                />
-                            </div>
-                        )}
-                        <div className="flex justify-end gap-3">
-                            <button
-                                onClick={() => setShowSuspendModal(false)}
-                                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleConfirmSuspend}
-                                className={`px-4 py-2 text-white rounded-lg transition-colors ${
-                                    selectedCustomer.account_status === 'suspended'
-                                        ? 'bg-green-600 hover:bg-green-700'
-                                        : 'bg-orange-600 hover:bg-orange-700'
-                                }`}
-                            >
-                                {selectedCustomer.account_status === 'suspended' ? 'Activate' : 'Suspend'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Delete Confirmation Modal */}
-            {showDeleteModal && selectedCustomer && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 bg-red-100 rounded-full">
-                                <IconTrash className="w-6 h-6 text-red-600" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-gray-900">Delete Customer</h3>
-                        </div>
-                        <p className="text-gray-600 mb-6">
-                            Are you sure you want to delete <strong>{selectedCustomer.first_name} {selectedCustomer.last_name}</strong>? This action cannot be undone and will remove all customer data.
-                        </p>
-                        <div className="flex justify-end gap-3">
-                            <button
-                                onClick={() => setShowDeleteModal(false)}
-                                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleConfirmDelete}
-                                className="px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
-                            >
-                                Delete Customer
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
-    );
+const STATUS_BADGE: Record<AccountStatus, BadgeProps['variant']> = {
+    active: 'success',
+    pending: 'warning',
+    suspended: 'destructive',
+    inactive: 'secondary',
 };
 
-export default CustomerManagement;
+const suspendSchema = z.object({ reason: z.string().trim() });
+type SuspendValues = z.infer<typeof suspendSchema>;
 
+function fullName(customer: Customer): string {
+    return `${customer.first_name ?? ''} ${customer.last_name ?? ''}`.trim();
+}
 
+function formatDate(value?: string | null): string {
+    if (!value) return '';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '';
+    return new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).format(date);
+}
+
+function apiErrorMessage(error: unknown, fallback: string): string {
+    const detail = (error as { response?: { data?: { detail?: unknown } } })?.response?.data?.detail;
+    if (typeof detail === 'string') return detail;
+    return fallback;
+}
+
+/**
+ * Sends paging, search, status and ordering to the API. If the endpoint answers with a bare array
+ * (no server-side paging), the same filters are applied locally so the table still behaves.
+ */
+async function fetchCustomers(query: CustomerQuery): Promise<CustomerPage> {
+    const params: Record<string, string | number> = { page: query.page, page_size: query.pageSize };
+    if (query.search) params.search = query.search;
+    if (query.status !== 'all') params.account_status = query.status;
+    if (query.sort) params.ordering = `${query.sort.desc ? '-' : ''}${query.sort.id}`;
+
+    const response = await axiosInstance.get('/customers/', { params });
+    const data = response.data;
+
+    if (!Array.isArray(data)) {
+        const rows: Customer[] = data?.results ?? data?.data ?? [];
+        return { rows, count: typeof data?.count === 'number' ? data.count : rows.length };
+    }
+
+    let rows = data as Customer[];
+    const term = query.search.toLowerCase();
+    if (term) rows = rows.filter((c) => [c.first_name, c.last_name, c.email, c.phone_number].some((value) => (value ?? '').toLowerCase().includes(term)));
+    if (query.status !== 'all') rows = rows.filter((c) => c.account_status === query.status);
+    if (query.sort) {
+        const { id, desc } = query.sort;
+        const key = id as keyof Customer;
+        rows = [...rows].sort((a, b) => {
+            const left = a[key] ?? '';
+            const right = b[key] ?? '';
+            const order = typeof left === 'number' && typeof right === 'number' ? left - right : String(left).localeCompare(String(right));
+            return desc ? -order : order;
+        });
+    }
+    const start = (query.page - 1) * query.pageSize;
+    return { rows: rows.slice(start, start + query.pageSize), count: rows.length };
+}
+
+function CustomerCell({ customer }: { customer: Customer }) {
+    const name = fullName(customer);
+    return (
+        <div className="flex min-w-0 items-center gap-3">
+            <Avatar className="h-9 w-9">
+                {customer.profile_picture ? <AvatarImage src={customer.profile_picture} alt={name || 'Customer'} /> : null}
+                <AvatarFallback>
+                    <UserRound className="h-4 w-4" aria-hidden="true" />
+                </AvatarFallback>
+            </Avatar>
+            <div className="min-w-0">
+                <p className="truncate font-semibold text-foreground">{name || '-'}</p>
+                <p className="truncate text-xs text-muted-foreground">{customer.email || '-'}</p>
+            </div>
+        </div>
+    );
+}
+
+function SuspendDialog({ customer, onClose, onDone }: { customer: Customer | null; onClose: () => void; onDone: () => void }) {
+    const form = useForm<SuspendValues>({ resolver: zodResolver(suspendSchema), defaultValues: { reason: '' } });
+    const { isSubmitting } = form.formState;
+    const activating = customer?.account_status === 'suspended';
+
+    useEffect(() => {
+        form.reset({ reason: '' });
+    }, [customer, form]);
+
+    const submit = form.handleSubmit(async (values) => {
+        if (!customer) return;
+        try {
+            await axiosInstance.patch(`/customers/${customer.id}/`, {
+                account_status: activating ? 'active' : 'suspended',
+                suspension_reason: values.reason,
+            });
+            toast.success(activating ? 'Customer activated' : 'Customer suspended');
+            onDone();
+            onClose();
+        } catch (error) {
+            toast.error(apiErrorMessage(error, 'Failed to update customer status. Please try again.'));
+        }
+    });
+
+    return (
+        <Dialog open={Boolean(customer)} onOpenChange={(open) => (open || isSubmitting ? undefined : onClose())}>
+            <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                    <DialogTitle>{activating ? 'Activate customer?' : 'Suspend customer?'}</DialogTitle>
+                    <DialogDescription>
+                        {activating ? `${customer ? fullName(customer) : ''} will be able to use their account again.` : `${customer ? fullName(customer) : ''} will no longer be able to use their account.`}
+                    </DialogDescription>
+                </DialogHeader>
+                <Form {...form}>
+                    <form onSubmit={submit} noValidate className="space-y-4">
+                        {activating ? null : (
+                            <FormField
+                                control={form.control}
+                                name="reason"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Suspension reason</FormLabel>
+                                        <FormControl>
+                                            <Textarea rows={3} placeholder="Enter the reason for suspension" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        )}
+                        <DialogFooter>
+                            <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
+                                Cancel
+                            </Button>
+                            <Button type="submit" variant={activating ? 'default' : 'destructive'} disabled={isSubmitting}>
+                                {isSubmitting ? <Loader2 className="animate-spin" aria-hidden="true" /> : null}
+                                {activating ? 'Activate' : 'Suspend'}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </Form>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+function DeleteDialog({ customer, onClose, onDone }: { customer: Customer | null; onClose: () => void; onDone: () => void }) {
+    const [deleting, setDeleting] = useState(false);
+
+    const confirm = async () => {
+        if (!customer) return;
+        setDeleting(true);
+        try {
+            await axiosInstance.delete(`/customers/${customer.id}/`);
+            toast.success('Customer deleted');
+            onDone();
+            onClose();
+        } catch (error) {
+            toast.error(apiErrorMessage(error, 'Failed to delete customer. Please try again.'));
+        } finally {
+            setDeleting(false);
+        }
+    };
+
+    return (
+        <Dialog open={Boolean(customer)} onOpenChange={(open) => (open || deleting ? undefined : onClose())}>
+            <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                    <DialogTitle>Delete customer?</DialogTitle>
+                    <DialogDescription>
+                        {customer ? fullName(customer) || customer.email : ''} and all their customer data will be removed. This cannot be undone.
+                    </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                    <Button type="button" variant="outline" onClick={onClose} disabled={deleting}>
+                        Keep customer
+                    </Button>
+                    <Button type="button" variant="destructive" onClick={() => void confirm()} disabled={deleting}>
+                        {deleting ? <Loader2 className="animate-spin" aria-hidden="true" /> : null}
+                        Delete customer
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+export default function CustomerManagement() {
+    const dispatch = useDispatch();
+    const { mutate: globalMutate } = useSWRConfig();
+    const { formatDisplayPrice } = useCurrency();
+
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(PAGE_SIZE_DEFAULT);
+    const [search, setSearch] = useState('');
+    const [status, setStatus] = useState<AccountStatus | 'all'>('all');
+    const [sort, setSort] = useState<DataTableSort | null>(null);
+    const [suspendTarget, setSuspendTarget] = useState<Customer | null>(null);
+    const [deleteTarget, setDeleteTarget] = useState<Customer | null>(null);
+
+    useEffect(() => {
+        dispatch(setPageTitle('Customers'));
+    }, [dispatch]);
+
+    const query: CustomerQuery = { page, pageSize, search, status, sort };
+    const { data, error, isLoading, isValidating, mutate } = useSWR<CustomerPage>([CUSTOMERS_KEY, 'list', page, pageSize, search, status, sort?.id ?? '', sort?.desc ?? false], () => fetchCustomers(query), SWR_OPTIONS);
+
+    const { data: allCount, isLoading: allLoading } = useSWR<CustomerPage>([CUSTOMERS_KEY, 'count', 'all'], () => fetchCustomers({ page: 1, pageSize: 1, search: '', status: 'all', sort: null }), SWR_OPTIONS);
+    const { data: activeCount, isLoading: activeLoading } = useSWR<CustomerPage>([CUSTOMERS_KEY, 'count', 'active'], () => fetchCustomers({ page: 1, pageSize: 1, search: '', status: 'active', sort: null }), SWR_OPTIONS);
+
+    const refreshAll = useCallback(() => globalMutate((key) => Array.isArray(key) && key[0] === CUSTOMERS_KEY), [globalMutate]);
+
+    const columns = useMemo<ColumnDef<Customer>[]>(
+        () => [
+            { accessorKey: 'first_name', header: 'Customer', enableHiding: false, meta: { label: 'Customer', cardTitle: true, className: 'max-w-[18rem]' }, cell: ({ row }) => <CustomerCell customer={row.original} /> },
+            { accessorKey: 'phone_number', header: 'Phone', meta: { label: 'Phone' }, cell: ({ row }) => <span className="text-sm text-muted-foreground">{row.original.phone_number || '-'}</span> },
+            { accessorKey: 'total_orders', header: 'Orders', meta: { label: 'Orders' }, cell: ({ row }) => <span className="font-semibold text-foreground">{row.original.total_orders ?? 0}</span> },
+            { accessorKey: 'total_spent', header: 'Total spent', meta: { label: 'Total spent' }, cell: ({ row }) => <span className="whitespace-nowrap font-semibold text-foreground">{formatDisplayPrice(row.original.total_spent || 0)}</span> },
+            { accessorKey: 'average_order_value', header: 'Avg. order', meta: { label: 'Avg. order' }, cell: ({ row }) => <span className="whitespace-nowrap text-muted-foreground">{formatDisplayPrice(row.original.average_order_value || 0)}</span> },
+            {
+                accessorKey: 'account_status',
+                header: 'Status',
+                meta: { label: 'Status' },
+                cell: ({ row }) => {
+                    const value = row.original.account_status || 'inactive';
+                    return <Badge variant={STATUS_BADGE[value] ?? 'secondary'}>{value.charAt(0).toUpperCase() + value.slice(1)}</Badge>;
+                },
+            },
+            { accessorKey: 'date_joined', header: 'Joined', meta: { label: 'Joined' }, cell: ({ row }) => <span className="whitespace-nowrap text-sm text-muted-foreground">{formatDate(row.original.date_joined) || '-'}</span> },
+            {
+                id: 'actions',
+                header: () => <span className="sr-only">Actions</span>,
+                enableSorting: false,
+                enableHiding: false,
+                meta: { className: 'w-32' },
+                cell: ({ row }) => {
+                    const customer = row.original;
+                    const suspended = customer.account_status === 'suspended';
+                    const name = fullName(customer) || customer.email;
+                    return (
+                        <div className="flex items-center gap-1.5" onClick={(event) => event.stopPropagation()}>
+                            <Button asChild variant="outline" size="icon-sm">
+                                <Link to={`/admin/customers/${customer.id}`} aria-label={`View ${name}`} title="View details">
+                                    <Eye aria-hidden="true" />
+                                </Link>
+                            </Button>
+                            <Button type="button" variant="outline" size="icon-sm" aria-label={`${suspended ? 'Activate' : 'Suspend'} ${name}`} title={suspended ? 'Activate' : 'Suspend'} onClick={() => setSuspendTarget(customer)}>
+                                {suspended ? <CheckCircle2 aria-hidden="true" /> : <Ban aria-hidden="true" />}
+                            </Button>
+                            <Button type="button" variant="destructive" size="icon-sm" aria-label={`Delete ${name}`} title="Delete customer" onClick={() => setDeleteTarget(customer)}>
+                                <Trash2 aria-hidden="true" />
+                            </Button>
+                        </div>
+                    );
+                },
+            },
+        ],
+        [formatDisplayPrice]
+    );
+
+    const hasFilters = Boolean(search) || status !== 'all';
+
+    return (
+        <div className="space-y-4">
+            <PageHeader
+                title="Customers"
+                description="Manage customer accounts and relationships."
+                className="pb-0"
+                actions={
+                    <>
+                        <Button type="button" variant="outline" onClick={() => void refreshAll()} disabled={isValidating}>
+                            <RefreshCw className={cn(isValidating && 'animate-spin')} aria-hidden="true" />
+                            Refresh
+                        </Button>
+                        <Button asChild>
+                            <Link to="/admin/customers/new">
+                                <Plus aria-hidden="true" />
+                                Add customer
+                            </Link>
+                        </Button>
+                    </>
+                }
+            />
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <StatCard label="Total customers" value={(allCount?.count ?? 0).toLocaleString()} icon={Users} isLoading={allLoading} />
+                <StatCard label="Active customers" value={(activeCount?.count ?? 0).toLocaleString()} isLoading={activeLoading} />
+            </div>
+
+            <DataTable
+                columns={columns}
+                data={data?.rows ?? []}
+                total={data?.count ?? 0}
+                page={page}
+                pageSize={pageSize}
+                onPageChange={setPage}
+                onPageSizeChange={(next) => {
+                    setPageSize(next);
+                    setPage(1);
+                }}
+                sort={sort}
+                onSortChange={(next) => {
+                    setSort(next);
+                    setPage(1);
+                }}
+                search={search}
+                onSearchChange={(value) => {
+                    setSearch(value);
+                    setPage(1);
+                }}
+                searchPlaceholder="Search name, email or phone"
+                isLoading={isLoading}
+                error={error}
+                onRetry={() => void mutate()}
+                getRowId={(row) => String(row.id)}
+                toolbar={
+                    <Select
+                        value={status}
+                        onValueChange={(value) => {
+                            setStatus(value as AccountStatus | 'all');
+                            setPage(1);
+                        }}
+                    >
+                        <SelectTrigger aria-label="Filter by status" className="w-full sm:w-44">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {STATUS_OPTIONS.map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                    {option.label}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                }
+                emptyState={
+                    hasFilters ? (
+                        <EmptyState icon={Users} title="No customers match your filters" description="Try a different search or clear your filters." />
+                    ) : (
+                        <EmptyState icon={Users} title="No customers yet" description="Customer accounts will appear here once they register." />
+                    )
+                }
+            />
+
+            <SuspendDialog customer={suspendTarget} onClose={() => setSuspendTarget(null)} onDone={() => void refreshAll()} />
+            <DeleteDialog customer={deleteTarget} onClose={() => setDeleteTarget(null)} onDone={() => void refreshAll()} />
+        </div>
+    );
+}

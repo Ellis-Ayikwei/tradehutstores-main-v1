@@ -1,20 +1,16 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import {
-    IconArrowLeft,
-    IconBulb,
-    IconCalendar,
-    IconCurrencyDollar,
-    IconEdit,
-    IconPackage,
-    IconPhoto,
-    IconStar,
-    IconTag,
-    IconTruck,
-} from '@tabler/icons-react';
-import { notifications } from '@mantine/notifications';
+import { AlertTriangle, ArrowLeft, Calendar, DollarSign, Lightbulb, Package, Pencil, Image as ImageIcon, RefreshCw, Star, Tag, Truck, type LucideIcon } from 'lucide-react';
+import { toast } from 'sonner';
+import { Badge } from '@/components/shadcn/badge';
+import { Button } from '@/components/shadcn/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
+import { EmptyState } from '@/components/shadcn/empty-state';
+import { Skeleton } from '@/components/shadcn/skeleton';
+import { Switch } from '@/components/shadcn/switch';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
+import { cn } from '@/lib/utils';
 import axiosInstance from '../../../services/axiosInstance';
-import IconLoader from '../../../components/Icon/IconLoader';
 
 /** Matches backend VARIATION_THEMES labels (subset for display lookup). */
 const VARIATION_THEME_LABELS: Record<string, string> = {
@@ -49,23 +45,15 @@ function formatMoney(amount: unknown, currency: string): string {
     }).format(num(amount));
 }
 
-function DetailCard({
-    title,
-    icon: Icon,
-    children,
-}: {
-    title: string;
-    icon: React.ComponentType<{ className?: string }>;
-    children: React.ReactNode;
-}) {
+function DetailCard({ title, icon: Icon, children }: { title: string; icon: LucideIcon; children: React.ReactNode }) {
     return (
-        <section className="rounded-lg border border-gray-200 bg-white shadow-sm">
-            <header className="flex items-center gap-2 border-b border-gray-100 px-5 py-3">
-                <Icon className="h-5 w-5 text-primary-600" />
-                <h2 className="text-base font-semibold text-gray-900">{title}</h2>
-            </header>
-            <div className="p-5">{children}</div>
-        </section>
+        <Card>
+            <CardHeader className="flex flex-row items-center gap-2 space-y-0 border-b p-4 sm:p-4">
+                <Icon className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                <CardTitle className="text-base">{title}</CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 pt-4 sm:p-4 sm:pt-4">{children}</CardContent>
+        </Card>
     );
 }
 
@@ -73,12 +61,40 @@ function DlGrid({ pairs }: { pairs: [string, React.ReactNode][] }) {
     return (
         <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {pairs.map(([k, v]) => (
-                <div key={k} className="border-b border-gray-50 pb-2 sm:border-0">
-                    <dt className="text-xs font-medium uppercase tracking-wide text-gray-500">{k}</dt>
-                    <dd className="mt-0.5 text-sm text-gray-900">{v ?? '—'}</dd>
+                <div key={k} className="min-w-0">
+                    <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{k}</dt>
+                    <dd className="mt-0.5 break-words text-sm text-foreground">{v ?? '-'}</dd>
                 </div>
             ))}
         </dl>
+    );
+}
+
+function MiniStat({ icon: Icon, value, label }: { icon: LucideIcon; value: React.ReactNode; label: string }) {
+    return (
+        <Card>
+            <CardContent className="p-4 pt-4 sm:p-4 sm:pt-4">
+                <Icon className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                <p className="mt-2 truncate text-xl font-bold text-foreground">{value}</p>
+                <p className="text-xs text-muted-foreground">{label}</p>
+            </CardContent>
+        </Card>
+    );
+}
+
+function DetailSkeleton() {
+    return (
+        <div className="space-y-4" aria-busy="true">
+            <Skeleton className="h-8 w-64" />
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+                <Skeleton className="aspect-square w-full lg:col-span-4" />
+                <div className="space-y-4 lg:col-span-8">
+                    <Skeleton className="h-24 w-full" />
+                    <Skeleton className="h-40 w-full" />
+                    <Skeleton className="h-40 w-full" />
+                </div>
+            </div>
+        </div>
     );
 }
 
@@ -87,6 +103,7 @@ const ProductDetail: React.FC = () => {
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState(true);
+    const [loadError, setLoadError] = useState(false);
     const [product, setProduct] = useState<Record<string, unknown> | null>(null);
     const [variants, setVariants] = useState<Record<string, unknown>[]>([]);
     const [images, setImages] = useState<Record<string, unknown>[]>([]);
@@ -107,6 +124,7 @@ const ProductDetail: React.FC = () => {
     const loadAll = useCallback(async () => {
         if (!id) return;
         setLoading(true);
+        setLoadError(false);
         try {
             const pRes = await axiosInstance.get(`/products/${id}/`);
             const pdata = pRes?.data;
@@ -138,28 +156,19 @@ const ProductDetail: React.FC = () => {
             setInventoryRows(arrays[4]);
             setReviews(arrays[5]);
 
-            const hadFailure = settled.some((r) => r.status === 'rejected');
-            if (hadFailure) {
-                notifications.show({
-                    title: 'Partial load',
-                    message: 'Some related data (reviews, inventory, etc.) failed to load. Core product is shown.',
-                    color: 'yellow',
-                });
+            if (settled.some((r) => r.status === 'rejected')) {
+                toast.warning('Some related data (reviews, inventory, etc.) failed to load. Core product is shown.');
             }
         } catch {
-            notifications.show({
-                title: 'Error',
-                message: 'Failed to load product',
-                color: 'red',
-            });
-            navigate('/admin/products/list');
+            toast.error('Failed to load product');
+            setLoadError(true);
         } finally {
             setLoading(false);
         }
-    }, [id, navigate]);
+    }, [id]);
 
     useEffect(() => {
-        loadAll();
+        void loadAll();
     }, [loadAll]);
 
     const currency = String(product?.pricing_currency ?? 'USD').toUpperCase();
@@ -180,13 +189,9 @@ const ProductDetail: React.FC = () => {
         try {
             await axiosInstance.patch(`/products/${id}/`, { [field]: value });
             setProduct({ ...product, [field]: value });
-            notifications.show({ title: 'Saved', message: 'Product updated.', color: 'green' });
+            toast.success('Product updated.');
         } catch {
-            notifications.show({
-                title: 'Error',
-                message: `Could not update ${field}`,
-                color: 'red',
-            });
+            toast.error(`Could not update ${field}`);
         } finally {
             setSavingQuick(false);
         }
@@ -194,403 +199,327 @@ const ProductDetail: React.FC = () => {
 
     const themeLabel = useMemo(() => {
         const raw = product?.variation_theme != null ? String(product.variation_theme) : '';
-        return VARIATION_THEME_LABELS[raw] || raw || '—';
+        return VARIATION_THEME_LABELS[raw] || raw || '-';
     }, [product?.variation_theme]);
 
     if (!id) {
         return null;
     }
 
-    if (loading || !product) {
+    if (loading && !product) {
+        return <DetailSkeleton />;
+    }
+
+    if (loadError || !product) {
         return (
-            <div className="flex min-h-screen items-center justify-center">
-                <IconLoader className="h-10 w-10 animate-spin" />
-            </div>
+            <Card>
+                <EmptyState
+                    icon={AlertTriangle}
+                    title="Could not load this product"
+                    description="It may have been removed, or the request failed."
+                    action={
+                        <div className="flex flex-wrap justify-center gap-2">
+                            <Button type="button" variant="outline" size="sm" onClick={() => void loadAll()}>
+                                <RefreshCw />
+                                Try again
+                            </Button>
+                            <Button type="button" size="sm" onClick={() => navigate('/admin/products/list')}>
+                                Back to products
+                            </Button>
+                        </div>
+                    }
+                />
+            </Card>
         );
     }
 
     const pname = product.name != null ? String(product.name) : 'Product';
     const skuLine = product.primary_sku != null ? String(product.primary_sku) : null;
+    const dash = (v: unknown) => (v != null && String(v) !== '' ? String(v) : '-');
 
     return (
-        <div className="space-y-6">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div className="flex items-start gap-3">
-                    <button
-                        type="button"
-                        onClick={() => navigate('/admin/products/list')}
-                        className="mt-1 rounded-lg p-2 transition-colors hover:bg-gray-100"
-                        title="Back"
-                    >
-                        <IconArrowLeft className="h-5 w-5 text-gray-700" />
-                    </button>
+        <div className="space-y-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="flex min-w-0 items-start gap-3">
+                    <Button type="button" variant="ghost" size="icon" onClick={() => navigate('/admin/products/list')} aria-label="Back to products">
+                        <ArrowLeft />
+                    </Button>
                     <div className="min-w-0">
-                        <nav className="text-xs text-gray-500">
-                            <Link to="/admin/products/list" className="hover:text-gray-700">
+                        <nav className="text-xs text-muted-foreground" aria-label="Breadcrumb">
+                            <Link to="/admin/products/list" className="hover:text-foreground hover:underline">
                                 Products
                             </Link>{' '}
-                            /{' '}
-                            <span className="text-gray-800">{pname}</span>
+                            / <span className="text-foreground">{pname}</span>
                         </nav>
-                        <h1 className="mt-1 text-2xl font-bold tracking-tight text-gray-900">{pname}</h1>
-                        {skuLine && <p className="text-sm text-gray-600">SKU: {skuLine}</p>}
+                        <h1 className="mt-1 break-words text-xl font-bold tracking-tight text-foreground sm:text-2xl">{pname}</h1>
+                        {skuLine ? <p className="text-sm text-muted-foreground">SKU: {skuLine}</p> : null}
                         <div className="mt-2 flex flex-wrap gap-2">
-                            {product.status != null && (
-                                <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-semibold uppercase text-gray-700">
-                                    {String(product.status)}
-                                </span>
-                            )}
-                            {product.available ? (
-                                <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-800">
-                                    Available
-                                </span>
-                            ) : (
-                                <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-800">
-                                    Not available
-                                </span>
-                            )}
-                            {product.is_product_of_the_month ? (
-                                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-900">
-                                    Product of the month
-                                </span>
-                            ) : null}
+                            {product.status != null ? <Badge variant="secondary" className="uppercase">{String(product.status)}</Badge> : null}
+                            {product.available ? <Badge variant="success">Available</Badge> : <Badge variant="destructive">Not available</Badge>}
+                            {product.is_product_of_the_month ? <Badge variant="warning">Product of the month</Badge> : null}
                         </div>
                     </div>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                    <Link
-                        to={`/admin/products/${id}/edit`}
-                        className="inline-flex items-center gap-2 rounded-lg bg-primary-500 px-4 py-2 text-sm font-medium text-white hover:bg-primary-600"
-                    >
-                        <IconEdit className="h-4 w-4" />
-                        Edit (form)
-                    </Link>
-                    <button
-                        type="button"
-                        onClick={() => loadAll()}
-                        className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                    >
+                    <Button asChild size="sm">
+                        <Link to={`/admin/products/${id}/edit`}>
+                            <Pencil />
+                            Edit
+                        </Link>
+                    </Button>
+                    <Button type="button" variant="outline" size="sm" onClick={() => void loadAll()} disabled={loading}>
+                        <RefreshCw className={cn(loading && 'animate-spin')} />
                         Refresh
-                    </button>
+                    </Button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-                <div className="lg:col-span-4">
-                    <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-                        <div className="aspect-square bg-gray-100">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+                <div className="space-y-4 lg:col-span-4">
+                    <Card className="overflow-hidden">
+                        <div className="aspect-square bg-muted">
                             {product.main_product_image ? (
-                                <img
-                                    src={String(product.main_product_image)}
-                                    alt={pname}
-                                    className="h-full w-full object-contain"
-                                />
+                                <img src={String(product.main_product_image)} alt={pname} className="h-full w-full object-contain" />
                             ) : (
-                                <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-gray-400">
-                                    <IconPackage className="h-12 w-12" />
+                                <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-muted-foreground">
+                                    <Package className="h-12 w-12" aria-hidden="true" />
                                     <span className="text-sm">No hero image</span>
                                 </div>
                             )}
                         </div>
-                    </div>
+                    </Card>
 
-                    <div className="mt-4 rounded-lg border border-blue-100 bg-blue-50 p-4">
-                        <h3 className="text-sm font-semibold text-blue-900">Quick flags</h3>
-                        <p className="mt-1 text-xs text-blue-800">
-                            Same booleans as Django admin “Flags”; saved with PATCH.
-                        </p>
-                        <ul className="mt-4 space-y-3">
-                            {(
-                                [
-                                    ['Available', 'available'],
-                                    ['Spare part', 'is_spare_part'],
-                                    ['Requires installation', 'requires_installation'],
-                                    ['Product of the month', 'is_product_of_the_month'],
-                                ] as const
-                            ).map(([label, field]) => (
-                                <li key={field} className="flex items-center justify-between gap-2">
-                                    <span className="text-sm text-gray-800">{label}</span>
-                                    <input
-                                        type="checkbox"
-                                        className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
-                                        checked={quickFlags[field]}
-                                        disabled={savingQuick}
-                                        onChange={(e) => patchQuick(field, e.target.checked)}
-                                    />
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                    <Card>
+                        <CardHeader className="space-y-1 p-4 pb-0 sm:p-4 sm:pb-0">
+                            <CardTitle className="text-sm">Quick flags</CardTitle>
+                            <p className="text-xs text-muted-foreground">Changes save immediately.</p>
+                        </CardHeader>
+                        <CardContent className="p-4 pt-3 sm:p-4 sm:pt-3">
+                            <ul className="space-y-3">
+                                {(
+                                    [
+                                        ['Available', 'available'],
+                                        ['Spare part', 'is_spare_part'],
+                                        ['Requires installation', 'requires_installation'],
+                                        ['Product of the month', 'is_product_of_the_month'],
+                                    ] as const
+                                ).map(([label, field]) => (
+                                    <li key={field} className="flex items-center justify-between gap-2">
+                                        <span className="text-sm text-foreground">{label}</span>
+                                        <Switch checked={quickFlags[field]} disabled={savingQuick} onCheckedChange={(checked) => void patchQuick(field, checked)} aria-label={label} />
+                                    </li>
+                                ))}
+                            </ul>
+                        </CardContent>
+                    </Card>
                 </div>
 
-                <div className="lg:col-span-8 space-y-6">
+                <div className="space-y-4 lg:col-span-8">
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                        <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-                            <IconStar className="h-5 w-5 text-amber-500" />
-                            <p className="mt-2 text-xl font-bold text-gray-900">
-                                {(num(product.average_rating) || 0).toFixed(1)}
-                            </p>
-                            <p className="text-xs text-gray-500">{num(product.total_reviews)} reviews</p>
-                        </div>
-                        <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-                            <IconTag className="h-5 w-5 text-primary-500" />
-                            <p className="mt-2 text-xl font-bold text-gray-900">
-                                {product.primary_variant_price != null
-                                    ? formatMoney(product.primary_variant_price, currency)
-                                    : '—'}
-                            </p>
-                            <p className="text-xs text-gray-500">Primary variant</p>
-                        </div>
-                        <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-                            <IconTruck className="h-5 w-5 text-slate-500" />
-                            <p className="mt-2 text-xl font-bold text-gray-900">{num(product.variant_stock_total)}</p>
-                            <p className="text-xs text-gray-500">Variant qty total</p>
-                        </div>
-                        <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-                            <IconCurrencyDollar className="h-5 w-5 text-emerald-500" />
-                            <p className="mt-2 text-xl font-bold text-gray-900">
-                                {num(product.discount_percentage)}%
-                            </p>
-                            <p className="text-xs text-gray-500">Catalog discount</p>
-                        </div>
+                        <MiniStat icon={Star} value={(num(product.average_rating) || 0).toFixed(1)} label={`${num(product.total_reviews)} reviews`} />
+                        <MiniStat icon={Tag} value={product.primary_variant_price != null ? formatMoney(product.primary_variant_price, currency) : '-'} label="Primary variant" />
+                        <MiniStat icon={Truck} value={num(product.variant_stock_total)} label="Variant qty total" />
+                        <MiniStat icon={DollarSign} value={`${num(product.discount_percentage)}%`} label="Catalog discount" />
                     </div>
 
-                    <DetailCard title="Variations & default" icon={IconPackage}>
+                    <DetailCard title="Variations & default" icon={Package}>
                         <DlGrid
                             pairs={[
                                 ['Variation theme', themeLabel],
-                                ['Default variant id', product.default_variant != null ? String(product.default_variant) : '—'],
+                                ['Default variant id', dash(product.default_variant)],
                                 ['Variants', String(variants.length)],
                             ]}
                         />
                     </DetailCard>
 
-                    <DetailCard title="Basic information" icon={IconTag}>
+                    <DetailCard title="Basic information" icon={Tag}>
                         <DlGrid
                             pairs={[
-                                ['Slug', product.slug != null ? String(product.slug) : '—'],
-                                ['Keywords', product.keywords != null ? String(product.keywords) : '—'],
-                                [
-                                    'Category',
-                                    product.category_name != null
-                                        ? String(product.category_name)
-                                        : String(product.category ?? '—'),
-                                ],
-                                [
-                                    'Sub-category',
-                                    product.sub_category_name != null
-                                        ? String(product.sub_category_name)
-                                        : String(product.sub_category ?? '—'),
-                                ],
-                                [
-                                    'Brand',
-                                    product.brand_name != null
-                                        ? String(product.brand_name)
-                                        : String(product.brand ?? '—'),
-                                ],
-                                ['Condition', product.condition != null ? String(product.condition) : '—'],
-                                ['Description', (
-                                    <p className="whitespace-pre-wrap text-sm leading-relaxed">
-                                        {product.description != null ? String(product.description) : '—'}
-                                    </p>
-                                )],
-                                ['Thin (THIN)', product.thin != null ? String(product.thin) : '—'],
+                                ['Slug', dash(product.slug)],
+                                ['Keywords', dash(product.keywords)],
+                                ['Category', product.category_name != null ? String(product.category_name) : dash(product.category)],
+                                ['Sub-category', product.sub_category_name != null ? String(product.sub_category_name) : dash(product.sub_category)],
+                                ['Brand', product.brand_name != null ? String(product.brand_name) : dash(product.brand)],
+                                ['Condition', dash(product.condition)],
+                                ['Thin (THIN)', dash(product.thin)],
+                                ['Description', <p key="d" className="whitespace-pre-wrap leading-relaxed">{dash(product.description)}</p>],
                             ]}
                         />
                     </DetailCard>
 
-                    <DetailCard title="Commercial & inventory (IDs)" icon={IconCurrencyDollar}>
+                    <DetailCard title="Commercial & inventory (IDs)" icon={DollarSign}>
                         <DlGrid
                             pairs={[
-                                ['Seller profile', product.seller_profile != null ? String(product.seller_profile) : '—'],
-                                ['Legacy seller user', product.seller != null ? String(product.seller) : '—'],
-                                ['Store', product.store != null ? String(product.store) : '—'],
-                                ['Min purchase qty', product.min_amount != null ? String(product.min_amount) : '—'],
-                                ['Inventory level (rollup)', product.inventory_level != null ? String(product.inventory_level) : '—'],
+                                ['Seller profile', dash(product.seller_profile)],
+                                ['Legacy seller user', dash(product.seller)],
+                                ['Store', dash(product.store)],
+                                ['Min purchase qty', dash(product.min_amount)],
+                                ['Inventory level (rollup)', dash(product.inventory_level)],
                             ]}
                         />
                     </DetailCard>
 
-                    <DetailCard title="SEO" icon={IconBulb}>
+                    <DetailCard title="SEO" icon={Lightbulb}>
                         <DlGrid
                             pairs={[
-                                ['Meta title', product.meta_title != null ? String(product.meta_title) : '—'],
-                                [
-                                    'Meta description',
-                                    product.meta_description != null ? String(product.meta_description) : '—',
-                                ],
+                                ['Meta title', dash(product.meta_title)],
+                                ['Meta description', dash(product.meta_description)],
                             ]}
                         />
                     </DetailCard>
 
-                    <DetailCard title={`Variants (${variants.length})`} icon={IconTag}>
-                        <div className="-mx-2 overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200 text-sm">
-                                <thead className="bg-gray-50 text-left text-xs font-semibold uppercase text-gray-500">
-                                    <tr>
-                                        <th className="px-3 py-2">SKU</th>
-                                        <th className="px-3 py-2">{currency}</th>
-                                        <th className="px-3 py-2">Qty</th>
-                                        <th className="px-3 py-2">Min buy</th>
-                                        <th className="px-3 py-2 hidden md:table-cell">Attributes</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-100 bg-white">
-                                    {variants.map((row) => {
-                                        const attrs = Array.isArray(row.attribute_values)
-                                            ? row.attribute_values
-                                            : [];
-                                        const summary = attrs
-                                            .map((av: Record<string, unknown>) =>
-                                                [av.attribute_name, av.value_name].filter(Boolean).join(': ')
-                                            )
-                                            .join(' · ');
-                                        return (
-                                            <tr key={String(row.id ?? row.sku)}>
-                                                <td className="max-w-[10rem] truncate px-3 py-2 font-mono text-xs">
-                                                    {String(row.sku)}
-                                                </td>
-                                                <td className="px-3 py-2">{formatMoney(row.price, currency)}</td>
-                                                <td className="px-3 py-2">{num(row.quantity)}</td>
-                                                <td className="px-3 py-2">{num(row.min_buy_amount)}</td>
-                                                <td className="hidden max-w-[20rem] px-3 py-2 text-xs text-gray-600 md:table-cell">
-                                                    {summary || '—'}
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                    {variants.length === 0 && (
-                                        <tr>
-                                            <td colSpan={5} className="px-3 py-8 text-center text-gray-500">
-                                                No variants returned.
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-                    </DetailCard>
-
-                    <DetailCard title={`Gallery images (${images.length})`} icon={IconPhoto}>
-                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-                            {images.map((row) => {
-                                const img = typeof row.image === 'string' ? row.image : null;
-                                const main = Boolean(row.is_main);
-                                return (
-                                    <div
-                                        key={String(row.id)}
-                                        className={`overflow-hidden rounded-md border bg-gray-50 ${main ? 'ring-2 ring-primary-400' : 'border-gray-200'}`}
-                                    >
-                                        <div className="aspect-square">
-                                            {img ? (
-                                                <img src={img} alt="" className="h-full w-full object-cover" />
-                                            ) : (
-                                                <div className="flex h-full items-center justify-center text-xs text-gray-400">
-                                                    No file
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div className="flex items-center justify-between px-2 py-1 text-[10px] uppercase text-gray-600">
-                                            <span>{String(row.image_type ?? '')}</span>
-                                            {main && <span className="font-bold text-primary-600">Main</span>}
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                            {images.length === 0 && (
-                                <p className="text-sm text-gray-500">No product-level gallery rows.</p>
-                            )}
-                        </div>
-                    </DetailCard>
-
-                    <DetailCard title={`Key features (${keyFeatures.length})`} icon={IconBulb}>
-                        <ul className="list-inside list-disc space-y-1 text-sm">
-                            {keyFeatures.map((f) => (
-                                <li key={String(f.id)}>{f.name != null ? String(f.name) : '—'}</li>
-                            ))}
-                            {keyFeatures.length === 0 && <li className="list-none text-gray-500">None recorded.</li>}
-                        </ul>
-                    </DetailCard>
-
-                    <DetailCard title={`Inventory rows (${inventoryRows.length})`} icon={IconCalendar}>
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200 text-sm">
-                                <thead className="bg-gray-50 text-left text-xs font-semibold uppercase text-gray-500">
-                                    <tr>
-                                        <th className="px-3 py-2">Qty in stock</th>
-                                        <th className="px-3 py-2">Restock</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-100">
-                                    {inventoryRows.map((row) => (
-                                        <tr key={String(row.id)}>
-                                            <td className="px-3 py-2">{num(row.quantity_in_stock)}</td>
-                                            <td className="px-3 py-2 text-xs">{String(row.restock_date ?? '—')}</td>
-                                        </tr>
-                                    ))}
-                                    {inventoryRows.length === 0 && (
-                                        <tr>
-                                            <td colSpan={2} className="px-3 py-6 text-gray-500">
-                                                No standalone inventory rows.
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-                    </DetailCard>
-
-                    <DetailCard title={`Scheduled discounts (${discounts.length})`} icon={IconCurrencyDollar}>
-                        <div className="space-y-3">
-                            {discounts.map((d) => (
-                                <div key={String(d.id)} className="rounded border border-gray-100 bg-gray-50 p-3 text-sm">
-                                    <p className="font-semibold text-gray-900">
-                                        {formatMoney(d.new_price, currency)} new price
-                                    </p>
-                                    <p className="text-xs text-gray-600">
-                                        {String(d.discount_start ?? '')} → {String(d.discount_end ?? '')}
-                                    </p>
-                                    <p className="mt-1 text-[11px] text-gray-400">Discount link: {String(d.discount ?? '—')}</p>
+                    <DetailCard title={`Variants (${variants.length})`} icon={Tag}>
+                        {variants.length === 0 ? (
+                            <p className="text-sm text-muted-foreground">No variants returned.</p>
+                        ) : (
+                            <>
+                                <div className="hidden md:block">
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>SKU</TableHead>
+                                                <TableHead>Price ({currency})</TableHead>
+                                                <TableHead>Qty</TableHead>
+                                                <TableHead>Min buy</TableHead>
+                                                <TableHead>Attributes</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {variants.map((row) => {
+                                                const summary = variantSummary(row);
+                                                return (
+                                                    <TableRow key={String(row.id ?? row.sku)}>
+                                                        <TableCell className="max-w-[10rem] truncate font-mono text-xs">{String(row.sku)}</TableCell>
+                                                        <TableCell className="tabular-nums">{formatMoney(row.price, currency)}</TableCell>
+                                                        <TableCell className="tabular-nums">{num(row.quantity)}</TableCell>
+                                                        <TableCell className="tabular-nums">{num(row.min_buy_amount)}</TableCell>
+                                                        <TableCell className="max-w-[20rem] text-xs text-muted-foreground">{summary || '-'}</TableCell>
+                                                    </TableRow>
+                                                );
+                                            })}
+                                        </TableBody>
+                                    </Table>
                                 </div>
-                            ))}
-                            {discounts.length === 0 && (
-                                <p className="text-sm text-gray-500">No product discount windows.</p>
-                            )}
-                        </div>
+                                <div className="space-y-2 md:hidden">
+                                    {variants.map((row) => (
+                                        <div key={String(row.id ?? row.sku)} className="rounded-xl border p-3 text-sm">
+                                            <p className="break-all font-mono text-xs text-foreground">{String(row.sku)}</p>
+                                            <p className="mt-1 text-foreground">
+                                                <span className="font-semibold tabular-nums">{formatMoney(row.price, currency)}</span>
+                                                <span className="text-muted-foreground"> · Qty {num(row.quantity)} · Min buy {num(row.min_buy_amount)}</span>
+                                            </p>
+                                            {variantSummary(row) ? <p className="mt-1 text-xs text-muted-foreground">{variantSummary(row)}</p> : null}
+                                        </div>
+                                    ))}
+                                </div>
+                            </>
+                        )}
                     </DetailCard>
 
-                    <DetailCard title={`Buyer reviews (${reviews.length})`} icon={IconStar}>
-                        <ul className="space-y-3">
-                            {reviews.slice(0, 20).map((r) => (
-                                <li key={String(r.id)} className="rounded border border-gray-100 bg-white p-3 text-sm">
-                                    <div className="flex items-center justify-between gap-2">
-                                        <span className="font-medium text-gray-900">
-                                            Rating {num(r.rating).toFixed(1)}
-                                            {r.verified ? (
-                                                <span className="ml-2 rounded bg-green-50 px-1.5 py-0.5 text-[10px] font-semibold text-green-700">
-                                                    Verified
-                                                </span>
-                                            ) : null}
-                                        </span>
-                                        <span className="text-xs text-gray-500">{String(r.created_at ?? '')}</span>
+                    <DetailCard title={`Gallery images (${images.length})`} icon={ImageIcon}>
+                        {images.length === 0 ? (
+                            <p className="text-sm text-muted-foreground">No product-level gallery rows.</p>
+                        ) : (
+                            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+                                {images.map((row) => {
+                                    const img = typeof row.image === 'string' ? row.image : null;
+                                    const main = Boolean(row.is_main);
+                                    return (
+                                        <div key={String(row.id)} className={cn('overflow-hidden rounded-xl border bg-muted', main && 'border-primary')}>
+                                            <div className="aspect-square">
+                                                {img ? <img src={img} alt="" className="h-full w-full object-cover" loading="lazy" /> : <div className="flex h-full items-center justify-center text-xs text-muted-foreground">No file</div>}
+                                            </div>
+                                            <div className="flex items-center justify-between px-2 py-1 text-[10px] uppercase text-muted-foreground">
+                                                <span>{String(row.image_type ?? '')}</span>
+                                                {main ? <span className="font-bold text-foreground">Main</span> : null}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </DetailCard>
+
+                    <DetailCard title={`Key features (${keyFeatures.length})`} icon={Lightbulb}>
+                        {keyFeatures.length === 0 ? (
+                            <p className="text-sm text-muted-foreground">None recorded.</p>
+                        ) : (
+                            <ul className="list-inside list-disc space-y-1 text-sm text-foreground">
+                                {keyFeatures.map((f) => (
+                                    <li key={String(f.id)}>{f.name != null ? String(f.name) : '-'}</li>
+                                ))}
+                            </ul>
+                        )}
+                    </DetailCard>
+
+                    <DetailCard title={`Inventory rows (${inventoryRows.length})`} icon={Calendar}>
+                        {inventoryRows.length === 0 ? (
+                            <p className="text-sm text-muted-foreground">No standalone inventory rows.</p>
+                        ) : (
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Qty in stock</TableHead>
+                                        <TableHead>Restock</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {inventoryRows.map((row) => (
+                                        <TableRow key={String(row.id)}>
+                                            <TableCell className="tabular-nums">{num(row.quantity_in_stock)}</TableCell>
+                                            <TableCell className="text-xs">{String(row.restock_date ?? '-')}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        )}
+                    </DetailCard>
+
+                    <DetailCard title={`Scheduled discounts (${discounts.length})`} icon={DollarSign}>
+                        {discounts.length === 0 ? (
+                            <p className="text-sm text-muted-foreground">No product discount windows.</p>
+                        ) : (
+                            <div className="space-y-3">
+                                {discounts.map((d) => (
+                                    <div key={String(d.id)} className="rounded-xl border bg-muted p-3 text-sm">
+                                        <p className="font-semibold text-foreground">{formatMoney(d.new_price, currency)} new price</p>
+                                        <p className="text-xs text-muted-foreground">
+                                            {String(d.discount_start ?? '')} to {String(d.discount_end ?? '')}
+                                        </p>
+                                        <p className="mt-1 text-[11px] text-muted-foreground">Discount link: {String(d.discount ?? '-')}</p>
                                     </div>
-                                    <p className="mt-1 text-gray-700">{String(r.comment ?? '')}</p>
-                                </li>
-                            ))}
-                            {reviews.length === 0 && (
-                                <li className="list-none text-sm text-gray-500">No public reviews matched.</li>
-                            )}
-                            {reviews.length > 20 && (
-                                <p className="text-xs text-gray-500">Showing 20 newest.</p>
-                            )}
-                        </ul>
+                                ))}
+                            </div>
+                        )}
                     </DetailCard>
 
-                    <DetailCard title="Audit" icon={IconCalendar}>
+                    <DetailCard title={`Buyer reviews (${reviews.length})`} icon={Star}>
+                        {reviews.length === 0 ? (
+                            <p className="text-sm text-muted-foreground">No public reviews matched.</p>
+                        ) : (
+                            <ul className="space-y-3">
+                                {reviews.slice(0, 20).map((r) => (
+                                    <li key={String(r.id)} className="rounded-xl border p-3 text-sm">
+                                        <div className="flex items-center justify-between gap-2">
+                                            <span className="flex items-center gap-2 font-medium text-foreground">
+                                                Rating {num(r.rating).toFixed(1)}
+                                                {r.verified ? <Badge variant="success">Verified</Badge> : null}
+                                            </span>
+                                            <span className="text-xs text-muted-foreground">{String(r.created_at ?? '')}</span>
+                                        </div>
+                                        <p className="mt-1 text-foreground">{String(r.comment ?? '')}</p>
+                                    </li>
+                                ))}
+                                {reviews.length > 20 ? <p className="text-xs text-muted-foreground">Showing 20 newest.</p> : null}
+                            </ul>
+                        )}
+                    </DetailCard>
+
+                    <DetailCard title="Audit" icon={Calendar}>
                         <DlGrid
                             pairs={[
-                                ['Created', product.created_at != null ? String(product.created_at) : '—'],
-                                ['Updated', product.updated_at != null ? String(product.updated_at) : '—'],
+                                ['Created', dash(product.created_at)],
+                                ['Updated', dash(product.updated_at)],
                             ]}
                         />
                     </DetailCard>
@@ -599,5 +528,12 @@ const ProductDetail: React.FC = () => {
         </div>
     );
 };
+
+function variantSummary(row: Record<string, unknown>): string {
+    const attrs = Array.isArray(row.attribute_values) ? row.attribute_values : [];
+    return attrs
+        .map((av: Record<string, unknown>) => [av.attribute_name, av.value_name].filter(Boolean).join(': '))
+        .join(' · ');
+}
 
 export default ProductDetail;

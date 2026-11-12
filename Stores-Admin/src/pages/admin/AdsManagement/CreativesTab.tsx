@@ -1,17 +1,15 @@
-import {
-    IconCloudUpload,
-    IconCopy,
-    IconDeviceDesktop,
-    IconDeviceMobile,
-    IconEdit,
-    IconExternalLink,
-    IconPhoto,
-    IconPlus,
-    IconRefresh,
-    IconSparkles,
-    IconTrash,
-} from '@tabler/icons-react';
+import { CloudUpload, Copy, ExternalLink, Image as ImageIcon, Monitor, Pencil, Plus, RefreshCw, Smartphone, Sparkles, Trash2 } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { toast } from 'sonner';
+import { Badge } from '@/components/shadcn/badge';
+import { Button } from '@/components/shadcn/button';
+import { Card } from '@/components/shadcn/card';
+import { Input } from '@/components/shadcn/input';
+import { Label } from '@/components/shadcn/label';
+import { Switch } from '@/components/shadcn/switch';
+import { Tabs, TabsList, TabsTrigger } from '@/components/shadcn/tabs';
+import { Textarea } from '@/components/shadcn/textarea';
+import { cn } from '@/lib/utils';
 import {
     CREATIVE_FORMATS,
     Campaign,
@@ -28,14 +26,19 @@ import {
     ACCENT_PRESETS,
     Alert,
     BACKGROUND_PRESETS,
+    CardGridSkeleton,
+    CheckRow,
     ColorSwatchPicker,
+    ConfirmDialog,
     EmptyState,
     Field,
+    FormSection,
+    FormSheet,
     LivePreview,
-    ModalShell,
+    SimpleSelect,
     TEXT_PRESETS,
+    Toolbar,
     creativeAsPreview,
-    inputCls,
 } from './_shared';
 
 interface DraftState {
@@ -88,19 +91,25 @@ interface Props {
     onChange?: () => void;
 }
 
+const ALL = '';
+
 const CreativesTab: React.FC<Props> = ({ onChange }) => {
     const [rows, setRows] = useState<Creative[]>([]);
     const [campaigns, setCampaigns] = useState<Campaign[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [formError, setFormError] = useState<string | null>(null);
     const [search, setSearch] = useState('');
-    const [campaignFilter, setCampaignFilter] = useState<string>('');
+    const [campaignFilter, setCampaignFilter] = useState<string>(ALL);
 
     const [editingId, setEditingId] = useState<string | null>(null);
     const [draft, setDraft] = useState<DraftState>(emptyDraft);
     const [open, setOpen] = useState(false);
     const [saving, setSaving] = useState(false);
     const [previewVariant, setPreviewVariant] = useState<'banner' | 'topbar' | 'modal'>('banner');
+
+    const [toDelete, setToDelete] = useState<Creative | null>(null);
+    const [deleting, setDeleting] = useState(false);
 
     const desktopRef = useRef<HTMLInputElement>(null);
     const mobileRef = useRef<HTMLInputElement>(null);
@@ -109,10 +118,7 @@ const CreativesTab: React.FC<Props> = ({ onChange }) => {
         try {
             setLoading(true);
             setError(null);
-            const [creatives, camps] = await Promise.all([
-                fetchCreatives(campaignFilter || undefined),
-                fetchCampaigns(),
-            ]);
+            const [creatives, camps] = await Promise.all([fetchCreatives(campaignFilter || undefined), fetchCampaigns()]);
             setRows(creatives);
             setCampaigns(camps);
         } catch (e) {
@@ -129,14 +135,15 @@ const CreativesTab: React.FC<Props> = ({ onChange }) => {
     const filtered = useMemo(() => {
         const s = search.trim().toLowerCase();
         if (!s) return rows;
-        return rows.filter(
-            (r) => r.name.toLowerCase().includes(s) || r.headline.toLowerCase().includes(s)
-        );
+        return rows.filter((r) => r.name.toLowerCase().includes(s) || r.headline.toLowerCase().includes(s));
     }, [rows, search]);
+
+    const campaignOptions = useMemo(() => campaigns.map((c) => ({ value: c.id, label: c.name })), [campaigns]);
 
     const openCreate = () => {
         setEditingId(null);
         setDraft(emptyDraft(campaignFilter));
+        setFormError(null);
         setOpen(true);
     };
 
@@ -163,6 +170,7 @@ const CreativesTab: React.FC<Props> = ({ onChange }) => {
             accent_color: row.accent_color,
             alt_text: row.alt_text,
         });
+        setFormError(null);
         setOpen(true);
     };
 
@@ -204,36 +212,42 @@ const CreativesTab: React.FC<Props> = ({ onChange }) => {
 
     const save = async () => {
         if (!draft.campaign || !draft.name.trim()) {
-            setError('Campaign and creative name are required.');
+            setFormError('Campaign and creative name are required.');
             return;
         }
         try {
             setSaving(true);
-            setError(null);
+            setFormError(null);
             const payload = buildPayload();
             if (editingId) {
                 await patchCreative(editingId, payload);
             } else {
                 await createCreative(payload);
             }
+            toast.success(editingId ? 'Creative saved' : 'Creative created');
             setOpen(false);
             await load();
             onChange?.();
         } catch (e) {
-            setError(adsAdminErrorMessage(e));
+            setFormError(adsAdminErrorMessage(e));
         } finally {
             setSaving(false);
         }
     };
 
-    const remove = async (row: Creative) => {
-        if (!confirm(`Delete creative "${row.name}"?`)) return;
+    const confirmRemove = async () => {
+        if (!toDelete) return;
         try {
-            await deleteCreative(row.id);
+            setDeleting(true);
+            await deleteCreative(toDelete.id);
+            toast.success('Creative deleted');
+            setToDelete(null);
             await load();
             onChange?.();
         } catch (e) {
-            setError(adsAdminErrorMessage(e));
+            toast.error(adsAdminErrorMessage(e));
+        } finally {
+            setDeleting(false);
         }
     };
 
@@ -256,430 +270,255 @@ const CreativesTab: React.FC<Props> = ({ onChange }) => {
                 accent_color: row.accent_color,
                 alt_text: row.alt_text,
             });
+            toast.success('Creative duplicated');
             await load();
             onChange?.();
         } catch (e) {
-            setError(adsAdminErrorMessage(e));
+            toast.error(adsAdminErrorMessage(e));
         }
     };
 
+    const setField = <K extends keyof DraftState>(key: K, value: DraftState[K]) => setDraft((d) => ({ ...d, [key]: value }));
+
     return (
         <div className="space-y-4">
-            <div className="flex items-center gap-3 flex-wrap rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-3">
-                <input
-                    placeholder="Search by name or headline…"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className={`${inputCls} max-w-sm`}
-                />
-                <select
+            <Toolbar>
+                <Input placeholder="Search by name or headline…" value={search} onChange={(e) => setSearch(e.target.value)} className="sm:max-w-sm" aria-label="Search creatives" />
+                <SimpleSelect
                     value={campaignFilter}
-                    onChange={(e) => setCampaignFilter(e.target.value)}
-                    className={`${inputCls} max-w-[260px]`}
-                >
-                    <option value="">All campaigns</option>
-                    {campaigns.map((c) => (
-                        <option key={c.id} value={c.id}>
-                            {c.name}
-                        </option>
-                    ))}
-                </select>
-                <button
-                    type="button"
-                    onClick={load}
-                    className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold border border-gray-300 dark:border-gray-700 text-on-surface-variant hover:bg-gray-100 dark:hover:bg-gray-800"
-                >
-                    <IconRefresh size={16} /> Refresh
-                </button>
-                <button
-                    type="button"
-                    onClick={openCreate}
-                    className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary-hover shadow"
-                >
-                    <IconPlus size={16} /> New creative
-                </button>
-            </div>
+                    onChange={setCampaignFilter}
+                    options={[{ value: ALL, label: 'All campaigns' }, ...campaignOptions]}
+                    className="sm:w-64"
+                />
+                <div className="flex gap-2 sm:ml-auto">
+                    <Button type="button" variant="outline" onClick={load} className="flex-1 sm:flex-none">
+                        <RefreshCw /> Refresh
+                    </Button>
+                    <Button type="button" onClick={openCreate} className="flex-1 sm:flex-none">
+                        <Plus /> New creative
+                    </Button>
+                </div>
+            </Toolbar>
 
-            {error && <Alert>{error}</Alert>}
+            {error ? <Alert onRetry={load}>{error}</Alert> : null}
 
             {loading ? (
-                <div className="text-center py-12 text-sm text-on-surface-variant">Loading creatives…</div>
+                <CardGridSkeleton />
             ) : filtered.length === 0 ? (
                 <EmptyState
-                    icon={<IconPhoto size={26} />}
-                    title="No creatives yet"
-                    body="A creative is the visual + copy + CTA. Make one and assign it to a campaign — you can reuse it across many placements."
+                    icon={ImageIcon}
+                    title={rows.length === 0 ? 'No creatives yet' : 'No creatives match'}
+                    body={
+                        rows.length === 0
+                            ? 'A creative is the visual, copy and CTA. Make one and assign it to a campaign. You can reuse it across many placements.'
+                            : 'Try a different search or campaign filter.'
+                    }
                     action={
-                        <button
-                            type="button"
-                            onClick={openCreate}
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary-hover"
-                        >
-                            <IconPlus size={16} /> Create your first creative
-                        </button>
+                        rows.length === 0 ? (
+                            <Button type="button" onClick={openCreate}>
+                                <Plus /> Create your first creative
+                            </Button>
+                        ) : undefined
                     }
                 />
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {filtered.map((row) => (
-                        <div
-                            key={row.id}
-                            className="group rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
-                        >
-                            {/* Live preview tile */}
-                            <div className="p-3 bg-gradient-to-br from-gray-100 to-gray-50 dark:from-gray-800 dark:to-gray-900">
+                        <Card key={row.id}>
+                            <div className="bg-muted p-3">
                                 <LivePreview creative={creativeAsPreview(row)} variant="banner" />
                             </div>
 
                             <div className="p-4">
                                 <div className="flex items-start justify-between gap-3">
                                     <div className="min-w-0 flex-1">
-                                        <h3 className="font-bold text-sm text-on-surface dark:text-white truncate">
-                                            {row.name}
-                                        </h3>
-                                        <p className="text-xs text-on-surface-variant truncate flex items-center gap-1">
-                                            <IconSparkles size={11} />
-                                            {row.campaign_name}
+                                        <h3 className="truncate text-sm font-semibold text-foreground">{row.name}</h3>
+                                        <p className="flex items-center gap-1 truncate text-xs text-muted-foreground">
+                                            <Sparkles className="h-3 w-3 shrink-0" aria-hidden />
+                                            <span className="truncate">{row.campaign_name}</span>
                                         </p>
                                     </div>
-                                    <div className="flex gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button
-                                            onClick={() => openEdit(row)}
-                                            className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 text-on-surface-variant"
-                                            title="Edit"
-                                        >
-                                            <IconEdit size={15} />
-                                        </button>
-                                        <button
-                                            onClick={() => duplicate(row)}
-                                            className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 text-on-surface-variant"
-                                            title="Duplicate"
-                                        >
-                                            <IconCopy size={15} />
-                                        </button>
-                                        <button
-                                            onClick={() => remove(row)}
-                                            className="p-1.5 rounded-md hover:bg-red-100 dark:hover:bg-red-950 text-red-600"
-                                            title="Delete"
-                                        >
-                                            <IconTrash size={15} />
-                                        </button>
+                                    <div className="flex shrink-0 gap-1">
+                                        <Button type="button" variant="ghost" size="icon-sm" onClick={() => openEdit(row)} aria-label={`Edit ${row.name}`}>
+                                            <Pencil />
+                                        </Button>
+                                        <Button type="button" variant="ghost" size="icon-sm" onClick={() => duplicate(row)} aria-label={`Duplicate ${row.name}`}>
+                                            <Copy />
+                                        </Button>
+                                        <Button type="button" variant="destructive" size="icon-sm" onClick={() => setToDelete(row)} aria-label={`Delete ${row.name}`}>
+                                            <Trash2 />
+                                        </Button>
                                     </div>
                                 </div>
 
-                                <div className="mt-3 flex items-center gap-2 flex-wrap text-[11px]">
-                                    <Chip>{row.format}</Chip>
-                                    {row.image_desktop_url && (
-                                        <Chip>
-                                            <IconDeviceDesktop size={10} className="inline mr-0.5" />
-                                            desktop
-                                        </Chip>
-                                    )}
-                                    {row.image_mobile_url && (
-                                        <Chip>
-                                            <IconDeviceMobile size={10} className="inline mr-0.5" />
-                                            mobile
-                                        </Chip>
-                                    )}
-                                    {row.cta_url && (
-                                        <Chip tone="primary">
-                                            <IconExternalLink size={10} className="inline mr-0.5" />
-                                            {row.cta_label || 'CTA'}
-                                        </Chip>
-                                    )}
+                                <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                                    <Badge variant="secondary" className="capitalize">
+                                        {row.format}
+                                    </Badge>
+                                    {row.image_desktop_url ? (
+                                        <Badge variant="secondary">
+                                            <Monitor aria-hidden /> desktop
+                                        </Badge>
+                                    ) : null}
+                                    {row.image_mobile_url ? (
+                                        <Badge variant="secondary">
+                                            <Smartphone aria-hidden /> mobile
+                                        </Badge>
+                                    ) : null}
+                                    {row.cta_url ? (
+                                        <Badge variant="info">
+                                            <ExternalLink aria-hidden /> {row.cta_label || 'CTA'}
+                                        </Badge>
+                                    ) : null}
                                 </div>
                             </div>
-                        </div>
+                        </Card>
                     ))}
                 </div>
             )}
 
-            {/* ── Editor modal ──────────────────────────────────────────── */}
-            {open && (
-                <ModalShell
-                    title={editingId ? 'Edit creative' : 'New creative'}
-                    icon={
-                        <span className="p-2 rounded-lg bg-primary-subtle text-primary">
-                            <IconPhoto size={18} />
-                        </span>
-                    }
-                    onClose={() => setOpen(false)}
-                    onSave={save}
-                    saving={saving}
-                    saveLabel={editingId ? 'Save changes' : 'Create creative'}
-                    width="xl"
-                >
-                    <div className="grid lg:grid-cols-[1fr,360px] gap-0 lg:divide-x divide-gray-200 dark:divide-gray-800">
-                        {/* Left: form */}
-                        <div className="p-6 space-y-5">
-                            {error && <Alert>{error}</Alert>}
+            <FormSheet
+                open={open}
+                title={editingId ? 'Edit creative' : 'New creative'}
+                description="Visual, copy and styling for an ad."
+                onClose={() => setOpen(false)}
+                onSave={save}
+                saving={saving}
+                saveLabel={editingId ? 'Save changes' : 'Create creative'}
+                width="xl"
+            >
+                <div className="grid lg:grid-cols-[1fr,360px]">
+                    {/* Form */}
+                    <div className="space-y-5 p-4">
+                        {formError ? <Alert>{formError}</Alert> : null}
 
-                            <div className="grid grid-cols-2 gap-3">
-                                <Field label="Campaign *">
-                                    <select
-                                        className={inputCls}
-                                        value={draft.campaign}
-                                        onChange={(e) =>
-                                            setDraft((d) => ({ ...d, campaign: e.target.value }))
-                                        }
-                                    >
-                                        <option value="">— Select campaign —</option>
-                                        {campaigns.map((c) => (
-                                            <option key={c.id} value={c.id}>
-                                                {c.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </Field>
-                                <Field label="Format">
-                                    <select
-                                        className={inputCls}
-                                        value={draft.format}
-                                        onChange={(e) =>
-                                            setDraft((d) => ({
-                                                ...d,
-                                                format: e.target.value as DraftState['format'],
-                                            }))
-                                        }
-                                    >
-                                        {CREATIVE_FORMATS.map((f) => (
-                                            <option key={f.value} value={f.value}>
-                                                {f.label}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </Field>
-                            </div>
-
-                            <Field label="Internal name *" hint="Only shown in admin. e.g. 'BF26 – top bar – orange'">
-                                <input
-                                    className={inputCls}
-                                    value={draft.name}
-                                    onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))}
-                                    placeholder="Black Friday — top bar — orange variant"
-                                />
+                        <div className="grid gap-4 sm:grid-cols-2">
+                            <Field label="Campaign *">
+                                <SimpleSelect value={draft.campaign} onChange={(v) => setField('campaign', v)} options={campaignOptions} placeholder="Select campaign" />
                             </Field>
-
-                            {/* Media */}
-                            <div className="grid grid-cols-2 gap-3">
-                                <DropZone
-                                    label="Desktop image"
-                                    hint="Recommended ≥ 1600 × 400"
-                                    preview={draft.image_desktop_preview}
-                                    inputRef={desktopRef}
-                                    onPick={(f) => onPickFile('desktop', f)}
-                                    onDrop={(e) => onDrop('desktop', e)}
-                                />
-                                <DropZone
-                                    label="Mobile image (optional)"
-                                    hint="Falls back to desktop if missing"
-                                    preview={draft.image_mobile_preview}
-                                    inputRef={mobileRef}
-                                    onPick={(f) => onPickFile('mobile', f)}
-                                    onDrop={(e) => onDrop('mobile', e)}
-                                />
-                            </div>
-
-                            {draft.format === 'video' && (
-                                <Field label="Video URL">
-                                    <input
-                                        className={inputCls}
-                                        value={draft.video_url}
-                                        onChange={(e) =>
-                                            setDraft((d) => ({ ...d, video_url: e.target.value }))
-                                        }
-                                        placeholder="https://…"
-                                    />
-                                </Field>
-                            )}
-                            {draft.format === 'html' && (
-                                <Field label="HTML body" hint="Will be sanitized on render">
-                                    <textarea
-                                        className={`${inputCls} font-mono text-xs`}
-                                        rows={6}
-                                        value={draft.html_body}
-                                        onChange={(e) =>
-                                            setDraft((d) => ({ ...d, html_body: e.target.value }))
-                                        }
-                                    />
-                                </Field>
-                            )}
-
-                            {/* Copy */}
-                            <div className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 space-y-3 bg-gray-50 dark:bg-gray-800">
-                                <div className="flex items-center gap-2 mb-1">
-                                    <IconSparkles size={14} className="text-primary" />
-                                    <p className="text-xs font-bold uppercase tracking-wide text-on-surface-variant">
-                                        Copy
-                                    </p>
-                                </div>
-                                <Field label="Eyebrow" hint="Tiny label above the headline (optional)">
-                                    <input
-                                        className={inputCls}
-                                        value={draft.eyebrow}
-                                        onChange={(e) =>
-                                            setDraft((d) => ({ ...d, eyebrow: e.target.value }))
-                                        }
-                                        placeholder="LIMITED · 48 HOURS"
-                                    />
-                                </Field>
-                                <Field label="Headline">
-                                    <input
-                                        className={inputCls}
-                                        value={draft.headline}
-                                        onChange={(e) =>
-                                            setDraft((d) => ({ ...d, headline: e.target.value }))
-                                        }
-                                        placeholder="50% off premium collections"
-                                    />
-                                </Field>
-                                <Field label="Sub-headline">
-                                    <input
-                                        className={inputCls}
-                                        value={draft.subheadline}
-                                        onChange={(e) =>
-                                            setDraft((d) => ({ ...d, subheadline: e.target.value }))
-                                        }
-                                        placeholder="Check back at midnight for fresh drops"
-                                    />
-                                </Field>
-                                <div className="grid grid-cols-2 gap-3">
-                                    <Field label="CTA label">
-                                        <input
-                                            className={inputCls}
-                                            value={draft.cta_label}
-                                            onChange={(e) =>
-                                                setDraft((d) => ({ ...d, cta_label: e.target.value }))
-                                            }
-                                            placeholder="Shop now"
-                                        />
-                                    </Field>
-                                    <Field label="CTA URL">
-                                        <input
-                                            className={inputCls}
-                                            value={draft.cta_url}
-                                            onChange={(e) =>
-                                                setDraft((d) => ({ ...d, cta_url: e.target.value }))
-                                            }
-                                            placeholder="/deals"
-                                        />
-                                    </Field>
-                                </div>
-                                <Field label="Alt text" hint="Read by screen readers when image fails">
-                                    <input
-                                        className={inputCls}
-                                        value={draft.alt_text}
-                                        onChange={(e) =>
-                                            setDraft((d) => ({ ...d, alt_text: e.target.value }))
-                                        }
-                                    />
-                                </Field>
-                                <label className="flex items-center gap-2 text-sm text-on-surface dark:text-gray-200">
-                                    <input
-                                        type="checkbox"
-                                        checked={draft.open_in_new_tab}
-                                        onChange={(e) =>
-                                            setDraft((d) => ({ ...d, open_in_new_tab: e.target.checked }))
-                                        }
-                                    />
-                                    Open CTA in a new tab
-                                </label>
-                            </div>
-
-                            {/* Styling */}
-                            <div className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 space-y-4 bg-gray-50 dark:bg-gray-800">
-                                <p className="text-xs font-bold uppercase tracking-wide text-on-surface-variant">
-                                    Styling
-                                </p>
-                                <Field label="Background" hint="Solid hex or full CSS gradient">
-                                    <ColorSwatchPicker
-                                        value={draft.background_color}
-                                        presets={BACKGROUND_PRESETS}
-                                        onChange={(v) => setDraft((d) => ({ ...d, background_color: v }))}
-                                    />
-                                </Field>
-                                <Field label="Text color">
-                                    <ColorSwatchPicker
-                                        value={draft.text_color}
-                                        presets={TEXT_PRESETS}
-                                        onChange={(v) => setDraft((d) => ({ ...d, text_color: v }))}
-                                    />
-                                </Field>
-                                <Field label="Accent (CTA + eyebrow)">
-                                    <ColorSwatchPicker
-                                        value={draft.accent_color}
-                                        presets={ACCENT_PRESETS}
-                                        onChange={(v) => setDraft((d) => ({ ...d, accent_color: v }))}
-                                    />
-                                </Field>
-                            </div>
+                            <Field label="Format">
+                                <SimpleSelect value={draft.format} onChange={(v) => setField('format', v as DraftState['format'])} options={CREATIVE_FORMATS} />
+                            </Field>
                         </div>
 
-                        {/* Right: live preview */}
-                        <div className="lg:sticky lg:top-0 lg:self-start p-6 bg-gray-50 dark:bg-gray-950 space-y-3">
-                            <div className="flex items-center justify-between">
-                                <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">
-                                    Live preview
-                                </p>
-                                <div className="flex gap-1 p-0.5 rounded-lg bg-gray-200 dark:bg-gray-800">
-                                    {(['banner', 'topbar', 'modal'] as const).map((v) => (
-                                        <button
-                                            key={v}
-                                            type="button"
-                                            onClick={() => setPreviewVariant(v)}
-                                            className={[
-                                                'px-2 py-1 text-[11px] font-bold rounded-md capitalize',
-                                                previewVariant === v
-                                                    ? 'bg-white dark:bg-gray-900 text-primary shadow-sm'
-                                                    : 'text-on-surface-variant',
-                                            ].join(' ')}
-                                        >
-                                            {v}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                            <LivePreview
-                                creative={{
-                                    eyebrow: draft.eyebrow,
-                                    headline: draft.headline || '(your headline shows here)',
-                                    subheadline: draft.subheadline,
-                                    cta_label: draft.cta_label,
-                                    background_color: draft.background_color,
-                                    text_color: draft.text_color,
-                                    accent_color: draft.accent_color,
-                                    image_desktop_preview: draft.image_desktop_preview,
-                                }}
-                                variant={previewVariant}
+                        <Field label="Internal name *" hint="Only shown in admin.">
+                            <Input value={draft.name} onChange={(e) => setField('name', e.target.value)} placeholder="Black Friday, top bar, orange variant" />
+                        </Field>
+
+                        <div className="grid gap-4 sm:grid-cols-2">
+                            <DropZone
+                                label="Desktop image"
+                                hint="Recommended 1600 x 400 or wider"
+                                preview={draft.image_desktop_preview}
+                                inputRef={desktopRef}
+                                onPick={(f) => onPickFile('desktop', f)}
+                                onDrop={(e) => onDrop('desktop', e)}
                             />
-                            <p className="text-[11px] text-on-surface-variant leading-relaxed">
-                                The storefront renders this creative responsively — desktop image on md+, mobile
-                                image otherwise. Switch the preview tabs above to see how it looks in different
-                                placement formats.
-                            </p>
+                            <DropZone
+                                label="Mobile image (optional)"
+                                hint="Falls back to desktop if missing"
+                                preview={draft.image_mobile_preview}
+                                inputRef={mobileRef}
+                                onPick={(f) => onPickFile('mobile', f)}
+                                onDrop={(e) => onDrop('mobile', e)}
+                            />
                         </div>
+
+                        {draft.format === 'video' ? (
+                            <Field label="Video URL">
+                                <Input value={draft.video_url} onChange={(e) => setField('video_url', e.target.value)} placeholder="https://…" />
+                            </Field>
+                        ) : null}
+                        {draft.format === 'html' ? (
+                            <Field label="HTML body" hint="Will be sanitized on render">
+                                <Textarea className="font-mono text-xs" rows={6} value={draft.html_body} onChange={(e) => setField('html_body', e.target.value)} />
+                            </Field>
+                        ) : null}
+
+                        <FormSection title="Copy" icon={Sparkles}>
+                            <Field label="Eyebrow" hint="Tiny label above the headline (optional)">
+                                <Input value={draft.eyebrow} onChange={(e) => setField('eyebrow', e.target.value)} placeholder="Limited, 48 hours" />
+                            </Field>
+                            <Field label="Headline">
+                                <Input value={draft.headline} onChange={(e) => setField('headline', e.target.value)} placeholder="50% off premium collections" />
+                            </Field>
+                            <Field label="Sub-headline">
+                                <Input value={draft.subheadline} onChange={(e) => setField('subheadline', e.target.value)} placeholder="Check back at midnight for fresh drops" />
+                            </Field>
+                            <div className="grid gap-4 sm:grid-cols-2">
+                                <Field label="CTA label">
+                                    <Input value={draft.cta_label} onChange={(e) => setField('cta_label', e.target.value)} placeholder="Shop now" />
+                                </Field>
+                                <Field label="CTA URL">
+                                    <Input value={draft.cta_url} onChange={(e) => setField('cta_url', e.target.value)} placeholder="/deals" />
+                                </Field>
+                            </div>
+                            <Field label="Alt text" hint="Read by screen readers when the image fails">
+                                <Input value={draft.alt_text} onChange={(e) => setField('alt_text', e.target.value)} />
+                            </Field>
+                            <CheckRow id="creative-newtab" label="Open CTA in a new tab">
+                                <Switch id="creative-newtab" checked={draft.open_in_new_tab} onCheckedChange={(v) => setField('open_in_new_tab', v)} />
+                            </CheckRow>
+                        </FormSection>
+
+                        <FormSection title="Styling">
+                            <Field label="Background" hint="Solid hex or full CSS gradient">
+                                <ColorSwatchPicker value={draft.background_color} presets={BACKGROUND_PRESETS} onChange={(v) => setField('background_color', v)} />
+                            </Field>
+                            <Field label="Text colour">
+                                <ColorSwatchPicker value={draft.text_color} presets={TEXT_PRESETS} onChange={(v) => setField('text_color', v)} />
+                            </Field>
+                            <Field label="Accent (CTA + eyebrow)">
+                                <ColorSwatchPicker value={draft.accent_color} presets={ACCENT_PRESETS} onChange={(v) => setField('accent_color', v)} />
+                            </Field>
+                        </FormSection>
                     </div>
-                </ModalShell>
-            )}
+
+                    {/* Live preview: below the form on mobile, sticky column on lg */}
+                    <div className="space-y-3 border-t border-border bg-muted p-4 lg:sticky lg:top-0 lg:self-start lg:border-l lg:border-t-0">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                            <p className="text-sm font-semibold text-foreground">Live preview</p>
+                            <Tabs value={previewVariant} onValueChange={(v) => setPreviewVariant(v as typeof previewVariant)}>
+                                <TabsList className="bg-background">
+                                    {(['banner', 'topbar', 'modal'] as const).map((v) => (
+                                        <TabsTrigger key={v} value={v} className="px-2.5 text-xs capitalize">
+                                            {v}
+                                        </TabsTrigger>
+                                    ))}
+                                </TabsList>
+                            </Tabs>
+                        </div>
+                        <LivePreview
+                            creative={{
+                                eyebrow: draft.eyebrow,
+                                headline: draft.headline || '(your headline shows here)',
+                                subheadline: draft.subheadline,
+                                cta_label: draft.cta_label,
+                                background_color: draft.background_color,
+                                text_color: draft.text_color,
+                                accent_color: draft.accent_color,
+                                image_desktop_preview: draft.image_desktop_preview,
+                            }}
+                            variant={previewVariant}
+                        />
+                        <p className="text-xs leading-relaxed text-muted-foreground">
+                            The storefront renders this creative responsively: desktop image on md and up, mobile image otherwise. Switch the preview tabs to see how it looks in different placement formats.
+                        </p>
+                    </div>
+                </div>
+            </FormSheet>
+
+            <ConfirmDialog
+                open={toDelete !== null}
+                title="Delete this creative?"
+                description={toDelete ? `"${toDelete.name}" will be deleted. This cannot be undone.` : undefined}
+                busy={deleting}
+                onConfirm={confirmRemove}
+                onCancel={() => setToDelete(null)}
+            />
         </div>
     );
 };
-
-const Chip: React.FC<{ tone?: 'default' | 'primary'; children: React.ReactNode }> = ({
-    tone = 'default',
-    children,
-}) => (
-    <span
-        className={[
-            'inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold',
-            tone === 'primary'
-                ? 'bg-primary-subtle text-primary'
-                : 'bg-gray-100 dark:bg-gray-800 text-on-surface-variant',
-        ].join(' ')}
-    >
-        {children}
-    </span>
-);
 
 const DropZone: React.FC<{
     label: string;
@@ -690,19 +529,25 @@ const DropZone: React.FC<{
     onDrop: (e: React.DragEvent<HTMLDivElement>) => void;
 }> = ({ label, hint, preview, inputRef, onPick, onDrop }) => {
     const [hover, setHover] = useState(false);
+    const id = React.useId();
     return (
-        <div>
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-on-surface-variant dark:text-gray-500 mb-1.5">
-                {label}
-            </label>
+        <div className="space-y-1.5">
+            <Label htmlFor={id}>{label}</Label>
             <div
-                className={[
-                    'relative aspect-[16/6] rounded-xl border-2 border-dashed overflow-hidden cursor-pointer transition-all',
-                    hover
-                        ? 'border-primary bg-primary-subtle'
-                        : 'border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:border-primary-400',
-                ].join(' ')}
+                role="button"
+                tabIndex={0}
+                aria-label={`${label}: ${preview ? 'click to replace' : 'drop or click to upload'}`}
+                className={cn(
+                    'relative aspect-[16/6] cursor-pointer overflow-hidden rounded-xl border-2 border-dashed bg-muted transition-colors focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-subtle',
+                    hover ? 'border-primary bg-primary-subtle' : 'border-border hover:border-primary'
+                )}
                 onClick={() => inputRef.current?.click()}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        inputRef.current?.click();
+                    }
+                }}
                 onDragOver={(e) => {
                     e.preventDefault();
                     setHover(true);
@@ -715,24 +560,24 @@ const DropZone: React.FC<{
             >
                 {preview ? (
                     <>
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={preview} alt="preview" className="w-full h-full object-cover" />
-                        <div className="absolute bottom-2 right-2 px-2 py-1 rounded-md bg-gray-900 text-white text-[10px] font-semibold opacity-0 hover:opacity-100 transition">
-                            Click to replace
-                        </div>
+                        <img src={preview} alt="" className="h-full w-full object-cover" />
+                        <span className="absolute bottom-2 right-2 rounded-md bg-foreground px-2 py-1 text-[10px] font-semibold text-background">Click to replace</span>
                     </>
                 ) : (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-xs text-on-surface-variant gap-1.5">
-                        <IconCloudUpload size={22} className="text-primary" />
-                        <span className="font-semibold">Drop or click to upload</span>
-                        {hint && <span className="text-[10px]">{hint}</span>}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 text-xs text-muted-foreground">
+                        <CloudUpload className="h-5 w-5 text-primary" aria-hidden />
+                        <span className="font-medium">Drop or click to upload</span>
+                        {hint ? <span className="text-[11px]">{hint}</span> : null}
                     </div>
                 )}
                 <input
                     ref={inputRef}
+                    id={id}
                     type="file"
                     accept="image/*"
-                    className="hidden"
+                    className="sr-only"
+                    tabIndex={-1}
+                    onClick={(e) => e.stopPropagation()}
                     onChange={(e) => {
                         const f = e.target.files?.[0];
                         if (f) onPick(f);

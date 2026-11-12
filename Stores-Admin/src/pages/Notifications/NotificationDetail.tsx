@@ -1,225 +1,124 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faBell,
-  faArrowLeft,
-  faCalendarAlt,
-  faTruck,
-  faMoneyBillWave,
-  faExclamationCircle,
-  faEye,
-  faTrash,
-  faExternalLinkAlt,
-} from '@fortawesome/free-solid-svg-icons';
-import { format } from 'date-fns';
-import { mockNotifications } from '../../data/mockdata';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import useSWR from 'swr';
+import { AlertCircle, ArrowLeft, ExternalLink, Trash2 } from 'lucide-react';
 
+import { Badge } from '@/components/shadcn/badge';
+import { Button } from '@/components/shadcn/button';
+import { Card, CardContent } from '@/components/shadcn/card';
+import { EmptyState } from '@/components/shadcn/empty-state';
+import { Skeleton } from '@/components/shadcn/skeleton';
+import { toast } from '@/components/shadcn/sonner';
+import { deleteNotification, fetchNotification, isInternalLink, markNotificationRead, notificationErrorMessage } from '@/services/notificationService';
+import { ConfirmDeleteDialog, NOTIFICATION_KEY, formatAbsolute, kindIcon, useRefreshNotifications } from './notificationUi';
 
-const NotificationDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const [notification, setNotification] = useState<Notification | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
+const NotificationDetail = () => {
+    const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
+    const refresh = useRefreshNotifications();
+    const [confirmOpen, setConfirmOpen] = useState(false);
+    const [deleting, setDeleting] = useState(false);
+    const markedFor = useRef<string | null>(null);
 
-  useEffect(() => {
-    const fetchNotificationDetail = async () => {
-      setIsLoading(true);
-      setError(null);
+    const { data: notification, error, isLoading, mutate } = useSWR(id ? [NOTIFICATION_KEY, 'detail', id] : null, () => fetchNotification(id as string));
 
-      try {
-        // In a real implementation, you'd call an API
-        // const response = await api.getNotification(id);
-        // setNotification(response.data);
-        
-        // Using mock data
-        setTimeout(() => {
-          const foundNotification = mockNotifications.find(n => n.id === id);
-          if (foundNotification) {
-            setNotification(foundNotification);
-          } else {
-            setError('Notification not found');
-          }
-          setIsLoading(false);
-        }, 500);
-      } catch (error) {
-        console.error('Error fetching notification details', error);
-        setError('Failed to load notification details');
-        setIsLoading(false);
-      }
+    // Opening the detail marks it read once per id.
+    useEffect(() => {
+        if (!id || !notification || notification.is_read || markedFor.current === id) return;
+        markedFor.current = id;
+        markNotificationRead(id)
+            .then((updated) => {
+                void mutate(updated, { revalidate: false });
+                void refresh();
+            })
+            .catch(() => {
+                markedFor.current = null;
+            });
+    }, [id, notification, mutate, refresh]);
+
+    const confirmDelete = async () => {
+        if (!id) return;
+        setDeleting(true);
+        try {
+            await deleteNotification(id);
+            void refresh();
+            toast.success('Notification deleted');
+            navigate('/notifications', { replace: true });
+        } catch (err) {
+            toast.error(notificationErrorMessage(err, 'Could not delete the notification.'));
+            setDeleting(false);
+        }
     };
 
-    if (id) {
-      fetchNotificationDetail();
-    }
-  }, [id]);
+    const Icon = notification ? kindIcon(notification.kind) : null;
 
-  // Get notification icon based on type
-  const getNotificationIcon = (type: string) => {
-    switch (type) {
-      case 'booking':
-        return <FontAwesomeIcon icon={faTruck} className="text-blue-500" />;
-      case 'payment':
-        return <FontAwesomeIcon icon={faMoneyBillWave} className="text-green-500" />;
-      case 'alert':
-        return <FontAwesomeIcon icon={faExclamationCircle} className="text-red-500" />;
-      case 'reminder':
-        return <FontAwesomeIcon icon={faCalendarAlt} className="text-yellow-500" />;
-      default:
-        return <FontAwesomeIcon icon={faBell} className="text-purple-500" />;
-    }
-  };
+    return (
+        <div className="mx-auto w-full max-w-2xl space-y-4 p-4 sm:p-6">
+            <Button variant="ghost" asChild>
+                <Link to="/notifications">
+                    <ArrowLeft className="h-4 w-4" />
+                    All notifications
+                </Link>
+            </Button>
 
-  const handleGoBack = () => {
-    navigate('/notifications');
-  };
-
-  const handleAction = () => {
-    if (notification?.actionUrl) {
-      navigate(notification.actionUrl);
-    }
-  };
-
-  const getNotificationTypeLabel = (type: string) => {
-    switch (type) {
-      case 'booking':
-        return 'Booking Update';
-      case 'payment':
-        return 'Payment Notification';
-      case 'alert':
-        return 'Alert';
-      case 'reminder':
-        return 'Reminder';
-      case 'system':
-        return 'System Message';
-      default:
-        return 'Notification';
-    }
-  };
-
-  return (
-    <div className="w-full px-4 md:px-8 py-8 bg-gray-50 dark:bg-gray-900 min-h-screen">
-      <div className="max-w-3xl mx-auto">
-        {/* Back button */}
-        <button 
-          onClick={handleGoBack}
-          className="mb-4 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center"
-        >
-          <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
-          Back to notifications
-        </button>
-        
-        {isLoading ? (
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-8 shadow-md flex justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-          </div>
-        ) : error ? (
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-8 shadow-md text-center">
-            <div className="w-16 h-16 mx-auto mb-4 bg-red-100 dark:bg-red-950 rounded-full flex items-center justify-center">
-              <FontAwesomeIcon icon={faExclamationCircle} className="text-red-500 text-2xl" />
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">{error}</h3>
-            <p className="text-gray-500 dark:text-gray-400 mb-4">The notification you're looking for doesn't exist or was deleted.</p>
-            <button 
-              onClick={handleGoBack}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
-            >
-              Return to notifications
-            </button>
-          </div>
-        ) : notification ? (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-            {/* Header */}
-            <div className={`p-6 ${
-              notification.type === 'booking' ? 'bg-blue-50 dark:bg-blue-950' : 
-              notification.type === 'payment' ? 'bg-green-50 dark:bg-green-950' : 
-              notification.type === 'alert' ? 'bg-red-50 dark:bg-red-950' : 
-              notification.type === 'reminder' ? 'bg-yellow-50 dark:bg-yellow-950' : 
-              'bg-purple-50 dark:bg-purple-950'
-            } border-b border-gray-200 dark:border-gray-700`}>
-              <div className="flex items-start">
-                <div className="mr-4">
-                  <div className="w-12 h-12 rounded-full bg-white dark:bg-gray-700 flex items-center justify-center shadow-sm">
-                    {getNotificationIcon(notification.type)}
-                  </div>
+            {isLoading ? (
+                <div className="space-y-3" aria-busy="true">
+                    <Skeleton className="h-8 w-2/3" />
+                    <Skeleton className="h-4 w-1/3" />
+                    <Skeleton className="h-24 w-full" />
                 </div>
-                <div>
-                  <div className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
-                    {getNotificationTypeLabel(notification.type)}
-                  </div>
-                  <h1 className="text-xl font-bold text-gray-900 dark:text-white">{notification.title}</h1>
-                  <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                    <time dateTime={notification.createdAt}>
-                      {format(new Date(notification.createdAt), 'MMMM d, yyyy h:mm a')}
-                    </time>
-                  </div>
-                </div>
-              </div>
-            </div>
+            ) : error || !notification ? (
+                <EmptyState
+                    icon={AlertCircle}
+                    title="Could not load this notification"
+                    description={notificationErrorMessage(error, 'Check your connection and try again.')}
+                    action={
+                        <Button variant="outline" onClick={() => mutate()}>
+                            Retry
+                        </Button>
+                    }
+                />
+            ) : (
+                <Card>
+                    <CardContent className="space-y-4 p-4 sm:p-6">
+                        <div className="flex items-start gap-3">
+                            {Icon ? (
+                                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                                    <Icon className="h-5 w-5" aria-hidden="true" />
+                                </span>
+                            ) : null}
+                            <div className="min-w-0 flex-1 space-y-1">
+                                <h1 className="break-words text-lg font-semibold text-foreground sm:text-xl">{notification.title}</h1>
+                                <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                                    <Badge variant="secondary">{notification.kind}</Badge>
+                                    <span>{formatAbsolute(notification.created_at)}</span>
+                                </div>
+                            </div>
+                        </div>
 
-            {/* Content */}
-            <div className="p-6">
-              <div className="text-gray-800 dark:text-gray-200 leading-relaxed mb-6">
-                {notification.message}
-              </div>
-              
-              {notification.bookingId && (
-                <div className="mb-6 bg-gray-50 dark:bg-gray-750 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
-                        Related Booking
-                      </div>
-                      <div className="text-gray-900 dark:text-white font-medium">
-                        {notification.bookingId}
-                      </div>
-                    </div>
-                    <button 
-                      onClick={() => navigate(`/bookings/${notification.bookingId}`)}
-                      className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium flex items-center"
-                    >
-                      View booking
-                      <FontAwesomeIcon icon={faExternalLinkAlt} className="ml-1" />
-                    </button>
-                  </div>
-                </div>
-              )}
+                        {notification.body ? <p className="whitespace-pre-wrap break-words text-sm text-foreground">{notification.body}</p> : null}
 
-              {/* Actions */}
-              <div className="mt-6 flex flex-wrap gap-3">
-                {notification.actionUrl && (
-                  <button
-                    onClick={handleAction}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center"
-                  >
-                    <FontAwesomeIcon icon={faEye} className="mr-2" />
-                    {notification.type === 'booking' ? 'View Booking' : 
-                     notification.type === 'payment' ? 'View Payment' : 
-                     'View Details'}
-                  </button>
-                )}
-                
-                <button
-                  onClick={handleGoBack}
-                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
-                >
-                  Dismiss
-                </button>
-                
-                <button
-                  className="px-4 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg flex items-center ml-auto"
-                >
-                  <FontAwesomeIcon icon={faTrash} className="mr-2" />
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-        ) : null}
-      </div>
-    </div>
-  );
+                        <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+                            <Button variant="destructive" onClick={() => setConfirmOpen(true)}>
+                                <Trash2 className="h-4 w-4" />
+                                Delete
+                            </Button>
+                            {isInternalLink(notification.link) ? (
+                                <Button asChild>
+                                    <Link to={notification.link}>
+                                        <ExternalLink className="h-4 w-4" />
+                                        Open
+                                    </Link>
+                                </Button>
+                            ) : null}
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
+
+            <ConfirmDeleteDialog open={confirmOpen} busy={deleting} onOpenChange={setConfirmOpen} onConfirm={confirmDelete} />
+        </div>
+    );
 };
 
 export default NotificationDetail;

@@ -1,20 +1,12 @@
-import {
-    IconBolt,
-    IconCalendarTime,
-    IconChartBar,
-    IconChevronRight,
-    IconClick,
-    IconEdit,
-    IconEye,
-    IconFlame,
-    IconPlus,
-    IconRefresh,
-    IconRocket,
-    IconSparkles,
-    IconSpeakerphone,
-    IconTrash,
-} from '@tabler/icons-react';
+import { BarChart3, CalendarClock, ChevronRight, Eye, Flame, Megaphone, MousePointerClick, Pause, Pencil, Play, Plus, RefreshCw, Sparkles, Trash2, Zap } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
+import { Badge } from '@/components/shadcn/badge';
+import { Button } from '@/components/shadcn/button';
+import { Card } from '@/components/shadcn/card';
+import { Input } from '@/components/shadcn/input';
+import { Textarea } from '@/components/shadcn/textarea';
+import { cn } from '@/lib/utils';
 import {
     CAMPAIGN_PRIORITIES,
     CAMPAIGN_STATUSES,
@@ -27,14 +19,7 @@ import {
     fetchCampaigns,
     patchCampaign,
 } from '../../../services/adsAdminService';
-import {
-    Alert,
-    EmptyState,
-    Field,
-    ModalShell,
-    StatusBadge,
-    inputCls,
-} from './_shared';
+import { Alert, CardGridSkeleton, ConfirmDialog, EmptyState, Field, FormSheet, SimpleSelect, StatusBadge, Toolbar, fromLocalInput, toLocalInput } from './_shared';
 
 function emptyDraft(): CampaignWritePayload {
     return {
@@ -51,20 +36,6 @@ function emptyDraft(): CampaignWritePayload {
     };
 }
 
-function toLocalInput(iso: string | null): string {
-    if (!iso) return '';
-    const d = new Date(iso);
-    if (Number.isNaN(d.getTime())) return '';
-    const pad = (n: number) => String(n).padStart(2, '0');
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
-
-function fromLocalInput(v: string): string | null {
-    if (!v) return null;
-    const d = new Date(v);
-    return Number.isNaN(d.getTime()) ? null : d.toISOString();
-}
-
 interface Props {
     onChange?: () => void;
 }
@@ -73,6 +44,7 @@ const CampaignsTab: React.FC<Props> = ({ onChange }) => {
     const [rows, setRows] = useState<Campaign[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [formError, setFormError] = useState<string | null>(null);
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState<CampaignStatus | 'all'>('all');
 
@@ -80,6 +52,9 @@ const CampaignsTab: React.FC<Props> = ({ onChange }) => {
     const [draft, setDraft] = useState<CampaignWritePayload>(emptyDraft);
     const [open, setOpen] = useState(false);
     const [saving, setSaving] = useState(false);
+
+    const [toDelete, setToDelete] = useState<Campaign | null>(null);
+    const [deleting, setDeleting] = useState(false);
 
     const load = useCallback(async () => {
         try {
@@ -101,12 +76,7 @@ const CampaignsTab: React.FC<Props> = ({ onChange }) => {
         const s = search.trim().toLowerCase();
         return rows
             .filter((r) => statusFilter === 'all' || r.status === statusFilter)
-            .filter(
-                (r) =>
-                    !s ||
-                    r.name.toLowerCase().includes(s) ||
-                    r.advertiser.toLowerCase().includes(s)
-            );
+            .filter((r) => !s || r.name.toLowerCase().includes(s) || r.advertiser.toLowerCase().includes(s));
     }, [rows, search, statusFilter]);
 
     const counts = useMemo(() => {
@@ -120,6 +90,7 @@ const CampaignsTab: React.FC<Props> = ({ onChange }) => {
     const openCreate = () => {
         setEditingId(null);
         setDraft(emptyDraft());
+        setFormError(null);
         setOpen(true);
     };
 
@@ -137,341 +108,228 @@ const CampaignsTab: React.FC<Props> = ({ onChange }) => {
             total_impression_cap: row.total_impression_cap,
             notes: row.notes ?? '',
         });
+        setFormError(null);
         setOpen(true);
     };
 
     const save = async () => {
         if (!draft.name.trim()) {
-            setError('Campaign name is required.');
+            setFormError('Campaign name is required.');
             return;
         }
         try {
             setSaving(true);
-            setError(null);
+            setFormError(null);
             if (editingId) await patchCampaign(editingId, draft);
             else await createCampaign(draft);
+            toast.success(editingId ? 'Campaign saved' : 'Campaign created');
             setOpen(false);
             await load();
             onChange?.();
         } catch (e) {
-            setError(adsAdminErrorMessage(e));
+            setFormError(adsAdminErrorMessage(e));
         } finally {
             setSaving(false);
         }
     };
 
-    const remove = async (row: Campaign) => {
-        if (!confirm(`Delete campaign "${row.name}" and all its creatives?`)) return;
+    const confirmRemove = async () => {
+        if (!toDelete) return;
         try {
-            await deleteCampaign(row.id);
+            setDeleting(true);
+            await deleteCampaign(toDelete.id);
+            toast.success('Campaign deleted');
+            setToDelete(null);
             await load();
             onChange?.();
         } catch (e) {
-            setError(adsAdminErrorMessage(e));
+            toast.error(adsAdminErrorMessage(e));
+        } finally {
+            setDeleting(false);
         }
     };
 
     const cycleStatus = async (row: Campaign) => {
-        const next: CampaignStatus =
-            row.status === 'running' ? 'paused' : row.status === 'paused' ? 'running' : 'running';
+        const next: CampaignStatus = row.status === 'running' ? 'paused' : 'running';
         try {
             await patchCampaign(row.id, { status: next });
+            toast.success(next === 'running' ? 'Campaign running' : 'Campaign paused');
             await load();
             onChange?.();
         } catch (e) {
-            setError(adsAdminErrorMessage(e));
+            toast.error(adsAdminErrorMessage(e));
         }
     };
 
+    const numberOrNull = (v: string) => (v ? Number(v) : null);
+
     return (
         <div className="space-y-4">
-            {/* Status segmented filter */}
-            <div className="flex items-center gap-1 p-1 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-x-auto">
-                <FilterChip
-                    active={statusFilter === 'all'}
-                    onClick={() => setStatusFilter('all')}
-                    label="All"
-                    count={counts.all}
-                />
+            {/* Status filter */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1" role="group" aria-label="Filter by status">
+                <FilterChip active={statusFilter === 'all'} onClick={() => setStatusFilter('all')} label="All" count={counts.all} />
                 {CAMPAIGN_STATUSES.filter((s) => s.value !== 'archived').map((s) => (
-                    <FilterChip
-                        key={s.value}
-                        active={statusFilter === s.value}
-                        onClick={() => setStatusFilter(s.value)}
-                        label={s.label}
-                        count={counts[s.value] ?? 0}
-                        dotColor={s.color}
-                    />
+                    <FilterChip key={s.value} active={statusFilter === s.value} onClick={() => setStatusFilter(s.value)} label={s.label} count={counts[s.value] ?? 0} />
                 ))}
             </div>
 
-            {/* Toolbar */}
-            <div className="flex items-center gap-3 flex-wrap rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-3">
-                <input
-                    placeholder="Search by campaign or advertiser…"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className={`${inputCls} max-w-sm`}
-                />
-                <button
-                    type="button"
-                    onClick={load}
-                    className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold border border-gray-300 dark:border-gray-700 text-on-surface-variant hover:bg-gray-100 dark:hover:bg-gray-800"
-                >
-                    <IconRefresh size={16} /> Refresh
-                </button>
-                <button
-                    type="button"
-                    onClick={openCreate}
-                    className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary-hover shadow"
-                >
-                    <IconPlus size={16} /> New campaign
-                </button>
-            </div>
+            <Toolbar>
+                <Input placeholder="Search by campaign or advertiser…" value={search} onChange={(e) => setSearch(e.target.value)} className="sm:max-w-sm" aria-label="Search campaigns" />
+                <div className="flex gap-2 sm:ml-auto">
+                    <Button type="button" variant="outline" onClick={load} className="flex-1 sm:flex-none">
+                        <RefreshCw /> Refresh
+                    </Button>
+                    <Button type="button" onClick={openCreate} className="flex-1 sm:flex-none">
+                        <Plus /> New campaign
+                    </Button>
+                </div>
+            </Toolbar>
 
-            {error && <Alert>{error}</Alert>}
+            {error ? <Alert onRetry={load}>{error}</Alert> : null}
 
             {loading ? (
-                <div className="text-center py-12 text-sm text-on-surface-variant">
-                    Loading campaigns…
-                </div>
+                <CardGridSkeleton />
             ) : filtered.length === 0 ? (
                 <EmptyState
-                    icon={<IconSpeakerphone size={26} />}
-                    title="No campaigns yet"
-                    body="A campaign is the umbrella for an ad push (status, schedule, advertiser, impression caps). You group creatives under it, then book them into placements as slots."
+                    icon={Megaphone}
+                    title={rows.length === 0 ? 'No campaigns yet' : 'No campaigns match'}
+                    body={
+                        rows.length === 0
+                            ? 'A campaign is the umbrella for an ad push (status, schedule, advertiser, impression caps). Group creatives under it, then book them into placements as slots.'
+                            : 'Try a different search or status filter.'
+                    }
                     action={
-                        <button
-                            type="button"
-                            onClick={openCreate}
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white hover:bg-primary-hover"
-                        >
-                            <IconPlus size={16} /> Create your first campaign
-                        </button>
+                        rows.length === 0 ? (
+                            <Button type="button" onClick={openCreate}>
+                                <Plus /> Create your first campaign
+                            </Button>
+                        ) : undefined
                     }
                 />
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {filtered.map((row) => (
-                        <CampaignCard
-                            key={row.id}
-                            row={row}
-                            onEdit={() => openEdit(row)}
-                            onCycleStatus={() => cycleStatus(row)}
-                            onDelete={() => remove(row)}
-                        />
+                        <CampaignCard key={row.id} row={row} onEdit={() => openEdit(row)} onCycleStatus={() => cycleStatus(row)} onDelete={() => setToDelete(row)} />
                     ))}
                 </div>
             )}
 
-            {open && (
-                <ModalShell
-                    title={editingId ? 'Edit campaign' : 'New campaign'}
-                    icon={
-                        <span className="p-2 rounded-lg bg-primary-subtle text-primary">
-                            <IconRocket size={18} />
-                        </span>
-                    }
-                    onClose={() => setOpen(false)}
-                    onSave={save}
-                    saving={saving}
-                    saveLabel={editingId ? 'Save changes' : 'Create campaign'}
-                    width="lg"
-                >
-                    <div className="p-6 space-y-4">
-                        {error && <Alert>{error}</Alert>}
+            <FormSheet
+                open={open}
+                title={editingId ? 'Edit campaign' : 'New campaign'}
+                description="Status, schedule and impression caps for an ad push."
+                onClose={() => setOpen(false)}
+                onSave={save}
+                saving={saving}
+                saveLabel={editingId ? 'Save changes' : 'Create campaign'}
+                width="lg"
+            >
+                <div className="space-y-4 p-4">
+                    {formError ? <Alert>{formError}</Alert> : null}
 
-                        <Field label="Campaign name *">
-                            <input
-                                className={inputCls}
-                                value={draft.name}
-                                onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))}
-                                placeholder="Black Friday 2026"
-                            />
+                    <Field label="Campaign name *">
+                        <Input value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} placeholder="Black Friday 2026" />
+                    </Field>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                        <Field label="Advertiser / brand">
+                            <Input value={draft.advertiser} onChange={(e) => setDraft((d) => ({ ...d, advertiser: e.target.value }))} placeholder="TradeHut House" />
                         </Field>
-                        <div className="grid grid-cols-2 gap-3">
-                            <Field label="Advertiser / brand">
-                                <input
-                                    className={inputCls}
-                                    value={draft.advertiser}
-                                    onChange={(e) =>
-                                        setDraft((d) => ({ ...d, advertiser: e.target.value }))
-                                    }
-                                    placeholder="TradeHut House"
-                                />
-                            </Field>
-                            <Field
-                                label="Seller (optional)"
-                                hint="UUID of the seller this is paid for. Leave blank for in-house pushes."
-                            >
-                                <input
-                                    className={`${inputCls} font-mono text-xs`}
-                                    value={draft.seller ?? ''}
-                                    onChange={(e) =>
-                                        setDraft((d) => ({
-                                            ...d,
-                                            seller: e.target.value.trim() || null,
-                                        }))
-                                    }
-                                    placeholder="seller UUID"
-                                />
-                            </Field>
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                            <Field label="Status">
-                                <div className="grid grid-cols-3 gap-1">
-                                    {CAMPAIGN_STATUSES.filter((s) => s.value !== 'archived').map((s) => (
-                                        <button
-                                            key={s.value}
-                                            type="button"
-                                            onClick={() =>
-                                                setDraft((d) => ({ ...d, status: s.value }))
-                                            }
-                                            className={[
-                                                'px-2 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wide transition border',
-                                                draft.status === s.value
-                                                    ? 'text-white border-transparent shadow'
-                                                    : 'border-gray-300 dark:border-gray-700 text-on-surface-variant hover:bg-gray-100 dark:hover:bg-gray-800',
-                                            ].join(' ')}
-                                            style={
-                                                draft.status === s.value
-                                                    ? { backgroundColor: s.color }
-                                                    : undefined
-                                            }
-                                        >
-                                            {s.label}
-                                        </button>
-                                    ))}
-                                </div>
-                            </Field>
-                            <Field label="Priority" hint="Higher priority wins more often in the auction">
-                                <select
-                                    className={inputCls}
-                                    value={draft.priority}
-                                    onChange={(e) =>
-                                        setDraft((d) => ({ ...d, priority: Number(e.target.value) }))
-                                    }
-                                >
-                                    {CAMPAIGN_PRIORITIES.map((p) => (
-                                        <option key={p.value} value={p.value}>
-                                            {p.label}
-                                        </option>
-                                    ))}
-                                </select>
-                            </Field>
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                            <Field label="Starts at">
-                                <input
-                                    type="datetime-local"
-                                    className={inputCls}
-                                    value={toLocalInput(draft.starts_at)}
-                                    onChange={(e) =>
-                                        setDraft((d) => ({
-                                            ...d,
-                                            starts_at: fromLocalInput(e.target.value),
-                                        }))
-                                    }
-                                />
-                            </Field>
-                            <Field label="Ends at">
-                                <input
-                                    type="datetime-local"
-                                    className={inputCls}
-                                    value={toLocalInput(draft.ends_at)}
-                                    onChange={(e) =>
-                                        setDraft((d) => ({
-                                            ...d,
-                                            ends_at: fromLocalInput(e.target.value),
-                                        }))
-                                    }
-                                />
-                            </Field>
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                            <Field label="Daily impression cap" hint="Pause for the day after N impressions">
-                                <input
-                                    type="number"
-                                    min={0}
-                                    className={inputCls}
-                                    value={draft.daily_impression_cap ?? ''}
-                                    onChange={(e) =>
-                                        setDraft((d) => ({
-                                            ...d,
-                                            daily_impression_cap: e.target.value
-                                                ? Number(e.target.value)
-                                                : null,
-                                        }))
-                                    }
-                                    placeholder="No limit"
-                                />
-                            </Field>
-                            <Field label="Total impression cap" hint="End campaign after N total">
-                                <input
-                                    type="number"
-                                    min={0}
-                                    className={inputCls}
-                                    value={draft.total_impression_cap ?? ''}
-                                    onChange={(e) =>
-                                        setDraft((d) => ({
-                                            ...d,
-                                            total_impression_cap: e.target.value
-                                                ? Number(e.target.value)
-                                                : null,
-                                        }))
-                                    }
-                                    placeholder="No limit"
-                                />
-                            </Field>
-                        </div>
-                        <Field label="Internal notes" hint="Briefing, contract, deal terms…">
-                            <textarea
-                                rows={3}
-                                className={inputCls}
-                                value={draft.notes}
-                                onChange={(e) => setDraft((d) => ({ ...d, notes: e.target.value }))}
+                        <Field label="Seller (optional)" hint="UUID of the seller this is paid for. Leave blank for in-house pushes.">
+                            <Input
+                                className="font-mono text-xs"
+                                value={draft.seller ?? ''}
+                                onChange={(e) => setDraft((d) => ({ ...d, seller: e.target.value.trim() || null }))}
+                                placeholder="seller UUID"
                             />
                         </Field>
                     </div>
-                </ModalShell>
-            )}
+                    <div className="grid gap-4 sm:grid-cols-2">
+                        <div className="space-y-1.5">
+                            <span className="text-sm font-medium text-foreground">Status</span>
+                            <div className="grid grid-cols-3 gap-1.5" role="group" aria-label="Status">
+                                {CAMPAIGN_STATUSES.filter((s) => s.value !== 'archived').map((s) => (
+                                    <Button
+                                        key={s.value}
+                                        type="button"
+                                        size="sm"
+                                        variant={draft.status === s.value ? 'default' : 'outline'}
+                                        aria-pressed={draft.status === s.value}
+                                        onClick={() => setDraft((d) => ({ ...d, status: s.value }))}
+                                        className="px-2 text-xs"
+                                    >
+                                        {s.label}
+                                    </Button>
+                                ))}
+                            </div>
+                        </div>
+                        <Field label="Priority" hint="Higher priority wins more often in the auction">
+                            <SimpleSelect
+                                value={String(draft.priority)}
+                                onChange={(v) => setDraft((d) => ({ ...d, priority: Number(v) }))}
+                                options={CAMPAIGN_PRIORITIES.map((p) => ({ value: String(p.value), label: p.label }))}
+                            />
+                        </Field>
+                    </div>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                        <Field label="Starts at">
+                            <Input type="datetime-local" value={toLocalInput(draft.starts_at)} onChange={(e) => setDraft((d) => ({ ...d, starts_at: fromLocalInput(e.target.value) }))} />
+                        </Field>
+                        <Field label="Ends at">
+                            <Input type="datetime-local" value={toLocalInput(draft.ends_at)} onChange={(e) => setDraft((d) => ({ ...d, ends_at: fromLocalInput(e.target.value) }))} />
+                        </Field>
+                    </div>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                        <Field label="Daily impression cap" hint="Pause for the day after N impressions">
+                            <Input
+                                type="number"
+                                min={0}
+                                value={draft.daily_impression_cap ?? ''}
+                                onChange={(e) => setDraft((d) => ({ ...d, daily_impression_cap: numberOrNull(e.target.value) }))}
+                                placeholder="No limit"
+                            />
+                        </Field>
+                        <Field label="Total impression cap" hint="End campaign after N total">
+                            <Input
+                                type="number"
+                                min={0}
+                                value={draft.total_impression_cap ?? ''}
+                                onChange={(e) => setDraft((d) => ({ ...d, total_impression_cap: numberOrNull(e.target.value) }))}
+                                placeholder="No limit"
+                            />
+                        </Field>
+                    </div>
+                    <Field label="Internal notes" hint="Briefing, contract, deal terms…">
+                        <Textarea rows={3} value={draft.notes} onChange={(e) => setDraft((d) => ({ ...d, notes: e.target.value }))} />
+                    </Field>
+                </div>
+            </FormSheet>
+
+            <ConfirmDialog
+                open={toDelete !== null}
+                title="Delete this campaign?"
+                description={toDelete ? `"${toDelete.name}" and all its creatives will be deleted. This cannot be undone.` : undefined}
+                busy={deleting}
+                onConfirm={confirmRemove}
+                onCancel={() => setToDelete(null)}
+            />
         </div>
     );
 };
 
-const FilterChip: React.FC<{
-    active: boolean;
-    onClick: () => void;
-    label: string;
-    count: number;
-    dotColor?: string;
-}> = ({ active, onClick, label, count, dotColor }) => (
-    <button
-        type="button"
-        onClick={onClick}
-        className={[
-            'flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap',
-            active
-                ? 'bg-primary text-white shadow'
-                : 'text-on-surface-variant hover:bg-gray-100 dark:hover:bg-gray-800',
-        ].join(' ')}
-    >
-        {dotColor && (
-            <span
-                className="h-1.5 w-1.5 rounded-full"
-                style={{ backgroundColor: active ? '#ffffff' : dotColor }}
-            />
-        )}
+const FilterChip: React.FC<{ active: boolean; onClick: () => void; label: string; count: number }> = ({ active, onClick, label, count }) => (
+    <Button type="button" size="sm" variant={active ? 'default' : 'outline'} aria-pressed={active} onClick={onClick} className="shrink-0">
         {label}
-        <span
-            className={[
-                'inline-block px-1.5 rounded text-[10px] font-bold',
-                active ? 'bg-gray-700 text-white' : 'bg-gray-100 dark:bg-gray-800 text-on-surface-variant',
-            ].join(' ')}
-        >
-            {count}
-        </span>
-    </button>
+        <span className="text-xs opacity-80">{count}</span>
+    </Button>
+);
+
+const Stat: React.FC<{ icon: React.ReactNode; label: string; value: React.ReactNode; valueClass?: string }> = ({ icon, label, value, valueClass }) => (
+    <div>
+        <div className="flex items-center gap-1 text-[10px] uppercase tracking-wide text-muted-foreground">
+            {icon} {label}
+        </div>
+        <p className={cn('mt-0.5 text-lg font-bold leading-tight text-foreground', valueClass)}>{value}</p>
+    </div>
 );
 
 const CampaignCard: React.FC<{
@@ -482,136 +340,85 @@ const CampaignCard: React.FC<{
 }> = ({ row, onEdit, onCycleStatus, onDelete }) => {
     const isUrgent = row.priority >= 20;
     const isHigh = row.priority >= 10 && !isUrgent;
+    const ctr = row.stats?.ctr ?? 0;
 
     return (
-        <div className="group rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all relative overflow-hidden">
-            {/* Priority accent stripe */}
-            {(isUrgent || isHigh) && (
-                <div
-                    className="absolute top-0 left-0 right-0 h-1"
-                    style={{ backgroundColor: isUrgent ? '#dc2626' : '#f59e0b' }}
-                />
-            )}
-
+        <Card className="flex flex-col p-4 sm:p-5">
             <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap mb-1.5">
+                    <div className="mb-1.5 flex flex-wrap items-center gap-2">
                         <StatusBadge status={row.status} />
-                        {isUrgent && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300">
-                                <IconFlame size={10} /> URGENT
-                            </span>
-                        )}
-                        {isHigh && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300">
-                                <IconBolt size={10} /> HIGH
-                            </span>
-                        )}
+                        {isUrgent ? (
+                            <Badge variant="destructive">
+                                <Flame aria-hidden /> Urgent
+                            </Badge>
+                        ) : null}
+                        {isHigh ? (
+                            <Badge variant="warning">
+                                <Zap aria-hidden /> High
+                            </Badge>
+                        ) : null}
                     </div>
-                    <h3 className="font-bold text-on-surface dark:text-white truncate">{row.name}</h3>
-                    <p className="text-xs text-on-surface-variant truncate flex items-center gap-1.5 mt-0.5">
-                        <IconSparkles size={11} />
-                        {row.advertiser || 'No advertiser'}
-                        {row.seller_name && (
-                            <span className="text-primary">· {row.seller_name}</span>
-                        )}
+                    <h3 className="truncate font-semibold text-foreground">{row.name}</h3>
+                    <p className="mt-0.5 flex items-center gap-1.5 truncate text-xs text-muted-foreground">
+                        <Sparkles className="h-3 w-3 shrink-0" aria-hidden />
+                        <span className="truncate">{row.advertiser || 'No advertiser'}</span>
+                        {row.seller_name ? <span className="truncate text-primary">· {row.seller_name}</span> : null}
                     </p>
                 </div>
-                <div className="flex gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button
-                        onClick={onEdit}
-                        className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 text-on-surface-variant"
-                        title="Edit"
-                    >
-                        <IconEdit size={15} />
-                    </button>
-                    <button
-                        onClick={onDelete}
-                        className="p-1.5 rounded-md hover:bg-red-100 dark:hover:bg-red-950 text-red-600"
-                        title="Delete"
-                    >
-                        <IconTrash size={15} />
-                    </button>
+                <div className="flex shrink-0 gap-1">
+                    <Button type="button" variant="ghost" size="icon-sm" onClick={onEdit} aria-label={`Edit ${row.name}`}>
+                        <Pencil />
+                    </Button>
+                    <Button type="button" variant="destructive" size="icon-sm" onClick={onDelete} aria-label={`Delete ${row.name}`}>
+                        <Trash2 />
+                    </Button>
                 </div>
             </div>
 
-            {/* Schedule */}
-            <div className="mt-3 flex items-center gap-2 text-[11px] text-on-surface-variant">
-                <IconCalendarTime size={12} />
+            <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                <CalendarClock className="h-3.5 w-3.5 shrink-0" aria-hidden />
                 {row.starts_at || row.ends_at ? (
-                    <span>
+                    <span className="inline-flex items-center gap-0.5">
                         {row.starts_at ? new Date(row.starts_at).toLocaleDateString() : 'now'}
-                        <IconChevronRight size={10} className="inline mx-0.5" />
-                        {row.ends_at ? new Date(row.ends_at).toLocaleDateString() : '∞'}
+                        <ChevronRight className="h-3 w-3" aria-hidden />
+                        {row.ends_at ? new Date(row.ends_at).toLocaleDateString() : 'no end'}
                     </span>
                 ) : (
                     <span>Always on</span>
                 )}
             </div>
 
-            {/* Caps */}
-            {(row.daily_impression_cap || row.total_impression_cap) && (
-                <div className="mt-2 flex items-center gap-3 text-[11px] text-on-surface-variant">
-                    {row.daily_impression_cap && (
-                        <span>cap {row.daily_impression_cap.toLocaleString()}/day</span>
-                    )}
-                    {row.total_impression_cap && (
-                        <span>cap {row.total_impression_cap.toLocaleString()} total</span>
-                    )}
+            {row.daily_impression_cap || row.total_impression_cap ? (
+                <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
+                    {row.daily_impression_cap ? <span>cap {row.daily_impression_cap.toLocaleString()}/day</span> : null}
+                    {row.total_impression_cap ? <span>cap {row.total_impression_cap.toLocaleString()} total</span> : null}
                 </div>
-            )}
+            ) : null}
 
-            {/* Stats */}
-            <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800 grid grid-cols-3 gap-2 text-xs">
-                <div>
-                    <div className="flex items-center gap-1 text-on-surface-variant text-[10px] uppercase tracking-wide">
-                        <IconChartBar size={10} /> Creatives
-                    </div>
-                    <p className="font-bold text-on-surface dark:text-white text-lg leading-tight mt-0.5">
-                        {row.creative_count}
-                    </p>
-                </div>
-                <div>
-                    <div className="flex items-center gap-1 text-on-surface-variant text-[10px] uppercase tracking-wide">
-                        <IconEye size={10} /> Impr 30d
-                    </div>
-                    <p className="font-bold text-on-surface dark:text-white text-lg leading-tight mt-0.5">
-                        {(row.stats?.impressions ?? 0).toLocaleString()}
-                    </p>
-                </div>
-                <div>
-                    <div className="flex items-center gap-1 text-on-surface-variant text-[10px] uppercase tracking-wide">
-                        <IconClick size={10} /> CTR
-                    </div>
-                    <p
-                        className={[
-                            'font-bold text-lg leading-tight mt-0.5',
-                            (row.stats?.ctr ?? 0) >= 1.5
-                                ? 'text-emerald-600'
-                                : (row.stats?.ctr ?? 0) > 0
-                                ? 'text-amber-600'
-                                : 'text-on-surface dark:text-white',
-                        ].join(' ')}
-                    >
-                        {row.stats?.ctr ?? 0}%
-                    </p>
-                </div>
+            <div className="mt-4 grid grid-cols-3 gap-2 border-t border-border pt-4 text-xs">
+                <Stat icon={<BarChart3 className="h-3 w-3" aria-hidden />} label="Creatives" value={row.creative_count} />
+                <Stat icon={<Eye className="h-3 w-3" aria-hidden />} label="Impr 30d" value={(row.stats?.impressions ?? 0).toLocaleString()} />
+                <Stat
+                    icon={<MousePointerClick className="h-3 w-3" aria-hidden />}
+                    label="CTR"
+                    value={`${ctr}%`}
+                    valueClass={ctr >= 1.5 ? 'text-success-600' : ctr > 0 ? 'text-warning-subtle-foreground' : undefined}
+                />
             </div>
 
-            {/* Status quick toggle */}
-            <button
-                type="button"
-                onClick={onCycleStatus}
-                className="mt-4 w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold border border-gray-300 dark:border-gray-700 text-on-surface-variant hover:bg-gray-100 dark:hover:bg-gray-800 transition"
-                title={
-                    row.status === 'running'
-                        ? 'Pause this campaign'
-                        : 'Set to Running — ads start serving'
-                }
-            >
-                {row.status === 'running' ? '⏸ Pause campaign' : '▶ Run campaign'}
-            </button>
-        </div>
+            <Button type="button" variant="outline" onClick={onCycleStatus} className="mt-4 w-full" title={row.status === 'running' ? 'Pause this campaign' : 'Set to Running, ads start serving'}>
+                {row.status === 'running' ? (
+                    <>
+                        <Pause /> Pause campaign
+                    </>
+                ) : (
+                    <>
+                        <Play /> Run campaign
+                    </>
+                )}
+            </Button>
+        </Card>
     );
 };
 

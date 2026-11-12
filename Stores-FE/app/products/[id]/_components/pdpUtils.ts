@@ -146,6 +146,13 @@ export function normalizeProduct(
   imagesRaw: unknown = [],
   reviews: MappedReview[] = []
 ): PdpProduct {
+  // Infographic rows are the big "about this product" pictures: they go in the wall under the details,
+  // never into the buy-box gallery.
+  const allImageRows = Array.isArray(imagesRaw) ? imagesRaw : []
+  const isWallRow = (r: unknown) => asRecord(r)?.image_type === 'infographic'
+  const wallImages = toImageList(allImageRows.filter(isWallRow))
+  imagesRaw = allImageRows.filter(r => !isWallRow(r))
+
   const variantImages = variantImageMap(imagesRaw)
   const variants = list(variantsRaw)
     .map(normalizeVariant)
@@ -185,6 +192,7 @@ export function normalizeProduct(
     pricing_currency: str(raw.pricing_currency) ?? 'GHS',
     main_product_image: main,
     images,
+    wall_images: wallImages,
     shared_images: toImageList(Array.isArray(imagesRaw) ? imagesRaw.filter(r => { const o = asRecord(r); return !o || o.product_variant == null || o.product_variant === '' }) : []),
     variants,
     variation_theme: str(raw.variation_theme) ?? 'single',
