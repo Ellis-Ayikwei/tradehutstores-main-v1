@@ -55,6 +55,7 @@ interface ActivityQuery {
     pageSize: number;
     search: string;
     activityType: string;
+    user: string;
     startDate: string;
     endDate: string;
     sort: DataTableSort | null;
@@ -131,6 +132,7 @@ async function fetchActivities(query: ActivityQuery): Promise<ActivityPage> {
     const params: Record<string, string | number> = { page: query.page, page_size: query.pageSize };
     if (query.search) params.search = query.search;
     if (query.activityType) params.activity_type = query.activityType;
+    if (query.user) params.user = query.user;
     if (query.startDate) params.start_date = query.startDate;
     if (query.endDate) params.end_date = query.endDate;
     if (query.sort) params.ordering = `${query.sort.desc ? '-' : ''}${query.sort.id}`;
@@ -145,6 +147,8 @@ async function fetchActivities(query: ActivityQuery): Promise<ActivityPage> {
     const term = query.search.toLowerCase();
     if (term) rows = rows.filter((a) => [a.user_details?.email, a.activity_type, a.request?.title].some((value) => (value ?? '').toLowerCase().includes(term)));
     if (query.activityType) rows = rows.filter((a) => a.activity_type === query.activityType);
+    const userTerm = query.user.toLowerCase();
+    if (userTerm) rows = rows.filter((a) => [a.user_details?.id, a.user_details?.email].some((value) => (value ?? '').toLowerCase() === userTerm || (value ?? '').toLowerCase().includes(userTerm)));
     if (query.startDate) rows = rows.filter((a) => a.created_at.slice(0, 10) >= query.startDate);
     if (query.endDate) rows = rows.filter((a) => a.created_at.slice(0, 10) <= query.endDate);
     if (query.sort) {
@@ -183,6 +187,7 @@ export default function AuditTrail() {
     const [pageSize, setPageSize] = useState(PAGE_SIZE_DEFAULT);
     const [search, setSearch] = useState('');
     const [activityType, setActivityType] = useState('');
+    const [user, setUser] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [sort, setSort] = useState<DataTableSort | null>(null);
@@ -192,9 +197,9 @@ export default function AuditTrail() {
         dispatch(setPageTitle('Audit trail'));
     }, [dispatch]);
 
-    const query: ActivityQuery = { page, pageSize, search, activityType, startDate, endDate, sort };
+    const query: ActivityQuery = { page, pageSize, search, activityType, user, startDate, endDate, sort };
     const { data, error, isLoading, isValidating, mutate } = useSWR<ActivityPage>(
-        ['audit-trail', page, pageSize, search, activityType, startDate, endDate, sort?.id ?? '', sort?.desc ?? false],
+        ['audit-trail', page, pageSize, search, activityType, user, startDate, endDate, sort?.id ?? '', sort?.desc ?? false],
         () => fetchActivities(query),
         { ...SWR_OPTIONS, refreshInterval: 30000 }
     );
@@ -266,7 +271,7 @@ export default function AuditTrail() {
     );
 
     const resetPage = () => setPage(1);
-    const hasFilters = Boolean(search || activityType || startDate || endDate);
+    const hasFilters = Boolean(search || activityType || user || startDate || endDate);
     const mostActive = stats?.activities?.most_active_users?.[0];
 
     return (
@@ -351,6 +356,21 @@ export default function AuditTrail() {
                                 ))}
                             </SelectContent>
                         </Select>
+                        <div className="w-full sm:w-52">
+                            <Label htmlFor="audit-user" className="sr-only">
+                                Filter by user
+                            </Label>
+                            <Input
+                                id="audit-user"
+                                type="search"
+                                value={user}
+                                placeholder="User ID or email"
+                                onChange={(event) => {
+                                    setUser(event.target.value.trim());
+                                    resetPage();
+                                }}
+                            />
+                        </div>
                         <div className="flex items-center gap-2">
                             <Label htmlFor="audit-start" className="sr-only">
                                 Start date

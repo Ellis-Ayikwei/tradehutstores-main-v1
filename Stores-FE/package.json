@@ -65,9 +65,9 @@
     "@cloudflare/next-on-pages": {
       "next": "$next",
       "vercel": "$vercel",
-      "esbuild": "^0.25.0",
+      "esbuild": ">=0.25.0",
       "miniflare": "5.20261110.1-beta",
-      "cookie": "^0.7.2"
+      "cookie": ">=0.7.2"
     },
     "js-yaml": "^4.3.2",
     "zod": "^4.6.7",
@@ -78,6 +78,8 @@
     "glob@13": "^14.0.2",
     "minimatch@10": "^11.0.1",
     "path-to-regexp@6": "^6.3.0",
-    "path-to-regexp@8": "^8.4.0"
+    "path-to-regexp@8": "^8.4.0",
+    "glob@10": "^14.0.2",
+    "tsx": "^4.23.15"
   }
 }

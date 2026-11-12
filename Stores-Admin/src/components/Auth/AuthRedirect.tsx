@@ -3,6 +3,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 import useIsAuthenticated from 'react-auth-kit/hooks/useIsAuthenticated';
 import { useUserAccess } from '@/pages/seller/hooks/useUserAccess';
+import { safeInternalPath } from '@/helper/safeInternalPath';
 
 interface AuthUser {
     user: {
@@ -27,11 +28,11 @@ const AuthRedirect: React.FC<AuthRedirectProps> = ({ children }) => {
     if (isAuthenticated && authUser?.user) {
         const userType = authUser.user.user_type?.toLowerCase();
         const searchParams = new URLSearchParams(location.search);
-        const from = searchParams.get('from');
+        const from = safeInternalPath(searchParams.get('from'));
 
-        // If there's a 'from' parameter, redirect there
+        // If there's a valid same-origin 'from' parameter, redirect there
         if (from) {
-            return <Navigate to={decodeURIComponent(from)} replace />;
+            return <Navigate to={from} replace />;
         }
 
         // Wait for the profile (group list) so a seller is never sent to the wrong page first

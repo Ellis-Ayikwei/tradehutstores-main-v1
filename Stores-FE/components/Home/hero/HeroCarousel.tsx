@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react'
 import { HIDE_SCROLLBAR } from '../HomeSection'
 import HeroSlideCard from './HeroSlideCard'
 import type { HeroConfig, HeroSlide } from './heroData'
@@ -23,6 +23,7 @@ export default function HeroCarousel({ slides, config, className = '' }: Readonl
     const touchX = useRef<number | null>(null)
     const [index, setIndex] = useState(0)
     const [paused, setPaused] = useState(false)
+    const [stopped, setStopped] = useState(false)
     const fade = config.transition === 'fade'
 
     const goTo = useCallback(
@@ -58,11 +59,11 @@ export default function HeroCarousel({ slides, config, className = '' }: Readonl
     }
 
     useEffect(() => {
-        if (!config.autoplay || paused || count < 2) return
+        if (!config.autoplay || paused || stopped || count < 2) return
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
         const id = window.setInterval(() => goTo(indexRef.current + 1), config.interval_seconds * 1000)
         return () => window.clearInterval(id)
-    }, [config.autoplay, config.interval_seconds, paused, count, goTo])
+    }, [config.autoplay, config.interval_seconds, paused, stopped, count, goTo])
 
     const onTouchStart = (e: React.TouchEvent) => {
         setPaused(true)
@@ -132,6 +133,17 @@ export default function HeroCarousel({ slides, config, className = '' }: Readonl
                         <ChevronRight className="h-5 w-5" aria-hidden />
                     </button>
                 </>
+            ) : null}
+
+            {count > 1 && config.autoplay ? (
+                <button
+                    type="button"
+                    onClick={() => setStopped((s) => !s)}
+                    aria-label={stopped ? 'Play slideshow' : 'Pause slideshow'}
+                    className="absolute right-2 top-2 z-20 flex h-8 w-8 items-center justify-center rounded-md border border-zinc-300 bg-white text-zinc-900 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+                >
+                    {stopped ? <Play className="h-4 w-4" aria-hidden /> : <Pause className="h-4 w-4" aria-hidden />}
+                </button>
             ) : null}
 
             {count > 1 && config.show_dots ? (

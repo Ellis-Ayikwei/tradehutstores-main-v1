@@ -299,36 +299,45 @@ interface PreviewProps {
     variant?: PlacementFormat;
 }
 
-// Storefront render fallbacks when a creative leaves a colour blank. These mirror the
-// storefront ad component, so the preview matches what buyers see.
-const FALLBACK_BG = '#1f2937';
-const FALLBACK_FG = '#ffffff';
-const FALLBACK_ACCENT = '#fbbf24';
-const CTA_CHIP_BG = '#ffffff';
-const CTA_CHIP_FG = '#111827';
+// Storefront render fallbacks when a creative leaves a colour blank (Tailwind classes, same
+// values as the storefront ad component). Colours set on the creative stay inline styles.
+const FALLBACK_BG_CLASS = 'bg-gray-800';
+const FALLBACK_FG_CLASS = 'text-white';
+const FALLBACK_ACCENT_BG_CLASS = 'bg-amber-400';
+const FALLBACK_ACCENT_BORDER_CLASS = 'border-amber-400';
+const CTA_CHIP_CLASS = 'bg-white text-gray-900';
 
-const bgStyle = (bg: string, fg: string): React.CSSProperties => ({
-    background: bg.includes('gradient') ? bg : undefined,
-    backgroundColor: bg.includes('gradient') ? undefined : bg,
-    color: fg,
-});
+/** Surface props: creative colours go inline, blanks fall back to Tailwind classes. */
+const surfaceProps = (bg: string, fg: string): { className: string; style: React.CSSProperties } => {
+    const isGradient = bg.includes('gradient');
+    return {
+        className: cn(!bg && FALLBACK_BG_CLASS, !fg && FALLBACK_FG_CLASS),
+        style: {
+            background: bg && isGradient ? bg : undefined,
+            backgroundColor: bg && !isGradient ? bg : undefined,
+            color: fg || undefined,
+        },
+    };
+};
 
 export const LivePreview: React.FC<PreviewProps> = ({ creative, variant = 'banner' }) => {
-    const bg = creative.background_color || FALLBACK_BG;
-    const fg = creative.text_color || FALLBACK_FG;
-    const accent = creative.accent_color || FALLBACK_ACCENT;
+    const bg = creative.background_color || '';
+    const fg = creative.text_color || '';
+    const accent = creative.accent_color || '';
+    const surface = surfaceProps(bg, fg);
+    const accentStyle: React.CSSProperties = accent ? { backgroundColor: accent } : {};
     const image = creative.image_desktop_preview || creative.image_desktop_url || '';
 
     if (variant === 'topbar') {
         return (
-            <div className="overflow-hidden rounded-xl border border-border" style={bgStyle(bg, fg)}>
+            <div className={cn('overflow-hidden rounded-xl border border-border', surface.className)} style={surface.style}>
                 <div className="flex items-center justify-center gap-3 px-4 py-2 text-xs font-medium">
                     {creative.eyebrow ? <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider">{creative.eyebrow}</span> : null}
                     <span className="truncate">{creative.headline || '(headline)'}</span>
                     {creative.cta_label ? (
                         <span
-                            className="whitespace-nowrap rounded-full border px-2.5 py-0.5 text-[11px] font-bold"
-                            style={{ borderColor: accent, backgroundColor: CTA_CHIP_BG, color: CTA_CHIP_FG }}
+                            className={cn('whitespace-nowrap rounded-full border px-2.5 py-0.5 text-[11px] font-bold', CTA_CHIP_CLASS, !accent && FALLBACK_ACCENT_BORDER_CLASS)}
+                            style={accent ? { borderColor: accent } : undefined}
                         >
                             {creative.cta_label}
                         </span>
@@ -346,16 +355,16 @@ export const LivePreview: React.FC<PreviewProps> = ({ creative, variant = 'banne
                         <img src={image} alt="" className="h-full w-full object-cover" />
                     </div>
                 ) : null}
-                <div className="p-6 text-center" style={bgStyle(bg, fg)}>
+                <div className={cn('p-6 text-center', surface.className)} style={surface.style}>
                     {creative.eyebrow ? (
-                        <span className="mb-3 inline-block rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em]" style={{ backgroundColor: accent, color: FALLBACK_FG }}>
+                        <span className={cn('mb-3 inline-block rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white', !accent && FALLBACK_ACCENT_BG_CLASS)} style={accentStyle}>
                             {creative.eyebrow}
                         </span>
                     ) : null}
                     <h2 className="text-2xl font-bold leading-tight">{creative.headline || '(headline)'}</h2>
                     {creative.subheadline ? <p className="mt-2 text-sm">{creative.subheadline}</p> : null}
                     {creative.cta_label ? (
-                        <span className="mt-5 inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold" style={{ backgroundColor: accent, color: FALLBACK_FG }}>
+                        <span className={cn('mt-5 inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold text-white', !accent && FALLBACK_ACCENT_BG_CLASS)} style={accentStyle}>
                             {creative.cta_label} →
                         </span>
                     ) : null}
@@ -366,18 +375,18 @@ export const LivePreview: React.FC<PreviewProps> = ({ creative, variant = 'banne
 
     // Default: banner / carousel / inline_card / etc.
     return (
-        <div className="relative aspect-[21/5] w-full overflow-hidden rounded-xl border border-border" style={bgStyle(bg, fg)}>
+        <div className={cn('relative aspect-[21/5] w-full overflow-hidden rounded-xl border border-border', surface.className)} style={surface.style}>
             {image ? <img src={image} alt="" className="absolute inset-0 h-full w-full object-cover" /> : null}
             <div className={cn('absolute inset-0 flex flex-col justify-center px-4 sm:px-8', image && 'bg-gradient-to-r from-black/60 via-black/25 to-transparent')}>
                 {creative.eyebrow ? (
-                    <span className="mb-2 inline-block w-fit rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.2em]" style={{ backgroundColor: accent, color: FALLBACK_FG }}>
+                    <span className={cn('mb-2 inline-block w-fit rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white', !accent && FALLBACK_ACCENT_BG_CLASS)} style={accentStyle}>
                         {creative.eyebrow}
                     </span>
                 ) : null}
                 <h3 className="max-w-md text-sm font-bold leading-tight sm:text-xl">{creative.headline || '(headline)'}</h3>
                 {creative.subheadline ? <p className="mt-1 line-clamp-2 max-w-md text-xs sm:text-sm">{creative.subheadline}</p> : null}
                 {creative.cta_label ? (
-                    <span className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold" style={{ backgroundColor: accent, color: FALLBACK_FG }}>
+                    <span className={cn('mt-2 inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold text-white', !accent && FALLBACK_ACCENT_BG_CLASS)} style={accentStyle}>
                         {creative.cta_label} →
                     </span>
                 ) : null}

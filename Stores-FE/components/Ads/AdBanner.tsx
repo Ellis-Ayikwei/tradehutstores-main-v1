@@ -55,29 +55,47 @@ export default function AdBanner({
     const boxTone = textOnly && !surface.background ? 'bg-zinc-900' : 'bg-zinc-100'
 
     // Caption sits directly on the photo (or on the solid/gradient surface), over a legibility scrim.
+    // A caller-sized box (e.g. the 21:5 / 21:3 strips) is short, so the caption scales down to fit it.
+    const compact = !!aspectClass
     const caption = hasCaption ? (
         <div
-            className="absolute inset-0 flex max-w-2xl flex-col justify-end gap-1 p-4 sm:justify-center sm:gap-2 sm:p-8 lg:p-12"
+            className={`absolute inset-0 flex max-w-2xl flex-col justify-center ${
+                compact ? 'gap-0.5 p-2 sm:gap-1 sm:p-4 lg:p-6' : 'justify-end gap-1 p-4 sm:justify-center sm:gap-2 sm:p-8 lg:p-12'
+            }`}
             style={{ color: surface.color }}
         >
             {c.eyebrow ? (
-                <span className="w-fit rounded-full bg-white px-2.5 py-0.5 text-xs font-semibold text-zinc-900">
+                <span
+                    className={`w-fit rounded-full bg-white px-2.5 py-0.5 text-xs font-semibold text-zinc-900 ${
+                        compact ? 'hidden sm:inline-block' : ''
+                    }`}
+                >
                     {c.eyebrow}
                 </span>
             ) : null}
             {c.headline ? (
-                <h3 className="line-clamp-2 font-syne text-xl font-extrabold leading-tight sm:text-3xl lg:text-4xl">
+                <h3
+                    className={`font-syne font-extrabold leading-tight ${
+                        compact ? 'line-clamp-1 text-sm sm:text-lg lg:text-2xl' : 'line-clamp-2 text-xl sm:text-3xl lg:text-4xl'
+                    }`}
+                >
                     {c.headline}
                 </h3>
             ) : null}
             {c.subheadline ? (
-                <p className="line-clamp-2 hidden max-w-md text-sm leading-snug sm:block sm:text-base">{c.subheadline}</p>
+                <p
+                    className={`line-clamp-2 hidden max-w-md leading-snug sm:block ${
+                        compact ? 'text-xs lg:text-sm' : 'text-sm sm:text-base'
+                    }`}
+                >
+                    {c.subheadline}
+                </p>
             ) : null}
             {c.cta_label ? (
                 <span
-                    className={`mt-1 inline-flex h-9 w-fit items-center gap-1 rounded-full px-4 text-sm font-bold sm:mt-2 sm:h-11 sm:px-6 ${
-                        accent ? '' : 'bg-white text-zinc-900'
-                    }`}
+                    className={`inline-flex w-fit items-center gap-1 rounded-full font-bold ${
+                        compact ? 'mt-0.5 h-7 px-3 text-xs sm:h-8 sm:px-4 sm:text-sm' : 'mt-1 h-9 px-4 text-sm sm:mt-2 sm:h-11 sm:px-6'
+                    } ${accent ? '' : 'bg-white text-zinc-900'}`}
                     style={accent}
                 >
                     {c.cta_label}

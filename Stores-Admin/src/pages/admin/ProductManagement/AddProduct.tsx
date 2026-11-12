@@ -868,7 +868,7 @@ const AddProduct: React.FC = () => {
         setVariants(variants.filter((_, i) => i !== index));
     };
 
-    const updateVariant = (index: number, field: keyof ProductVariant, value: any) => {
+    const updateVariant = (index: number, field: keyof ProductVariant, value: ProductVariant[keyof ProductVariant]) => {
         const updated = [...variants];
         updated[index] = { ...updated[index], [field]: value };
         setVariants(updated);

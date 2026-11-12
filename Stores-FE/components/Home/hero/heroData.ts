@@ -104,7 +104,7 @@ const FALLBACK_SLIDES: HeroSlide[] = [
         title: 'New arrivals',
         subtitle: 'See the latest listings on TradeHut',
         cta_label: 'Explore new',
-        link_url: '/products?sort=new',
+        link_url: '/products?sort=newest',
     },
     {
         ...slideBase,
@@ -126,7 +126,7 @@ const FALLBACK_SLIDES: HeroSlide[] = [
         title: 'New arrivals',
         subtitle: '',
         cta_label: "See what's new",
-        link_url: '/products?sort=new',
+        link_url: '/products?sort=newest',
     },
 ]
 

@@ -22,6 +22,7 @@ import { ThunkDispatch, AnyAction } from '@reduxjs/toolkit';
 import { useEffect } from 'react';
 import useIsAuthenticated from 'react-auth-kit/hooks/useIsAuthenticated';
 import { useUserAccess } from '../seller/hooks/useUserAccess';
+import { safeInternalPath } from '../../helper/safeInternalPath';
 
 interface LoginFormValues {
     email: string;
@@ -44,7 +45,8 @@ const Login: React.FC = () => {
     const [loginAttempts, setLoginAttempts] = useState(0);
 
     const { loading, error, user } = useSelector((state: IRootState) => state.auth);
-    const explicitFrom = new URLSearchParams(location.search).get('from');
+    // Only same-origin app paths are honoured; anything else falls back to the default landing page.
+    const explicitFrom = safeInternalPath(new URLSearchParams(location.search).get('from'));
     const { isResolving, isSeller, isStaff } = useUserAccess();
     // Seller-only accounts (Sellers group, no staff signal) land on the seller dashboard; everyone else keeps the admin default.
     const from = explicitFrom || (isSeller && !isStaff ? '/seller/overview' : '/admin/dashboard');

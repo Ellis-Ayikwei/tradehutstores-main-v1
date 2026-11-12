@@ -62,7 +62,7 @@ interface ReviewModalProps {
     jobs: Job[];
     saving: boolean;
     onClose: () => void;
-    onFormChange: (field: string, value: any) => void;
+    onFormChange: (field: string, value: string | boolean) => void;
     onSave: () => void;
 }
 

@@ -4,6 +4,9 @@ from rest_framework import serializers
 from .models import HeroConfig, HeroSlide
 
 
+MAX_HERO_IMAGE_BYTES = 5 * 1024 * 1024
+
+
 def _abs(serializer, file):
     if not file:
         return None
@@ -145,6 +148,27 @@ class HeroSlideAdminSerializer(_ModelCleanMixin, serializers.ModelSerializer):
     def get_image_mobile_url(self, obj):
         return _abs(self, obj.image_mobile)
 
+    @staticmethod
+    def _check_size(file):
+        if file is not None and file.size > MAX_HERO_IMAGE_BYTES:
+            raise serializers.ValidationError("Image is larger than 5 MB.")
+        return file
+
+    def validate_image_desktop(self, file):
+        return self._check_size(file)
+
+    def validate_image_mobile(self, file):
+        return self._check_size(file)
+
 
 class HeroReorderSerializer(serializers.Serializer):
+    """The ids must be exactly the existing slides, each once, so positions can never collide."""
+
     ids = serializers.ListField(child=serializers.IntegerField(), allow_empty=False)
+
+    def validate_ids(self, ids):
+        if len(set(ids)) != len(ids):
+            raise serializers.ValidationError("Each slide may appear only once.")
+        if set(ids) != set(HeroSlide.objects.values_list("id", flat=True)):
+            raise serializers.ValidationError("Send every slide id, and only existing ones.")
+        return ids

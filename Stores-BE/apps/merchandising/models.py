@@ -194,7 +194,10 @@ def validate_link(value: str) -> None:
     """Storefront-relative path ("/deals") or absolute http(s) URL."""
     if not value:
         return
-    if value.startswith("/") and not value.startswith("//"):
+    # Browsers read "/\host" and "/%2F" style prefixes as protocol-relative, so only plain paths pass.
+    if "\\" in value or any(ord(ch) < 32 for ch in value):
+        raise ValidationError("Use a path starting with / or a full http(s) URL.")
+    if value.startswith("/") and not value.startswith("//") and not value.lower().startswith("/%2f"):
         return
     if value.startswith(("http://", "https://")):
         return

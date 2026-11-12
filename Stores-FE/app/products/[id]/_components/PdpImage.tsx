@@ -24,10 +24,11 @@ interface PdpImageProps {
   className?: string
   priority?: boolean
   draggable?: boolean
+  onLoad?: (event: React.SyntheticEvent<HTMLImageElement>) => void
 }
 
 /** Fill-mode next/image: the parent must be `relative` with a fixed size or aspect ratio. */
-export default function PdpImage({ src, alt, sizes, className, priority, draggable }: PdpImageProps) {
+export default function PdpImage({ src, alt, sizes, className, priority, draggable, onLoad }: PdpImageProps) {
   return (
     <Image
       src={src}
@@ -36,6 +37,7 @@ export default function PdpImage({ src, alt, sizes, className, priority, draggab
       sizes={sizes}
       priority={priority}
       draggable={draggable}
+      onLoad={onLoad}
       unoptimized={needsUnoptimized(src)}
       className={className}
     />

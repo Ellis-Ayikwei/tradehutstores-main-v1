@@ -74,8 +74,9 @@ function unwrapList<T>(payload: unknown): T[] {
 }
 
 /** Pull a readable message out of an axios / DRF error. */
-function requestErrorMessage(error: any): string {
-    const data = error?.response?.data;
+function requestErrorMessage(error: unknown): string {
+    const err = error as { response?: { data?: unknown }; message?: string } | null | undefined;
+    const data = err?.response?.data as (string | Record<string, unknown> | null | undefined);
     if (typeof data === 'string' && data.trim() && !data.trim().startsWith('<')) return data;
     if (data && typeof data === 'object') {
         if (typeof data.detail === 'string') return data.detail;
@@ -86,7 +87,7 @@ function requestErrorMessage(error: any): string {
         }
         if (parts.length > 0) return parts.join('\n');
     }
-    return error?.message || 'An unexpected error occurred. Please try again.';
+    return err?.message || 'An unexpected error occurred. Please try again.';
 }
 
 const toRating = (rating: number | string | null | undefined): number => {
@@ -249,7 +250,7 @@ const ReviewManagement: React.FC = () => {
         setForm(EMPTY_FORM);
     };
 
-    const handleFormChange = (field: string, value: any) => setForm((prev) => ({ ...prev, [field]: value }));
+    const handleFormChange = (field: string, value: string | boolean) => setForm((prev) => ({ ...prev, [field]: value }));
 
     const handleSave = async () => {
         try {
