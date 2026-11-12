@@ -4,6 +4,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import routers
 
+from apps.core.views import health
+
 # JWT views can be imported here when needed for custom endpoints
 # from rest_framework_simplejwt.views import (
 #     TokenObtainPairView,
@@ -26,6 +28,8 @@ urlpatterns = [
         include(
             [
                 path("admin/", admin.site.urls),
+                # Liveness + database probe for the platform healthcheck and uptime monitors
+                path("health/", health, name="health"),
                 # Include router URLs for ViewSets
                 path("", include(router.urls)),
                 # Authentication endpoints

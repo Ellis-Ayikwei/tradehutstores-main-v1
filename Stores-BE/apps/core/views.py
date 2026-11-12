@@ -1,13 +1,47 @@
 import logging
 
+from django.db import connection
 from rest_framework import serializers, status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import (
+    api_view,
+    authentication_classes,
+    permission_classes,
+    throttle_classes,
+)
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from .fx_service import get_or_build_fx_snapshot, quote_checkout_amounts
 
 logger = logging.getLogger(__name__)
+
+
+@api_view(["GET", "HEAD"])
+@authentication_classes([])
+@permission_classes([AllowAny])
+@throttle_classes([])
+def health(_request):
+    """
+    GET tradehut/api/v1/health/
+
+    200 {"status": "ok"} when the process is serving and the database answers `SELECT 1`;
+    503 {"status": "unavailable"} otherwise. Unauthenticated and unthrottled so uptime
+    monitors and the platform healthcheck never get a 401/429. Only the database is
+    checked: Redis, search and other optional subsystems degrade without taking the API down.
+    The body never carries hostnames, versions or error text.
+    """
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+            cursor.fetchone()
+    except Exception:
+        logger.exception("health check: database unavailable")
+        return Response(
+            {"status": "unavailable"},
+            status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            headers={"Cache-Control": "no-store"},
+        )
+    return Response({"status": "ok"}, headers={"Cache-Control": "no-store"})
 
 
 class FxQuoteLineSerializer(serializers.Serializer):
