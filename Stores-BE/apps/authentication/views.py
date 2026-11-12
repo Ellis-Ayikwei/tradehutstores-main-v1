@@ -1,11 +1,11 @@
 import os
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.core.mail import send_mail
 from django.conf import settings
 from django.urls import reverse
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from apps.core.email import send_branded_email
 from apps.users.models import User
 from rest_framework import status, permissions
 from rest_framework.views import APIView
@@ -607,11 +607,18 @@ class PasswordRecoveryAPIView(APIView):
 
         # Send password reset email
         try:
-            send_mail(
-                subject="Password Reset Request",
-                message=f"Click the following link to reset your password: {reset_url}",
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[user.email],
+            send_branded_email(
+                user.email,
+                "Password Reset Request",
+                title="Reset your password",
+                user_name=user.first_name or user.email.split("@")[0],
+                paragraphs=[
+                    "We received a request to reset the password for your account. "
+                    "Use the button below to choose a new one.",
+                    "If you didn't ask for this, you can ignore this email and your password stays the same.",
+                ],
+                action_label="Reset password",
+                action_url=reset_url,
                 fail_silently=False,
             )
 

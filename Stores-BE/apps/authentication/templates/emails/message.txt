@@ -1,0 +1,10 @@
+{% extends "emails/base.txt" %}{% block content %}{% if user_name %}Hi {{ user_name }},
+
+{% endif %}{% if title %}{{ title }}
+
+{% endif %}{% for line in paragraphs %}{{ line }}
+
+{% endfor %}{% if code %}Your code: {{ code }}
+
+{% endif %}{% if action_url %}{{ action_label|default:"Open" }}: {{ action_url }}
+{% endif %}{% endblock %}

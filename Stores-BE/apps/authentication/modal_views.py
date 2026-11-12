@@ -38,7 +38,6 @@ from typing import Any
 
 from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
-from django.core.mail import send_mail
 from django.db import transaction
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
@@ -46,6 +45,8 @@ from rest_framework.decorators import api_view, permission_classes, throttle_cla
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+
+from apps.core.email import send_branded_email
 
 from .models import AuthFlowSession, _normalise_identifier, mask_identifier
 from .throttles import (
@@ -123,15 +124,15 @@ def _deliver_otp(*, identifier: str, kind: str, code: str) -> None:
     fires-and-forgets. Logging the code is gated by DEBUG."""
     if kind == "email":
         try:
-            send_mail(
-                subject="Your TradeHut verification code",
-                message=(
-                    f"Your one-time code is {code}.\n"
-                    "It expires in 5 minutes. If you didn't request this, "
-                    "ignore this email."
-                ),
-                from_email=getattr(settings, "DEFAULT_FROM_EMAIL", None),
-                recipient_list=[identifier],
+            send_branded_email(
+                identifier,
+                "Your TradeHut verification code",
+                title="Your verification code",
+                paragraphs=[
+                    "Use this code to continue. It expires in 5 minutes.",
+                    "If you didn't request this, you can ignore this email.",
+                ],
+                code=code,
                 fail_silently=True,
             )
         except Exception:  # noqa: BLE001 — delivery must never break the flow

@@ -519,16 +519,27 @@ PAYSTACK_BASE_URL = config("PAYSTACK_BASE_URL", default="https://api.paystack.co
 # Minutes a buyer has to finish paying before the unpaid order is cancelled and its stock released.
 CHECKOUT_PAYMENT_WINDOW_MINUTES = config("CHECKOUT_PAYMENT_WINDOW_MINUTES", default=30, cast=int)
 
-# Email Configuration (update with your SMTP settings)
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # For development
-# For production, use:
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'your-email@gmail.com'
-# EMAIL_HOST_PASSWORD = 'your-app-password'
-DEFAULT_FROM_EMAIL = "noreply@tradehut.com"
+# ── Email ─────────────────────────────────────────────────────────────────────
+# USE_SES=True sends every email (OTPs, password resets, notifications) through Amazon SES over its
+# HTTPS API, so it works on hosts that block outbound SMTP. Off by default: dev and CI print emails
+# to the console instead.
+USE_SES = _bool_env("USE_SES", default=False)
+# Must be an address or domain verified in SES, e.g. "TradeHut <noreply@yourdomain.com>".
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="TradeHut <noreply@tradehut.com>")
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
+if USE_SES:
+    EMAIL_BACKEND = "django_ses.SESBackend"
+    USE_SES_V2 = True
+    # Dedicated SES keys: django-ses falls back to AWS_ACCESS_KEY_ID, which holds the R2 key when USE_R2 is on.
+    AWS_SES_ACCESS_KEY_ID = config("SES_ACCESS_KEY_ID")
+    AWS_SES_SECRET_ACCESS_KEY = config("SES_SECRET_ACCESS_KEY")
+    # The SES endpoint is derived from the region; identities and sandbox status are per region.
+    AWS_SES_REGION_NAME = config("SES_REGION")
+    # Optional: a configuration set that routes delivery/bounce/complaint events to SNS or CloudWatch.
+    AWS_SES_CONFIGURATION_SET = config("SES_CONFIGURATION_SET", default="") or None
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # ── Store catalogue currency (aligned with Stores-FE/lib/storeCurrency.ts) ───
 # All placeholder FX rates are expressed per 1 unit of this ISO code.

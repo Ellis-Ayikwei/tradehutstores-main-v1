@@ -1,0 +1,11 @@
+{% autoescape off %}{% block content %}{% endblock %}
+
+Thanks,
+The {{ app_name }} team
+
+Need help? Call or WhatsApp {{ support_phone }} ({{ support_whatsapp_link }})
+{{ business_location }}
+
+This is an automated message from a no-reply address, so replies are not read.
+(c) {{ current_year }} {{ app_name }}
+{% endautoescape %}

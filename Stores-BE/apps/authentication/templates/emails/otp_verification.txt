@@ -1,0 +1,9 @@
+{% extends "emails/base.txt" %}{% block content %}Hi {{ user_name }},
+
+{{ message }}
+
+Your code: {{ otp_code }}
+
+This code expires in {{ validity_minutes }} minutes and can be used once.
+Never share this code with anyone. {{ app_name }} will never ask you for it.
+If you did not request this, you can ignore this email and your account stays safe.{% endblock %}

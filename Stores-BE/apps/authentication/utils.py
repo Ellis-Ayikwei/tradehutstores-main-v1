@@ -10,6 +10,8 @@ from django.core.cache import cache
 from datetime import datetime
 import logging
 
+from apps.core.email import base_email_context
+
 logger = logging.getLogger(__name__)
 
 
@@ -113,17 +115,11 @@ def send_email_template(user, subject, template_name, context=None):
         if context is None:
             context = {}
 
-        # Add default context
+        # Add default context (logo, signature and no-reply details for emails/base.*)
         context.update(
             {
                 "user_name": user.first_name or user.email.split("@")[0],
-                "app_name": "MoreVans",
-                "current_year": datetime.now().year,
-                "logo_url": getattr(
-                    settings,
-                    "EMAIL_LOGO_URL",
-                    "https://api.morevans.com/morevans/api/v1/images/morevanstext.png",
-                ),
+                **base_email_context(),
             }
         )
 
@@ -201,24 +197,12 @@ class OTPEmailService:
                 f"[EMAIL_DEBUG] Preparing email context for OTP type: {otp_type}"
             )
 
-            # Generate logo for email
-            logo_data_url = OTPEmailService.get_logo_data_url("MV", "#2E2787", 80)
-
             context = {
+                **base_email_context(),
                 "user_name": user.first_name or user.email.split("@")[0],
                 "otp_code": otp.otp_code,
                 "validity_minutes": int(
                     (otp.expires_at - timezone.now()).total_seconds() / 60
-                ),
-                "app_name": kwargs.get("app_name", "MoreVans"),
-                "current_year": datetime.now().year,
-                "logo_svg_base64": logo_data_url.split(",")[
-                    1
-                ],  # Remove the data:image/svg+xml;base64, prefix
-                "logo_url": getattr(
-                    settings,
-                    "EMAIL_LOGO_URL",
-                    "https://api.morevans.com/morevans/api/v1/images/morevanstext.png",
                 ),
             }
 
@@ -287,7 +271,7 @@ class OTPEmailService:
                 preloaded_logo_bytes = None
 
             if preloaded_logo_bytes:
-                context["logo_cid"] = "cid:morevans-logo"
+                context["logo_cid"] = "cid:tradehut-logo"
 
             # Render email templates
             logger.info(f"[EMAIL_DEBUG] Rendering email templates")
@@ -328,11 +312,11 @@ class OTPEmailService:
                     if "/" in preloaded_content_type:
                         subtype = preloaded_content_type.split("/")[-1]
                     img = MIMEImage(preloaded_logo_bytes, _subtype=subtype)
-                    img.add_header("Content-ID", "<morevans-logo>")
+                    img.add_header("Content-ID", "<tradehut-logo>")
                     img.add_header(
                         "Content-Disposition",
                         "inline",
-                        filename=f"morevanstext.{subtype}",
+                        filename=f"tradehut-logo.{subtype}",
                     )
                     email.attach(img)
             except Exception as cid_err:

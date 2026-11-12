@@ -1,0 +1,17 @@
+;; Amazon SES (eu-north-1) DNS records for thetradehut.com
+;; BIND zone file for Cloudflare: DNS > Records > Import and Export > Import DNS records
+;; Leave "Proxy imported DNS records" unticked. TTL 1 means Auto in Cloudflare.
+
+$ORIGIN thetradehut.com.
+
+;; DKIM (Easy DKIM, 3 CNAMEs)
+x3fxnwqmg7iqccp2z2kave4zvegenzgv._domainkey.thetradehut.com.	1	IN	CNAME	x3fxnwqmg7iqccp2z2kave4zvegenzgv.dkim.amazonses.com.
+hcgiafqho6y3kdcefwyqs7sjgno2bbse._domainkey.thetradehut.com.	1	IN	CNAME	hcgiafqho6y3kdcefwyqs7sjgno2bbse.dkim.amazonses.com.
+dpigazkp2h6twq3wfbbdawsrejuyp6p5._domainkey.thetradehut.com.	1	IN	CNAME	dpigazkp2h6twq3wfbbdawsrejuyp6p5.dkim.amazonses.com.
+
+;; Custom MAIL FROM domain (name kept exactly as SES issued it)
+bounce.thetradehut.com.thetradehut.com.	1	IN	MX	10 feedback-smtp.eu-north-1.amazonses.com.
+bounce.thetradehut.com.thetradehut.com.	1	IN	TXT	"v=spf1 include:amazonses.com ~all"
+
+;; DMARC
+_dmarc.thetradehut.com.	1	IN	TXT	"v=DMARC1; p=none;"
