@@ -519,6 +519,12 @@ PAYSTACK_BASE_URL = config("PAYSTACK_BASE_URL", default="https://api.paystack.co
 # Minutes a buyer has to finish paying before the unpaid order is cancelled and its stock released.
 CHECKOUT_PAYMENT_WINDOW_MINUTES = config("CHECKOUT_PAYMENT_WINDOW_MINUTES", default=30, cast=int)
 
+# Social sign-in (apps/authentication/social.py). A provider is offered only when all of its
+# values are set. The same client/app id must be set on the storefront (NEXT_PUBLIC_*).
+GOOGLE_OAUTH_CLIENT_ID = config("GOOGLE_OAUTH_CLIENT_ID", default="")
+FACEBOOK_APP_ID = config("FACEBOOK_APP_ID", default="")
+FACEBOOK_APP_SECRET = config("FACEBOOK_APP_SECRET", default="")
+
 # ── Email ─────────────────────────────────────────────────────────────────────
 # USE_SES=True sends every email (OTPs, password resets, notifications) through Amazon SES over its
 # HTTPS API, so it works on hosts that block outbound SMTP. Off by default: dev and CI print emails

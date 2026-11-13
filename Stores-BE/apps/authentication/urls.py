@@ -29,6 +29,7 @@ from .views import (
     AdminViewUserOTPsView,
 )
 from . import modal_views
+from .social import SocialLoginAPIView
 
 
 # Create a router for the UserViewSet
@@ -45,6 +46,7 @@ urlpatterns = [
         name="register_provider",
     ),
     path("login/", LoginAPIView.as_view(), name="token_obtain_pair"),
+    path("social/", SocialLoginAPIView.as_view(), name="social_login"),
     path("admin-login/", AdminLoginAPIView.as_view(), name="admin_token_obtain_pair"),
     path("logout/", LogoutAPIView.as_view(), name="logout"),
     path("forget_password/", PasswordRecoveryAPIView.as_view(), name="forget_password"),

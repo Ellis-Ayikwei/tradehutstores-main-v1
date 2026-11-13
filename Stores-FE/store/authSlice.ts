@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, isAnyOf, type PayloadAction } from '@reduxjs/toolkit'
 import { isAxiosError } from 'axios'
 import type { TokenPair } from '@/lib/authClient'
 import authAxiosInstance from '@/lib/authAxiosInstance'
@@ -159,6 +159,32 @@ export const commitAuthKitSignIn = createAsyncThunk<
     }
 })
 
+/**
+ * Shared tail of `auth/login/` and `auth/social/`: both return the user in the body and the
+ * tokens in headers. Returns the user, or an error message when the session could not be stored.
+ */
+function signInFromLoginResponse(
+    response: { data: unknown; headers: unknown },
+    signIn: AuthKitSignInFn,
+): Record<string, unknown> | string {
+    const data = response.data as { user?: Record<string, unknown> }
+    const headers = response.headers as Record<string, string | undefined>
+    const access = headerString(headers, 'authorization', 'Authorization')
+    const refresh = headerString(headers, 'x-refresh-token', 'X-Refresh-Token')
+    if (!data?.user || !access || !refresh) return 'Invalid response from server'
+    const cleanAccess = access.startsWith('Bearer ') ? access : `Bearer ${access}`
+    const ok = signIn({
+        auth: { token: cleanAccess, type: 'Bearer' },
+        refresh,
+        userState: toAuthKitUserStateFromApiUser(data.user),
+    })
+    if (ok === false) return 'Frontend sign-in failed'
+    if (typeof data.user.id !== 'undefined') {
+        localStorage.setItem('userId', String(data.user.id))
+    }
+    return data.user
+}
+
 /** Legacy email/password login — `POST auth/login/` (tokens in headers). */
 export const loginUser = createAsyncThunk<
     { user: Record<string, unknown>; otpRequired: false },
@@ -167,32 +193,29 @@ export const loginUser = createAsyncThunk<
 >('auth/loginUser', async ({ email, password, extra }, { dispatch, rejectWithValue }) => {
     try {
         const response = await authAxiosInstance.post('login/', { email, password })
-        const data = response.data as { user?: Record<string, unknown> }
-        const access = headerString(
-            response.headers as Record<string, string | undefined>,
-            'authorization',
-            'Authorization',
-        )
-        const refresh = headerString(
-            response.headers as Record<string, string | undefined>,
-            'x-refresh-token',
-            'X-Refresh-Token',
-        )
-        if (!data?.user || !access || !refresh) {
-            return rejectWithValue('Invalid response from server')
-        }
-        const cleanAccess = access.startsWith('Bearer ') ? access : `Bearer ${access}`
-        const ok = extra.signIn({
-            auth: { token: cleanAccess, type: 'Bearer' },
-            refresh,
-            userState: toAuthKitUserStateFromApiUser(data.user),
-        })
-        if (ok === false) return rejectWithValue('Frontend sign-in failed')
-        if (typeof data.user.id !== 'undefined') {
-            localStorage.setItem('userId', String(data.user.id))
-        }
+        const user = signInFromLoginResponse(response, extra.signIn)
+        if (typeof user === 'string') return rejectWithValue(user)
         void dispatch(syncGuestWishlistToServer())
-        return { user: data.user, otpRequired: false as const }
+        return { user, otpRequired: false as const }
+    } catch (e) {
+        return rejectWithValue(axiosDetail(e) || ERROR_MESSAGES.LOGIN_FAILED)
+    }
+})
+
+export type SocialProvider = 'google' | 'facebook'
+
+/** `POST auth/social/` with the provider's access token. Same response as `auth/login/`. */
+export const socialLogin = createAsyncThunk<
+    { user: Record<string, unknown>; otpRequired: false },
+    { provider: SocialProvider; accessToken: string; extra: { signIn: AuthKitSignInFn } },
+    { rejectValue: string }
+>('auth/socialLogin', async ({ provider, accessToken, extra }, { dispatch, rejectWithValue }) => {
+    try {
+        const response = await authAxiosInstance.post('social/', { provider, access_token: accessToken })
+        const user = signInFromLoginResponse(response, extra.signIn)
+        if (typeof user === 'string') return rejectWithValue(user)
+        void dispatch(syncGuestWishlistToServer())
+        return { user, otpRequired: false as const }
     } catch (e) {
         return rejectWithValue(axiosDetail(e) || ERROR_MESSAGES.LOGIN_FAILED)
     }
@@ -328,23 +351,6 @@ const authSlice = createSlice({
                 state.loading = false
                 state.error = action.payload ?? action.error.message ?? ERROR_MESSAGES.DEFAULT
             })
-            .addCase(loginUser.pending, (state) => {
-                state.loading = true
-                state.error = null
-            })
-            .addCase(loginUser.fulfilled, (state, action) => {
-                state.loading = false
-                state.user = action.payload.user
-                state.isLoggedIn = true
-                state.message = 'Login successful'
-                state.otp = { ...initialOTPState }
-                state.error = null
-            })
-            .addCase(loginUser.rejected, (state, action) => {
-                state.loading = false
-                state.error = action.payload ?? ERROR_MESSAGES.LOGIN_FAILED
-                state.message = null
-            })
             .addCase(refreshAuthToken.pending, (state) => {
                 state.loading = true
             })
@@ -433,6 +439,24 @@ const authSlice = createSlice({
             .addCase(confirmPasswordReset.rejected, (state, action) => {
                 state.loading = false
                 state.error = action.payload ?? ERROR_MESSAGES.RESET_PASSWORD_FAILED
+                state.message = null
+            })
+            // Password and social sign-in end in the same state. Matchers must follow every addCase.
+            .addMatcher(isAnyOf(loginUser.pending, socialLogin.pending), (state) => {
+                state.loading = true
+                state.error = null
+            })
+            .addMatcher(isAnyOf(loginUser.fulfilled, socialLogin.fulfilled), (state, action) => {
+                state.loading = false
+                state.user = action.payload.user
+                state.isLoggedIn = true
+                state.message = 'Login successful'
+                state.otp = { ...initialOTPState }
+                state.error = null
+            })
+            .addMatcher(isAnyOf(loginUser.rejected, socialLogin.rejected), (state, action) => {
+                state.loading = false
+                state.error = action.payload ?? ERROR_MESSAGES.LOGIN_FAILED
                 state.message = null
             })
     },

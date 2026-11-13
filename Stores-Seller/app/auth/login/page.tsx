@@ -7,15 +7,10 @@ import useSignIn from 'react-auth-kit/hooks/useSignIn'
 import { useDispatch } from 'react-redux'
 import type { AppDispatch } from '@/store'
 import { loginUser } from '@/store/authSlice'
-import { Apple, Chrome, Facebook, Lock, Mail } from 'lucide-react'
+import { Lock, Mail } from 'lucide-react'
 import AuthShell from '../_components/AuthShell'
+import SocialButtons, { nextPathAfterSignIn } from '../_components/SocialButtons'
 import { ErrorBanner, PrimaryButton, TextField } from '../_components/fields'
-
-const SOCIAL_PROVIDERS = [
-  { label: 'Google', icon: Chrome },
-  { label: 'Apple', icon: Apple },
-  { label: 'Facebook', icon: Facebook },
-]
 
 export default function LoginPage() {
   const signIn = useSignIn()
@@ -46,7 +41,7 @@ export default function LoginPage() {
           extra: { signIn },
         })
       ).unwrap()
-      router.push('/seller-central')
+      router.push(nextPathAfterSignIn())
     } catch (err) {
       setServerError(typeof err === 'string' ? err : 'Incorrect email or password. Please try again.')
     } finally {
@@ -61,8 +56,10 @@ export default function LoginPage() {
     >
       <header className="mb-6">
         <h1 className="font-display text-2xl font-extrabold text-zinc-900 sm:text-3xl">Sign in</h1>
-        <p className="mt-1.5 text-sm text-zinc-600">Use your email and password to access your account.</p>
+        <p className="mt-1.5 text-sm text-zinc-600">Welcome back. Sign in to manage your store, orders and payouts.</p>
       </header>
+
+      <SocialButtons dividerLabel="or sign in with email" />
 
       <form onSubmit={handleLogin} noValidate className="space-y-4">
         {serverError && <ErrorBanner>{serverError}</ErrorBanner>}
@@ -111,30 +108,7 @@ export default function LoginPage() {
         </PrimaryButton>
       </form>
 
-      <div className="my-6 flex items-center gap-3 text-xs text-zinc-500">
-        <span className="h-px flex-1 bg-zinc-200" />
-        Or continue with
-        <span className="h-px flex-1 bg-zinc-200" />
-      </div>
-
-      <div className="grid grid-cols-3 gap-3">
-        {SOCIAL_PROVIDERS.map(({ label, icon: Icon }) => (
-          <button
-            key={label}
-            type="button"
-            disabled
-            title="Coming soon"
-            aria-label={`${label} sign-in (coming soon)`}
-            className="flex h-12 items-center justify-center gap-2 rounded-lg border border-zinc-300 bg-zinc-100 text-sm font-medium text-zinc-500 cursor-not-allowed dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-500"
-          >
-            <Icon size={18} aria-hidden />
-            <span className="hidden sm:inline">{label}</span>
-          </button>
-        ))}
-      </div>
-      <p className="mt-2 text-center text-xs text-zinc-500">Social sign-in is coming soon.</p>
-
-      <p className="mt-8 text-center text-sm text-zinc-700">
+      <p className="mt-6 text-center text-sm text-zinc-700">
         New to TradeHut?{' '}
         <Link
           href="/auth/register"

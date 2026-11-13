@@ -68,7 +68,7 @@ export default function AuthShell({ heroTitle, heroText, children }: AuthShellPr
           <BrandLogo onDark={false} className="w-28 sm:w-32" />
           <span className="inline-flex items-center gap-1.5 text-xs text-zinc-600">
             <Lock size={14} aria-hidden />
-            Secure checkout
+            Secure sign-in
           </span>
         </div>
 

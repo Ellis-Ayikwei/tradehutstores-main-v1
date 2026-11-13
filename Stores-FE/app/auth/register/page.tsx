@@ -7,6 +7,7 @@ import * as Yup from 'yup'
 import { Check, Circle, Lock, Mail, MailCheck, Phone, RefreshCw, ShieldCheck, User } from 'lucide-react'
 import AuthShell from '../_components/AuthShell'
 import OtpInput from '../_components/OtpInput'
+import SocialButtons from '../_components/SocialButtons'
 import { ErrorBanner, PrimaryButton, SecondaryButton, TextField } from '../_components/fields'
 import { parseAuthError, registerUser, resendSignupOtp, verifySignupOtp } from '@/lib/auth-api'
 
@@ -228,6 +229,8 @@ export default function RegisterPage() {
             <h1 className="font-display text-2xl font-extrabold text-zinc-900 sm:text-3xl">Create your account</h1>
             <p className="mt-1.5 text-sm text-zinc-600">We use these to secure your account and send order updates.</p>
           </header>
+
+          <SocialButtons dividerLabel="or sign up with email" />
 
           <form noValidate onSubmit={formik.handleSubmit} className="space-y-4">
             {formError && <ErrorBanner>{formError}</ErrorBanner>}
