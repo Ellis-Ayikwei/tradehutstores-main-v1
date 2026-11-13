@@ -1,7 +1,7 @@
 /**
  * Homepage hero admin API (Stores-BE apps/merchandising/hero_views.py):
  *   GET/POST   homepage/admin/hero/configs/                 heroes (name, layout, styling)
- *   PATCH/DEL  homepage/admin/hero/configs/{id}/            the live hero cannot be deleted (409)
+ *   GET/PATCH/DEL homepage/admin/hero/configs/{id}/         the live hero cannot be deleted (409)
  *   POST       homepage/admin/hero/configs/{id}/activate/   make that hero the live one
  *   GET/POST   homepage/admin/hero/slides/?hero={id}        multipart on POST, `hero` required
  *   PATCH/DEL  homepage/admin/hero/slides/{id}/             multipart on PATCH
@@ -106,6 +106,16 @@ export async function fetchHeroes(): Promise<HeroConfig[]> {
         return Array.isArray(data) ? data : data.results;
     } catch (err) {
         throw toApiError(err, 'Could not load the heroes.');
+    }
+}
+
+export async function fetchHero(id: number): Promise<HeroConfig> {
+    try {
+        const { data } = await axiosInstance.get<HeroConfig>(`${BASE}configs/${id}/`);
+        return data;
+    } catch (err) {
+        if (axios.isAxiosError(err) && err.response?.status === 404) throw new HeroApiError('This hero no longer exists.');
+        throw toApiError(err, 'Could not load this hero.');
     }
 }
 
