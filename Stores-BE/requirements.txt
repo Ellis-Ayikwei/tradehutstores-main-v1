@@ -40,11 +40,6 @@ elasticsearch>=8.10,<9
 # ── Vector DB extension (opt-in: SEARCH_ENABLE_EMBEDDINGS + pgvector in DB) ─
 pgvector>=0.2,<1
 
-# ── Visual search — CLIP in-process when EMBEDDING_SERVICE_URL is unset.
-# Heavy (~2GB+ downloads); on small hosts prefer EMBEDDING_SERVICE_URL + FastAPI service.
-torch>=2.2,<3
-transformers>=4.40,<5
-
 # ── Images & parsing ─────────────────────────────────────────────────────────
 Pillow>=10.0
 beautifulsoup4>=4.12

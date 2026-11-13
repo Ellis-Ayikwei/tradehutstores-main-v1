@@ -9,6 +9,11 @@ In production we recommend running a dedicated FastAPI embedding service (see
 ``tradehut_search/embedding_service``) and pointing ``EMBEDDING_SERVICE_URL`` at
 it. When ``EMBEDDING_SERVICE_URL`` is set, this module makes HTTP calls
 instead of running CLIP locally — useful so Django web workers stay light.
+
+Note: ``torch`` and ``transformers`` are intentionally NOT listed in
+``requirements.txt``. Running CLIP in-process (when ``EMBEDDING_SERVICE_URL`` is
+unset) requires installing both packages manually. Production relies on
+``EMBEDDING_SERVICE_URL``.
 """
 
 from __future__ import annotations
