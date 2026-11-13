@@ -133,7 +133,6 @@ def _deliver_otp(*, identifier: str, kind: str, code: str) -> None:
                     "If you didn't request this, you can ignore this email.",
                 ],
                 code=code,
-                fail_silently=True,
             )
         except Exception:  # noqa: BLE001 — delivery must never break the flow
             logger.exception("Failed to send OTP email to %s", identifier)
