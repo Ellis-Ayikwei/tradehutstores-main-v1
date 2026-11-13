@@ -6,7 +6,7 @@ import { Label } from '@/components/shadcn/label';
 import { Textarea } from '@/components/shadcn/textarea';
 import { cn } from '@/lib/utils';
 import type { AdminSellerError } from '@/services/adminSellersService';
-import { ErrorPanel } from '../../seller/components/ErrorPanel';
+import { ErrorPanel } from '@/components/admin/ErrorPanel';
 import { kindLabel } from './sellerUi';
 
 /** Resolves to the error when the action failed (the dialog stays open), or null on success. */

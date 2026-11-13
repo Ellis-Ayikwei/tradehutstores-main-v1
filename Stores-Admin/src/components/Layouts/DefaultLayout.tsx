@@ -9,20 +9,12 @@ import { IRootState } from '../../store';
 import Footer from './Footer';
 import Header from './Header';
 import Sidebar from './Sidebar';
-import { LayoutGrid, LayoutDashboard, List, MessageCircle, Package, ReceiptText, Wallet } from 'lucide-react';
+import { LayoutGrid, List, MessageCircle, ReceiptText } from 'lucide-react';
 import IconLoader from '../Icon/IconLoader';
 import { Toaster } from '@/components/shadcn/sonner';
 import { cn } from '@/lib/utils';
-import { useUserAccess } from '@/pages/seller/hooks/useUserAccess';
 
-const SELLER_NAV = [
-    { to: '/seller/overview', Icon: LayoutDashboard, label: 'Overview' },
-    { to: '/seller/listings', Icon: Package, label: 'Listings' },
-    { to: '/seller/orders', Icon: ReceiptText, label: 'Orders' },
-    { to: '/seller/payouts', Icon: Wallet, label: 'Payouts' },
-];
-
-const ADMIN_NAV = [
+const BOTTOM_NAV = [
     { to: '/admin/dashboard', Icon: LayoutGrid, label: 'Home' },
     { to: '/admin/products/list', Icon: List, label: 'Products' },
     { to: '/admin/orders/list', Icon: ReceiptText, label: 'Orders' },
@@ -31,8 +23,6 @@ const ADMIN_NAV = [
 
 const DefaultLayout = ({ children }: PropsWithChildren) => {
     const themeConfig = useSelector((state: IRootState) => state.themeConfig);
-    const { isSeller, isStaff } = useUserAccess();
-    const bottomNav = isSeller && !isStaff ? SELLER_NAV : ADMIN_NAV;
 
     const [showLoader, setShowLoader] = useState(true);
     const [showTopButton, setShowTopButton] = useState(false);
@@ -111,9 +101,9 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
                     </div>
                 </div>
 
-                {/* Mobile bottom nav (hidden on md+). Seller accounts get the seller shortcuts. */}
+                {/* Mobile bottom nav (hidden on md+). */}
                 <nav aria-label="Quick navigation" className="fixed bottom-0 left-0 z-50 flex w-full items-center justify-around rounded-t-2xl border-t border-border bg-background px-4 py-2 shadow-lg md:hidden">
-                    {bottomNav.map(({ to, Icon, label }) => (
+                    {BOTTOM_NAV.map(({ to, Icon, label }) => (
                         <NavLink
                             key={to}
                             to={to}

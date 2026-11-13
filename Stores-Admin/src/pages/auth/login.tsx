@@ -9,7 +9,6 @@ import { LoginUser } from '../../store/authSlice';
 import useSignIn from 'react-auth-kit/hooks/useSignIn';
 import { ThunkDispatch, AnyAction } from '@reduxjs/toolkit';
 import useIsAuthenticated from 'react-auth-kit/hooks/useIsAuthenticated';
-import { useUserAccess } from '../seller/hooks/useUserAccess';
 import { safeInternalPath } from '../../helper/safeInternalPath';
 import AuthLayout, { AuthError, AuthField, AuthSubmit } from './AuthLayout';
 
@@ -32,16 +31,11 @@ const Login: React.FC = () => {
     const { loading, error } = useSelector((state: IRootState) => state.auth);
     // Only same-origin app paths are honoured; anything else falls back to the default landing page.
     const explicitFrom = safeInternalPath(new URLSearchParams(location.search).get('from'));
-    const { isResolving, isSeller, isStaff } = useUserAccess();
-    // Seller-only accounts (Sellers group, no staff signal) land on the seller dashboard; everyone else keeps the admin default.
-    const from = explicitFrom || (isSeller && !isStaff ? '/seller/overview' : '/admin/dashboard');
+    const from = explicitFrom || '/admin/dashboard';
 
     useEffect(() => {
-        // Without an explicit `from`, wait for the profile so the right landing page is chosen (no wrong-page flash).
-        if (isAuthenticated && (explicitFrom || !isResolving)) {
-            navigate(from);
-        }
-    }, [isAuthenticated, isResolving, explicitFrom, navigate, from]);
+        if (isAuthenticated) navigate(from);
+    }, [isAuthenticated, navigate, from]);
 
     const locked = failedAttempts >= MAX_ATTEMPTS;
 
@@ -51,9 +45,8 @@ const Login: React.FC = () => {
         onSubmit: async (values) => {
             if (locked) return;
             try {
+                // The effect above navigates once the session is stored.
                 await dispatch(LoginUser({ email: values.email.trim(), password: values.password, extra: { signIn } })).unwrap();
-                // With no `from`, the effect above routes once the profile is known.
-                if (explicitFrom) navigate(explicitFrom);
             } catch {
                 // The message comes from the auth slice (`error` above).
                 setFailedAttempts((n) => n + 1);
@@ -64,7 +57,7 @@ const Login: React.FC = () => {
     const busy = formik.isSubmitting || loading;
 
     return (
-        <AuthLayout title="Sign in" subtitle="Staff and seller access to TradeHut Stores." footer={<Link to="/register" className="font-semibold text-primary hover:underline">Need an account?</Link>}>
+        <AuthLayout title="Sign in" subtitle="Staff access to TradeHut Stores." footer={<Link to="/register" className="font-semibold text-primary hover:underline">Need an account?</Link>}>
             <form onSubmit={formik.handleSubmit} noValidate className="space-y-4">
                 {locked ? (
                     <AuthError>

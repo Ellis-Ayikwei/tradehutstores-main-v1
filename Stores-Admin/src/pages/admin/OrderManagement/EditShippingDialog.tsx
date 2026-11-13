@@ -9,7 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/shadcn/input';
 import { Textarea } from '@/components/shadcn/textarea';
 import type { OrderShipment, ShippingPatch } from '@/services/adminOrdersService';
-import { ErrorPanel } from '@/pages/seller/components/ErrorPanel';
+import { ErrorPanel } from '@/components/admin/ErrorPanel';
 import type { AdminActionResult } from './AdminOrderDialogs';
 
 const decimal = (max: number) => z.string().trim().refine((v) => v === '' || (/^\d+(\.\d{1,2})?$/.test(v) && Number(v) <= max), `Enter a number up to ${max}`);

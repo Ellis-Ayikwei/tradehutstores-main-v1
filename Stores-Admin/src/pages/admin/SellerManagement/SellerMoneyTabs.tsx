@@ -33,8 +33,8 @@ import {
 } from '@/services/adminSellersService';
 import type { SellerOrderListRow } from '@/services/sellerOrdersService';
 import { formatMoney } from '@/services/sellerStatsService';
-import { FulfilmentBadge, OrderThumb, PaymentBadge, formatDate, humanize, itemSummary, shortId } from '@/pages/seller/orders/orderUi';
-import { ErrorPanel } from '../../seller/components/ErrorPanel';
+import { FulfilmentBadge, OrderThumb, PaymentBadge, formatDate, humanize, itemSummary, shortId } from '@/pages/admin/OrderManagement/orderUi';
+import { ErrorPanel } from '@/components/admin/ErrorPanel';
 import { SELLERS_KEY, SWR_OPTIONS } from './sellerSections';
 
 const ordersKey = (id: string, ...rest: unknown[]) => [SELLERS_KEY, 'orders', id, ...rest] as const;

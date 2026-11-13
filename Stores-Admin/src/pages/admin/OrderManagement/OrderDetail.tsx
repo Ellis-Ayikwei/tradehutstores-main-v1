@@ -25,8 +25,8 @@ import {
     type ShipOrderInput,
 } from '@/services/adminOrdersService';
 import { setPageTitle } from '@/store/themeConfigSlice';
-import { OrderThumb, addressLines, amount, formatDate, humanize } from '@/pages/seller/orders/orderUi';
-import { ShipDialog } from '@/pages/seller/orders/OrderActionDialogs';
+import { OrderThumb, addressLines, amount, formatDate, humanize } from './orderUi';
+import { ShipDialog } from './OrderActionDialogs';
 import { Badge } from '@/components/shadcn/badge';
 import { CancelOrderDialog, ConfirmDeliveryDialog, type AdminActionResult } from './AdminOrderDialogs';
 import { EditShippingDialog } from './EditShippingDialog';

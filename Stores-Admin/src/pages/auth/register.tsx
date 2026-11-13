@@ -36,7 +36,7 @@ const Register: React.FC = () => (
                 </span>
                 <div>
                     <p className="text-sm font-semibold text-zinc-900">Sellers</p>
-                    <p className="mt-0.5 text-sm text-zinc-600">Open your store on TradeHut Seller Central, then sign in here with the same email and password.</p>
+                    <p className="mt-0.5 text-sm text-zinc-600">This dashboard is for staff. Open and manage your store on TradeHut Seller Central.</p>
                 </div>
             </li>
         </ul>

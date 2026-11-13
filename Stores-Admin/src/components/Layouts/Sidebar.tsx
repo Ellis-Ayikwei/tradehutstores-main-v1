@@ -12,12 +12,8 @@ import {
     LayoutGrid,
     LogOut,
     Megaphone,
-    MessageSquareQuote,
-    Package,
-    ReceiptText,
     Search,
     Settings,
-    ShieldAlert,
     ShieldCheck,
     Star,
     Store,
@@ -36,7 +32,7 @@ import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/
 import { Skeleton } from '@/components/shadcn/skeleton';
 import { cn } from '@/lib/utils';
 import useMediaQuery from '@/hooks/useMediaQuery';
-import { useUserAccess } from '@/pages/seller/hooks/useUserAccess';
+import { useUserAccess } from '@/hooks/useUserAccess';
 import { AppDispatch, IRootState } from '../../store';
 import { LogoutUser } from '../../store/authSlice';
 import { toggleSidebar } from '../../store/themeConfigSlice';
@@ -48,17 +44,6 @@ interface MenuItem {
     allowedGroups?: string[];
     subItems?: MenuItem[];
 }
-
-const SELLER_MENU: MenuItem[] = [
-    { path: '/seller/overview', icon: LayoutDashboard, label: 'Overview' },
-    { path: '/seller/listings', icon: Package, label: 'Listings' },
-    { path: '/seller/orders', icon: ReceiptText, label: 'Orders' },
-    { path: '/seller/auctions', icon: Gavel, label: 'Auctions' },
-    { path: '/seller/rfq', icon: MessageSquareQuote, label: 'RFQ' },
-    { path: '/seller/payouts', icon: Wallet, label: 'Payouts' },
-    { path: '/seller/disputes', icon: ShieldAlert, label: 'Disputes' },
-    { path: '/seller/settings', icon: Settings, label: 'Settings' },
-];
 
 const ADMIN_MENU: MenuItem[] = [
     {
@@ -172,7 +157,7 @@ const Sidebar = () => {
     const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-    const { profile, groups, isSeller, isResolving } = useUserAccess();
+    const { profile, groups, isResolving } = useUserAccess();
 
     // Close the mobile sheet after navigating.
     useEffect(() => {
@@ -254,16 +239,14 @@ const Sidebar = () => {
         );
     };
 
-    const sectionLabel = (text: string) => <p className="px-2.5 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{text}</p>;
-
     const displayName = profile?.name || profile?.full_name || profile?.email || 'Account';
-    const displayRole = isSeller ? 'Seller' : String(profile?.user_type || '').replace(/_/g, ' ') || 'Staff';
+    const displayRole = String(profile?.user_type || '').replace(/_/g, ' ') || 'Staff';
     const displayInitial = String(displayName).charAt(0).toUpperCase();
 
     const body = (
         <div className="flex h-full flex-col border-r border-border bg-background text-foreground">
             <div className="flex items-center px-4 py-3 pr-12 lg:pr-4">
-                <NavLink to={isSeller ? '/seller/overview' : '/'} className="flex shrink-0 items-center">
+                <NavLink to="/" className="flex shrink-0 items-center">
                     <img src="/assets/images/logos/tradehutfullText.png" alt="TradeHut" className="w-24 flex-none sm:w-28" loading="lazy" />
                 </NavLink>
             </div>
@@ -286,20 +269,7 @@ const Sidebar = () => {
                         ))}
                     </div>
                 ) : (
-                    <>
-                        {isSeller ? (
-                            <>
-                                {adminItems.length > 0 ? sectionLabel('Seller') : null}
-                                <ul className="space-y-0.5">{SELLER_MENU.map((item) => renderItem(item))}</ul>
-                            </>
-                        ) : null}
-                        {adminItems.length > 0 ? (
-                            <>
-                                {isSeller ? sectionLabel('Admin') : null}
-                                <ul className="space-y-0.5">{adminItems.map((item) => renderItem(item))}</ul>
-                            </>
-                        ) : null}
-                    </>
+                    <ul className="space-y-0.5">{adminItems.map((item) => renderItem(item))}</ul>
                 )}
             </nav>
 

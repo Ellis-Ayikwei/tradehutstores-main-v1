@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils';
 import { fetchAdminSeller, fetchSellerSummary, updateAdminSeller, type AdminSellerError, type SellerDetail as SellerDetailData, type SellerFinanceSummary, type SellerUpdate } from '@/services/adminSellersService';
 import { formatMoney } from '@/services/sellerStatsService';
 import { setPageTitle } from '@/store/themeConfigSlice';
-import { ErrorPanel } from '../../seller/components/ErrorPanel';
+import { ErrorPanel } from '@/components/admin/ErrorPanel';
 import { DecisionDialog, type ActionResult } from './DecisionDialog';
 import { DocumentsSection } from './DocumentsSection';
 import { SellerOrdersTab, SellerPayoutsTab, SellerSoldTab, summaryKey } from './SellerMoneyTabs';

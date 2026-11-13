@@ -10,7 +10,7 @@ import { Skeleton } from '@/components/shadcn/skeleton';
 import { Switch } from '@/components/shadcn/switch';
 import { cn } from '@/lib/utils';
 import { updateAdminSeller, type AdminSellerError, type SellerDetail, type SellerUpdate } from '@/services/adminSellersService';
-import { ErrorPanel } from '../../seller/components/ErrorPanel';
+import { ErrorPanel } from '@/components/admin/ErrorPanel';
 import { idTypeLabel } from './sellerUi';
 
 /** Every list, count and detail SWR key starts with this so one predicate refreshes them all. */

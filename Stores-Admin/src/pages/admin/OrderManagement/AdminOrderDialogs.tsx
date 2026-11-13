@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/shadcn/form';
 import { Textarea } from '@/components/shadcn/textarea';
 import type { OrderApiError } from '@/services/adminOrdersService';
-import { ErrorPanel } from '@/pages/seller/components/ErrorPanel';
+import { ErrorPanel } from '@/components/admin/ErrorPanel';
 
 /** Resolves to the error when the action failed (the dialog stays open), or null on success. */
 export type AdminActionResult = OrderApiError | null;

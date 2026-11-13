@@ -349,17 +349,10 @@ class AdminLoginAPIView(APIView):
 
             user = serializer.validated_data["user"]
 
-            # Restrict this endpoint to staff, or sellers whose account is not
-            # suspended (pending sellers may sign in to prepare listings).
-            seller = getattr(user, "seller_profile", None)
-            seller_allowed = (
-                seller is not None
-                and seller.is_active
-                and seller.verification_status != "suspended"
-            )
-            if getattr(user, "is_staff", None) != True and not seller_allowed:
+            # Staff only. Sellers and buyers sign in through auth/login/ on their own apps.
+            if not user.is_staff:
                 return Response(
-                    {"detail": "Admins and sellers only: this endpoint is restricted."},
+                    {"detail": "This sign-in is for TradeHut staff. Sellers sign in on Seller Central."},
                     status=status.HTTP_403_FORBIDDEN,
                 )
 

@@ -1,5 +1,5 @@
 import { Badge, type BadgeProps } from '@/components/shadcn/badge';
-import { formatDate, humanize } from '@/pages/seller/orders/orderUi';
+import { formatDate, humanize } from './orderUi';
 
 export { formatDate, humanize };
 

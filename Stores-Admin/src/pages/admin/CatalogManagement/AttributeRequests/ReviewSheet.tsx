@@ -9,8 +9,8 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import { Textarea } from '@/components/shadcn/textarea';
 import { ATTRIBUTE_REQUESTS_KEY, approveValueRequest, rejectValueRequest, type AttributeRequestError, type AttributeValueRequest } from '@/services/attributeRequestsService';
 import { listAttributeValues, type AdminAttribute, type AdminAttributeValue } from '@/services/catalogAdminService';
-import { ErrorPanel } from '@/pages/seller/components/ErrorPanel';
-import { ColourField, colourError, isColourAttribute } from '@/pages/seller/listings/components/ColourField';
+import { ErrorPanel } from '@/components/admin/ErrorPanel';
+import { ColourField, colourError, isColourAttribute } from './ColourField';
 import { StatusBadge, formatDate, requesterLabel } from './requestUi';
 
 const MIN_REJECT_NOTE = 5;
