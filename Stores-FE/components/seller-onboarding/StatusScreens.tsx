@@ -59,7 +59,7 @@ function StatusCard({
     )
 }
 
-/** Link to the seller dashboard. Hidden (dev-only note) when NEXT_PUBLIC_ADMIN_URL is unset. */
+/** Link to the seller dashboard. Hidden (dev-only note) when neither NEXT_PUBLIC_SELLER_URL nor NEXT_PUBLIC_ADMIN_URL is set. */
 export function GoToStore({ label = 'Go to my store' }: { label?: string }) {
     if (SELLER_DASHBOARD_URL) {
         return (
@@ -72,7 +72,7 @@ export function GoToStore({ label = 'Go to my store' }: { label?: string }) {
     if (process.env.NODE_ENV === 'development') {
         return (
             <p className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-900">
-                Dev only: set NEXT_PUBLIC_ADMIN_URL in Stores-FE/.env to show the &quot;{label}&quot; link.
+                Dev only: set NEXT_PUBLIC_SELLER_URL in Stores-FE/.env to show the &quot;{label}&quot; link.
             </p>
         )
     }

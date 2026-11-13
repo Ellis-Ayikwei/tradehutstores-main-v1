@@ -207,11 +207,27 @@ export function parseApiError(err: unknown): ParsedApiError {
     return { status, code, fields, message }
 }
 
-// ─── Seller dashboard (Stores-Admin) link ────────────────────────────────────
+// ─── Seller dashboard link ───────────────────────────────────────────────────
 
-const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL
+/** Origin of a configured app URL (any path after the host is ignored); null when unset or not a URL. */
+function originOf(value: string | undefined): string | null {
+    if (!value) return null
+    try {
+        return new URL(value).origin
+    } catch {
+        return null
+    }
+}
 
-/** `${NEXT_PUBLIC_ADMIN_URL}/seller/overview`, or null when the env var is not set. */
-export const SELLER_DASHBOARD_URL: string | null = ADMIN_URL
-    ? `${ADMIN_URL.replace(/\/+$/, '')}/seller/overview`
-    : null
+const SELLER_ORIGIN = originOf(process.env.NEXT_PUBLIC_SELLER_URL)
+const ADMIN_ORIGIN = originOf(process.env.NEXT_PUBLIC_ADMIN_URL)
+
+/**
+ * Where "My store" / "Go to my store" lead: Seller Central (`NEXT_PUBLIC_SELLER_URL`) when set,
+ * else the seller pages of Stores-Admin (`NEXT_PUBLIC_ADMIN_URL`), else null (links fall back to /sell).
+ */
+export const SELLER_DASHBOARD_URL: string | null = SELLER_ORIGIN
+    ? `${SELLER_ORIGIN}/seller-central`
+    : ADMIN_ORIGIN
+      ? `${ADMIN_ORIGIN}/seller/overview`
+      : null

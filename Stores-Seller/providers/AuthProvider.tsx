@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+import AuthKitContext from 'react-auth-kit/AuthContext'
 import ReactAuthKitProvider from 'react-auth-kit/AuthProvider'
 import createStore from 'react-auth-kit/createStore'
 import createRefresh from 'react-auth-kit/createRefresh'
@@ -51,10 +53,30 @@ const store = createStore<IUserData>({
     }),
 })
 
+// react-auth-kit puts one long-lived token object in context and mutates it on sign-in, sign-out
+// and refresh, so useIsAuthenticated / useAuthUser callers never re-render on their own. Every
+// change is re-published below under a new wrapper object, which makes React re-render them.
+// The token object offers no unsubscribe, so it is subscribed once here and fans out.
+const authListeners = new Set<() => void>()
+// The library's context is typed for an unknown user shape; the cast drops IUserData, nothing else.
+const contextTokenObject = store.tokenObject as unknown as NonNullable<React.ContextType<typeof AuthKitContext>>
+store.tokenObject.subscribe(() => authListeners.forEach((notify) => notify()))
+
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
+    const [tokenObject, setTokenObject] = useState(contextTokenObject)
+
+    useEffect(() => {
+        // The wrapper inherits everything from the real token object; only its identity is new.
+        const publish = () => setTokenObject(Object.create(contextTokenObject) as typeof contextTokenObject)
+        authListeners.add(publish)
+        return () => {
+            authListeners.delete(publish)
+        }
+    }, [])
+
     return (
         <ReactAuthKitProvider store={store}>
-            {children}
+            <AuthKitContext.Provider value={tokenObject}>{children}</AuthKitContext.Provider>
         </ReactAuthKitProvider>
     )
 }
