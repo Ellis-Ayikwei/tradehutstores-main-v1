@@ -482,6 +482,12 @@ CORS_PREFLIGHT_MAX_AGE = 86400
 # ── Production hardening (auto-enabled when DEBUG=False) ─────────────────────
 if not DEBUG:
     SECURE_SSL_REDIRECT = _bool_env("SECURE_SSL_REDIRECT", default=True)
+    # The platform health check probes over plain HTTP (no X-Forwarded-Proto), so these
+    # paths must not be redirected to HTTPS or the health check never sees a 200.
+    SECURE_REDIRECT_EXEMPT = [
+        r"^tradehut/api/v1/health/?$",
+        r"^tradehut/api/v1/search/health/?$",
+    ]
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_HSTS_SECONDS = config("SECURE_HSTS_SECONDS", default=31536000, cast=int)
