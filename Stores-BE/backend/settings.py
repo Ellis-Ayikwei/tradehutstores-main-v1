@@ -136,6 +136,7 @@ INSTALLED_APPS = [
     "apps.sellers",
     "apps.wishlist",
     "apps.auctions",
+    "apps.rfq",
     # Search subsystem (full-text + visual). The app boots without ES /
     # pgvector / Celery / CLIP installed; toggling on real search is done via
     # the SEARCH_ENABLE_* env flags below.
@@ -225,6 +226,7 @@ CELERY_TASK_ROUTES = {
     "apps.auctions.tasks.close_auction": {"queue": "default"},
     "apps.auctions.tasks.sweep_auctions": {"queue": "default"},
     "apps.auctions.tasks.settle_pending_orders": {"queue": "default"},
+    "apps.rfq.tasks.sweep_rfqs": {"queue": "default"},
 }
 # Beat (run `celery -A backend beat`). The sweeper is the only path that closes
 # long auctions; per-auction close tasks are ETA-armed within 90s of ends_at.
@@ -236,6 +238,11 @@ CELERY_BEAT_SCHEDULE = {
     "auctions-settle-pending-orders": {
         "task": "apps.auctions.tasks.settle_pending_orders",
         "schedule": 60.0,
+    },
+    # RFQ: expire open / quoting requests past their windows, settle awarded ones.
+    "rfq-sweep": {
+        "task": "apps.rfq.tasks.sweep_rfqs",
+        "schedule": 300.0,
     },
     # Unpaid Paystack checkouts past their window: settle a missed webhook, else cancel + give the stock back.
     "orders-expire-checkout-sessions": {

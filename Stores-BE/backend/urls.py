@@ -38,6 +38,8 @@ urlpatterns = [
                 path("sellers/", include("apps.sellers.urls")),
                 # Bid Central (auctions)
                 path("auctions/", include("apps.auctions.urls")),
+                # Requests for quotation
+                path("rfq/", include("apps.rfq.urls")),
                 # Customer endpoints
                 path("customers/", include("apps.customers.urls")),
                 # User endpoints

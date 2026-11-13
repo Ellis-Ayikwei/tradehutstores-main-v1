@@ -45,7 +45,8 @@ export default function SellerCentralShell({ children }: { children: ReactNode }
     else {
         content = (
             <div className="lg:grid lg:grid-cols-[14rem_minmax(0,1fr)] lg:items-start lg:gap-4">
-                <aside className="hidden lg:block">
+                {/* Pinned under the h-16 header plus the 1rem page padding; scrolls on its own if taller than the screen. */}
+                <aside className="hidden lg:sticky lg:top-20 lg:block lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
                     <SellerSidebar />
                 </aside>
                 <div className="min-w-0">

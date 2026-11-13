@@ -7,6 +7,7 @@
 | `11-rfq.md` | RFQ frozen contract + tasks |
 | `20-seller-and-checkout-gaps.md` | Shared conventions (§0), orders/payments/sellers/products/disputes/cart/notifications contracts + tasks |
 | `30-fe-kinetic-migration.md` | Phase 1 Kinetic removal, FE + Admin, final token cleanup |
+| `26-sponsored-products.md` | Paid product promotion (fixed packages, Paystack, staff review/stop/refund), draft contract |
 
 Rules: max **5 builders at once** across all phases. One owner per file at any time; sequential hand-offs are listed as dependencies. The reviewer (Opus) gates every task against AGENTS §8. Admin tsc gate = no new errors in touched files (baseline 858).
 
