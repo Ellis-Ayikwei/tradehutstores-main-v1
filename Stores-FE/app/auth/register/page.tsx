@@ -171,16 +171,17 @@ export default function RegisterPage() {
     error: formik.touched[name] && formik.errors[name] ? String(formik.errors[name]) : serverErrors[name],
   })
 
-  const handleVerify = async (e: React.FormEvent) => {
-    e.preventDefault()
+  // Runs from the Verify button and as soon as the last digit is entered.
+  const submitCode = async (otp: string) => {
+    if (verifying) return
     setVerifyError('')
-    if (code.length < OTP_LENGTH) {
+    if (otp.length < OTP_LENGTH) {
       setVerifyError(`Enter all ${OTP_LENGTH} digits of the code.`)
       return
     }
     setVerifying(true)
     try {
-      await verifySignupOtp(verifyEmail, code)
+      await verifySignupOtp(verifyEmail, otp)
       setStage('done')
     } catch (err) {
       const parsed = parseAuthError(err)
@@ -355,13 +356,21 @@ export default function RegisterPage() {
             </div>
           )}
 
-          <form onSubmit={handleVerify} className="mt-6 space-y-4" noValidate>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              void submitCode(code)
+            }}
+            className="mt-6 space-y-4"
+            noValidate
+          >
             <OtpInput
               length={OTP_LENGTH}
               value={code}
               onChange={(v) => {
                 setCode(v)
-                if (verifyError) setVerifyError('')
+                if (v.length === OTP_LENGTH) void submitCode(v)
+                else if (verifyError) setVerifyError('')
               }}
               invalid={!!verifyError}
               disabled={verifying}

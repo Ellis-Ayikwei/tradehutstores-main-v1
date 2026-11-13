@@ -316,7 +316,7 @@ export default function AuthModal({ open, onClose, initialMode = 'auto' }: Props
         setCode(next)
         if (digit && i < 5) otpInputs.current[i + 1]?.focus()
         const joined = next.join('')
-        if (joined.length === 6 && !joined.includes('')) {
+        if (joined.length === 6) {
             void handleVerifyOtp(joined)
         }
     }
