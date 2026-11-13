@@ -1,9 +1,11 @@
 /**
  * Homepage hero admin API (Stores-BE apps/merchandising/hero_views.py):
- *   GET/PATCH  homepage/admin/hero/config/          layout + styling (singleton)
- *   GET/POST   homepage/admin/hero/slides/          multipart
- *   PATCH/DEL  homepage/admin/hero/slides/{id}/     multipart on PATCH
- *   POST       homepage/admin/hero/slides/reorder/  { ids: number[] }
+ *   GET/POST   homepage/admin/hero/configs/                 heroes (name, layout, styling)
+ *   PATCH/DEL  homepage/admin/hero/configs/{id}/            the live hero cannot be deleted (409)
+ *   POST       homepage/admin/hero/configs/{id}/activate/   make that hero the live one
+ *   GET/POST   homepage/admin/hero/slides/?hero={id}        multipart on POST, `hero` required
+ *   PATCH/DEL  homepage/admin/hero/slides/{id}/             multipart on PATCH
+ *   POST       homepage/admin/hero/slides/reorder/          { hero: number, ids: number[] }
  */
 import axios from 'axios';
 import axiosInstance from './axiosInstance';
@@ -15,6 +17,10 @@ export type HeroPlacement = 'main' | 'tile';
 export type HeroTextAlign = 'left' | 'center' | 'right';
 
 export interface HeroConfig {
+    id: number;
+    name: string;
+    /** True for the one hero the storefront shows. Changed only with `activateHero`. */
+    is_active: boolean;
     layout: HeroLayout;
     autoplay: boolean;
     interval_seconds: number;
@@ -33,6 +39,7 @@ export interface HeroConfig {
 
 export interface HeroSlide {
     id: number;
+    hero: number;
     name: string;
     placement: HeroPlacement;
     position: number;
@@ -60,7 +67,7 @@ export interface HeroSlide {
 }
 
 /** What the slide form edits. Files are sent only when set; `null` means "remove the saved image". */
-export type HeroSlideDraft = Omit<HeroSlide, 'id' | 'position' | 'is_live' | 'image_desktop_url' | 'image_mobile_url'> & {
+export type HeroSlideDraft = Omit<HeroSlide, 'id' | 'hero' | 'position' | 'is_live' | 'image_desktop_url' | 'image_mobile_url'> & {
     image_desktop: File | null | undefined;
     image_mobile: File | null | undefined;
 };
@@ -93,27 +100,53 @@ function toApiError(err: unknown, fallback: string): HeroApiError {
     return new HeroApiError(fallback);
 }
 
-export async function fetchHeroConfig(): Promise<HeroConfig> {
+export async function fetchHeroes(): Promise<HeroConfig[]> {
     try {
-        const { data } = await axiosInstance.get<HeroConfig>(`${BASE}config/`);
-        return data;
+        const { data } = await axiosInstance.get<HeroConfig[] | { results: HeroConfig[] }>(`${BASE}configs/`);
+        return Array.isArray(data) ? data : data.results;
     } catch (err) {
-        throw toApiError(err, 'Could not load the hero settings.');
+        throw toApiError(err, 'Could not load the heroes.');
     }
 }
 
-export async function saveHeroConfig(body: Partial<HeroConfig>): Promise<HeroConfig> {
+export async function createHero(name: string): Promise<HeroConfig> {
     try {
-        const { data } = await axiosInstance.patch<HeroConfig>(`${BASE}config/`, body);
+        const { data } = await axiosInstance.post<HeroConfig>(`${BASE}configs/`, { name });
+        return data;
+    } catch (err) {
+        throw toApiError(err, 'Could not create the hero.');
+    }
+}
+
+export async function saveHero(id: number, body: Partial<HeroConfig>): Promise<HeroConfig> {
+    try {
+        const { data } = await axiosInstance.patch<HeroConfig>(`${BASE}configs/${id}/`, body);
         return data;
     } catch (err) {
         throw toApiError(err, 'Could not save the hero settings.');
     }
 }
 
-export async function fetchHeroSlides(): Promise<HeroSlide[]> {
+export async function activateHero(id: number): Promise<HeroConfig> {
     try {
-        const { data } = await axiosInstance.get<HeroSlide[] | { results: HeroSlide[] }>(`${BASE}slides/`);
+        const { data } = await axiosInstance.post<HeroConfig>(`${BASE}configs/${id}/activate/`);
+        return data;
+    } catch (err) {
+        throw toApiError(err, 'Could not make this hero live.');
+    }
+}
+
+export async function deleteHero(id: number): Promise<void> {
+    try {
+        await axiosInstance.delete(`${BASE}configs/${id}/`);
+    } catch (err) {
+        throw toApiError(err, 'Could not delete the hero.');
+    }
+}
+
+export async function fetchHeroSlides(heroId: number): Promise<HeroSlide[]> {
+    try {
+        const { data } = await axiosInstance.get<HeroSlide[] | { results: HeroSlide[] }>(`${BASE}slides/`, { params: { hero: heroId } });
         return Array.isArray(data) ? data : data.results;
     } catch (err) {
         throw toApiError(err, 'Could not load the hero slides.');
@@ -134,9 +167,11 @@ function buildSlideFormData(draft: Partial<HeroSlideDraft>): FormData {
 
 const MULTIPART = { headers: { 'Content-Type': 'multipart/form-data' } };
 
-export async function createHeroSlide(draft: HeroSlideDraft): Promise<HeroSlide> {
+export async function createHeroSlide(heroId: number, draft: HeroSlideDraft): Promise<HeroSlide> {
     try {
-        const { data } = await axiosInstance.post<HeroSlide>(`${BASE}slides/`, buildSlideFormData(draft), MULTIPART);
+        const body = buildSlideFormData(draft);
+        body.append('hero', String(heroId));
+        const { data } = await axiosInstance.post<HeroSlide>(`${BASE}slides/`, body, MULTIPART);
         return data;
     } catch (err) {
         throw toApiError(err, 'Could not create the slide.');
@@ -160,9 +195,9 @@ export async function deleteHeroSlide(id: number): Promise<void> {
     }
 }
 
-export async function reorderHeroSlides(ids: number[]): Promise<HeroSlide[]> {
+export async function reorderHeroSlides(heroId: number, ids: number[]): Promise<HeroSlide[]> {
     try {
-        const { data } = await axiosInstance.post<HeroSlide[]>(`${BASE}slides/reorder/`, { ids });
+        const { data } = await axiosInstance.post<HeroSlide[]>(`${BASE}slides/reorder/`, { hero: heroId, ids });
         return data;
     } catch (err) {
         throw toApiError(err, 'Could not reorder the slides.');

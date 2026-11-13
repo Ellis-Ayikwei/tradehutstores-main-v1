@@ -194,7 +194,7 @@ export function SlideSheet({ open, slide, config, onOpenChange, onSaved }: Slide
         if (Object.keys(found).length > 0) return;
         setSaving(true);
         try {
-            const saved = slide ? await updateHeroSlide(slide.id, draft) : await createHeroSlide(draft);
+            const saved = slide ? await updateHeroSlide(slide.id, draft) : await createHeroSlide(config.id, draft);
             toast.success(slide ? 'Slide saved' : 'Slide added');
             onSaved(saved);
             onOpenChange(false);

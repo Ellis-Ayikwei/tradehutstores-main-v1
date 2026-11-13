@@ -72,6 +72,18 @@ export function LayoutTab({ config, onChange, onSave, saving, dirty, errors }: L
         <div className="space-y-4">
             <Card>
                 <CardHeader>
+                    <CardTitle>Name</CardTitle>
+                    <CardDescription>Only staff see this. Use it to tell your heroes apart, for example "Everyday" or "Black Friday".</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-1.5">
+                    <Label htmlFor="hero-name">Hero name</Label>
+                    <Input id="hero-name" value={config.name} maxLength={80} onChange={(e) => onChange({ name: e.target.value })} aria-invalid={errors.name ? true : undefined} />
+                    {errors.name ? <p className="text-sm text-destructive">{errors.name}</p> : null}
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
                     <CardTitle>Arrangement</CardTitle>
                     <CardDescription>How the banners are laid out on the home page. Slides are assigned to the main area or the tiles on the Slides tab.</CardDescription>
                 </CardHeader>

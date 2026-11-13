@@ -61,7 +61,7 @@ export function SlidesTab({ slides, config, onChange }: SlidesTabProps) {
         [reordered[index], reordered[target]] = [reordered[target], reordered[index]];
         const others = slides.filter((s) => s.placement !== placement);
         try {
-            onChange(await reorderHeroSlides([...others, ...reordered].map((s) => s.id)));
+            onChange(await reorderHeroSlides(config.id, [...others, ...reordered].map((s) => s.id)));
         } catch (e) {
             toast.error(e instanceof HeroApiError ? e.message : 'Could not reorder the slides.');
         }

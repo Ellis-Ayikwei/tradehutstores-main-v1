@@ -205,7 +205,7 @@ def validate_link(value: str) -> None:
 
 
 class HeroConfig(TimeStampedModel):
-    """Singleton: how the storefront home hero is arranged and styled."""
+    """One named hero: how it is arranged and styled, plus its slides. The storefront shows the active one."""
 
     class Layout(models.TextChoices):
         CAROUSEL = "carousel", "Carousel (full width)"
@@ -220,6 +220,10 @@ class HeroConfig(TimeStampedModel):
         NONE = "none", "None (page background)"
         SOLID = "solid", "Solid colour"
         GRADIENT = "gradient", "Gradient"
+
+    name = models.CharField(max_length=80, default="Homepage hero", help_text="Internal label, not shown to buyers.")
+    # Changed only through the admin "activate" action, which swaps it between heroes in one transaction.
+    is_active = models.BooleanField(default=False)
 
     layout = models.CharField(max_length=20, choices=Layout.choices, default=Layout.CAROUSEL_SIDE)
     autoplay = models.BooleanField(default=True)
@@ -240,20 +244,22 @@ class HeroConfig(TimeStampedModel):
     gradient_angle = models.PositiveSmallIntegerField(default=135)
 
     class Meta:
-        verbose_name = "Hero configuration"
-        verbose_name_plural = "Hero configuration"
+        ordering = ["id"]
+        verbose_name = "Hero"
+        verbose_name_plural = "Heroes"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["is_active"], condition=models.Q(is_active=True), name="merch_one_active_hero"
+            )
+        ]
 
     def __str__(self):
-        return "Home hero configuration"
-
-    def save(self, *args, **kwargs):
-        self.pk = 1
-        super().save(*args, **kwargs)
+        return self.name
 
     @classmethod
-    def load(cls) -> "HeroConfig":
-        obj, _ = cls.objects.get_or_create(pk=1)
-        return obj
+    def current(cls) -> "HeroConfig | None":
+        """The hero the storefront shows: the active one, else the oldest, so a hero that exists is never hidden."""
+        return cls.objects.order_by("-is_active", "id").first()
 
     def clean(self):
         errors = {}
@@ -287,6 +293,9 @@ class HeroSlide(TimeStampedModel):
         CENTER = "center", "Centre"
         RIGHT = "right", "Right"
 
+    # Nullable in the database only so the column can be added to a table that already has rows;
+    # the API requires it on every new slide.
+    hero = models.ForeignKey(HeroConfig, on_delete=models.CASCADE, related_name="slides", null=True, blank=True)
     name = models.CharField(max_length=120, help_text="Internal label, not shown to buyers.")
     placement = models.CharField(max_length=10, choices=Placement.choices, default=Placement.MAIN)
     position = models.PositiveSmallIntegerField(default=0)
