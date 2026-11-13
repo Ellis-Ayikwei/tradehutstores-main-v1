@@ -310,11 +310,25 @@ export default function AuthModal({ open, onClose, initialMode = 'auto' }: Props
 
     // ── OTP input plumbing ───────────────────────────────────────────────
     const setOtpDigit = (i: number, v: string) => {
-        const digit = v.replace(/\D/g, '').slice(-1)
+        const typed = v.replace(/\D/g, '')
         const next = [...code]
-        next[i] = digit
+        // Several digits at once is a paste or SMS autofill from the keyboard, which fires no paste
+        // event. Two digits in an already filled box is just the user typing over it.
+        if (typed.length > 1 && !(typed.length === 2 && code[i])) {
+            const start = typed.length >= 6 ? 0 : i
+            typed
+                .slice(0, 6 - start)
+                .split('')
+                .forEach((d, k) => {
+                    next[start + k] = d
+                })
+            otpInputs.current[Math.min(start + typed.length, 5)]?.focus()
+        } else {
+            const digit = typed.length === 2 ? (typed[0] === code[i] ? typed[1] : typed[0]) : typed
+            next[i] = digit
+            if (digit && i < 5) otpInputs.current[i + 1]?.focus()
+        }
         setCode(next)
-        if (digit && i < 5) otpInputs.current[i + 1]?.focus()
         const joined = next.join('')
         if (joined.length === 6) {
             void handleVerifyOtp(joined)
@@ -500,7 +514,8 @@ export default function AuthModal({ open, onClose, initialMode = 'auto' }: Props
                                         }}
                                         type="text"
                                         inputMode="numeric"
-                                        maxLength={1}
+                                        autoComplete={i === 0 ? 'one-time-code' : 'off'}
+                                        aria-label={`Digit ${i + 1}`}
                                         value={d}
                                         onChange={(e) => setOtpDigit(i, e.target.value)}
                                         onKeyDown={(e) => onOtpKey(i, e.key)}
@@ -508,6 +523,14 @@ export default function AuthModal({ open, onClose, initialMode = 'auto' }: Props
                                     />
                                 ))}
                             </div>
+                            <Primary
+                                onClick={() => void handleVerifyOtp(code.join(''))}
+                                disabled={busy || code.join('').length < 6}
+                                busy={busy}
+                            >
+                                Verify and continue
+                                <ArrowRight size={16} />
+                            </Primary>
                             <div className="flex items-center justify-between text-xs">
                                 <button
                                     type="button"

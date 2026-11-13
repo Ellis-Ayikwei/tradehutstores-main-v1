@@ -25,7 +25,23 @@ export default function OtpInput({ length = 6, value, onChange, invalid, disable
   }
 
   const handleChange = (i: number, raw: string) => {
-    const digit = raw.replace(/\D/g, '').slice(-1)
+    const typed = raw.replace(/\D/g, '')
+    // Several digits at once is a paste or SMS autofill from the keyboard, which fires no paste
+    // event. Two digits in an already filled box is just the user typing over it.
+    if (typed.length > 1 && !(typed.length === 2 && digits[i])) {
+      const start = typed.length >= length ? 0 : i
+      const next = [...digits]
+      typed
+        .slice(0, length - start)
+        .split('')
+        .forEach((d, k) => {
+          next[start + k] = d
+        })
+      onChange(next.join(''))
+      focusAt(Math.min(start + typed.length, length - 1))
+      return
+    }
+    const digit = typed.length === 2 ? (typed[0] === digits[i] ? typed[1] : typed[0]) : typed
     setDigit(i, digit)
     if (digit && i < length - 1) focusAt(i + 1)
   }
@@ -54,7 +70,6 @@ export default function OtpInput({ length = 6, value, onChange, invalid, disable
           type="text"
           inputMode="numeric"
           pattern="\d*"
-          maxLength={1}
           autoComplete={i === 0 ? 'one-time-code' : 'off'}
           value={d}
           disabled={disabled}

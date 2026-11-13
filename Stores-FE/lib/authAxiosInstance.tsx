@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { apiUrl } from './config';
+import { getDeviceIdentity } from './deviceIdentity';
 
 // const authApiUrl = 'https://127.0.0.1/sc/api/v1';
 export const authApiUrl = `${apiUrl}auth/`;
@@ -31,8 +32,12 @@ const getAuthToken = (): string => {
     return token || '';
 };
 
+// Requests that end in a signed-in session. Each carries the device identity so the backend can
+// tie the session to a device.
+const SIGN_IN_PATHS = /^(login\/|social\/|otp\/verify\/|modal\/(verify-otp|login-password|create-account)\/)$/;
+
 authAxiosInstance.interceptors.request.use(
-    (config) => {
+    async (config) => {
         const token = getAuthToken();
         // Ensure token is properly formatted for Authorization header
         if (token && !token.startsWith('Bearer ')) {
@@ -41,6 +46,12 @@ authAxiosInstance.interceptors.request.use(
             config.headers.Authorization = token || '';
         }
         config.headers['X-Refresh-Token'] = getCookie('_auth_refresh') ?? '';
+
+        const body = config.data;
+        if (SIGN_IN_PATHS.test(config.url ?? '') && body && typeof body === 'object' && !(body instanceof FormData)) {
+            const device = await getDeviceIdentity();
+            if (device) config.data = { ...body, ...device };
+        }
 
         if (!config.data) {
             config.data = {
