@@ -3,11 +3,41 @@ from rest_framework import serializers
 from .models import Attribute, AttributeValue, Brand, Category, SubCategory
 
 
+MAX_TILE_IMAGE_BYTES = 2 * 1024 * 1024
+
+
 class CategoryAdminSerializer(serializers.ModelSerializer):
+    tile_image_url = serializers.SerializerMethodField()
+
     class Meta:
         model = Category
-        fields = ["id", "name", "description", "created_at", "updated_at"]
-        read_only_fields = ["id", "created_at", "updated_at"]
+        fields = [
+            "id",
+            "name",
+            "description",
+            "show_on_home",
+            "home_position",
+            "home_label",
+            "tile_icon",
+            "tile_image",
+            "tile_image_url",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["id", "tile_image_url", "created_at", "updated_at"]
+        extra_kwargs = {"tile_image": {"required": False, "allow_null": True, "write_only": True}}
+
+    def get_tile_image_url(self, obj):
+        if not obj.tile_image:
+            return None
+        request = self.context.get("request")
+        url = obj.tile_image.url
+        return request.build_absolute_uri(url) if request else url
+
+    def validate_tile_image(self, file):
+        if file is not None and file.size > MAX_TILE_IMAGE_BYTES:
+            raise serializers.ValidationError("Tile image is larger than 2 MB. Export it at 512 x 512.")
+        return file
 
 
 class SubCategoryAdminSerializer(serializers.ModelSerializer):

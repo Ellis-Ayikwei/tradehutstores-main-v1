@@ -1,5 +1,33 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import type { LucideIcon } from 'lucide-react';
+import {
+    Baby,
+    BookOpen,
+    Briefcase,
+    Camera,
+    Car,
+    Dumbbell,
+    Gamepad2,
+    Gift,
+    Hammer,
+    Headphones,
+    Heart,
+    Home,
+    Laptop,
+    Package,
+    PawPrint,
+    Refrigerator,
+    Settings,
+    Shirt,
+    ShoppingBag,
+    Smartphone,
+    Sofa,
+    Sparkles,
+    Tv,
+    UtensilsCrossed,
+    Watch,
+} from 'lucide-react';
 import {
     IconAlertTriangle,
     IconEdit,
@@ -39,6 +67,37 @@ function normalizeTab(raw: string | null): TabId {
 }
 
 const DISPLAY_TYPES: AttributeDisplayType[] = ['dropdown', 'swatch', 'image', 'text'];
+
+/** Must match Category.TILE_ICON_CHOICES (Stores-BE) and ICON_BY_KEY in Stores-FE components/Home/Categories.tsx. */
+const TILE_ICONS: { key: string; label: string; Icon: LucideIcon }[] = [
+    { key: 'smartphone', label: 'Phone', Icon: Smartphone },
+    { key: 'laptop', label: 'Laptop', Icon: Laptop },
+    { key: 'camera', label: 'Camera', Icon: Camera },
+    { key: 'headphones', label: 'Headphones', Icon: Headphones },
+    { key: 'tv', label: 'TV', Icon: Tv },
+    { key: 'gamepad', label: 'Gaming', Icon: Gamepad2 },
+    { key: 'shirt', label: 'Clothing', Icon: Shirt },
+    { key: 'shopping-bag', label: 'Bag', Icon: ShoppingBag },
+    { key: 'watch', label: 'Watch', Icon: Watch },
+    { key: 'sparkles', label: 'Beauty', Icon: Sparkles },
+    { key: 'heart', label: 'Health', Icon: Heart },
+    { key: 'dumbbell', label: 'Sports', Icon: Dumbbell },
+    { key: 'baby', label: 'Baby', Icon: Baby },
+    { key: 'book', label: 'Books', Icon: BookOpen },
+    { key: 'paw', label: 'Pets', Icon: PawPrint },
+    { key: 'utensils', label: 'Kitchen', Icon: UtensilsCrossed },
+    { key: 'sofa', label: 'Furniture', Icon: Sofa },
+    { key: 'refrigerator', label: 'Appliance', Icon: Refrigerator },
+    { key: 'hammer', label: 'Tools', Icon: Hammer },
+    { key: 'settings', label: 'Industrial', Icon: Settings },
+    { key: 'home', label: 'Home', Icon: Home },
+    { key: 'car', label: 'Auto', Icon: Car },
+    { key: 'briefcase', label: 'Office', Icon: Briefcase },
+    { key: 'gift', label: 'Gifts', Icon: Gift },
+    { key: 'package', label: 'General', Icon: Package },
+];
+
+const MAX_TILE_IMAGE_BYTES = 2 * 1024 * 1024;
 
 const CatalogManagement: React.FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -248,34 +307,92 @@ function CategoriesTable({
     const [modal, setModal] = useState<'add' | { edit: AdminCategory } | null>(null);
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
+    const [showOnHome, setShowOnHome] = useState(true);
+    const [homePosition, setHomePosition] = useState(0);
+    const [homeLabel, setHomeLabel] = useState('');
+    const [tileIcon, setTileIcon] = useState('');
+    // undefined = keep the saved image, null = remove it, File = replace it.
+    const [tileImage, setTileImage] = useState<File | null | undefined>(undefined);
+    const [formError, setFormError] = useState<string | null>(null);
     const [busy, setBusy] = useState(false);
+
+    const editing = modal && modal !== 'add' ? modal.edit : null;
+    const newImageUrl = useMemo(() => (tileImage instanceof File ? URL.createObjectURL(tileImage) : null), [tileImage]);
+    useEffect(
+        () => () => {
+            if (newImageUrl) URL.revokeObjectURL(newImageUrl);
+        },
+        [newImageUrl]
+    );
+    const previewImage = tileImage === null ? null : newImageUrl ?? editing?.tile_image_url ?? null;
+    const PreviewIcon = TILE_ICONS.find((t) => t.key === tileIcon)?.Icon;
 
     const openAdd = () => {
         setName('');
         setDescription('');
+        setShowOnHome(true);
+        // New categories go to the end of the home row by default.
+        setHomePosition(rows.reduce((max, r) => Math.max(max, r.home_position + 1), 0));
+        setHomeLabel('');
+        setTileIcon('');
+        setTileImage(undefined);
+        setFormError(null);
         setModal('add');
     };
 
     const openEdit = (c: AdminCategory) => {
         setName(c.name);
         setDescription(c.description ?? '');
+        setShowOnHome(c.show_on_home);
+        setHomePosition(c.home_position);
+        setHomeLabel(c.home_label ?? '');
+        setTileIcon(c.tile_icon ?? '');
+        setTileImage(undefined);
+        setFormError(null);
         setModal({ edit: c });
+    };
+
+    const pickImage = (file: File | undefined) => {
+        if (!file) return;
+        if (file.size > MAX_TILE_IMAGE_BYTES) {
+            setFormError('Tile image is larger than 2 MB. Export it at 512 x 512.');
+            return;
+        }
+        setFormError(null);
+        setTileImage(file);
     };
 
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
         setBusy(true);
+        setFormError(null);
+        const body = new FormData();
+        body.append('name', name.trim());
+        body.append('description', description);
+        body.append('show_on_home', showOnHome ? 'true' : 'false');
+        body.append('home_position', String(Math.max(0, homePosition || 0)));
+        body.append('home_label', homeLabel.trim());
+        body.append('tile_icon', tileIcon);
+        if (tileImage instanceof File) body.append('tile_image', tileImage);
+        else if (tileImage === null) body.append('tile_image', '');
+        const multipart = { headers: { 'Content-Type': 'multipart/form-data' } };
         try {
             if (modal === 'add') {
-                await axiosInstance.post(catalogAdminApi.categories(), { name: name.trim(), description: description || null });
-            } else if (modal && 'edit' in modal) {
-                await axiosInstance.patch(catalogAdminApi.category(modal.edit.id), {
-                    name: name.trim(),
-                    description: description || null,
-                });
+                await axiosInstance.post(catalogAdminApi.categories(), body, multipart);
+            } else if (editing) {
+                await axiosInstance.patch(catalogAdminApi.category(editing.id), body, multipart);
             }
             setModal(null);
             await onRefresh();
+        } catch (err: unknown) {
+            // DRF returns { field: ["message"] }; show the first one with its field name.
+            const data = (err as { response?: { data?: Record<string, unknown> } })?.response?.data;
+            const first = data && typeof data === 'object' ? Object.entries(data)[0] : undefined;
+            setFormError(
+                first
+                    ? `${first[0].replace(/_/g, ' ')}: ${Array.isArray(first[1]) ? first[1].join(' ') : String(first[1])}`
+                    : 'Could not save the category. Try again.'
+            );
         } finally {
             setBusy(false);
         }
@@ -304,6 +421,7 @@ function CategoriesTable({
                         <tr>
                             <th className="px-4 py-3 font-semibold">Name</th>
                             <th className="px-4 py-3 font-semibold">Description</th>
+                            <th className="px-4 py-3 font-semibold">Home tile</th>
                             <th className="px-4 py-3 font-semibold w-28">Actions</th>
                         </tr>
                     </thead>
@@ -312,6 +430,9 @@ function CategoriesTable({
                             <tr key={c.id} className="border-t border-gray-100 hover:bg-gray-50">
                                 <td className="px-4 py-3 font-medium text-gray-900">{c.name}</td>
                                 <td className="px-4 py-3 text-gray-600 max-w-md truncate">{c.description || '—'}</td>
+                                <td className="px-4 py-3">
+                                    <HomeTileCell category={c} />
+                                </td>
                                 <td className="px-4 py-3">
                                     <div className="flex gap-1">
                                         <button type="button" className="p-2 hover:bg-gray-100 rounded" onClick={() => openEdit(c)} title="Edit">
@@ -332,7 +453,7 @@ function CategoriesTable({
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                     <form
                         onSubmit={(e) => void submit(e)}
-                        className="bg-white rounded-lg max-w-lg w-full p-6 space-y-4 shadow-xl"
+                        className="bg-white rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 space-y-4 shadow-xl"
                     >
                         <h3 className="text-lg font-semibold">{modal === 'add' ? 'Add category' : 'Edit category'}</h3>
                         <div>
@@ -353,6 +474,105 @@ function CategoriesTable({
                                 onChange={(e) => setDescription(e.target.value)}
                             />
                         </div>
+                        <fieldset className="space-y-3 border-t border-gray-200 pt-4">
+                            <legend className="text-sm font-semibold text-gray-900">Home page tile</legend>
+                            <label className="flex items-center gap-2 text-sm text-gray-700">
+                                <input type="checkbox" checked={showOnHome} onChange={(e) => setShowOnHome(e.target.checked)} />
+                                Show in Shop by category on the home page
+                            </label>
+                            {showOnHome && (
+                                <>
+                                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                        <div>
+                                            <label htmlFor="cat-home-label" className="block text-sm font-medium text-gray-700 mb-1">
+                                                Tile label
+                                            </label>
+                                            <input
+                                                id="cat-home-label"
+                                                className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                                                value={homeLabel}
+                                                maxLength={30}
+                                                placeholder={name || 'Uses the category name'}
+                                                onChange={(e) => setHomeLabel(e.target.value)}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label htmlFor="cat-home-position" className="block text-sm font-medium text-gray-700 mb-1">
+                                                Position
+                                            </label>
+                                            <input
+                                                id="cat-home-position"
+                                                type="number"
+                                                min={0}
+                                                className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                                                value={homePosition}
+                                                onChange={(e) => setHomePosition(Number.parseInt(e.target.value, 10) || 0)}
+                                            />
+                                            <p className="mt-1 text-xs text-gray-500">Lower numbers show first.</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-start gap-4">
+                                        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-md border border-gray-200 bg-gray-50">
+                                            {previewImage ? (
+                                                <img src={previewImage} alt="Tile preview" className="h-12 w-12 object-contain" />
+                                            ) : PreviewIcon ? (
+                                                <PreviewIcon className="h-6 w-6 text-primary-700" aria-hidden />
+                                            ) : (
+                                                <span className="px-1 text-center text-xs text-gray-500">Auto icon</span>
+                                            )}
+                                        </div>
+                                        <div className="min-w-0 flex-1 space-y-2">
+                                            <div>
+                                                <label htmlFor="cat-tile-image" className="block text-sm font-medium text-gray-700 mb-1">
+                                                    Tile image
+                                                </label>
+                                                <input
+                                                    id="cat-tile-image"
+                                                    type="file"
+                                                    accept="image/png,image/webp,image/jpeg"
+                                                    className="block w-full text-sm"
+                                                    onChange={(e) => {
+                                                        pickImage(e.target.files?.[0]);
+                                                        e.target.value = '';
+                                                    }}
+                                                />
+                                                <p className="mt-1 text-xs text-gray-500">
+                                                    Square PNG or WebP, 512 x 512, transparent background, up to 2 MB. Shown instead of the icon.
+                                                </p>
+                                                {previewImage && (
+                                                    <button type="button" className="mt-1 text-xs font-medium text-red-600 hover:underline" onClick={() => setTileImage(null)}>
+                                                        Remove image
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <div>
+                                                <label htmlFor="cat-tile-icon" className="block text-sm font-medium text-gray-700 mb-1">
+                                                    Icon (used when there is no image)
+                                                </label>
+                                                <select
+                                                    id="cat-tile-icon"
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                                                    value={tileIcon}
+                                                    onChange={(e) => setTileIcon(e.target.value)}
+                                                >
+                                                    <option value="">Automatic (from the category name)</option>
+                                                    {TILE_ICONS.map((t) => (
+                                                        <option key={t.key} value={t.key}>
+                                                            {t.label}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                        </fieldset>
+                        {formError && (
+                            <p role="alert" className="text-sm text-red-600">
+                                {formError}
+                            </p>
+                        )}
                         <div className="flex justify-end gap-2 pt-2">
                             <button type="button" className="px-4 py-2 rounded-lg bg-gray-100" onClick={() => setModal(null)}>
                                 Cancel
@@ -364,6 +584,23 @@ function CategoriesTable({
                     </form>
                 </div>
             )}
+        </div>
+    );
+}
+
+function HomeTileCell({ category: c }: { category: AdminCategory }) {
+    if (!c.show_on_home) return <span className="text-xs text-gray-500">Hidden</span>;
+    const RowIcon = TILE_ICONS.find((t) => t.key === c.tile_icon)?.Icon;
+    return (
+        <div className="flex items-center gap-2">
+            {c.tile_image_url ? (
+                <img src={c.tile_image_url} alt="" className="h-8 w-8 object-contain" />
+            ) : RowIcon ? (
+                <RowIcon className="h-5 w-5 text-gray-700" aria-hidden />
+            ) : (
+                <span className="text-xs text-gray-500">Auto icon</span>
+            )}
+            <span className="text-xs text-gray-500">#{c.home_position}</span>
         </div>
     );
 }

@@ -548,31 +548,26 @@ class AdminLoginSellerTests(TestCase):
     def login(self, email):
         return APIClient().post(self.url, {"email": email, "password": "pass12345!"}, format="json")
 
-    def test_pending_seller_can_log_in(self):
-        make_seller("pending@seller.test", status="pending")
-        res = self.login("pending@seller.test")
-        self.assertEqual(res.status_code, 200, res.content)
-        self.assertIn("Authorization", res)
-
-    def test_rejected_and_verified_sellers_can_log_in(self):
-        make_seller("rej@seller.test", status="rejected")
-        make_seller("ver@seller.test", status="verified")
-        self.assertEqual(self.login("rej@seller.test").status_code, 200)
-        self.assertEqual(self.login("ver@seller.test").status_code, 200)
-
-    def test_suspended_seller_denied(self):
-        make_seller("sus@seller.test", status="suspended")
-        self.assertEqual(self.login("sus@seller.test").status_code, 403)
-
-    def test_inactive_seller_profile_denied(self):
-        make_seller("inactive@seller.test", status="verified", is_active=False)
-        self.assertEqual(self.login("inactive@seller.test").status_code, 403)
+    def test_sellers_are_denied_whatever_their_status(self):
+        for status in ("pending", "rejected", "verified", "suspended"):
+            make_seller(f"{status}@seller.test", status=status)
+            res = self.login(f"{status}@seller.test")
+            self.assertEqual(res.status_code, 403, status)
+            self.assertNotIn("Authorization", res)
 
     def test_buyer_denied_staff_allowed(self):
         make_user("buyer@test.dev")
         make_user("staff@test.dev", is_staff=True)
         self.assertEqual(self.login("buyer@test.dev").status_code, 403)
-        self.assertEqual(self.login("staff@test.dev").status_code, 200)
+        res = self.login("staff@test.dev")
+        self.assertEqual(res.status_code, 200, res.content)
+        self.assertIn("Authorization", res)
+
+    def test_staff_who_also_sells_is_allowed(self):
+        user, _ = make_seller("both@seller.test", status="verified")
+        user.is_staff = True
+        user.save(update_fields=["is_staff"])
+        self.assertEqual(self.login("both@seller.test").status_code, 200)
 
 
 class SellersGroupMigrationTests(TestCase):

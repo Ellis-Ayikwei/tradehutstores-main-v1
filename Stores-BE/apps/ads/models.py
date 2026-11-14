@@ -419,3 +419,6 @@ class AdClick(models.Model):
         indexes = [
             models.Index(fields=["campaign_id", "clicked_at"]),
         ]
+
+
+from .sponsored_models import SponsoredPackage, SponsoredPromotion  # noqa: E402,F401

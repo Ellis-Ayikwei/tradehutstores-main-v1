@@ -4,7 +4,7 @@ import type { CSSProperties } from 'react'
 import useSWR from 'swr'
 import fetcher from '@/lib/fetcher'
 
-export type HeroLayout = 'carousel' | 'carousel_side' | 'bento'
+export type HeroLayout = 'carousel' | 'carousel_side' | 'bento' | 'tiles_below' | 'flanked' | 'full_bleed'
 export type HeroTransition = 'slide' | 'fade'
 export type HeroBackgroundStyle = 'none' | 'solid' | 'gradient'
 export type HeroTextAlign = 'left' | 'center' | 'right'
@@ -30,6 +30,8 @@ export interface HeroSlide {
     placement: 'main' | 'tile'
     image_desktop: string | null
     image_mobile: string | null
+    /** Optional looping clip; `image_desktop` is its poster. */
+    video: string | null
     alt_text: string
     eyebrow: string
     title: string
@@ -37,6 +39,8 @@ export interface HeroSlide {
     cta_label: string
     link_url: string
     open_in_new_tab: boolean
+    cta_bg_color: string
+    cta_text_color: string
     text_color: string
     text_align: HeroTextAlign
     overlay_strength: number
@@ -71,8 +75,11 @@ const FALLBACK_CONFIG: HeroConfig = {
 const slideBase = {
     image_desktop: null,
     image_mobile: null,
+    video: null,
     alt_text: '',
     open_in_new_tab: false,
+    cta_bg_color: '#ffffff',
+    cta_text_color: '#18181b',
     text_color: '#ffffff',
     text_align: 'left' as const,
     overlay_strength: 0,

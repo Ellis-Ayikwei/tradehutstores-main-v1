@@ -4,7 +4,19 @@ import type { CSSProperties } from 'react'
 import { HOME_CONTAINER } from './HomeSection'
 import HeroCarousel from './hero/HeroCarousel'
 import HeroSlideCard from './hero/HeroSlideCard'
-import { heroBackground, useHero } from './hero/heroData'
+import { heroBackground, useHero, type HeroLayout, type HeroSlide } from './hero/heroData'
+
+/** Most tiles each layout can show. */
+const TILE_LIMIT: Record<HeroLayout, number> = {
+    carousel: 0,
+    full_bleed: 0,
+    carousel_side: 2,
+    bento: 4,
+    tiles_below: 4,
+    flanked: 4,
+}
+
+const ROW_COLS = ['', 'lg:grid-cols-1', 'lg:grid-cols-2', 'lg:grid-cols-3', 'lg:grid-cols-4']
 
 /** Home hero. Layout, slides, timing and background are managed in Admin > Homepage hero. */
 export default function HeroWithSearch() {
@@ -14,8 +26,7 @@ export default function HeroWithSearch() {
     const tiles = slides.filter((s) => s.placement === 'tile')
     // Only tile slides live: show them in the carousel and drop the (duplicate) tile column.
     const mainSlides = main.length > 0 ? main : slides
-    const tileLimit = config.layout === 'bento' ? 4 : 2
-    const shownTiles = config.layout === 'carousel' || main.length === 0 ? [] : tiles.slice(0, tileLimit)
+    const shownTiles = main.length === 0 ? [] : tiles.slice(0, TILE_LIMIT[config.layout] ?? 0)
 
     const band = heroBackground(
         config.background_style,
@@ -26,7 +37,8 @@ export default function HeroWithSearch() {
     )
     const bandClass = band ? '' : 'bg-neutral-100 dark:bg-neutral-950'
     const heightVar = { '--hero-h': `${config.height_desktop}px` } as CSSProperties
-    const radius = config.rounded ? 'rounded-md' : ''
+    const bleed = config.layout === 'full_bleed'
+    const radius = config.rounded && !bleed ? 'rounded-md' : ''
 
     if (loading) {
         return (
@@ -44,21 +56,53 @@ export default function HeroWithSearch() {
     }
 
     const mainClass = 'aspect-[16/9] sm:aspect-[21/9] lg:aspect-auto lg:h-[var(--hero-h)]'
+    const tile = (t: HeroSlide, box: string) => (
+        <div key={t.id} className={`overflow-hidden ${box} ${radius}`}>
+            <HeroSlideCard slide={t} size="sm" />
+        </div>
+    )
 
     let body
-    if (shownTiles.length === 0) {
+    if (bleed) {
+        body = <HeroCarousel slides={mainSlides} config={{ ...config, rounded: false }} className={mainClass} />
+    } else if (shownTiles.length === 0) {
         body = <HeroCarousel slides={mainSlides} config={config} className={mainClass} />
     } else if (config.layout === 'bento') {
         body = (
             <div className="grid grid-cols-1 gap-3 lg:grid-cols-12">
                 <HeroCarousel slides={mainSlides} config={config} className={`${mainClass} lg:col-span-6`} />
                 <div className="grid grid-cols-2 gap-3 lg:col-span-6 lg:h-[var(--hero-h)] lg:grid-rows-2">
-                    {shownTiles.map((tile) => (
-                        <div key={tile.id} className={`aspect-[4/3] overflow-hidden lg:aspect-auto ${radius}`}>
-                            <HeroSlideCard slide={tile} size="sm" />
-                        </div>
-                    ))}
+                    {shownTiles.map((t) => tile(t, 'aspect-[4/3] lg:aspect-auto'))}
                 </div>
+            </div>
+        )
+    } else if (config.layout === 'tiles_below') {
+        body = (
+            <div className="space-y-3">
+                <HeroCarousel slides={mainSlides} config={config} className={mainClass} />
+                <div className={`grid grid-cols-2 gap-3 ${ROW_COLS[shownTiles.length]}`}>
+                    {shownTiles.map((t) => tile(t, 'aspect-[16/9] lg:aspect-[16/7]'))}
+                </div>
+            </div>
+        )
+    } else if (config.layout === 'flanked') {
+        const left = shownTiles.slice(0, Math.ceil(shownTiles.length / 2))
+        const right = shownTiles.slice(left.length)
+        // Phones: banner first, then every tile in a two-column grid. Desktop: tile column, banner, tile column.
+        const column = (items: HeroSlide[], order: string) => (
+            <div className={`grid grid-cols-2 gap-3 lg:col-span-3 lg:flex lg:h-[var(--hero-h)] lg:flex-col ${order}`}>
+                {items.map((t) => tile(t, 'aspect-[16/10] lg:aspect-auto lg:min-h-0 lg:flex-1'))}
+            </div>
+        )
+        body = (
+            <div className="grid grid-cols-1 gap-3 lg:grid-cols-12">
+                {column(left, 'order-2 lg:order-1')}
+                <HeroCarousel
+                    slides={mainSlides}
+                    config={config}
+                    className={`${mainClass} order-1 ${right.length > 0 ? 'lg:col-span-6' : 'lg:col-span-9'} lg:order-2`}
+                />
+                {right.length > 0 ? column(right, 'order-3') : null}
             </div>
         )
     } else {
@@ -66,11 +110,7 @@ export default function HeroWithSearch() {
             <div className="grid grid-cols-1 gap-3 lg:grid-cols-12">
                 <HeroCarousel slides={mainSlides} config={config} className={`${mainClass} lg:col-span-9`} />
                 <div className="grid grid-cols-2 gap-3 lg:col-span-3 lg:h-[var(--hero-h)] lg:grid-cols-1 lg:grid-rows-2">
-                    {shownTiles.map((tile) => (
-                        <div key={tile.id} className={`aspect-[16/10] overflow-hidden lg:aspect-auto ${radius}`}>
-                            <HeroSlideCard slide={tile} size="sm" />
-                        </div>
-                    ))}
+                    {shownTiles.map((t) => tile(t, 'aspect-[16/10] lg:aspect-auto'))}
                 </div>
             </div>
         )
@@ -78,7 +118,7 @@ export default function HeroWithSearch() {
 
     return (
         <section aria-label="Promotions" className={`${bandClass} pb-3 pt-3 sm:pt-4`} style={{ ...band, ...heightVar }}>
-            <div className={HOME_CONTAINER}>{body}</div>
+            {bleed ? body : <div className={HOME_CONTAINER}>{body}</div>}
         </section>
     )
 }

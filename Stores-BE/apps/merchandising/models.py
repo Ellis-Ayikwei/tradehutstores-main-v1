@@ -211,6 +211,9 @@ class HeroConfig(TimeStampedModel):
         CAROUSEL = "carousel", "Carousel (full width)"
         CAROUSEL_SIDE = "carousel_side", "Carousel + side tiles"
         BENTO = "bento", "Bento grid (large + tiles, static)"
+        TILES_BELOW = "tiles_below", "Carousel + tile row below"
+        FLANKED = "flanked", "Carousel between side tiles"
+        FULL_BLEED = "full_bleed", "Edge-to-edge carousel"
 
     class Transition(models.TextChoices):
         SLIDE = "slide", "Slide"
@@ -307,6 +310,8 @@ class HeroSlide(TimeStampedModel):
     image_mobile = models.ImageField(
         upload_to="hero/mobile/", blank=True, null=True, help_text="Optional. Falls back to desktop."
     )
+    # Optional looping background clip (mp4 / webm). The desktop image is its poster and the phone fallback.
+    video = models.FileField(upload_to="hero/video/", blank=True, null=True)
     alt_text = models.CharField(max_length=240, blank=True)
 
     eyebrow = models.CharField(max_length=60, blank=True)
@@ -315,6 +320,8 @@ class HeroSlide(TimeStampedModel):
     cta_label = models.CharField(max_length=40, blank=True)
     link_url = models.CharField(max_length=500, blank=True, validators=[validate_link])
     open_in_new_tab = models.BooleanField(default=False)
+    cta_bg_color = models.CharField(max_length=7, default="#ffffff", validators=[_HEX_COLOR])
+    cta_text_color = models.CharField(max_length=7, default="#18181b", validators=[_HEX_COLOR])
 
     text_color = models.CharField(max_length=7, default="#ffffff", validators=[_HEX_COLOR])
     text_align = models.CharField(max_length=10, choices=TextAlign.choices, default=TextAlign.LEFT)
@@ -351,6 +358,8 @@ class HeroSlide(TimeStampedModel):
 
     def clean(self):
         errors = {}
+        if self.video and not self.image_desktop:
+            errors["image_desktop"] = "A video slide needs a desktop image: it shows while the video loads and on phones."
         if self.overlay_strength > 80:
             errors["overlay_strength"] = "Maximum is 80."
         if self.gradient_angle > 360:

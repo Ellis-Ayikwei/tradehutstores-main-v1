@@ -31,6 +31,12 @@ export interface AdminCategory {
     id: string;
     name: string;
     description?: string | null;
+    /** Home page "shop by category" tile. Image wins over icon; blank icon means automatic. */
+    show_on_home: boolean;
+    home_position: number;
+    home_label: string;
+    tile_icon: string;
+    tile_image_url: string | null;
     created_at: string;
     updated_at: string;
 }

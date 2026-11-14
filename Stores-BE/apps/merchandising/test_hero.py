@@ -1,5 +1,11 @@
+import io
+import tempfile
+from unittest.mock import patch
+
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import IntegrityError, transaction
-from django.test import TestCase
+from django.test import TestCase, override_settings
+from PIL import Image
 from rest_framework.test import APIClient
 
 from apps.users.models import User
@@ -171,3 +177,106 @@ class HeroAdminTests(TestCase):
         self.assertEqual([r["id"] for r in ok.json()], [s2.id, s1.id])
         foreign.refresh_from_db()
         self.assertEqual(foreign.position, 5)
+
+
+def png_file(name="poster.png"):
+    buffer = io.BytesIO()
+    Image.new("RGB", (4, 4), "#336699").save(buffer, format="PNG")
+    return SimpleUploadedFile(name, buffer.getvalue(), content_type="image/png")
+
+
+def mp4_file(name="clip.mp4", size=64):
+    return SimpleUploadedFile(name, b"\x00\x00\x00\x18ftypmp42" + b"\x00" * size, content_type="video/mp4")
+
+
+def webm_file(name="clip.webm"):
+    return SimpleUploadedFile(name, b"\x1a\x45\xdf\xa3" + b"\x00" * 64, content_type="video/webm")
+
+
+class HeroStyleTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.client.force_authenticate(User.objects.create_user(email="staff@example.com", password="x", is_staff=True))
+        self.hero = HeroConfig.objects.create(name="A", is_active=True)
+
+    def test_every_layout_is_accepted_and_unknown_ones_refused(self):
+        for layout in ("carousel", "carousel_side", "bento", "tiles_below", "flanked", "full_bleed"):
+            ok = self.client.patch(f"{CONFIGS}{self.hero.id}/", {"layout": layout}, format="json")
+            self.assertEqual(ok.status_code, 200, layout)
+            self.assertEqual(ok.json()["layout"], layout)
+        bad = self.client.patch(f"{CONFIGS}{self.hero.id}/", {"layout": "spiral"}, format="json")
+        self.assertEqual(bad.status_code, 400)
+
+    def test_button_colours_default_to_the_original_white_button(self):
+        slide = self.client.post(SLIDES, {"name": "S", "hero": self.hero.id, "title": "T"}, format="json").json()
+        self.assertEqual((slide["cta_bg_color"], slide["cta_text_color"]), ("#ffffff", "#18181b"))
+
+    def test_button_colours_are_validated_and_served_publicly(self):
+        bad = self.client.post(SLIDES, {"name": "S", "hero": self.hero.id, "cta_bg_color": "red"}, format="json")
+        self.assertEqual(bad.status_code, 400)
+        self.assertIn("cta_bg_color", bad.json())
+        self.client.post(
+            SLIDES,
+            {"name": "S", "hero": self.hero.id, "title": "T", "cta_bg_color": "#ff6600", "cta_text_color": "#000000"},
+            format="json",
+        )
+        public = self.client.get(PUBLIC).json()["slides"][0]
+        self.assertEqual((public["cta_bg_color"], public["cta_text_color"]), ("#ff6600", "#000000"))
+
+
+class HeroVideoTests(TestCase):
+    def setUp(self):
+        media = tempfile.TemporaryDirectory()
+        self.addCleanup(media.cleanup)
+        override = override_settings(MEDIA_ROOT=media.name)
+        override.enable()
+        self.addCleanup(override.disable)
+        self.client = APIClient()
+        self.client.force_authenticate(User.objects.create_user(email="staff@example.com", password="x", is_staff=True))
+        self.hero = HeroConfig.objects.create(name="A", is_active=True)
+
+    def create(self, **files):
+        # Multipart forms read a missing checkbox as false, so the admin always sends is_active.
+        data = {"name": "Clip", "hero": self.hero.id, "title": "T", "is_active": "true", **files}
+        return self.client.post(SLIDES, data, format="multipart")
+
+    def test_mp4_and_webm_with_a_poster_are_saved_and_served(self):
+        for video in (mp4_file(), webm_file()):
+            response = self.create(image_desktop=png_file(), video=video)
+            self.assertEqual(response.status_code, 201, response.content)
+            self.assertTrue(response.json()["video_url"].startswith("http"))
+        public = self.client.get(PUBLIC).json()["slides"]
+        self.assertEqual(len(public), 2)
+        self.assertTrue(all(s["video"] and s["image_desktop"] for s in public))
+
+    def test_video_without_a_poster_image_is_refused(self):
+        response = self.create(video=mp4_file())
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("image_desktop", response.json())
+
+    def test_extension_and_file_contents_must_agree(self):
+        wrong_ext = self.create(image_desktop=png_file(), video=SimpleUploadedFile("clip.mov", b"\x00\x00\x00\x18ftypqt  ", content_type="video/quicktime"))
+        fake_mp4 = self.create(image_desktop=png_file(), video=SimpleUploadedFile("clip.mp4", b"not a video at all", content_type="video/mp4"))
+        webm_named_mp4 = self.create(image_desktop=png_file(), video=SimpleUploadedFile("clip.mp4", b"\x1a\x45\xdf\xa3" + b"\x00" * 16, content_type="video/mp4"))
+        for response in (wrong_ext, fake_mp4, webm_named_mp4):
+            self.assertEqual(response.status_code, 400)
+            self.assertIn("video", response.json())
+        self.assertEqual(HeroSlide.objects.count(), 0)
+
+    def test_oversized_video_is_refused(self):
+        with patch("apps.merchandising.hero_serializers.MAX_HERO_VIDEO_BYTES", 32):
+            response = self.create(image_desktop=png_file(), video=mp4_file(size=100))
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("15 MB", response.json()["video"][0])
+
+    def test_removing_the_video_keeps_the_slide(self):
+        created = self.create(image_desktop=png_file(), video=mp4_file()).json()
+        removed = self.client.patch(f"{SLIDES}{created['id']}/", {"video": ""}, format="multipart")
+        self.assertEqual(removed.status_code, 200, removed.content)
+        self.assertIsNone(removed.json()["video_url"])
+
+    def test_removing_the_poster_of_a_video_slide_is_refused(self):
+        created = self.create(image_desktop=png_file(), video=mp4_file()).json()
+        response = self.client.patch(f"{SLIDES}{created['id']}/", {"image_desktop": ""}, format="multipart")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("image_desktop", response.json())

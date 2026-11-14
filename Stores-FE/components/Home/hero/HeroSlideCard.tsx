@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { resolveMediaSrc } from '@/lib/mediaUrl'
+import HeroVideo from './HeroVideo'
 import { heroBackground, type HeroSlide } from './heroData'
 
 const ALIGN: Record<HeroSlide['text_align'], string> = {
@@ -94,6 +95,7 @@ export default function HeroSlideCard({
                             <Image src={mobile} alt={alt} fill sizes="100vw" className="object-cover md:hidden" />
                         </>
                     )}
+                    {slide.video && interactive ? <HeroVideo src={slide.video} /> : null}
                     {/* Photo-legibility scrim, only over a real image. */}
                     {slide.overlay_strength > 0 ? (
                         <div
@@ -134,7 +136,8 @@ export default function HeroSlideCard({
                     ) : null}
                     {slide.cta_label ? (
                         <span
-                            className={`inline-flex w-fit items-center rounded-md bg-white font-bold text-zinc-900 ${
+                            style={{ backgroundColor: slide.cta_bg_color || '#ffffff', color: slide.cta_text_color || '#18181b' }}
+                            className={`inline-flex w-fit items-center rounded-md font-bold ${
                                 large ? 'mt-1 min-h-[44px] px-5 text-sm' : 'mt-0.5 h-8 px-3 text-xs sm:text-sm'
                             }`}
                         >

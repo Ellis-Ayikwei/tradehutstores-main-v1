@@ -394,7 +394,7 @@ RESERVING = ("pending", "succeeded")
 
 
 def _minor(amount) -> int:
-    return int((money(amount) * 100).to_integral_value())
+    return paystack.to_minor(amount)
 
 
 def refunded_amount(payment, statuses=("succeeded",)) -> Decimal:

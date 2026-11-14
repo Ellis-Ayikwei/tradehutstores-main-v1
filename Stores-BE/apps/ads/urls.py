@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from .admin_views import (
@@ -16,6 +16,8 @@ router.register(r"ads/admin/creatives", CreativeAdminViewSet, basename="ads-admi
 router.register(r"ads/admin/slots", AdSlotAdminViewSet, basename="ads-admin-slot")
 
 urlpatterns = [
+    # Sponsored products (plan 26): public cards, seller purchase flow, staff review
+    path("ads/sponsored/", include("apps.ads.sponsored_urls")),
     # Public — storefront
     path("ads/placement/<slug:slug>/", serve_placement, name="ads-serve-placement"),
     path("ads/beacon/impression/", beacon_impression, name="ads-beacon-impression"),

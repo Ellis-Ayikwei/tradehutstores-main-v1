@@ -10,7 +10,7 @@
 import axios from 'axios';
 import axiosInstance from './axiosInstance';
 
-export type HeroLayout = 'carousel' | 'carousel_side' | 'bento';
+export type HeroLayout = 'carousel' | 'carousel_side' | 'bento' | 'tiles_below' | 'flanked' | 'full_bleed';
 export type HeroTransition = 'slide' | 'fade';
 export type HeroBackgroundStyle = 'none' | 'solid' | 'gradient';
 export type HeroPlacement = 'main' | 'tile';
@@ -49,6 +49,7 @@ export interface HeroSlide {
     ends_at: string | null;
     image_desktop_url: string | null;
     image_mobile_url: string | null;
+    video_url: string | null;
     alt_text: string;
     eyebrow: string;
     title: string;
@@ -56,6 +57,8 @@ export interface HeroSlide {
     cta_label: string;
     link_url: string;
     open_in_new_tab: boolean;
+    cta_bg_color: string;
+    cta_text_color: string;
     text_color: string;
     text_align: HeroTextAlign;
     overlay_strength: number;
@@ -67,9 +70,10 @@ export interface HeroSlide {
 }
 
 /** What the slide form edits. Files are sent only when set; `null` means "remove the saved image". */
-export type HeroSlideDraft = Omit<HeroSlide, 'id' | 'hero' | 'position' | 'is_live' | 'image_desktop_url' | 'image_mobile_url'> & {
+export type HeroSlideDraft = Omit<HeroSlide, 'id' | 'hero' | 'position' | 'is_live' | 'image_desktop_url' | 'image_mobile_url' | 'video_url'> & {
     image_desktop: File | null | undefined;
     image_mobile: File | null | undefined;
+    video: File | null | undefined;
 };
 
 const BASE = 'homepage/admin/hero/';

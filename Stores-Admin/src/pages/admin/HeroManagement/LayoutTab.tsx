@@ -12,11 +12,43 @@ const LAYOUTS: { value: HeroLayout; label: string; hint: string }[] = [
     { value: 'carousel', label: 'Carousel', hint: 'One full-width rotating banner.' },
     { value: 'carousel_side', label: 'Carousel + side tiles', hint: 'Rotating banner with two stacked tiles.' },
     { value: 'bento', label: 'Bento grid', hint: 'Large banner beside up to four tiles.' },
+    { value: 'tiles_below', label: 'Carousel + tile row', hint: 'Full-width banner with up to four tiles in a row below.' },
+    { value: 'flanked', label: 'Carousel between tiles', hint: 'Banner in the middle, tiles down both sides (up to four).' },
+    { value: 'full_bleed', label: 'Edge-to-edge', hint: 'Banner across the whole screen width. Tiles are not used.' },
 ];
 
 function LayoutGlyph({ layout }: { layout: HeroLayout }) {
     const block = 'rounded-sm bg-muted-foreground';
     if (layout === 'carousel') return <div className={`h-10 w-full ${block}`} />;
+    if (layout === 'full_bleed') return <div className={`-mx-3 h-10 w-[calc(100%+1.5rem)] rounded-none ${block.replace('rounded-sm', '')}`} />;
+    if (layout === 'tiles_below') {
+        return (
+            <div className="flex h-10 w-full flex-col gap-1">
+                <div className={`flex-[3] ${block}`} />
+                <div className="grid flex-[1.2] grid-cols-4 gap-1">
+                    <div className={block} />
+                    <div className={block} />
+                    <div className={block} />
+                    <div className={block} />
+                </div>
+            </div>
+        );
+    }
+    if (layout === 'flanked') {
+        return (
+            <div className="grid h-10 w-full grid-cols-6 gap-1">
+                <div className="grid grid-rows-2 gap-1">
+                    <div className={block} />
+                    <div className={block} />
+                </div>
+                <div className={`col-span-4 ${block}`} />
+                <div className="grid grid-rows-2 gap-1">
+                    <div className={block} />
+                    <div className={block} />
+                </div>
+            </div>
+        );
+    }
     if (layout === 'carousel_side') {
         return (
             <div className="grid h-10 w-full grid-cols-4 gap-1">
@@ -88,7 +120,7 @@ export function LayoutTab({ config, onChange, onSave, saving, dirty, errors }: L
                     <CardDescription>How the banners are laid out on the home page. Slides are assigned to the main area or the tiles on the Slides tab.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div role="radiogroup" aria-label="Hero layout" className="grid gap-3 sm:grid-cols-3">
+                    <div role="radiogroup" aria-label="Hero layout" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                         {LAYOUTS.map((l) => {
                             const selected = config.layout === l.value;
                             return (

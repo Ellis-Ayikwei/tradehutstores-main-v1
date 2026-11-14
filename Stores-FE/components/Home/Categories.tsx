@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import type { LucideIcon } from 'lucide-react'
 import {
@@ -62,6 +63,35 @@ const ICON_RULES: { keywords: string[]; icon: LucideIcon }[] = [
     { keywords: ['home', 'garden', 'living'], icon: Home },
 ]
 
+/** Staff-picked icon keys; must match Category.TILE_ICON_CHOICES in Stores-BE/apps/catalog/models.py. */
+const ICON_BY_KEY: Record<string, LucideIcon> = {
+    smartphone: Smartphone,
+    laptop: Laptop,
+    camera: Camera,
+    headphones: Headphones,
+    tv: Tv,
+    gamepad: Gamepad2,
+    shirt: Shirt,
+    'shopping-bag': ShoppingBag,
+    watch: Watch,
+    sparkles: Sparkles,
+    heart: Heart,
+    dumbbell: Dumbbell,
+    baby: Baby,
+    book: BookOpen,
+    paw: PawPrint,
+    utensils: UtensilsCrossed,
+    sofa: Sofa,
+    refrigerator: Refrigerator,
+    hammer: Hammer,
+    settings: Settings,
+    home: Home,
+    car: Car,
+    briefcase: Briefcase,
+    gift: Gift,
+    package: Package,
+}
+
 function iconFor(name: string): LucideIcon {
     const n = name.toLowerCase()
     return ICON_RULES.find((r) => r.keywords.some((k) => n.includes(k)))?.icon ?? Package
@@ -75,12 +105,19 @@ export default function Categories() {
 
     const rows = useMemo(
         () =>
-            categories.slice(0, MAX_ITEMS).map((cat, i) => ({
-                id: cat.id,
-                name: cat.name,
-                Icon: iconFor(cat.name),
-                href: `/products?category=${encodeURIComponent(cat.name)}`,
-            })),
+            categories
+                .map((cat, order) => ({ cat, order }))
+                .filter(({ cat }) => cat.showOnHome)
+                // Staff position first; ties keep the API order.
+                .sort((a, b) => a.cat.homePosition - b.cat.homePosition || a.order - b.order)
+                .slice(0, MAX_ITEMS)
+                .map(({ cat }) => ({
+                    id: cat.id,
+                    name: cat.homeLabel || cat.name,
+                    image: cat.tileImage,
+                    Icon: ICON_BY_KEY[cat.tileIcon] ?? iconFor(cat.name),
+                    href: `/products?category=${encodeURIComponent(cat.name)}`,
+                })),
         [categories]
     )
 
@@ -109,13 +146,24 @@ export default function Categories() {
                     </p>
                 ) : (
                     <ul className={listClass}>
-                        {rows.map(({ id, name, Icon, href }, i) => (
+                        {rows.map(({ id, name, image, Icon, href }, i) => (
                             <li
                                 key={id}
                                 className={`w-20 shrink-0 lg:w-auto ${i >= DESKTOP_VISIBLE ? 'lg:hidden' : ''}`}
                             >
                                 <Link href={href} className={TILE}>
-                                    <Icon className="h-6 w-6 text-primary-700 dark:text-primary-400" aria-hidden />
+                                    {image ? (
+                                        <Image
+                                            src={image}
+                                            alt=""
+                                            width={48}
+                                            height={48}
+                                            sizes="48px"
+                                            className="h-10 w-10 object-contain lg:h-12 lg:w-12"
+                                        />
+                                    ) : (
+                                        <Icon className="h-6 w-6 text-primary-700 dark:text-primary-400" aria-hidden />
+                                    )}
                                     <span className="line-clamp-2 w-full text-[12px] font-medium leading-[15px] text-zinc-800 dark:text-zinc-100">
                                         {name}
                                     </span>

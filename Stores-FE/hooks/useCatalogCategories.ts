@@ -11,6 +11,12 @@ export type CatalogCategoryRow = {
     subcategories: CatalogSubcategory[]
     /** Sum of active counts on subcategories (0 when none). */
     totalCount: number
+    /** Home page tile settings (staff-configured in the admin catalog screen). */
+    showOnHome: boolean
+    homePosition: number
+    homeLabel: string
+    tileIcon: string
+    tileImage: string | null
 }
 
 function parseSubcategory(raw: Record<string, unknown>): CatalogSubcategory {
@@ -44,7 +50,19 @@ function parseCategory(raw: Record<string, unknown>): CatalogCategoryRow | null 
 
     const totalCount = subcategories.reduce((acc, s) => acc + s.count, 0)
 
-    return { id, name, subcategories, totalCount }
+    const str = (v: unknown) => (typeof v === 'string' ? v : '')
+    return {
+        id,
+        name,
+        subcategories,
+        totalCount,
+        // Older API responses lack these fields; default to "show, automatic icon".
+        showOnHome: raw.show_on_home !== false,
+        homePosition: typeof raw.home_position === 'number' ? raw.home_position : 0,
+        homeLabel: str(raw.home_label),
+        tileIcon: str(raw.tile_icon),
+        tileImage: str(raw.tile_image) || null,
+    }
 }
 
 /**

@@ -21,6 +21,7 @@ class CategoryAdminViewSet(viewsets.ModelViewSet):
     permission_classes = [CatalogAdminPermission]
     serializer_class = CategoryAdminSerializer
     queryset = Category.objects.all().order_by("name")
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
     http_method_names = ["get", "post", "patch", "delete", "head", "options"]
 
 

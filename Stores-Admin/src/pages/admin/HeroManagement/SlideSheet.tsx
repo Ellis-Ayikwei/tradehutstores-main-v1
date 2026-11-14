@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ImagePlus, Loader2 } from 'lucide-react';
+import { ImagePlus, Loader2, Video } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/shadcn/button';
 import { Input } from '@/components/shadcn/input';
@@ -21,6 +21,7 @@ import { HeroPreview } from './HeroPreview';
 import type { HeroConfig } from '@/services/heroAdminService';
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const MAX_VIDEO_BYTES = 15 * 1024 * 1024;
 
 const EMPTY: HeroSlideDraft = {
     name: '',
@@ -30,6 +31,7 @@ const EMPTY: HeroSlideDraft = {
     ends_at: null,
     image_desktop: undefined,
     image_mobile: undefined,
+    video: undefined,
     alt_text: '',
     eyebrow: '',
     title: '',
@@ -37,6 +39,8 @@ const EMPTY: HeroSlideDraft = {
     cta_label: '',
     link_url: '',
     open_in_new_tab: false,
+    cta_bg_color: '#ffffff',
+    cta_text_color: '#18181b',
     text_color: '#ffffff',
     text_align: 'left',
     overlay_strength: 40,
@@ -56,6 +60,7 @@ function fromSlide(slide: HeroSlide): HeroSlideDraft {
         ends_at: slide.ends_at,
         image_desktop: undefined,
         image_mobile: undefined,
+        video: undefined,
         alt_text: slide.alt_text,
         eyebrow: slide.eyebrow,
         title: slide.title,
@@ -63,6 +68,8 @@ function fromSlide(slide: HeroSlide): HeroSlideDraft {
         cta_label: slide.cta_label,
         link_url: slide.link_url,
         open_in_new_tab: slide.open_in_new_tab,
+        cta_bg_color: slide.cta_bg_color,
+        cta_text_color: slide.cta_text_color,
         text_color: slide.text_color,
         text_align: slide.text_align,
         overlay_strength: slide.overlay_strength,
@@ -147,6 +154,67 @@ function ImageField({ id, label, hint, savedUrl, value, onChange }: ImageFieldPr
     );
 }
 
+interface VideoFieldProps {
+    id: string;
+    savedUrl: string | null;
+    value: File | null | undefined;
+    onChange: (file: File | null | undefined) => void;
+}
+
+/** Same three states as ImageField: undefined keeps the saved clip, null removes it, a File replaces it. */
+function VideoField({ id, savedUrl, value, onChange }: VideoFieldProps) {
+    const input = useRef<HTMLInputElement>(null);
+    const objectUrl = useMemo(() => (value instanceof File ? URL.createObjectURL(value) : null), [value]);
+    useEffect(() => () => { if (objectUrl) URL.revokeObjectURL(objectUrl); }, [objectUrl]);
+    const shown = value === null ? null : (objectUrl ?? savedUrl);
+
+    const pick = (file: File | undefined) => {
+        if (!file) return;
+        if (!/^video\/(mp4|webm)$/.test(file.type)) {
+            toast.error('Choose an MP4 or WebM video.');
+            return;
+        }
+        if (file.size > MAX_VIDEO_BYTES) {
+            toast.error('Video is larger than 15 MB. Compress it or shorten the clip.');
+            return;
+        }
+        onChange(file);
+    };
+
+    return (
+        <div className="space-y-1.5">
+            <Label htmlFor={id}>Background video (optional)</Label>
+            <div className="flex items-center gap-3">
+                <div className="flex h-16 w-28 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-muted">
+                    {shown ? <video src={shown} muted loop autoPlay playsInline className="h-full w-full object-cover" /> : <Video className="h-5 w-5 text-muted-foreground" aria-hidden />}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                    <Button type="button" variant="outline" size="sm" onClick={() => input.current?.click()}>
+                        {shown ? 'Replace' : 'Upload'}
+                    </Button>
+                    {shown ? (
+                        <Button type="button" variant="ghost" size="sm" onClick={() => onChange(null)}>
+                            Remove
+                        </Button>
+                    ) : null}
+                </div>
+                <input
+                    ref={input}
+                    id={id}
+                    type="file"
+                    accept="video/mp4,video/webm"
+                    className="sr-only"
+                    onChange={(e) => {
+                        pick(e.target.files?.[0]);
+                        e.target.value = '';
+                    }}
+                />
+            </div>
+            <p className="text-xs text-muted-foreground">MP4 or WebM up to 15 MB, short and silent (10 to 15 seconds loops well). Plays on tablets and desktops; phones and reduced-motion users see the desktop image instead.</p>
+        </div>
+    );
+}
+
 interface SlideSheetProps {
     open: boolean;
     slide: HeroSlide | null;
@@ -174,14 +242,36 @@ export function SlideSheet({ open, slide, config, onOpenChange, onSaved }: Slide
     );
     useEffect(() => () => { if (previewImage?.startsWith('blob:')) URL.revokeObjectURL(previewImage); }, [previewImage]);
 
+    const previewVideo = useMemo(
+        () => (draft.video instanceof File ? URL.createObjectURL(draft.video) : draft.video === null ? null : (slide?.video_url ?? null)),
+        [draft.video, slide]
+    );
+    useEffect(() => () => { if (previewVideo?.startsWith('blob:')) URL.revokeObjectURL(previewVideo); }, [previewVideo]);
+
+    // Contrast of the button label on the button colour (WCAG 2.x relative luminance); below 3 the label is hard to read.
+    const buttonContrast = useMemo(() => {
+        if (!isHex(draft.cta_bg_color) || !isHex(draft.cta_text_color)) return null;
+        const luminance = (hex: string) => {
+            const full = hex.length === 4 ? `#${hex[1]}${hex[1]}${hex[2]}${hex[2]}${hex[3]}${hex[3]}` : hex;
+            const [r, g, b] = [1, 3, 5].map((i) => parseInt(full.slice(i, i + 2), 16) / 255).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+            return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        };
+        const [hi, lo] = [luminance(draft.cta_bg_color), luminance(draft.cta_text_color)].sort((a, b) => b - a);
+        return (hi + 0.05) / (lo + 0.05);
+    }, [draft.cta_bg_color, draft.cta_text_color]);
+
     const validate = (): Record<string, string> => {
         const next: Record<string, string> = {};
         if (!draft.name.trim()) next.name = 'Give the slide an internal name.';
         const hasImage = draft.image_desktop instanceof File || (draft.image_desktop !== null && Boolean(slide?.image_desktop_url));
+        const hasVideo = draft.video instanceof File || (draft.video !== null && Boolean(slide?.video_url));
+        if (hasVideo && !hasImage) next.image_desktop = 'A video needs a desktop image: it shows while the video loads and on phones.';
         if (!hasImage && !draft.title.trim()) next.title = 'Add a headline or an image.';
         if (draft.link_url && !/^(\/(?!\/)|https?:\/\/)/.test(draft.link_url)) next.link_url = 'Use a path like /deals or a full http(s) link.';
         if (draft.cta_label && !draft.link_url) next.link_url = 'A button needs a link.';
         if (!isHex(draft.text_color)) next.text_color = 'Use a hex colour.';
+        if (!isHex(draft.cta_bg_color)) next.cta_bg_color = 'Use a hex colour.';
+        if (!isHex(draft.cta_text_color)) next.cta_text_color = 'Use a hex colour.';
         if (draft.background_style === 'solid' && !isHex(draft.background_color)) next.background_color = 'Use a hex colour.';
         if (draft.background_style === 'gradient' && !(isHex(draft.gradient_from) && isHex(draft.gradient_to))) next.gradient_from = 'Pick both colours.';
         if (draft.starts_at && draft.ends_at && new Date(draft.ends_at) <= new Date(draft.starts_at)) next.ends_at = 'End must be after start.';
@@ -211,8 +301,13 @@ export function SlideSheet({ open, slide, config, onOpenChange, onSaved }: Slide
         id: 'draft',
         placement: draft.placement,
         image_desktop_url: previewImage,
+        video_url: previewVideo,
         eyebrow: draft.eyebrow,
         title: draft.title,
+        subtitle: draft.subtitle,
+        cta_label: draft.cta_label,
+        cta_bg_color: isHex(draft.cta_bg_color) ? draft.cta_bg_color : '#ffffff',
+        cta_text_color: isHex(draft.cta_text_color) ? draft.cta_text_color : '#18181b',
         text_color: isHex(draft.text_color) ? draft.text_color : '#ffffff',
         text_align: draft.text_align,
         overlay_strength: draft.overlay_strength,
@@ -269,6 +364,9 @@ export function SlideSheet({ open, slide, config, onOpenChange, onSaved }: Slide
                         <h3 className="text-sm font-semibold text-foreground">Images</h3>
                         <ImageField id="slide-img-desktop" label="Desktop image" hint="Wide, about 1600 x 700. JPG, PNG or WebP up to 5 MB." savedUrl={slide?.image_desktop_url ?? null} value={draft.image_desktop} onChange={(f) => set('image_desktop', f)} />
                         <ImageField id="slide-img-mobile" label="Mobile image (optional)" hint="Taller crop, about 800 x 450. Falls back to the desktop image." savedUrl={slide?.image_mobile_url ?? null} value={draft.image_mobile} onChange={(f) => set('image_mobile', f)} />
+                        {errors.image_desktop ? <p className="text-xs text-destructive-subtle-foreground">{errors.image_desktop}</p> : null}
+                        <VideoField id="slide-video" savedUrl={slide?.video_url ?? null} value={draft.video} onChange={(f) => set('video', f)} />
+                        {errors.video ? <p className="text-xs text-destructive-subtle-foreground">{errors.video}</p> : null}
                         {field('slide-alt', 'Image description', 'alt_text', { maxLength: 240, placeholder: 'For screen readers' })}
                     </section>
 
@@ -281,6 +379,13 @@ export function SlideSheet({ open, slide, config, onOpenChange, onSaved }: Slide
                             {field('slide-cta', 'Button label', 'cta_label', { maxLength: 40 })}
                             {field('slide-link', 'Link', 'link_url', { maxLength: 500, placeholder: '/deals' })}
                         </div>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                            <ColorField id="slide-cta-bg" label="Button colour" value={draft.cta_bg_color} onChange={(v) => set('cta_bg_color', v)} error={errors.cta_bg_color} />
+                            <ColorField id="slide-cta-text" label="Button text colour" value={draft.cta_text_color} onChange={(v) => set('cta_text_color', v)} error={errors.cta_text_color} />
+                        </div>
+                        {draft.cta_label && buttonContrast !== null && buttonContrast < 3 ? (
+                            <p role="status" className="text-xs text-warning-subtle-foreground">The button text is hard to read on this colour. Pick colours that contrast more.</p>
+                        ) : null}
                         <div className="flex items-center justify-between gap-3 rounded-md border border-border px-3 py-2">
                             <Label htmlFor="slide-newtab">Open link in a new tab</Label>
                             <Switch id="slide-newtab" checked={draft.open_in_new_tab} onCheckedChange={(v) => set('open_in_new_tab', v)} />

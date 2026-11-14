@@ -15,6 +15,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.ads import sponsored_services
 from apps.orders import payment_flow
 from apps.orders.admin_views import _customer_name, admin_order_detail
 from apps.orders.checkout_views import find_owned_session
@@ -94,11 +95,16 @@ class PaystackWebhookView(APIView):
         data = event.get("data") if isinstance(event, dict) and isinstance(event.get("data"), dict) else {}
         if isinstance(name, str) and name.startswith("refund."):
             outcome = payment_flow.process_refund_event(name, data)
+            if outcome == "unmatched":
+                outcome = sponsored_services.process_refund_event(name, data)
             logger.info("Paystack %s handled: %s", name, outcome)
             return Response({"received": True})
         if name != "charge.success":
             return Response({"received": True})  # other events are acknowledged and ignored
         reference = str(data.get("reference") or "")
+        if reference.startswith(sponsored_services.REFERENCE_PREFIX):
+            logger.info("Paystack sponsored payment handled: %s", sponsored_services.mark_paid(reference, data))
+            return Response({"received": True})
         session = CheckoutSession.objects.filter(reference=reference).first() if reference else None
         if session is None:
             logger.warning("Paystack webhook for an unknown reference (%s)", reference[:40])

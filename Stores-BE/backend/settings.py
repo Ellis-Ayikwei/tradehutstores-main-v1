@@ -227,6 +227,7 @@ CELERY_TASK_ROUTES = {
     "apps.auctions.tasks.sweep_auctions": {"queue": "default"},
     "apps.auctions.tasks.settle_pending_orders": {"queue": "default"},
     "apps.rfq.tasks.sweep_rfqs": {"queue": "default"},
+    "apps.ads.tasks.abandon_stale_sponsored": {"queue": "default"},
 }
 # Beat (run `celery -A backend beat`). The sweeper is the only path that closes
 # long auctions; per-auction close tasks are ETA-armed within 90s of ends_at.
@@ -248,6 +249,11 @@ CELERY_BEAT_SCHEDULE = {
     "orders-expire-checkout-sessions": {
         "task": "apps.orders.tasks.expire_checkout_sessions",
         "schedule": 120.0,
+    },
+    # Sponsored products: unpaid promotions older than 30 minutes become abandoned (Paystack is asked first).
+    "ads-abandon-stale-sponsored": {
+        "task": "apps.ads.tasks.abandon_stale_sponsored",
+        "schedule": 1800.0,
     },
 }
 
@@ -517,6 +523,8 @@ OTP_MAX_ATTEMPTS = 3  # Maximum attempts before OTP is locked
 
 # Frontend URL for password reset emails (also where Paystack sends the buyer back after paying)
 FRONTEND_URL = config("FRONTEND_URL", default="http://localhost:3000")
+# Seller Central origin: where Paystack sends a seller back after paying for a sponsored promotion.
+SELLER_CENTRAL_URL = config("SELLER_CENTRAL_URL", default="http://localhost:3001")
 
 # Paystack (card + mobile money, hosted checkout). Keys are env-only. With no secret key the
 # "Card or mobile money" option is hidden from the storefront and the checkout refuses it.

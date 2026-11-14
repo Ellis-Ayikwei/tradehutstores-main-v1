@@ -1,7 +1,7 @@
 # 26 - Sponsored products (paid product promotion)
 
-Status: **draft contract**, decisions S1 to S3 taken by the user on 2026-11-13; S4 to S6 below use the
-recommended default until the user overrides them.
+Status: **approved** by the user on 2026-11-13 (S1 to S6 as below, staff review required). Nav lock
+lifted for one entry: "Promotions" in `Stores-Seller/components/seller-central/shell/navItems.ts`.
 
 ## 1. Goal / non-goals
 

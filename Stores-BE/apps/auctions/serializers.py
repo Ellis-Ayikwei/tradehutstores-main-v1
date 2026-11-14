@@ -238,6 +238,8 @@ class SellerAuctionRowSerializer(AuctionCardSerializer):
         data.update(
             {
                 "status": a.status,
+                # The seller always sees their own buy-now price; buyers only while it can be used.
+                "buy_now_price": money(a.buy_now_price),
                 "reserve_price": money(a.reserve_price),
                 "result": a.result,
                 "winner_display": services.seller_bidder_display(a.winner) if a.winner_id else None,
@@ -256,6 +258,7 @@ class SellerAuctionDetailSerializer(serializers.BaseSerializer):
         bids = a.bids.select_related("bidder").order_by("-amount")[:SELLER_BID_LIST]
         data.update(
             {
+                "buy_now_price": money(a.buy_now_price),
                 "reserve_price": money(a.reserve_price),
                 "original_ends_at": iso(a.original_ends_at),
                 "winner_display": services.seller_bidder_display(a.winner) if a.winner_id else None,

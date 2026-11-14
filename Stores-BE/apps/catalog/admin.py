@@ -13,7 +13,8 @@ from .models import (
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "description", "created_at", "updated_at")
+    list_display = ("name", "show_on_home", "home_position", "tile_icon", "updated_at")
+    list_filter = ("show_on_home",)
     search_fields = ("name", "description")
     ordering = ("name",)
 

@@ -64,7 +64,7 @@ function RatingStars({
             </span>
             {count !== undefined ? (
                 <span
-                    className={countTone === 'link' ? 'text-sky-800 dark:text-sky-400' : 'text-zinc-600 dark:text-zinc-400'}
+                    className={countTone === 'link' ? 'text-primary-700 dark:text-primary-400' : 'text-zinc-600 dark:text-zinc-400'}
                     aria-hidden="true"
                 >
                     {bracketed ? `(${countText})` : countText}

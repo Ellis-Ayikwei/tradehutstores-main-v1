@@ -443,19 +443,18 @@ export function buildCreateBody(values: AuctionFormValues, variantId: string, st
 
 /**
  * Request body for S4. `quantity` and `variant_id` are never sent (the server rejects them).
- * A blank reserve clears an existing one; a blank buy-now is left out so the stored value stays.
+ * A blank reserve or buy-now clears the stored value (the form is prefilled with both).
  */
 export function buildEditBody(values: AuctionFormValues): AuctionWriteBody {
-    const body: AuctionWriteBody = {
+    return {
         title: values.title.trim(),
         description: values.description.trim(),
         starting_price: values.starting_price.trim(),
         min_increment: values.min_increment.trim(),
         reserve_price: values.reserve_price.trim() || null,
+        buy_now_price: values.buy_now_price.trim() || null,
         starts_at: (fromLocalInput(values.starts_at) as Date).toISOString(),
         ends_at: (fromLocalInput(values.ends_at) as Date).toISOString(),
         soft_close_seconds: Number(values.soft_close_seconds),
     }
-    if (values.buy_now_price.trim()) body.buy_now_price = values.buy_now_price.trim()
-    return body
 }

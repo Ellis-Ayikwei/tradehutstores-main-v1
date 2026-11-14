@@ -13,6 +13,7 @@ Flow (Paystack's hosted page):
 import hashlib
 import hmac
 import logging
+from decimal import ROUND_HALF_UP, Decimal
 
 import requests
 from django.conf import settings
@@ -46,6 +47,13 @@ class PaystackError(Exception):
     @property
     def duplicate_reference(self) -> bool:
         return "duplicate" in str(self).lower() and "reference" in str(self).lower()
+
+
+def to_minor(amount) -> int:
+    """Major units (GHS, 2dp) to the gateway's integer minor units (pesewas), rounded half up.
+
+    The one place the x100 conversion lives; every caller of ``initialize`` / ``create_refund`` goes through it."""
+    return int((Decimal(amount or 0).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP) * 100).to_integral_value())
 
 
 def secret_key() -> str:

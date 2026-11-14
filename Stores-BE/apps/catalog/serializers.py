@@ -46,10 +46,28 @@ class CategorySerializer(serializers.ModelSerializer):
     """
 
     sub_categories = serializers.SerializerMethodField()
+    tile_image = serializers.SerializerMethodField()
 
     class Meta:
         model = Category
-        fields = ["id", "name", "description", "sub_categories"]
+        fields = [
+            "id",
+            "name",
+            "description",
+            "sub_categories",
+            "show_on_home",
+            "home_position",
+            "home_label",
+            "tile_icon",
+            "tile_image",
+        ]
+
+    def get_tile_image(self, obj):
+        if not obj.tile_image:
+            return None
+        request = self.context.get("request")
+        url = obj.tile_image.url
+        return request.build_absolute_uri(url) if request else url
 
     def get_sub_categories(self, obj):
         if not self.context.get("include_subcategories"):

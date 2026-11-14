@@ -1,3 +1,5 @@
+import os
+
 from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 
@@ -5,6 +7,7 @@ from .models import HeroConfig, HeroSlide
 
 
 MAX_HERO_IMAGE_BYTES = 5 * 1024 * 1024
+MAX_HERO_VIDEO_BYTES = 15 * 1024 * 1024
 
 
 def _abs(serializer, file):
@@ -36,6 +39,7 @@ class _ModelCleanMixin:
 class HeroSlidePublicSerializer(serializers.ModelSerializer):
     image_desktop = serializers.SerializerMethodField()
     image_mobile = serializers.SerializerMethodField()
+    video = serializers.SerializerMethodField()
 
     class Meta:
         model = HeroSlide
@@ -44,6 +48,7 @@ class HeroSlidePublicSerializer(serializers.ModelSerializer):
             "placement",
             "image_desktop",
             "image_mobile",
+            "video",
             "alt_text",
             "eyebrow",
             "title",
@@ -51,6 +56,8 @@ class HeroSlidePublicSerializer(serializers.ModelSerializer):
             "cta_label",
             "link_url",
             "open_in_new_tab",
+            "cta_bg_color",
+            "cta_text_color",
             "text_color",
             "text_align",
             "overlay_strength",
@@ -66,6 +73,9 @@ class HeroSlidePublicSerializer(serializers.ModelSerializer):
 
     def get_image_mobile(self, obj):
         return _abs(self, obj.image_mobile or obj.image_desktop)
+
+    def get_video(self, obj):
+        return _abs(self, obj.video)
 
 
 class HeroConfigPublicSerializer(serializers.ModelSerializer):
@@ -108,6 +118,7 @@ class HeroConfigAdminSerializer(_ModelCleanMixin, serializers.ModelSerializer):
 class HeroSlideAdminSerializer(_ModelCleanMixin, serializers.ModelSerializer):
     image_desktop_url = serializers.SerializerMethodField()
     image_mobile_url = serializers.SerializerMethodField()
+    video_url = serializers.SerializerMethodField()
     is_live = serializers.BooleanField(read_only=True)
 
     class Meta:
@@ -126,6 +137,8 @@ class HeroSlideAdminSerializer(_ModelCleanMixin, serializers.ModelSerializer):
             "image_desktop_url",
             "image_mobile",
             "image_mobile_url",
+            "video",
+            "video_url",
             "alt_text",
             "eyebrow",
             "title",
@@ -133,6 +146,8 @@ class HeroSlideAdminSerializer(_ModelCleanMixin, serializers.ModelSerializer):
             "cta_label",
             "link_url",
             "open_in_new_tab",
+            "cta_bg_color",
+            "cta_text_color",
             "text_color",
             "text_align",
             "overlay_strength",
@@ -149,6 +164,7 @@ class HeroSlideAdminSerializer(_ModelCleanMixin, serializers.ModelSerializer):
             "hero": {"required": True, "allow_null": False},
             "image_desktop": {"required": False, "allow_null": True, "write_only": True},
             "image_mobile": {"required": False, "allow_null": True, "write_only": True},
+            "video": {"required": False, "allow_null": True, "write_only": True},
         }
 
     def get_image_desktop_url(self, obj):
@@ -156,6 +172,9 @@ class HeroSlideAdminSerializer(_ModelCleanMixin, serializers.ModelSerializer):
 
     def get_image_mobile_url(self, obj):
         return _abs(self, obj.image_mobile)
+
+    def get_video_url(self, obj):
+        return _abs(self, obj.video)
 
     @staticmethod
     def _check_size(file):
@@ -168,6 +187,21 @@ class HeroSlideAdminSerializer(_ModelCleanMixin, serializers.ModelSerializer):
 
     def validate_image_mobile(self, file):
         return self._check_size(file)
+
+    def validate_video(self, file):
+        if file is None:
+            return None
+        if file.size > MAX_HERO_VIDEO_BYTES:
+            raise serializers.ValidationError("Video is larger than 15 MB. Compress it or shorten the clip.")
+        ext = os.path.splitext(file.name)[1].lower()
+        head = file.read(12)
+        file.seek(0)
+        # The client-sent content type is untrusted, so the file's own first bytes decide.
+        is_mp4 = head[4:8] == b"ftyp"
+        is_webm = head[:4] == b"\x1a\x45\xdf\xa3"
+        if not ((ext == ".mp4" and is_mp4) or (ext == ".webm" and is_webm)):
+            raise serializers.ValidationError("Upload an MP4 or WebM video.")
+        return file
 
 
 class HeroReorderSerializer(serializers.Serializer):

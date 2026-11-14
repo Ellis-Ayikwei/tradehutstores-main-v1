@@ -15,8 +15,47 @@ from apps.core.models import BaseModel
 
 
 class Category(BaseModel):
+    # Keys the storefront maps to lucide icons (Stores-FE components/Home/Categories.tsx,
+    # Stores-Admin CatalogManagement). Blank means "pick from the category name".
+    TILE_ICON_CHOICES = [
+        ("smartphone", "Phone"),
+        ("laptop", "Laptop"),
+        ("camera", "Camera"),
+        ("headphones", "Headphones"),
+        ("tv", "TV"),
+        ("gamepad", "Gaming"),
+        ("shirt", "Clothing"),
+        ("shopping-bag", "Bag"),
+        ("watch", "Watch"),
+        ("sparkles", "Beauty"),
+        ("heart", "Health"),
+        ("dumbbell", "Sports"),
+        ("baby", "Baby"),
+        ("book", "Books"),
+        ("paw", "Pets"),
+        ("utensils", "Kitchen"),
+        ("sofa", "Furniture"),
+        ("refrigerator", "Appliance"),
+        ("hammer", "Tools"),
+        ("settings", "Industrial"),
+        ("home", "Home"),
+        ("car", "Auto"),
+        ("briefcase", "Office"),
+        ("gift", "Gifts"),
+        ("package", "General"),
+    ]
+
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
+
+    # Home page "shop by category" tile. Image wins over icon; icon wins over the name-based default.
+    show_on_home = models.BooleanField(default=True)
+    home_position = models.PositiveSmallIntegerField(default=0, help_text="Lower numbers show first.")
+    home_label = models.CharField(
+        max_length=30, blank=True, default="", help_text="Short tile label. Blank uses the category name."
+    )
+    tile_icon = models.CharField(max_length=30, blank=True, default="", choices=TILE_ICON_CHOICES)
+    tile_image = models.ImageField(upload_to="categories/tiles/", blank=True, null=True)
 
     class Meta:
         managed = True
